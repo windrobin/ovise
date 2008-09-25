@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Root" >
+        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="WindowsLook/Menubar" Name="Root/MenuBar" >
+            <Property Name="Font" Value="DejaVuSans-10" />
+            <Property Name="AlwaysOnTop" Value="True" />
+            <Property Name="ItemSpacing" Value="10" />
+            <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+            <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{0,50}}" />
+            <Window Type="WindowsLook/MenuItem" Name="Root/MenuBar/File" >
+                <Property Name="Font" Value="DejaVuSans-10" />
+                <Property Name="Text" Value="File" />
+                <Property Name="AlwaysOnTop" Value="True" />
+                <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                <Property Name="UnifiedAreaRect" Value="{{0,8},{0,0},{0,49},{0,28}}" />
+                <Window Type="WindowsLook/PopupMenu" Name="Root/MenuBar/File/AutoPopup" >
+                    <Property Name="Font" Value="DejaVuSans-10" />
+                    <Property Name="FadeInTime" Value="0" />
+                    <Property Name="AlwaysOnTop" Value="True" />
+                    <Property Name="FadeOutTime" Value="0" />
+                    <Property Name="ItemSpacing" Value="2" />
+                    <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                    <Property Name="ClippedByParent" Value="False" />
+                    <Property Name="UnifiedAreaRect" Value="{{0.0122592,0},{0.0459777,0},{0,79},{0,81.1755}}" />
+                    <Property Name="AutoResizeEnabled" Value="True" />
+                    <Window Type="WindowsLook/MenuItem" Name="Root/MenuBar/File/Open" >
+                        <Property Name="Font" Value="DejaVuSans-10" />
+                        <Property Name="Text" Value="Open" />
+                        <Property Name="AlwaysOnTop" Value="True" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,4},{0,4},{0,74},{0,37}}" />
+                    </Window>
+                    <Window Type="WindowsLook/MenuItem" Name="Root/MenuBar/File/Exit" >
+                        <Property Name="Font" Value="DejaVuSans-10" />
+                        <Property Name="Text" Value="Exit" />
+                        <Property Name="AlwaysOnTop" Value="True" />
+                        <Property Name="UnifiedMaxSize" Value="{{1,0},{1,0}}" />
+                        <Property Name="UnifiedAreaRect" Value="{{0,4},{0,39},{0,74},{0,72}}" />
+                    </Window>
+                </Window>
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>

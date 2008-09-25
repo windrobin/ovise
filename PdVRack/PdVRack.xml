@@ -1,0 +1,141 @@
+<scene formatVersion="1.0.0">
+  <nodes>
+    <node name="ProfilHRM">
+      <position x="24.714729" y="9.399394" z="-8.594250"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHRM" meshFile="ProfilHRM.mesh"/>
+    </node>
+    <node name="ProfilHRO">
+      <position x="24.714731" y="24.299397" z="-8.594197"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHRO" meshFile="ProfilHRO.mesh"/>
+    </node>
+    <node name="ProfilVRH">
+      <position x="24.714731" y="12.279363" z="-16.894285"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilVRH" meshFile="ProfilVRH.mesh"/>
+    </node>
+    <node name="PTUSVSMitteOben2">
+      <position x="11.114730" y="23.229366" z="-11.994288"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="PTUSVSMitteOben2" meshFile="PTUSVSMitteOben2.mesh"/>
+      <node name="SVSMitteOben">
+        <position x="0.017924" y="0.130659" z="-0.214628"/>
+        <quaternion x="0.000000" y="-0.000000" z="0.000000" w="1.000000"/>
+        <scale x="1.000000" y="1.000000" z="1.000000"/>
+        <entity name="SVSMitteOben" meshFile="SVSMItteOben.mesh"/>
+      </node>
+    </node>
+    <node name="ProfilHMV">
+      <position x="12.414817" y="24.199322" z="-0.294287"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHMV" meshFile="ProfilHMV.mesh"/>
+    </node>
+    <node name="ProfilHMHH">
+      <position x="12.414819" y="24.199322" z="-12.394286"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHMHH" meshFile="ProfilHMHH.mesh"/>
+    </node>
+    <node name="PTUSVSMitteOben1">
+      <position x="11.114732" y="23.699368" z="-11.994288"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="PTUSVSMitteOben1" meshFile="PTUSVSMitteOben1.mesh"/>
+    </node>
+    <node name="ProfilVLU">
+      <position x="0.114729" y="1.799395" z="-8.594280"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilVLU" meshFile="ProfilVLU.mesh"/>
+    </node>
+    <node name="ProfilVLV">
+      <position x="0.114729" y="12.279366" z="-0.294287"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilVLV" meshFile="ProfilVLV.mesh"/>
+    </node>
+    <node name="ProfilHLO">
+      <position x="0.114730" y="24.299397" z="-8.594200"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHLO" meshFile="ProfilHLO.mesh"/>
+    </node>
+    <node name="ProfilVLH">
+      <position x="0.114730" y="12.279365" z="-16.894287"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilVLH" meshFile="ProfilVLH.mesh"/>
+    </node>
+    <node name="Camera">
+      <position x="0.000000" y="0.000000" z="0.000000"/>
+      <quaternion x="-0.789026" y="-0.316323" z="0.190060" w="0.491177"/>
+      <scale x="0.010000" y="0.010000" z="0.010000"/>
+      <camera name="Camera" fov="37.849289" projectionType="perspective">
+        <clipping nearPlaneDist="0.100000" farPlaneDist="100.000000"/>
+      </camera>
+    </node>
+    <node name="ProfilVRV">
+      <position x="24.714729" y="12.279365" z="-0.294284"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilVRV" meshFile="ProfilVRV.mesh"/>
+    </node>
+    <node name="PTUSVSLinks1">
+      <position x="0.114730" y="15.699365" z="-16.394287"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="PTUSVSLinks1" meshFile="PTUSVSLinks1.mesh"/>
+    </node>
+    <node name="ProfilHMH">
+      <position x="12.414819" y="24.199322" z="-11.394286"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHMH" meshFile="ProfilHMH.mesh"/>
+    </node>
+    <node name="Rueckwand">
+      <position x="12.614730" y="14.999364" z="-17.594288"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="Rueckwand" meshFile="Rueckwand.mesh"/>
+    </node>
+    <node name="PTUSVSLinks2">
+      <position x="0.114729" y="15.699365" z="-15.924289"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="PTUSVSLinks2" meshFile="PTUSVSLinks2.mesh"/>
+      <node name="SVSLinks">
+        <position x="-0.352778" y="-0.789822" z="0.248450"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
+        <scale x="1.000000" y="1.000000" z="1.000000"/>
+        <entity name="SVSLinks" meshFile="SVSLinks.mesh"/>
+      </node>
+    </node>
+    <node name="ProfilHRU">
+      <position x="24.714729" y="1.799393" z="-8.594278"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="ProfilHRU" meshFile="ProfilHRU.mesh"/>
+    </node>
+    <node name="Arbeitsplatte">
+      <position x="12.349854" y="9.899347" z="-8.751191"/>
+      <quaternion x="-0.707107" y="0.000000" z="0.000000" w="0.707107"/>
+      <scale x="1.000000" y="1.000000" z="1.000000"/>
+      <entity name="Arbeitsplatte" meshFile="Arbeitsplatte.mesh"/>
+    </node>
+  </nodes>
+  <externals>
+    <item type="material">
+      <file name="PdVRack.material"/>
+    </item>
+  </externals>
+  <environment>
+    <colourAmbient r="0.000000" g="0.000000" b="0.000000"/>
+    <colourBackground r="0.056563" g="0.220815" b="0.400000"/>
+  </environment>
+</scene>
