@@ -26,6 +26,7 @@ protected:
 public:
 	/** Constructor */
 	OViSEAddMeshDialog( wxWindow* parent );
+	virtual ~OViSEAddMeshDialog();
 
 private:
 	Ogre::SceneManager *mSceneMgr;

@@ -66,6 +66,8 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	mSplitter->SplitHorizontally(mMainRenderWin, logBox, this->GetSize().GetHeight()*0.85);
 	mLogBoxListener = new OViSELogListener(logBox);
 
+	mAddMeshDialog = NULL;
+
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener(mLogBoxListener);
 }
 
@@ -172,5 +174,9 @@ void OViSEWxFrame::OnSaveScreenToFile(wxCommandEvent &event)
 
 void OViSEWxFrame::OnSceneAddMesh(wxCommandEvent &event)
 {
-	
+	if(mAddMeshDialog == NULL)
+	{
+		mAddMeshDialog = new OViSEAddMeshDialog(this);
+	}
+	mAddMeshDialog->Show();
 }

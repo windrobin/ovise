@@ -94,6 +94,11 @@ std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string grou
 	return returnvec;
 }
 
+std::vector<std::string> OViSESceneHandling::getAvailableResourceGroupNames()
+{
+	return Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups();
+}
+
 OViSESceneHandling::~OViSESceneHandling()
 {
 }

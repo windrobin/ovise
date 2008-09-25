@@ -20,6 +20,7 @@
 #include "wxOgreRenderWindow.h"
 #include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
+#include "OViSEAddMeshDialog.h"
 
 enum
 {
@@ -58,6 +59,8 @@ class OViSEWxFrame: public GUIFrame
         OViSESceneHandling *mSceneHdlr;
 
 		OViSELogListener *mLogBoxListener;
+
+		OViSEAddMeshDialog *mAddMeshDialog;
 };
 
 #endif // OVISEWXMAIN_H

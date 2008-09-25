@@ -40,6 +40,12 @@ public:
 	 */
 	static std::vector<std::string> getAvailableMeshes(std::string group);
 
+	/** Returns a list of all resource groups available.
+	 * Retrieves a list of all resource groups currently available in the resource manager.
+	 * @return List of resource group names
+	 */
+	static std::vector<std::string> getAvailableResourceGroupNames();
+
 	virtual ~OViSESceneHandling();
 
 protected:
