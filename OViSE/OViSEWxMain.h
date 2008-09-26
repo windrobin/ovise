@@ -39,6 +39,7 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnAddView(wxCommandEvent& event);
 		virtual void OnSaveScreenToFile(wxCommandEvent& event);
 		virtual void OnSceneAddMesh(wxCommandEvent& event);
+		virtual void OnAddMeshDialogClose(wxCloseEvent& event);
 
 		void finishOgreInitialization();
 

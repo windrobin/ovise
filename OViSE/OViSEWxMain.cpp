@@ -176,7 +176,15 @@ void OViSEWxFrame::OnSceneAddMesh(wxCommandEvent &event)
 {
 	if(mAddMeshDialog == NULL)
 	{
-		mAddMeshDialog = new OViSEAddMeshDialog(this);
+		mAddMeshDialog = new OViSEAddMeshDialog(this, wxID_HIGHEST + 1);
+		mAddMeshDialog->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( OViSEWxFrame::OnAddMeshDialogClose ), NULL, this);
 	}
 	mAddMeshDialog->Show();
+}
+
+void OViSEWxFrame::OnAddMeshDialogClose(wxCloseEvent& event)
+{
+	mAddMeshDialog->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( OViSEWxFrame::OnAddMeshDialogClose ), NULL, this);
+	if(mAddMeshDialog->Destroy())
+		mAddMeshDialog = NULL;
 }

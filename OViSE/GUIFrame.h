@@ -20,8 +20,8 @@
 #include <wx/statusbr.h>
 #include <wx/frame.h>
 #include <wx/listbox.h>
-#include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,6 @@
 #define ID_SAVE_SCREENSHOT_TO_FILE 1002
 #define ID_ADD_MESH 1003
 #define idMenuAbout 1004
-#define wxOKBUTTON 1005
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -86,7 +85,7 @@ class AddMeshDialog : public wxDialog
 		
 	
 	public:
-		AddMeshDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add new mesh to scene"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 690,555 ), long style = wxDEFAULT_DIALOG_STYLE );
+		AddMeshDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add new mesh to scene"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 916,854 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~AddMeshDialog();
 	
 };

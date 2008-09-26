@@ -25,7 +25,7 @@ protected:
 	
 public:
 	/** Constructor */
-	OViSEAddMeshDialog( wxWindow* parent );
+	OViSEAddMeshDialog( wxWindow* parent, wxWindowID id);
 	virtual ~OViSEAddMeshDialog();
 
 private:
@@ -33,6 +33,10 @@ private:
 	OViSESceneHandling *mSceneHandler;
 	wxOgreRenderWindow *mRenderWin;
 	Ogre::Camera *mCam;
+	Ogre::Light *mLight;
+	Ogre::SceneNode *mMeshNode;
+
+	wxString lastSelected;
 };
 
 #endif // __OViSEAddMeshDialog__

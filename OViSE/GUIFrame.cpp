@@ -89,8 +89,13 @@ AddMeshDialog::AddMeshDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	mMeshList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_EXTENDED|wxLB_HSCROLL|wxLB_SINGLE|wxLB_SORT ); 
-	MainSizer->Add( mMeshList, 1, wxALL|wxEXPAND, 5 );
+	wxBoxSizer* ListSizer;
+	ListSizer = new wxBoxSizer( wxHORIZONTAL );
+	
+	mMeshList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL|wxLB_NEEDED_SB|wxLB_SINGLE|wxLB_SORT ); 
+	ListSizer->Add( mMeshList, 1, wxALL|wxEXPAND, 5 );
+	
+	MainSizer->Add( ListSizer, 4, wxEXPAND, 5 );
 	
 	wxBoxSizer* buttonSizer;
 	buttonSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -98,16 +103,16 @@ AddMeshDialog::AddMeshDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	buttonSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	
-	mOkButton = new wxButton( this, wxOKBUTTON, wxT("Ok"), wxDefaultPosition, wxDefaultSize, 0 );
+	mOkButton = new wxButton( this, wxID_OK, wxT("Ok"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( mOkButton, 0, wxALL, 5 );
 	
-	mApplyButton = new wxButton( this, wxID_ANY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
+	mApplyButton = new wxButton( this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( mApplyButton, 0, wxALL, 5 );
 	
-	mCancelButton = new wxButton( this, wxID_ANY, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	mCancelButton = new wxButton( this, wxID_CANCEL, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
 	buttonSizer->Add( mCancelButton, 0, wxALL, 5 );
 	
-	MainSizer->Add( buttonSizer, 1, wxEXPAND, 5 );
+	MainSizer->Add( buttonSizer, 0, wxEXPAND, 5 );
 	
 	this->SetSizer( MainSizer );
 	this->Layout();
