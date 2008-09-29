@@ -78,7 +78,7 @@ OViSEWxFrame::~OViSEWxFrame()
 
 void OViSEWxFrame::finishOgreInitialization()
 {
-	mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC, "ExampleSMInstance");
+	mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC, "MainSceneManager");
 
     mCam = mSceneMgr->createCamera("MainCam");
 
