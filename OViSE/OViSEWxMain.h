@@ -15,6 +15,7 @@
 #include "OViSEWxApp.h"
 
 #include <wx/splitter.h>
+#include <wx/propgrid/propgrid.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"
@@ -24,7 +25,8 @@
 
 enum
 {
-    WINDOW_MainRender = wxID_HIGHEST + 1
+    WINDOW_MainRender = wxID_HIGHEST + 1,
+	PGID
 };
 
 class OViSEWxFrame: public GUIFrame
@@ -37,11 +39,20 @@ class OViSEWxFrame: public GUIFrame
         virtual void OnQuit(wxCommandEvent& event);
         virtual void OnAbout(wxCommandEvent& event);
 		virtual void OnAddView(wxCommandEvent& event);
+		virtual void OnAdditionalViewClose(wxCloseEvent& event);
 		virtual void OnSaveScreenToFile(wxCommandEvent& event);
 		virtual void OnSceneAddMesh(wxCommandEvent& event);
 		virtual void OnAddMeshDialogClose(wxCloseEvent& event);
+		virtual void OnViewClick(wxMouseEvent& event);
+		virtual void OnPropertyChange(wxPropertyGridEvent& event);
 
 		void finishOgreInitialization();
+		void setupObjectProperties();
+		void setObjectProperties(Ogre::MovableObject *object);
+		void clearObjectProperties();
+
+	protected:
+		DECLARE_EVENT_TABLE()
 
     protected:
 		Ogre::Root *mRoot;
@@ -50,8 +61,11 @@ class OViSEWxFrame: public GUIFrame
 
 		wxListBox *logBox;
 		wxSplitterWindow *mSplitter;
+		wxSplitterWindow *mSecondSplitter;
 
-        Ogre::SceneManager *mSceneMgr;
+		wxPropertyGrid *mObjectProperties;
+		
+		Ogre::SceneManager *mSceneMgr;
         Ogre::Camera *mCam;
 
 		std::map<std::string, Ogre::Camera*> mAdditionalCameras;

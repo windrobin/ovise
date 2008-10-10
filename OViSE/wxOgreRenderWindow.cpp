@@ -95,6 +95,11 @@ void wxOgreRenderWindow::SetCamera(Ogre::Camera *cam)
 	mCamera = cam;
 }
 //------------------------------------------------------------------------------
+Ogre::Camera* wxOgreRenderWindow::GetCamera()
+{
+	return mCamera;
+}
+//------------------------------------------------------------------------------
 void wxOgreRenderWindow::SetStatusBar(wxStatusBar *sBar)
 {
 	mStatusBar = sBar;
@@ -185,8 +190,8 @@ void wxOgreRenderWindow::OnMouseEvents (wxMouseEvent &evt)
 			mX = newX;
 			mY = newY;
 		}
-	}
-	else evt.Skip();
+	}	
+	evt.Skip();
 }
 //------------------------------------------------------------------------------
 void wxOgreRenderWindow::OnKeyEvents(wxKeyEvent &evt)

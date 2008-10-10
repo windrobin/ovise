@@ -30,14 +30,15 @@ OViSEAddMeshDialog::OViSEAddMeshDialog( wxWindow* parent, wxWindowID id )
 AddMeshDialog( parent, id )
 {
 	mRenderWin = new wxOgreRenderWindow(this, wxID_ANY);
-	mSceneMgr = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "AddMesh");
-	mSceneMgr->setNormaliseNormalsOnScale(true);
+	mSceneHandler = OViSESceneHandling::getSingletonPtr();
+	mSceneHandler->addSceneManager("AddMeshScene");
+	Ogre::SceneManager *scnMgr = mSceneHandler->getSceneManager("AddMeshScene");
+	scnMgr->setNormaliseNormalsOnScale(true);
 
-	mListener = new MeshDialogFrameListener(mSceneMgr);
+	mListener = new MeshDialogFrameListener(scnMgr);
 	Ogre::Root::getSingletonPtr()->addFrameListener(mListener);
 
-	mSceneHandler = new OViSESceneHandling(mSceneMgr);
-	mCam = mSceneMgr->createCamera("AddMeshCam");
+	mCam = scnMgr->createCamera("AddMeshCam");
 	mCam->setNearClipDistance(1);
 	mCam->setFarClipDistance(1000);
 	mCam->setPosition(-20, 5, 0);
@@ -45,15 +46,15 @@ AddMeshDialog( parent, id )
 	mCam->setAutoAspectRatio(true);
 	mCam->setFixedYawAxis(true);
 
-	mMeshNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("MeshNode");
+	mMeshNode = scnMgr->getRootSceneNode()->createChildSceneNode("MeshNode");
 	
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
-	mLight = mSceneMgr->createLight("AddMeshLight");
+	scnMgr->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
+	mLight = scnMgr->createLight("AddMeshLight");
 	mLight->setType(Ogre::Light::LT_DIRECTIONAL);
 	mLight->setPosition(-20, 0, 0);
 	mLight->setDirection(1, -1, 0);
 
-	mSceneHandler->addGrid(1, 10, 10, Ogre::Vector3(1, 1, 1));
+	mSceneHandler->addGrid(1, 10, 10, Ogre::Vector3(1, 1, 1), "AddMeshScene");
 
 	mRenderWin->SetCamera(mCam);
 	mRenderWin->SetOgreRoot(Ogre::Root::getSingletonPtr());
@@ -73,12 +74,12 @@ AddMeshDialog( parent, id )
 
 void OViSEAddMeshDialog::updateMeshList()
 {
-	std::vector<std::string> groups = OViSESceneHandling::getAvailableResourceGroupNames();
+	std::vector<std::string> groups = mSceneHandler->getAvailableResourceGroupNames();
 	for(std::vector<std::string>::iterator it = groups.begin(); it != groups.end(); it++)
 	{
 		try
 		{
-			std::vector<std::string> meshlist = OViSESceneHandling::getAvailableMeshes(*it);
+			std::vector<std::string> meshlist = mSceneHandler->getAvailableMeshes(*it);
 			for(std::vector<std::string>::iterator iter = meshlist.begin(); iter != meshlist.end(); iter++)
 			{
 				if((*iter).rfind(".mesh") == (*iter).length() - 5)
@@ -104,16 +105,17 @@ void OViSEAddMeshDialog::OnMeshListSelect( wxCommandEvent& event )
 		return;
 	if(selected.Cmp(lastSelected) == 0)
 		return;
+	Ogre::SceneManager *scnMgr = mSceneHandler->getSceneManager("AddMeshScene");
 	Ogre::String meshToLoad(selected.ToAscii());
-	if(mSceneMgr->hasEntity("tmp"))
+	if(scnMgr->hasEntity("tmp"))
 	{
 		mMeshNode->removeAllChildren();
-		mSceneMgr->destroyEntity("tmp");
+		scnMgr->destroyEntity("tmp");
 	}
 	mMeshNode->setPosition(0, 0, 0);
 	mCam->setPosition(-20, 5, 0);
 	mCam->lookAt(0, 0, 0);
-	Ogre::Entity *ent = mSceneMgr->createEntity("tmp", meshToLoad);
+	Ogre::Entity *ent = scnMgr->createEntity("tmp", meshToLoad);
 	mMeshNode->attachObject(ent);
 	Ogre::Vector3 centering = ent->getBoundingBox().getCenter() - mMeshNode->getPosition();
 	mMeshNode->translate(-centering, Ogre::Node::TS_WORLD);
@@ -137,12 +139,9 @@ void OViSEAddMeshDialog::OnOkClick( wxCommandEvent& event )
 	// Add selected mesh to the base scene and close the dialog
 	try
 	{
-		Ogre::SceneManager *baseScnMgr = Ogre::Root::getSingletonPtr()->getSceneManager("MainSceneManager");
+		Ogre::SceneManager *baseScnMgr = mSceneHandler->getSceneManager();
 		wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
-		Ogre::SceneNode *addNode = baseScnMgr->getRootSceneNode()->createChildSceneNode(Ogre::String(tmp.ToAscii()));
-		Ogre::String entName = Ogre::String(tmp.ToAscii()) + "Entity";
-		Ogre::Entity *addEnt = baseScnMgr->createEntity(entName, Ogre::String(lastSelected.ToAscii()));
-		addNode->attachObject(addEnt);
+		mSceneHandler->addMesh(std::string(tmp.ToAscii()), std::string(lastSelected.ToAscii()));
 		Close();
 	}
 	catch(Ogre::Exception e) { }
@@ -153,12 +152,9 @@ void OViSEAddMeshDialog::OnApplyClick( wxCommandEvent& event )
 	// Add selected mesh to the base scene and continue the dialog
 	try
 	{
-		Ogre::SceneManager *baseScnMgr = Ogre::Root::getSingletonPtr()->getSceneManager("MainSceneManager");
+		Ogre::SceneManager *baseScnMgr = Ogre::Root::getSingletonPtr()->getSceneManager("BaseSceneManager");
 		wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
-		Ogre::SceneNode *addNode = baseScnMgr->getRootSceneNode()->createChildSceneNode(Ogre::String(tmp.ToAscii()));
-		Ogre::String entName = Ogre::String(tmp.ToAscii()) + "Entity";
-		Ogre::Entity *addEnt = baseScnMgr->createEntity(entName, Ogre::String(lastSelected.ToAscii()));
-		addNode->attachObject(addEnt);
+		mSceneHandler->addMesh(std::string(tmp.ToAscii()), std::string(lastSelected.ToAscii()));
 	}
 	catch(Ogre::Exception e) { }
 }
@@ -172,6 +168,5 @@ OViSEAddMeshDialog::~OViSEAddMeshDialog()
 {
 	Ogre::Root::getSingletonPtr()->removeFrameListener(mListener);
 	delete mListener;
-	Ogre::Root::getSingletonPtr()->destroySceneManager(mSceneMgr);
-	delete mSceneHandler;
+	mSceneHandler->removeSceneManager("AddMeshScene");
 }

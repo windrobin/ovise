@@ -110,6 +110,7 @@ class wxOgreRenderWindow : public wxControl {
 		/** Sets the camera associated with this view
 		  */
 		void SetCamera(Ogre::Camera *cam);
+		Ogre::Camera* GetCamera();
 
 		/** Gets the associated Ogre render window.
 			@return The render window used to paint this control.
