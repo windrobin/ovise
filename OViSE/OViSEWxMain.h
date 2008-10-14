@@ -16,6 +16,7 @@
 
 #include <wx/splitter.h>
 #include <wx/propgrid/propgrid.h>
+#include <wx/tokenzr.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"

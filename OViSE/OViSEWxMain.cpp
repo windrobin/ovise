@@ -116,22 +116,37 @@ void OViSEWxFrame::setupObjectProperties()
 	
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Node Properties")));
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("NodeName")));
+	mObjectProperties->SetPropertyValidator(wxT("NodeName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
+
 	wxPGId tID = mObjectProperties->Append(new wxStringProperty(wxT("Translation"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("x"), wxT("tx")));
+	mObjectProperties->SetPropertyValidator(wxT("Translation.tx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("y"), wxT("ty")));
+	mObjectProperties->SetPropertyValidator(wxT("Translation.ty"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("z"), wxT("tz")));
+	mObjectProperties->SetPropertyValidator(wxT("Translation.tz"), wxTextValidator(wxFILTER_NUMERIC));
+
 	wxPGId rID = mObjectProperties->Append(new wxStringProperty(wxT("Rotation"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("x"), wxT("rx")));
+	mObjectProperties->SetPropertyValidator(wxT("Rotation.rx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("y"), wxT("ry")));
+	mObjectProperties->SetPropertyValidator(wxT("Rotation.ry"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("z"), wxT("rz")));
+	mObjectProperties->SetPropertyValidator(wxT("Rotation.rz"), wxTextValidator(wxFILTER_NUMERIC));
+
 	wxPGId sID = mObjectProperties->Append(new wxStringProperty(wxT("Scale"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(sID, new wxFloatProperty(wxT("x"), wxT("sx")));
+	mObjectProperties->SetPropertyValidator(wxT("Scale.sx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(sID, new wxFloatProperty(wxT("y"), wxT("sy")));
+	mObjectProperties->SetPropertyValidator(wxT("Scale.sy"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(sID, new wxFloatProperty(wxT("z"), wxT("sz")));
+	mObjectProperties->SetPropertyValidator(wxT("Scale.sz"), wxTextValidator(wxFILTER_NUMERIC));
 
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Mesh Properties")));
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("MeshName")));
+	mObjectProperties->SetPropertyValidator(wxT("MeshName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 	mObjectProperties->Append(new wxStringProperty(wxT("Material"), wxT("MeshMaterial")));
+	mObjectProperties->SetPropertyValidator(wxT("MeshMaterial"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 }
 
 BEGIN_EVENT_TABLE(OViSEWxFrame, GUIFrame)
@@ -271,15 +286,102 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 
     // Get name of changed property
     const wxString& name = prop->GetName();
+	std::string objname = mObjectProperties->GetPropertyValueAsString(wxT("NodeName")).ToAscii();
 
+	Ogre::SceneNode *snode = OViSESceneHandling::getSingletonPtr()->getSelectedObjects()[objname];
+	if(!snode)
+		return;
+	Ogre::Vector3 pos = snode->getPosition();
+	Ogre::Vector3 scale = snode->getScale();
+	Ogre::Quaternion tmprot = snode->getOrientation();
+
+	wxVariant tmp = prop->GetValue();
+	wxString tmpstr = tmp.GetString();
+
+	double vals[3];
+
+	wxStringTokenizer checker(tmpstr, wxT(";"));
+
+	if(name == wxString(wxT("Translation")))
+	{
+		for(int i=0; i<3; i++)
+		{
+			checker.GetNextToken().ToDouble(&vals[i]);
+		}
+		pos = Ogre::Vector3(vals[0], vals[1], vals[2]);
+	}
 	if(name == wxString(wxT("Translation.tx")))
 	{
-		float tx = prop->GetValue().GetDouble();
+		float tx = tmp.GetDouble();
+		pos.x = tx;
 	}
 	if(name == wxString(wxT("Translation.ty")))
 	{
-		float ty = prop->GetValue().GetDouble();
+		float ty = tmp.GetDouble();
+		pos.y = ty;
 	}
+	if(name == wxString(wxT("Translation.tz")))
+	{
+		float tz = tmp.GetDouble();
+		pos.z = tz;
+	}
+
+	snode->setPosition(pos);
+
+	if(name == wxString(wxT("Rotation")))
+	{
+		for(int i=0; i<3; i++)
+		{
+			checker.GetNextToken().ToDouble(&vals[i]);
+		}
+		Ogre::Radian p = Ogre::Radian(Ogre::Degree(vals[0])) - tmprot.getPitch();
+		Ogre::Radian r = Ogre::Radian(Ogre::Degree(vals[1])) - tmprot.getRoll();
+		Ogre::Radian y = Ogre::Radian(Ogre::Degree(vals[2])) - tmprot.getYaw();
+		snode->pitch(p);
+		snode->roll(r);
+		snode->yaw(y);
+	}
+	if(name == wxString(wxT("Rotation.rx")))
+	{
+		float rx = tmp.GetDouble();
+		snode->pitch(Ogre::Radian(Ogre::Degree(rx)) - tmprot.getPitch());
+	}
+	if(name == wxString(wxT("Rotation.ry")))
+	{
+		float ry = tmp.GetDouble();
+		snode->pitch(Ogre::Radian(Ogre::Degree(ry)) - tmprot.getRoll());
+	}
+	if(name == wxString(wxT("Rotation.rz")))
+	{
+		float rz = tmp.GetDouble();
+		snode->pitch(Ogre::Radian(Ogre::Degree(rz)) - tmprot.getYaw());
+	}
+
+	if(name == wxString(wxT("Scale")))
+	{
+		for(int i=0; i<3; i++)
+		{
+			checker.GetNextToken().ToDouble(&vals[i]);
+		}
+		scale = Ogre::Vector3(vals[0], vals[1], vals[2]);
+	}
+	if(name == wxString(wxT("Scale.sx")))
+	{
+		float sx = tmp.GetDouble();
+		scale.x = sx;
+	}
+	if(name == wxString(wxT("Scale.sy")))
+	{
+		float sy = tmp.GetDouble();
+		scale.y = sy;
+	}
+	if(name == wxString(wxT("Scale.sz")))
+	{
+		float sz = tmp.GetDouble();
+		scale.z = sz;
+	}
+
+	snode->setScale(scale);
 
     // Get resulting value
     wxVariant value = prop->GetValue();
