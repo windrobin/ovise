@@ -6,7 +6,7 @@
 
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
 typedef std::map<std::string, Ogre::RaySceneQuery*> OViSERayQueryMap;
-typedef std::map<std::string, Ogre::SceneNode*> OViSESelectionMap;
+typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
 typedef std::map<std::string, OViSESelectionMap> OViSESelections;
 
 /**
@@ -44,11 +44,12 @@ public:
 	/// Retrieves the object selection query for the given scene manager
 	Ogre::RaySceneQuery* getObjectSelectionQuery(std::string sceneManagerName);
 
-	/// Add scene node to object selection
-	void addObjectToSelection(Ogre::SceneNode *node, bool showSelection = true, std::string sceneManagerName = "BaseSceneManager");
+	/// Add movable to object selection
+	void addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection = true, std::string sceneManagerName = "BaseSceneManager");
 
-	/// Remove scene node from object selection
-	void removeObjectFromSelection(Ogre::SceneNode *node, bool hideSelection = true, std::string sceneManagerName = "BaseSceneManager");
+	/// Remove movable object from object selection
+	void removeObjectFromSelection(Ogre::MovableObject *movObj, bool hideSelection = true, std::string sceneManagerName = "BaseSceneManager");
+	void removeObjectFromSelection(std::string name, bool hideSelection = true, std::string sceneManagerName = "BaseSceneManager");
 
 	/// Retrieve list of selected objects
 	OViSESelectionMap getSelectedObjects(std::string sceneManagerName = "BaseSceneManager");
@@ -76,9 +77,8 @@ public:
 	void addMesh(std::string meshName, std::string meshFileName, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
 
 	/** Deletes a mesh from the given scene.
-	 * @note Searches for a scenenode with name meshName and removes it with all its children from the scene. If
-	 * there is no scenenode named meshName the root scenenode will be searched for an entity with given name which
-	 * will then be removed from the scene.
+	 * @note Searches for an entity with name meshName, detaches it from the scenenode and destroys it. If
+	 * there it is the only entity attached to the scene node and the node doesn't have any children, the node itself will be destroyed.
 	 */
 	void deleteMesh(std::string meshName, std::string sceneManagerName = "BaseSceneManager");
 

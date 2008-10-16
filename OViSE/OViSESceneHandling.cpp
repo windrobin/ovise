@@ -141,7 +141,7 @@ void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 		OViSESelectionMap map = mObjectSelectionsMap[sceneManagerName];
 		for(OViSESelectionMap::iterator it = map.begin(); it != map.end(); it++)
 		{
-			it->second->showBoundingBox(false);
+			it->second->getParentSceneNode()->showBoundingBox(false);
 		}
 	}
 	catch (...)
@@ -150,13 +150,13 @@ void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 	}
 }
 
-void OViSESceneHandling::addObjectToSelection(Ogre::SceneNode *node, bool showSelection, std::string sceneManagerName)
+void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection, std::string sceneManagerName)
 {
 	try
 	{
-		mObjectSelectionsMap[sceneManagerName][node->getName()] = node;
+		mObjectSelectionsMap[sceneManagerName][movObj->getName()] = movObj;
 		if(showSelection)
-			node->showBoundingBox(true);
+			movObj->getParentSceneNode()->showBoundingBox(true);
 	}
 	catch (...)
 	{
@@ -164,13 +164,29 @@ void OViSESceneHandling::addObjectToSelection(Ogre::SceneNode *node, bool showSe
 	}
 }
 
-void OViSESceneHandling::removeObjectFromSelection(Ogre::SceneNode *node, bool hideSelection, std::string sceneManagerName)
+void OViSESceneHandling::removeObjectFromSelection(Ogre::MovableObject *movObj, bool hideSelection, std::string sceneManagerName)
 {
 	try
 	{
-		mObjectSelectionsMap[sceneManagerName].erase(node->getName());
-		if(hideSelection)
-			node->showBoundingBox(false);
+		if(movObj)
+			mObjectSelectionsMap[sceneManagerName].erase(movObj->getName());
+		if(movObj && hideSelection)
+			movObj->getParentSceneNode()->showBoundingBox(false);
+	}
+	catch (...)
+	{
+		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't remove object from object selection!");
+	}
+}
+
+void OViSESceneHandling::removeObjectFromSelection(std::string name, bool hideSelection, std::string sceneManagerName)
+{
+	try
+	{
+		Ogre::MovableObject *tmp = mObjectSelectionsMap[sceneManagerName][name];
+		if(tmp && hideSelection)
+			tmp->getParentSceneNode()->showBoundingBox(false);
+		mObjectSelectionsMap[sceneManagerName].erase(name);
 	}
 	catch (...)
 	{
@@ -249,7 +265,7 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, std::string scene
 		yAxisEnt->setCastShadows(castShadows);
 		Ogre::Entity *zAxisEnt = tmp->createEntity("zAxis", "zAxis.mesh");
 		zAxisEnt->setCastShadows(castShadows);
-		Ogre::SceneNode *n = tmp->getRootSceneNode()->createChildSceneNode();
+		Ogre::SceneNode *n = tmp->createSceneNode();
 		n->setScale(scale, scale, scale);
 		n->attachObject(xAxisEnt);
 		n->attachObject(yAxisEnt);
@@ -268,6 +284,7 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, std::string scene
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.what());
 	}
+	catch (...) {}
 }
 
 std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string group)
@@ -318,14 +335,15 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 	try
 	{
 		Ogre::SceneManager *scnMgr = getSceneManager(sceneManagerName);
-		if(scnMgr->hasSceneNode(meshName))
-		{
-			Ogre::SceneNode *tmp = scnMgr->getSceneNode(meshName);
-			scnMgr->destroySceneNode(tmp);
-		}
 		if(scnMgr->hasEntity(meshName))
 		{
-			scnMgr->destroyEntity(meshName);
+			OViSESceneHandling::getSingletonPtr()->removeObjectFromSelection(meshName);
+			Ogre::Entity *tmp = scnMgr->getEntity(meshName);
+			Ogre::SceneNode *tmpnode = tmp->getParentSceneNode();
+			tmpnode->detachObject(tmp);
+			if(tmpnode->numAttachedObjects() == 0 && tmpnode->numChildren() == 0 && tmpnode != scnMgr->getRootSceneNode())
+				scnMgr->destroySceneNode(tmpnode);
+			scnMgr->destroyEntity(tmp);
 		}
 	}
 	catch (std::exception e)

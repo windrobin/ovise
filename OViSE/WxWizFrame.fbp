@@ -183,9 +183,24 @@
                         <property name="label">Add Mesh</property>
                         <property name="name">addMesh</property>
                         <property name="permission">none</property>
-                        <property name="shortcut">Strg+I</property>
+                        <property name="shortcut">I</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection">OnSceneAddMesh</event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help">Remove selected meshes from scene</property>
+                        <property name="id">ID_DELETE_MESHES</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Delete Mesh(es)</property>
+                        <property name="name">deleteMeshes</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">X</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">OnMenuDeleteMeshes</event>
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
@@ -281,7 +296,7 @@
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
             <event name="OnChar"></event>
-            <event name="OnClose">OnClose</event>
+            <event name="OnClose">OnCloseDialog</event>
             <event name="OnEnterWindow"></event>
             <event name="OnEraseBackground"></event>
             <event name="OnHibernate"></event>

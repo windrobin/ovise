@@ -17,6 +17,7 @@
 #include <wx/splitter.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/tokenzr.h>
+#include <wx/aboutdlg.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"
@@ -46,14 +47,13 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnAddMeshDialogClose(wxCloseEvent& event);
 		virtual void OnViewClick(wxMouseEvent& event);
 		virtual void OnPropertyChange(wxPropertyGridEvent& event);
+		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
 
 		void finishOgreInitialization();
 		void setupObjectProperties();
 		void setObjectProperties(Ogre::MovableObject *object);
 		void clearObjectProperties();
-
-	protected:
-		DECLARE_EVENT_TABLE()
+		void deleteMeshes();
 
     protected:
 		Ogre::Root *mRoot;

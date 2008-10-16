@@ -25,6 +25,8 @@ bool MeshDialogFrameListener::frameEnded(const Ogre::FrameEvent &evt)
 	return true;
 }
 
+//----------------------------------------------------------------------
+
 OViSEAddMeshDialog::OViSEAddMeshDialog( wxWindow* parent, wxWindowID id )
 :
 AddMeshDialog( parent, id )
@@ -66,8 +68,8 @@ AddMeshDialog( parent, id )
 	if(listSizerItem->IsSizer())
 		listSizerItem->GetSizer()->Insert(0, mRenderWin, 4, wxEXPAND);
 
-	SetAffirmativeId(mOkButton->GetId());
-	SetEscapeId(mCancelButton->GetId());
+	//SetAffirmativeId(mOkButton->GetId());
+	//SetEscapeId(mCancelButton->GetId());
 
 	updateMeshList();
 }
@@ -93,8 +95,11 @@ void OViSEAddMeshDialog::updateMeshList()
 	}
 }
 
-void OViSEAddMeshDialog::OnClose( wxCloseEvent& event )
+void OViSEAddMeshDialog::OnCloseDialog( wxCloseEvent& event )
 {
+	Ogre::Root::getSingletonPtr()->removeFrameListener(mListener);
+	delete mListener;
+	mSceneHandler->removeSceneManager("AddMeshScene");
 	Destroy();
 }
 
@@ -142,7 +147,7 @@ void OViSEAddMeshDialog::OnOkClick( wxCommandEvent& event )
 		Ogre::SceneManager *baseScnMgr = mSceneHandler->getSceneManager();
 		wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
 		mSceneHandler->addMesh(std::string(tmp.ToAscii()), std::string(lastSelected.ToAscii()));
-		Close();
+		this->Close();
 	}
 	catch(Ogre::Exception e) { }
 }
@@ -166,7 +171,5 @@ void OViSEAddMeshDialog::OnCancelClick( wxCommandEvent& event )
 
 OViSEAddMeshDialog::~OViSEAddMeshDialog()
 {
-	Ogre::Root::getSingletonPtr()->removeFrameListener(mListener);
-	delete mListener;
-	mSceneHandler->removeSceneManager("AddMeshScene");
+	
 }

@@ -30,7 +30,8 @@
 #define ID_ADD_VIEW 1001
 #define ID_SAVE_SCREENSHOT_TO_FILE 1002
 #define ID_ADD_MESH 1003
-#define idMenuAbout 1004
+#define ID_DELETE_MESHES 1004
+#define idMenuAbout 1005
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -53,6 +54,7 @@ class GUIFrame : public wxFrame
 		virtual void OnAddView( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSaveScreenToFile( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		
 	
@@ -77,7 +79,7 @@ class AddMeshDialog : public wxDialog
 		wxButton* mCancelButton;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnClose( wxCloseEvent& event ){ event.Skip(); }
+		virtual void OnCloseDialog( wxCloseEvent& event ){ event.Skip(); }
 		virtual void OnMeshListSelect( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnOkClick( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnApplyClick( wxCommandEvent& event ){ event.Skip(); }

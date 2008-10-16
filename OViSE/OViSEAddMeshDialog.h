@@ -30,7 +30,7 @@ class OViSEAddMeshDialog : public AddMeshDialog
 {
 protected:
 	// Handlers for AddMeshDialog events.
-	void OnClose( wxCloseEvent& event );
+	void OnCloseDialog( wxCloseEvent& event );
 	void OnMeshListSelect( wxCommandEvent& event );
 	void OnOkClick( wxCommandEvent& event );
 	void OnApplyClick( wxCommandEvent& event );

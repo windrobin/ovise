@@ -112,6 +112,7 @@ void OViSEWxFrame::finishOgreInitialization()
 void OViSEWxFrame::setupObjectProperties()
 {
 	mObjectProperties = new wxPropertyGrid(mSecondSplitter, PGID);
+	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEWxFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
 	
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Node Properties")));
@@ -149,10 +150,6 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->SetPropertyValidator(wxT("MeshMaterial"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 }
 
-BEGIN_EVENT_TABLE(OViSEWxFrame, GUIFrame)
-	EVT_PG_CHANGED( PGID, OViSEWxFrame::OnPropertyChange )
-END_EVENT_TABLE()
-
 void OViSEWxFrame::OnClose(wxCloseEvent &event)
 {
 	for(std::map<std::string, wxFrame*>::iterator i = mViewWindows.begin(); i != mViewWindows.end(); i++)
@@ -166,15 +163,44 @@ void OViSEWxFrame::OnQuit(wxCommandEvent &event)
 {
 	for(std::map<std::string, wxFrame*>::iterator i = mViewWindows.begin(); i != mViewWindows.end(); i++)
 	{
-		(*i).second->Destroy();
+		(*i).second->Close();
 	}
     Destroy();
 }
 
 void OViSEWxFrame::OnAbout(wxCommandEvent &event)
 {
-    wxString msg = wxbuildinfo(long_f);
-    wxMessageBox(msg, _("Welcome to..."));
+    wxAboutDialogInfo info;
+    info.SetName(wxT("OViSE"));
+    info.SetVersion(wxT("0.1 Beta (goblin)"));
+
+	wxString description = wxT("Institute of Computer Science and Engineering (CSE)\n\r");
+	description += wxT("Industrial Applications of Computer Science and Micro Systems (IAIM)\n");
+	description += wxT("Prof. Dr. R. Dillmann\n");
+	description += wxT("Department of Computer Science\n");
+	description += wxT("Karlsruhe Institute of Technology (KIT)\n");
+	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
+	info.SetDescription(description);
+
+    info.SetCopyright(wxT("(C) 2008 Alexander Kasper"));
+
+	info.AddDeveloper(wxT("Programming - Alexander Kasper <akasper@ira.uka.de>"));
+
+	wxString licenseText = wxT("Permission is hereby granted, free of charge,");
+	licenseText += wxT("to any person obtaining a copy of this software and associated documentation files (the \"Software\"), ");
+	licenseText += wxT("to deal in the Software without restriction, including without limitation the rights to use, copy, modify, ");
+	licenseText += wxT("merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the ");
+	licenseText += wxT("Software is furnished to do so, subject to the following conditions:\n\n");
+	licenseText += wxT("The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\n");
+	licenseText += wxT("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED ");
+	licenseText += wxT("TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE ");
+	licenseText += wxT("AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, ");
+	licenseText += wxT("TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
+	info.SetLicense(licenseText);
+
+	info.SetWebSite(wxT("http://code.google.com/p/ovise/"));
+
+    wxAboutBox(info);
 }
 
 void OViSEWxFrame::OnAddView(wxCommandEvent &event)
@@ -243,9 +269,8 @@ void OViSEWxFrame::OnSceneAddMesh(wxCommandEvent &event)
 
 void OViSEWxFrame::OnAddMeshDialogClose(wxCloseEvent& event)
 {
-	mAddMeshDialog->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( OViSEWxFrame::OnAddMeshDialogClose ), NULL, this);
-	if(mAddMeshDialog->Destroy())
-		mAddMeshDialog = NULL;
+	event.Skip();
+	mAddMeshDialog = NULL;
 }
 
 void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
@@ -266,7 +291,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	{
 		if(!event.ControlDown())
 			mSceneHdlr->clearObjectSelection(cam->getSceneManager()->getName());
-		mSceneHdlr->addObjectToSelection(selectedObject->getParentSceneNode(), true, cam->getSceneManager()->getName());
+		mSceneHdlr->addObjectToSelection(selectedObject, true, cam->getSceneManager()->getName());
 		setObjectProperties(selectedObject);
 	}
 	else
@@ -288,7 +313,7 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
     const wxString& name = prop->GetName();
 	std::string objname = mObjectProperties->GetPropertyValueAsString(wxT("NodeName")).ToAscii();
 
-	Ogre::SceneNode *snode = OViSESceneHandling::getSingletonPtr()->getSelectedObjects()[objname];
+	Ogre::SceneNode *snode = OViSESceneHandling::getSingletonPtr()->getSelectedObjects()[objname]->getParentSceneNode();
 	if(!snode)
 		return;
 	Ogre::Vector3 pos = snode->getPosition();
@@ -382,9 +407,6 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 	}
 
 	snode->setScale(scale);
-
-    // Get resulting value
-    wxVariant value = prop->GetValue();
 }
 
 void OViSEWxFrame::setObjectProperties(Ogre::MovableObject *object)
@@ -409,6 +431,11 @@ void OViSEWxFrame::setObjectProperties(Ogre::MovableObject *object)
 	mObjectProperties->SetPropertyValue(wxT("MeshMaterial"), wxT("TODO"));
 }
 
+void OViSEWxFrame::OnMenuDeleteMeshes(wxCommandEvent &event)
+{
+	deleteMeshes();
+}
+
 void OViSEWxFrame::clearObjectProperties()
 {
 	mObjectProperties->ClearPropertyValue(wxT("NodeName"));
@@ -430,4 +457,24 @@ void OViSEWxFrame::clearObjectProperties()
 
 	mObjectProperties->ClearPropertyValue(wxT("MeshName"));
 	mObjectProperties->ClearPropertyValue(wxT("MeshMaterial"));
+}
+
+void OViSEWxFrame::deleteMeshes()
+{
+	OViSESelectionMap so = OViSESceneHandling::getSingletonPtr()->getSelectedObjects();
+	if(so.empty())
+	{
+		wxMessageDialog dlg(this, wxT("No meshes selected"), wxT("Error"), wxOK | wxCENTRE | wxICON_ERROR);
+		dlg.ShowModal();
+		return;
+	}
+	
+	wxMessageDialog confirmationDialog(this, wxT("Delete selected meshes?"), wxT("Confirmation required"), wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
+	if(confirmationDialog.ShowModal() == wxID_YES)
+	{
+		for(OViSESelectionMap::iterator it=so.begin(); it != so.end(); it++)
+		{
+			OViSESceneHandling::getSingletonPtr()->deleteMesh(it->first);
+		}
+	}
 }
