@@ -26,10 +26,12 @@ Ogre::Root *wxOgreRenderWindow::msOgreRoot = 0;
 //------------------------------------------------------------------------------
 unsigned int wxOgreRenderWindow::msNextRenderWindowId = 1;
 //------------------------------------------------------------------------------
-wxOgreRenderWindow::wxOgreRenderWindow (wxWindow *parent, wxWindowID id,
+wxOgreRenderWindow::wxOgreRenderWindow (Ogre::Camera *cam, wxWindow *parent, wxWindowID id,
 				const wxPoint &pos, const wxSize &size, long style, const wxValidator &validator) {
 	Init ();
 	Create (parent, id, pos, size, style, validator);
+	mCamera = cam;
+	mInputHandler = new OViSEInputHandler(cam);
 }
 //------------------------------------------------------------------------------
 wxOgreRenderWindow::wxOgreRenderWindow () {
@@ -59,6 +61,8 @@ wxOgreRenderWindow::~wxOgreRenderWindow () {
 
 	mRenderWindow = 0;
 
+	delete mInputHandler;
+
 	if (mRenderTimer)
 		delete mRenderTimer;
 }
@@ -67,9 +71,6 @@ void wxOgreRenderWindow::Init () {
 	mRenderWindow = 0;
 
 	mStatusBar = NULL;
-
-	mRotateSpeed = 0.5;
-	mMoveSpeed = 1.0;
 
 	// Callbacks
 	mMouseEventsCallback = 0;
@@ -93,6 +94,7 @@ void wxOgreRenderWindow::SetOgreRoot (Ogre::Root *root) {
 void wxOgreRenderWindow::SetCamera(Ogre::Camera *cam)
 {
 	mCamera = cam;
+	mInputHandler->setCamera(cam);
 }
 //------------------------------------------------------------------------------
 Ogre::Camera* wxOgreRenderWindow::GetCamera()
@@ -166,68 +168,12 @@ void wxOgreRenderWindow::OnSize (wxSizeEvent &evt) {
 //------------------------------------------------------------------------------
 void wxOgreRenderWindow::OnMouseEvents (wxMouseEvent &evt)
 {
-	if(evt.RightUp())
-	{
-		mRightMouseDown = false;
-	}
-	if(evt.RightIsDown())
-	{
-		mRightMouseDown = true;
-		if(evt.Dragging())
-		{
-			int newX = evt.GetPosition().x;
-			int newY = evt.GetPosition().y;
-
-			if(newX > mX)
-				mCamera->yaw(Ogre::Radian(Ogre::Degree(-mRotateSpeed)));
-			else if(newX < mX)
-				mCamera->yaw(Ogre::Radian(Ogre::Degree(mRotateSpeed)));
-
-			if(newY > mY)
-				mCamera->pitch(Ogre::Radian(Ogre::Degree(-mRotateSpeed)));
-			else if(newY < mY)
-				mCamera->pitch(Ogre::Radian(Ogre::Degree(mRotateSpeed)));
-			mX = newX;
-			mY = newY;
-		}
-	}	
-	evt.Skip();
+	mInputHandler->handleMouseInput(evt);
 }
 //------------------------------------------------------------------------------
 void wxOgreRenderWindow::OnKeyEvents(wxKeyEvent &evt)
 {
-	Ogre::Vector3 transVec = Ogre::Vector3::ZERO;
-	switch(evt.GetKeyCode())
-	{
-	case 'a':
-	case 'A':
-		transVec.x -= mMoveSpeed;
-		break;
-	case 'd':
-	case 'D':
-		transVec.x += mMoveSpeed;
-		break;
-	case 'w':
-	case 'W':
-		transVec.z -= mMoveSpeed;
-		break;
-	case 's':
-	case 'S':
-		transVec.z += mMoveSpeed;
-		break;
-	case 'q':
-	case 'Q':
-		transVec.y += mMoveSpeed;
-		break;
-	case 'e':
-	case 'E':
-		transVec.y -= mMoveSpeed;
-		break;
-	default: break;
-	}
-	mCamera->moveRelative(transVec);
-
-	evt.Skip();
+	mInputHandler->handleKeyboardInput(evt);
 }
 //------------------------------------------------------------------------------
 void wxOgreRenderWindow::CreateRenderWindow () {

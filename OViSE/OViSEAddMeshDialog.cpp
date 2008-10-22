@@ -31,7 +31,7 @@ OViSEAddMeshDialog::OViSEAddMeshDialog( wxWindow* parent, wxWindowID id )
 :
 AddMeshDialog( parent, id )
 {
-	mRenderWin = new wxOgreRenderWindow(this, wxID_ANY);
+	mRenderWin = new wxOgreRenderWindow(NULL, this, wxID_ANY);
 	mSceneHandler = OViSESceneHandling::getSingletonPtr();
 	mSceneHandler->addSceneManager("AddMeshScene");
 	Ogre::SceneManager *scnMgr = mSceneHandler->getSceneManager("AddMeshScene");

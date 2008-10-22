@@ -3,8 +3,7 @@
 
 #include <wx/wx.h>
 #include <Ogre.h>
-//#include <OgreNoMemoryMacros.h>
-//#include <OgreMemoryMacros.h>
+#include "OViSEInputHandler.h"
 
 /** wxWidgets Ogre render window widget.
 	Strongly based on the existing wxOgre widget implementation, this one
@@ -47,14 +46,13 @@ class wxOgreRenderWindow : public wxControl {
 		/// Callback for mouse events.
 		MouseEventsCallback mMouseEventsCallback;
 
-		// Mouse position of last click
-		int mX, mY;
-		double mRotateSpeed, mMoveSpeed;
-		double mRightMouseDown;
+		/// For handling of mouse and keyboard input
+		OViSEInputHandler *mInputHandler;
 
 // Methods ---------------------------------------------------------------------
 	public:
 		/** wx-like Constructor.
+		    @param cam Camera to use for this render window
 			@param parent The parent wxWindow component.
 			@param id The control id.
 			@param pos The default position.
@@ -62,7 +60,7 @@ class wxOgreRenderWindow : public wxControl {
 			@param style The default style for this component.
 			@param validator A default validator for the component.
 		 */
-		wxOgreRenderWindow (wxWindow *parent, wxWindowID id,
+		wxOgreRenderWindow (Ogre::Camera *cam, wxWindow *parent, wxWindowID id,
 				const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize,
 				long style = wxSUNKEN_BORDER, const wxValidator &validator = wxDefaultValidator);
 

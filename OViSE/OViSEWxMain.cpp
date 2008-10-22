@@ -59,7 +59,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
-	mMainRenderWin = new wxOgreRenderWindow(mSecondSplitter, WINDOW_MainRender);
+	mMainRenderWin = new wxOgreRenderWindow(NULL, mSecondSplitter, WINDOW_MainRender);
 	mMainRenderWin->SetStatusBar(statusBar);
 
 	mMainRenderWin->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler( OViSEWxFrame::OnViewClick ), NULL, this);
@@ -222,8 +222,8 @@ void OViSEWxFrame::OnAddView(wxCommandEvent &event)
 
 	// Need to create a new Frame to display the new renderwindow in
 	wxFrame *newFrame = new wxFrame(this, wxID_ANY, wxCamName);
-	wxOgreRenderWindow *newRenderWin = new wxOgreRenderWindow(newFrame, wxID_ANY);
-	newRenderWin->SetCamera(newCam);
+	wxOgreRenderWindow *newRenderWin = new wxOgreRenderWindow(newCam, newFrame, wxID_ANY);
+	//newRenderWin->SetCamera(newCam);
 	newRenderWin->SetOgreRoot(mRoot);
 	mViewWindows[std::string(wxCamName.ToAscii())] = newFrame;
 

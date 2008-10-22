@@ -302,6 +302,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEInputHandler.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OViSELogListener.cpp"
 				>
 			</File>
@@ -453,6 +457,10 @@
 			</File>
 			<File
 				RelativePath=".\OViSEAddMeshDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInputHandler.h"
 				>
 			</File>
 			<File
