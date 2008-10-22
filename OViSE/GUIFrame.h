@@ -31,7 +31,8 @@
 #define ID_SAVE_SCREENSHOT_TO_FILE 1002
 #define ID_ADD_MESH 1003
 #define ID_DELETE_MESHES 1004
-#define idMenuAbout 1005
+#define ID_LOAD_DOTSCENE 1005
+#define idMenuAbout 1006
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -55,6 +56,7 @@ class GUIFrame : public wxFrame
 		virtual void OnSaveScreenToFile( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		
 	

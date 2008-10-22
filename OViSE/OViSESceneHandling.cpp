@@ -352,6 +352,11 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 	}
 }
 
+void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string sceneManagerName, Ogre::SceneNode *node)
+{
+	// TODO: Implement this.
+}
+
 OViSESceneHandling::~OViSESceneHandling()
 {
 }

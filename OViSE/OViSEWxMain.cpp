@@ -478,3 +478,10 @@ void OViSEWxFrame::deleteMeshes()
 		}
 	}
 }
+
+void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
+{
+	/** @TODO Add code for dotScene loading.
+	 * This should happen in OViSESceneHandling, see method stubs there.
+	 */
+}

@@ -82,6 +82,13 @@ public:
 	 */
 	void deleteMesh(std::string meshName, std::string sceneManagerName = "BaseSceneManager");
 
+	/** Loads a complete scene from a dotSceneXML.
+	 * This function takes a dotScene-XML-file and imports all meshes into the scene designated by the scene manager and the node.
+	 * If the node is NULL, then a new scene node will be created as a child of the root scene node.
+	 * @TODO Implement this.
+	 */
+	void loadSceneFromXML(std::string filename, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
+
 	/** Resolves a ray scene query to select an object.
 	 * Casts a ray from the screen position through the given camera into the scene and evaluates
 	 * the nearest object hidden by the ray. Returns a pointer to the object, NULL if no object is hit by the ray.

@@ -203,6 +203,24 @@
                         <event name="OnMenuSelection">OnMenuDeleteMeshes</event>
                         <event name="OnUpdateUI"></event>
                     </object>
+                    <object class="separator" expanded="1">
+                        <property name="permission">none</property>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help">Load complete scene from a dotScene description</property>
+                        <property name="id">ID_LOAD_DOTSCENE</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Load dotScene</property>
+                        <property name="name">loadDotscene</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut">ALT+L</property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">OnLoadDotScene</event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">&amp;Help</property>
