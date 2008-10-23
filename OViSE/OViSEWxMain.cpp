@@ -182,9 +182,10 @@ void OViSEWxFrame::OnAbout(wxCommandEvent &event)
 	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
 	info.SetDescription(description);
 
-    info.SetCopyright(wxT("(C) 2008 Alexander Kasper"));
+    info.SetCopyright(wxT("(C) 2008 "));
 
 	info.AddDeveloper(wxT("Programming - Alexander Kasper <akasper@ira.uka.de>"));
+	info.AddDeveloper(wxT("Programming - Henning Renartz <hrenart@gmx.de>"));
 
 	wxString licenseText = wxT("Permission is hereby granted, free of charge,");
 	licenseText += wxT("to any person obtaining a copy of this software and associated documentation files (the \"Software\"), ");
