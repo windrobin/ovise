@@ -3,10 +3,13 @@
 
 #include "Ogre.h"
 
-
+/// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
+/// Map containing all ray scene querys for object selection.
 typedef std::map<std::string, Ogre::RaySceneQuery*> OViSERayQueryMap;
+/// Map containing selected objects.
 typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
+/// Map containing all object selection maps.
 typedef std::map<std::string, OViSESelectionMap> OViSESelections;
 
 /**
@@ -53,6 +56,9 @@ public:
 
 	/// Retrieve list of selected objects
 	OViSESelectionMap getSelectedObjects(std::string sceneManagerName = "BaseSceneManager");
+
+	/// Check if any objects are selected
+	bool hasSelectedObjects(std::string sceneManagerName = "BaseSceneManager");
 
 	/** Returns list of meshes available in loaded resources.
 	 * Retrieves a list of all meshes in the given resource group. One can then load a mesh using the given filename.

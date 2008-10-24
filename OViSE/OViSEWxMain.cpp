@@ -59,7 +59,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
-	mMainRenderWin = new wxOgreRenderWindow(NULL, mSecondSplitter, WINDOW_MainRender);
+	mMainRenderWin = new wxOgreRenderWindow(NULL, NULL, mSecondSplitter, WINDOW_MainRender);
 	mMainRenderWin->SetStatusBar(statusBar);
 
 	mMainRenderWin->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler( OViSEWxFrame::OnViewClick ), NULL, this);
@@ -96,9 +96,17 @@ void OViSEWxFrame::finishOgreInitialization()
     mCam->setNearClipDistance(5);
 
     mCam->setFixedYawAxis(true);
+	mCam->setQueryFlags(0x01);
+
+	Ogre::SceneNode *camFocusNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	camFocusNode->setFixedYawAxis(true);
+	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
+	camNode->setFixedYawAxis(true);
+	camNode->setPosition(0, 0, 10);
+	camNode->attachObject(mCam);
 
     Ogre::Viewport *mVp = mMainRenderWin->GetRenderWindow()->addViewport(mCam);
-	mMainRenderWin->SetCamera(mCam);
+	mMainRenderWin->SetCamera(mCam, camFocusNode);
 
     Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
 
@@ -216,14 +224,18 @@ void OViSEWxFrame::OnAddView(wxCommandEvent &event)
 	}
 	Ogre::Camera *newCam = mSceneMgr->createCamera(Ogre::String(wxCamName.ToAscii()));
 	mAdditionalCameras[Ogre::String(wxCamName.ToAscii())] =  newCam;
-	newCam->setPosition(Ogre::Vector3(0,10,20));
-	// Look back along -Z
-    newCam->setDirection(Ogre::Vector3(-1, 0, 0));
+	Ogre::SceneNode *camFocusNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	camFocusNode->setFixedYawAxis(true);
+	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
+	camNode->setFixedYawAxis(true);
+	camNode->setPosition(0, 0, 10);
+	camNode->attachObject(newCam);
     newCam->setNearClipDistance(5);
+	newCam->setQueryFlags(0x01);
 
 	// Need to create a new Frame to display the new renderwindow in
 	wxFrame *newFrame = new wxFrame(this, wxID_ANY, wxCamName);
-	wxOgreRenderWindow *newRenderWin = new wxOgreRenderWindow(newCam, newFrame, wxID_ANY);
+	wxOgreRenderWindow *newRenderWin = new wxOgreRenderWindow(newCam, camFocusNode, newFrame, wxID_ANY);
 	//newRenderWin->SetCamera(newCam);
 	newRenderWin->SetOgreRoot(mRoot);
 	mViewWindows[std::string(wxCamName.ToAscii())] = newFrame;
@@ -312,9 +324,12 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 
     // Get name of changed property
     const wxString& name = prop->GetName();
-	std::string objname = mObjectProperties->GetPropertyValueAsString(wxT("NodeName")).ToAscii();
+	std::string objname = mObjectProperties->GetPropertyValueAsString(wxT("MeshName")).ToAscii();
 
-	Ogre::SceneNode *snode = OViSESceneHandling::getSingletonPtr()->getSelectedObjects()[objname]->getParentSceneNode();
+	OViSESelectionMap selObjs = OViSESceneHandling::getSingletonPtr()->getSelectedObjects();
+	if(selObjs.empty())
+		return;
+	Ogre::SceneNode *snode = selObjs[objname]->getParentSceneNode();
 	if(!snode)
 		return;
 	Ogre::Vector3 pos = snode->getPosition();
@@ -485,4 +500,5 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	/** @TODO Add code for dotScene loading.
 	 * This should happen in OViSESceneHandling, see method stubs there.
 	 */
+	// mSceneHdlr->loadSceneFromXML(..);
 }

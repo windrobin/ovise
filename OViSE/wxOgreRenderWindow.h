@@ -30,8 +30,11 @@ class wxOgreRenderWindow : public wxControl {
 		/// This control's own render window reference.
 		Ogre::RenderWindow *mRenderWindow;
 
-		// Pointer to the camera associated with this view
+		/// Pointer to the camera associated with this view
 		Ogre::Camera *mCamera;
+		
+		/// Pointer to the scene node the camera is looking at
+		Ogre::SceneNode *mCameraNode;
 
 		/// Timer to sync the rendering to a "constant" frame rate.
 		wxTimer *mRenderTimer;
@@ -60,7 +63,7 @@ class wxOgreRenderWindow : public wxControl {
 			@param style The default style for this component.
 			@param validator A default validator for the component.
 		 */
-		wxOgreRenderWindow (Ogre::Camera *cam, wxWindow *parent, wxWindowID id,
+		wxOgreRenderWindow (Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow *parent, wxWindowID id,
 				const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize,
 				long style = wxSUNKEN_BORDER, const wxValidator &validator = wxDefaultValidator);
 
@@ -107,7 +110,7 @@ class wxOgreRenderWindow : public wxControl {
 
 		/** Sets the camera associated with this view
 		  */
-		void SetCamera(Ogre::Camera *cam);
+		void SetCamera(Ogre::Camera *cam, Ogre::SceneNode *camnode = NULL);
 		Ogre::Camera* GetCamera();
 
 		/** Gets the associated Ogre render window.

@@ -107,6 +107,7 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float 
 		Ogre::SceneManager *scnMgr = getSceneManager(sceneManagerName);
 		Ogre::RaySceneQuery *query = getObjectSelectionQuery(sceneManagerName);
 		query->setRay(cam->getCameraToViewportRay(screenx, screeny));
+		query->setQueryMask(~0x01);
 		query->setSortByDistance(true);
 		Ogre::RaySceneQueryResult &result = query->execute();
 		if(result.size() != 0)
@@ -143,6 +144,7 @@ void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 		{
 			it->second->getParentSceneNode()->showBoundingBox(false);
 		}
+		mObjectSelectionsMap[sceneManagerName].clear();
 	}
 	catch (...)
 	{
@@ -204,6 +206,22 @@ OViSESelectionMap OViSESceneHandling::getSelectedObjects(std::string sceneManage
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't get object selection!");
 		return OViSESelectionMap();
+	}
+}
+
+bool OViSESceneHandling::hasSelectedObjects(std::string sceneManagerName)
+{
+	try
+	{
+		OViSESelectionMap tmp = mObjectSelectionsMap[sceneManagerName];
+		if(tmp.size() > 0)
+			return true;
+		else return false;
+	}
+	catch (...)
+	{
+		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't get object selection!");
+		return false;
 	}
 }
 
@@ -354,7 +372,7 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 
 void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string sceneManagerName, Ogre::SceneNode *node)
 {
-	// TODO: Implement this.
+	///@todo Implement this.
 }
 
 OViSESceneHandling::~OViSESceneHandling()

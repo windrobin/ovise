@@ -31,6 +31,9 @@ enum
 	PGID
 };
 
+/** Mainwindow of the application.
+ * @todo Documentation!
+ */
 class OViSEWxFrame: public GUIFrame
 {
     public:

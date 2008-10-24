@@ -26,12 +26,13 @@ Ogre::Root *wxOgreRenderWindow::msOgreRoot = 0;
 //------------------------------------------------------------------------------
 unsigned int wxOgreRenderWindow::msNextRenderWindowId = 1;
 //------------------------------------------------------------------------------
-wxOgreRenderWindow::wxOgreRenderWindow (Ogre::Camera *cam, wxWindow *parent, wxWindowID id,
+wxOgreRenderWindow::wxOgreRenderWindow (Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow *parent, wxWindowID id,
 				const wxPoint &pos, const wxSize &size, long style, const wxValidator &validator) {
 	Init ();
 	Create (parent, id, pos, size, style, validator);
 	mCamera = cam;
-	mInputHandler = new OViSEInputHandler(cam);
+	mCameraNode = camnode;
+	mInputHandler = new OViSEInputHandler(cam, camnode, this);
 }
 //------------------------------------------------------------------------------
 wxOgreRenderWindow::wxOgreRenderWindow () {
@@ -91,10 +92,11 @@ void wxOgreRenderWindow::SetOgreRoot (Ogre::Root *root) {
 	msOgreRoot = root;
 }
 //------------------------------------------------------------------------------
-void wxOgreRenderWindow::SetCamera(Ogre::Camera *cam)
+void wxOgreRenderWindow::SetCamera(Ogre::Camera *cam, Ogre::SceneNode *camnode)
 {
 	mCamera = cam;
-	mInputHandler->setCamera(cam);
+	mCameraNode = camnode;
+	mInputHandler->setCamera(cam, camnode);
 }
 //------------------------------------------------------------------------------
 Ogre::Camera* wxOgreRenderWindow::GetCamera()
