@@ -1,0 +1,55 @@
+# -*- python -*-
+
+import os
+
+### BEGIN OF USER PART
+
+wx_ccflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags'
+wx_ldflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --libs'
+
+# Adapt the pathes to wxWidgets
+path_to_wx_includes = '/Users/martinloesch/Source/local/include/wx-2.8'
+path_to_wx_setup_h = '/Users/martinloesch/Source/local/lib/wx/include/mac-unicode-release-2.8/'
+path_to_wx_libs = '/Users/martinloesch/Source/local/lib'
+
+# Adapt general locations of your personal includes and libraries in your system
+paths_to_local_includes = ['/Users/martinloesch/Source/local/include/']
+paths_to_local_libs = ['/Users/martinloesch/Source/local/lib']
+
+### END OF USER PART
+
+
+### IF YOU MAKE CHANGES BELOW, BE SURE YOU KNOW WHAT YOU ARE DOING!!
+
+
+
+platform_cc_flags = '-F/org/opt/OgreSDK/Dependencies'
+platform_ld_flags = ''
+
+wx_cc_flags = os.popen(wx_ccflags_cmd).readlines()[0].replace("\n","")
+wx_ld_flags = os.popen(wx_ldflags_cmd).readlines()[0].replace("\n","")
+
+
+project_cc_flags = '-c -Wall -Wno-non-virtual-dtor -Wno-reorder -MD -fno-common' + ' ' + platform_cc_flags + ' ' + wx_cc_flags
+project_ld_flags = '-framework Ogre -framework Cg -framework Carbon' + ' ' + platform_ld_flags + ' ' + wx_ld_flags
+
+include_paths = ['.',
+                 path_to_wx_includes,
+                 path_to_wx_setup_h] + paths_to_local_includes
+
+library_paths = [path_to_wx_libs] + paths_to_local_libs
+
+system_libraries = ['gcc', 'System', 'stdc++', 'SystemStubs']
+project_libraries = []
+
+libraries = system_libraries + project_libraries
+
+input_files = ['GUIFrame.cpp', 'OViSELogListener.cpp', 'OViSEWxApp.cpp', 'wxOgreRenderWindow.cpp', 'OViSEAddMeshDialog.cpp', 'OViSESceneHandling.cpp', 'OViSEWxMain.cpp']
+
+
+progOvise = Program('OViSE', input_files,
+                    CPPPATH = include_paths,
+                    LIBPATH = library_paths,
+                    LIBS = libraries,
+                    CCFLAGS = project_cc_flags,
+                    LDFLAGS = project_ld_flags)
