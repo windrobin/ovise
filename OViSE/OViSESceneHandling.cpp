@@ -375,6 +375,11 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string scen
 	///@todo Implement this.
 }
 
+void OViSESceneHandling::showSceneGraphStructure(bool show)
+{
+	
+}
+
 OViSESceneHandling::~OViSESceneHandling()
 {
 }
