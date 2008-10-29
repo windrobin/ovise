@@ -43,6 +43,15 @@ void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
 	n->scale(1.5, 1, 0.7);
 	Ogre::Entity *e = mSceneManagers[sceneManagerName]->createEntity("Barrel", "Barrel.mesh");
 	n->attachObject(e);
+	Ogre::SceneNode *n2 = n->createChildSceneNode(Ogre::Vector3(10, 10, -4));
+	Ogre::Entity *e2 = mSceneManagers[sceneManagerName]->createEntity("Barrel2", "Barrel.mesh");
+	n2->attachObject(e2);
+	Ogre::SceneNode *n3 = n->createChildSceneNode(Ogre::Vector3(-10, 10, -4));
+	Ogre::Entity *e3 = mSceneManagers[sceneManagerName]->createEntity("Barrel3", "Barrel.mesh");
+	n3->attachObject(e3);
+	Ogre::SceneNode *n4 = n3->createChildSceneNode(Ogre::Vector3(-10, 10, -4));
+	Ogre::Entity *e4 = mSceneManagers[sceneManagerName]->createEntity("Barrel4", "Barrel.mesh");
+	n4->attachObject(e4);
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -107,6 +116,7 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float 
 		Ogre::SceneManager *scnMgr = getSceneManager(sceneManagerName);
 		Ogre::RaySceneQuery *query = getObjectSelectionQuery(sceneManagerName);
 		query->setRay(cam->getCameraToViewportRay(screenx, screeny));
+		// exclude cameras and scene structure mesh
 		query->setQueryMask(~0x01);
 		query->setSortByDistance(true);
 		Ogre::RaySceneQueryResult &result = query->execute();
@@ -375,9 +385,59 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string scen
 	///@todo Implement this.
 }
 
-void OViSESceneHandling::showSceneGraphStructure(bool show)
+void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
 {
-	
+	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
+	if(!scnMgr) throw std::exception("Scene manager not found!");
+
+	// Let's see if we're already displaying a structure
+	if(scnMgr->hasManualObject("SceneGraphStructure"))
+	{
+		// yes, delete old structure
+		scnMgr->destroyManualObject("SceneGraphStructure");
+		// if we're not requesting an update, return
+		if(!update)	return;
+	}
+	else  // no structure found
+	{
+		if(update) return;
+			// misguided update request, there's nothing to update so don't do anything
+	}
+
+	// either we need to update an existing structure or show a new one
+
+	Ogre::ManualObject *sgs = scnMgr->createManualObject("SceneGraphStructure");
+	// set flags, so it cannot be selected
+	sgs->setQueryFlags(0x01);
+
+	if(!Ogre::MaterialManager::getSingletonPtr()->resourceExists("SceneStructureMaterial"))
+	{
+		Ogre::MaterialPtr sgsMaterial = Ogre::MaterialManager::getSingleton().create("SceneStructureMaterial", "General");
+		sgsMaterial->setReceiveShadows(false);
+		sgsMaterial->getTechnique(0)->setLightingEnabled(true);
+		sgsMaterial->getTechnique(0)->getPass(0)->setDiffuse(1,0,0,0);
+		sgsMaterial->getTechnique(0)->getPass(0)->setAmbient(1,0,0);
+	}
+
+	sgs->begin("SceneStructureMaterial", Ogre::RenderOperation::OT_LINE_LIST);
+	std::list<Ogre::Node*> nodeQueue;
+	nodeQueue.push_back(scnMgr->getRootSceneNode());
+	for(std::list<Ogre::Node*>::iterator it = nodeQueue.begin(); it != nodeQueue.end(); it++)
+	{
+		if((*it)->getName() == Ogre::String("mainCamFocusNode")) continue;
+		Ogre::Node::ChildNodeIterator iter = (*it)->getChildIterator();
+		while(iter.hasMoreElements())
+		{
+			Ogre::Node *tmp = iter.getNext();
+			if(tmp->getName() == Ogre::String("mainCamFocusNode")) continue;
+			sgs->position((*it)->_getDerivedPosition());
+			sgs->position(tmp->_getDerivedPosition());
+			nodeQueue.push_back(tmp);
+		}
+	}
+	sgs->end();
+	nodeQueue.clear();
+	scnMgr->getRootSceneNode()->attachObject(sgs);
 }
 
 OViSESceneHandling::~OViSESceneHandling()

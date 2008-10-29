@@ -111,7 +111,7 @@ public:
 	/** Show graph relations.
 	 * Function shows a graphical representation of the scene graph using lines and spheres.
 	 */
-	void showSceneGraphStructure(bool show = true);
+	void showSceneGraphStructure(bool update = false, std::string sceneManagerName = "BaseSceneManager");
 
 	/** Add a grid to the scene. Gridsize is adjustable and it can be attached to any node.
 	 * By default the grid is aligned in the x-z-plane. To change that create a scene node for the grid

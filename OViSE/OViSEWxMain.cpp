@@ -98,7 +98,7 @@ void OViSEWxFrame::finishOgreInitialization()
     mCam->setFixedYawAxis(true);
 	mCam->setQueryFlags(0x01);
 
-	Ogre::SceneNode *camFocusNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	Ogre::SceneNode *camFocusNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("mainCamFocusNode");
 	camFocusNode->setFixedYawAxis(true);
 	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
 	camNode->setFixedYawAxis(true);
@@ -423,6 +423,9 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 	}
 
 	snode->setScale(scale);
+
+	// call update for scene structure
+	mSceneHdlr->showSceneGraphStructure(true);
 }
 
 void OViSEWxFrame::setObjectProperties(Ogre::MovableObject *object)
@@ -501,4 +504,9 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	 * This should happen in OViSESceneHandling, see method stubs there.
 	 */
 	// mSceneHdlr->loadSceneFromXML(..);
+}
+
+void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
+{
+	mSceneHdlr->showSceneGraphStructure();
 }
