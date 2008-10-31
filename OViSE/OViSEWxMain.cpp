@@ -324,7 +324,7 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 
     // Get name of changed property
     const wxString& name = prop->GetName();
-	std::string objname = mObjectProperties->GetPropertyValueAsString(wxT("MeshName")).ToAscii();
+	std::string objname = (const char*)mObjectProperties->GetPropertyValueAsString(wxT("MeshName")).ToAscii();
 
 	OViSESelectionMap selObjs = OViSESceneHandling::getSingletonPtr()->getSelectedObjects();
 	if(selObjs.empty())

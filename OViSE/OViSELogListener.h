@@ -1,5 +1,5 @@
 #pragma once
-#include "ogrelog.h"
+#include "OgreLog.h"
 #include <wx/wx.h>
 #include <wx/datetime.h>
 

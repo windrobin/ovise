@@ -2,6 +2,7 @@
 #define OVISESCENEHANDLING_H_
 
 #include "Ogre.h"
+#include "OViSEException.h"
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
@@ -36,7 +37,7 @@ public:
 	/** Adds a new scenemanager to the list.
 	 * Creates a new scenemanager with the given name and adds it to the accessible list of scenemanagers.
 	 */
-	void addSceneManager(std::string sceneManagerName) throw (std::exception);
+	void addSceneManager(std::string sceneManagerName);
 
 	/// Get a named scenemanager from the list
 	Ogre::SceneManager* getSceneManager(std::string sceneManagerName = "BaseSceneManager");
@@ -123,7 +124,7 @@ public:
 	 * @param sceneManagerName Name of the scenemanager the grid should be added to
 	 * @param node Defines the node the grid should be attached to, defaults to the root node
 	 */
-	void addGrid(int size, int numRows, int numCols, Ogre::Vector3& col, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node=NULL);
+	void addGrid(int size, int numRows, int numCols, Ogre::Vector3 col, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node=NULL);
 
 	/** Adds a mesh depicting a coordinate system.
 	 * @param sceneManagerName scenemanager the coordinate system will be added to.

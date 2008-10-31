@@ -61,7 +61,7 @@ void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
 		if(it->first.compare(sceneManagerName) == 0)
 		{
 			std::string logMsg = "Scene Manager with name: " + sceneManagerName + " already exists!";
-			throw std::exception(logMsg.c_str());
+			throw OViSEException(logMsg.c_str());
 		}
 	}
 
@@ -77,7 +77,7 @@ Ogre::SceneManager* OViSESceneHandling::getSceneManager(std::string sceneManager
 	if(it == mSceneManagers.end())
 	{
 		std::string logMsg = "Couldn't find scene manager with name " + sceneManagerName;
-		throw std::exception(logMsg.c_str());
+		throw OViSEException(logMsg.c_str());
 	}
 	else return it->second;
 }
@@ -104,7 +104,7 @@ Ogre::RaySceneQuery* OViSESceneHandling::getObjectSelectionQuery(std::string sce
 	if(it == mObjectSelectionQuerys.end())
 	{
 		std::string logMsg = "Couldn't find object selection query for scene manager with name " + sceneManagerName;
-		throw std::exception(logMsg.c_str());
+		throw OViSEException(logMsg.c_str());
 	}
 	return it->second;
 }
@@ -138,7 +138,7 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float 
 		Ogre::LogManager::getSingletonPtr()->logMessage(logMsg);
 		return NULL;
 	}
-	catch (std::exception e)
+	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 		return NULL;
@@ -235,7 +235,7 @@ bool OViSESceneHandling::hasSelectedObjects(std::string sceneManagerName)
 	}
 }
 
-void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3& col, std::string sceneManagerName, Ogre::SceneNode *node)
+void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 col, std::string sceneManagerName, Ogre::SceneNode *node)
 {
 	try
 	{
@@ -276,7 +276,7 @@ void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vecto
 		
 		gridObjectNode->attachObject(gridObject);
 	}
-	catch (std::exception e)
+	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 	}
@@ -308,7 +308,7 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, std::string scene
 			node->addChild(n);
 		}
 	}
-	catch (std::exception e)
+	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.what());
 	}
@@ -319,7 +319,7 @@ std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string grou
 {
 	Ogre::StringVectorPtr resources = Ogre::ResourceGroupManager::getSingletonPtr()->listResourceNames(group);
 	if(resources->size() == 0)
-		throw std::exception("Resource group not found!");
+		throw OViSEException("Resource group not found!");
 	std::vector<std::string> returnvec;
 	for(Ogre::StringVector::iterator it = resources->begin(); it != resources->end(); it++)
 		returnvec.push_back(*it);
@@ -352,7 +352,7 @@ void OViSESceneHandling::addMesh(std::string meshName, std::string meshFileName,
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.getFullDescription());
 	}
-	catch (std::exception e)
+	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 	}
@@ -374,7 +374,7 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 			scnMgr->destroyEntity(tmp);
 		}
 	}
-	catch (std::exception e)
+	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 	}
@@ -388,7 +388,7 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string scen
 void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
-	if(!scnMgr) throw std::exception("Scene manager not found!");
+	if(!scnMgr) throw OViSEException("Scene manager not found!");
 
 	// Let's see if we're already displaying a structure
 	if(scnMgr->hasManualObject("SceneGraphStructure"))

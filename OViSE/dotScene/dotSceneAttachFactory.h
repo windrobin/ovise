@@ -86,7 +86,7 @@ namespace dotSceneAdvanced
 		Ogre::SceneNode *_AttachRootNode;
 		
 		/// Converts a node from XML to Ogre, works recursively to catch all children
-		void convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode);
+		//void convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode);
 
 		// HashMaps manage to blueprints and their locations
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

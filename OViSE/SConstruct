@@ -4,47 +4,60 @@ import os
 
 ### BEGIN OF USER PART
 
-wx_ccflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags'
-wx_ldflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --libs'
-
-# Adapt the pathes to wxWidgets
-path_to_wx_includes = '/Users/martinloesch/Source/local/include/wx-2.8'
-path_to_wx_setup_h = '/Users/martinloesch/Source/local/lib/wx/include/mac-unicode-release-2.8/'
-path_to_wx_libs = '/Users/martinloesch/Source/local/lib'
+#wx_ccflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags'
+#wx_ldflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --libs'
+wx_ccflags_cmd = '/usr/bin/wx-config --cxxflags'
+wx_ldflags_cmd = '/usr/bin/wx-config --libs'
 
 # Adapt general locations of your personal includes and libraries in your system
-paths_to_local_includes = ['/Users/martinloesch/Source/local/include/']
-paths_to_local_libs = ['/Users/martinloesch/Source/local/lib']
+#paths_to_local_includes = ['/Users/martinloesch/Source/local/include/']
+#paths_to_local_libs = ['/Users/martinloesch/Source/local/lib']
+paths_to_local_includes = ['/home/staff/akasper/include']
+paths_to_local_libs = ['/home/staff/akasper/lib']
+
+# Ogre
+ogre_include_path = ['/usr/local/include/OGRE']
+ogre_lib_path = ['/usr/local/lib']
+ogre_plugin_path = ['/usr/local/lib/OGRE']
 
 ### END OF USER PART
 
 
 ### IF YOU MAKE CHANGES BELOW, BE SURE YOU KNOW WHAT YOU ARE DOING!!
 
+# Mac only
+#platform_cc_flags = '-F/org/opt/OgreSDK/Dependencies'
 
-
-platform_cc_flags = '-F/org/opt/OgreSDK/Dependencies'
+platform_include_paths = ['/usr/include/gtk-2.0',
+						  '/usr/lib/gtk-2.0/include',
+						  '/usr/include/cairo',
+						  '/usr/include/glib-2.0',
+						  '/usr/lib/glib-2.0/include',
+						  '/usr/include/pango-1.0',
+						  '/usr/include/atk-1.0',
+						  '/usr/lib/atk-1.0/include']
+						  
+platform_cc_flags = ''
 platform_ld_flags = ''
 
 wx_cc_flags = os.popen(wx_ccflags_cmd).readlines()[0].replace("\n","")
 wx_ld_flags = os.popen(wx_ldflags_cmd).readlines()[0].replace("\n","")
 
-
 project_cc_flags = '-c -Wall -Wno-non-virtual-dtor -Wno-reorder -MD -fno-common' + ' ' + platform_cc_flags + ' ' + wx_cc_flags
-project_ld_flags = '-framework Ogre -framework Cg -framework Carbon' + ' ' + platform_ld_flags + ' ' + wx_ld_flags
+# Mac only
+#project_ld_flags = '-framework Ogre -framework Cg -framework Carbon' + ' ' + platform_ld_flags + ' ' + wx_ld_flags
+project_ld_flags = platform_ld_flags + ' ' + wx_ld_flags
 
-include_paths = ['.',
-                 path_to_wx_includes,
-                 path_to_wx_setup_h] + paths_to_local_includes
+include_paths = ['.'] + ['./dotScene'] + platform_include_paths + paths_to_local_includes + ogre_include_path
 
-library_paths = [path_to_wx_libs] + paths_to_local_libs
+library_paths = [''] + paths_to_local_libs + ogre_lib_path + ogre_plugin_path
 
 system_libraries = ['gcc', 'System', 'stdc++', 'SystemStubs']
-project_libraries = []
+project_libraries = ['OgreMain', 'xerces-c', 'wxcode_gtk2u_propgrid-2.8']
 
 libraries = system_libraries + project_libraries
 
-input_files = ['GUIFrame.cpp', 'OViSELogListener.cpp', 'OViSEWxApp.cpp', 'wxOgreRenderWindow.cpp', 'OViSEAddMeshDialog.cpp', 'OViSESceneHandling.cpp', 'OViSEWxMain.cpp']
+input_files = Glob('*.cpp') + Glob('dotScene/*.cpp')
 
 
 progOvise = Program('OViSE', input_files,
