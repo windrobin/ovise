@@ -32,7 +32,7 @@ if not env.GetOption('clean'):
             Exit(1)
 env = conf.Finish()
 
-dbgenv = env.Clone()
+#dbgenv = env.Clone()
 
 ## wxWidgets
 # command for include flags
@@ -44,25 +44,25 @@ env.ParseConfig(wxflags_cmd)
 
 ## Ogre3D
 if(myplatform == 'Linux'):
-    linux_ogre_include_path = {'CPPPATH':'/usr/local/include/OGRE'}
+    linux_ogre_include_path = {'CPPPATH':['/usr/local/include/OGRE']}
     env.MergeFlags(linux_ogre_include_path)
 
     linux_ogre_lib_path = {'LIBPATH':['/usr/local/lib']}
     env.MergeFlags(linux_ogre_lib_path)
 
-    linux_ogre_libraries = {'LIBS':'OgreMain'}
+    linux_ogre_libraries = {'LIBS':['OgreMain']}
     env.MergeFlags(linux_ogre_libraries)
 
     linux_ogre_plugin_path = {'LIBPATH':['/usr/local/lib/OGRE']}
     env.MergeFlags(linux_ogre_plugin_path)
 else:
-    mac_ogre_include_path = {'CCFLAGS':'-F/org/opt/OgreSDK/Dependencies'}
+    mac_ogre_include_path = {'CCFLAGS':['-F/org/opt/OgreSDK/Dependencies']}
     env.MergeFlags(mac_ogre_include_path)
     mac_ogre_lib_flags = {'LIBS':['-framework Ogre', '-framework Cg', '-framework Carbon']}
     env.MergeFlags(mac_ogre_lib_flags)
 
 ## Xerces
-xerces_lib = {'LIBS':'xerces-c'}
+xerces_lib = {'LIBS':['xerces-c']}
 env.MergeFlags(xerces_lib)
 
 ## PropertyGrid
@@ -81,7 +81,7 @@ if(myplatform == 'Linux'):
                                            ./dotScene''')}
     env.MergeFlags(linux_include_paths)
 
-    linux_paths_to_local_libs = {'LIBPATH':'/home/staff/akasper/lib'}
+    linux_paths_to_local_libs = {'LIBPATH':['/home/staff/akasper/lib']}
     env.MergeFlags(linux_paths_to_local_libs)
 else:
     mac_paths_to_local_includes = {'CPPPATH':['/Users/martinloesch/Source/local/include/']}
