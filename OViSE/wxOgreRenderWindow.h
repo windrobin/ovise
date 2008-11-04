@@ -2,7 +2,11 @@
 #define WXOGRERENDERWINDOW_H_INCLUDED
 
 #include <wx/wx.h>
+#ifdef __APPLE__
+#include <Ogre/Ogre.h>
+#else
 #include <Ogre.h>
+#endif
 #include "OViSEInputHandler.h"
 
 /** wxWidgets Ogre render window widget.

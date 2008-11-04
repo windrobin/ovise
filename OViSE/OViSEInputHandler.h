@@ -1,7 +1,11 @@
 #pragma once
 
 #include <wx/wx.h>
+#ifdef __APPLE__
+#include <Ogre/Ogre.h>
+#else
 #include <Ogre.h>
+#endif
 
 #include "OViSESceneHandling.h"
 

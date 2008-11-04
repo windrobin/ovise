@@ -131,7 +131,7 @@ else:
     input_files += Glob('dotScene/*.cpp')
 
 ## Debug
-#printDbg(env)
+printDbg(env)
 
 ### Build
 progOvise = env.Program('OViSE', input_files)

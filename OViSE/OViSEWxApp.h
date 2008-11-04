@@ -12,7 +12,11 @@
 
 #include <wx/app.h>
 #include <wx/splash.h>
+#ifdef __APPLE__
+#include <Ogre/Ogre.h>
+#else
 #include <Ogre.h>
+#endif
 
 class OViSEWxApp : public wxApp
 {

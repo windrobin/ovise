@@ -1,7 +1,11 @@
 #ifndef OVISESCENEHANDLING_H_
 #define OVISESCENEHANDLING_H_
 
+#ifdef __APPLE__
+#include "Ogre/Ogre.h"
+#else
 #include "Ogre.h"
+#endif
 #include "OViSEException.h"
 
 /// Map containing all scene managers.
