@@ -1,68 +1,138 @@
 # -*- python -*-
 
 import os
+import platform
 
-### BEGIN OF USER PART
+myplatform = platform.system()
 
-#wx_ccflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags'
-#wx_ldflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --libs'
-wx_ccflags_cmd = '/usr/bin/wx-config --cxxflags'
-wx_ldflags_cmd = '/usr/bin/wx-config --libs'
+## Functions
+def printDbg(e):
+    print 'CCFLAGS:'
+    print e['CCFLAGS']
+    print 'CPPPATH:'
+    print e['CPPPATH']
+    print 'LIBPATH:'
+    print e['LIBPATH']
+    print 'LIBS:'
+    print e['LIBS']
 
-# Adapt general locations of your personal includes and libraries in your system
-#paths_to_local_includes = ['/Users/martinloesch/Source/local/include/']
-#paths_to_local_libs = ['/Users/martinloesch/Source/local/lib']
-paths_to_local_includes = ['/home/staff/akasper/include']
-paths_to_local_libs = ['/home/staff/akasper/lib']
+### Setting up environment
 
-# Ogre
-ogre_include_path = ['/usr/local/include/OGRE']
-ogre_lib_path = ['/usr/local/lib']
-ogre_plugin_path = ['/usr/local/lib/OGRE']
+env = Environment()
+if ARGUMENTS.get('verbose') != "1":
+    env['CCCOMSTR'] = "Compiling $TARGET"
+    env['LINKCOMSTR'] = "Linking $TARGET"
 
-### END OF USER PART
+conf = Configure(env)
+if not env.GetOption('clean'):
+    if(myplatform == 'Linux'):
+        if not conf.CheckLib('OgreMain'):
+            Exit(1)
+        if not conf.CheckLib('xerces-c'):
+            Exit(1)
+env = conf.Finish()
 
+dbgenv = env.Clone()
 
-### IF YOU MAKE CHANGES BELOW, BE SURE YOU KNOW WHAT YOU ARE DOING!!
+## wxWidgets
+# command for include flags
+if(myplatform == 'Linux'):
+    wxflags_cmd = '/usr/bin/wx-config --cxxflags --libs'
+else:
+    wxflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags --libs'
+env.ParseConfig(wxflags_cmd)
 
-# Mac only
-#platform_cc_flags = '-F/org/opt/OgreSDK/Dependencies'
+## Ogre3D
+if(myplatform == 'Linux'):
+    linux_ogre_include_path = {'CPPPATH':'/usr/local/include/OGRE'}
+    env.MergeFlags(linux_ogre_include_path)
 
-platform_include_paths = ['/usr/include/gtk-2.0',
-						  '/usr/lib/gtk-2.0/include',
-						  '/usr/include/cairo',
-						  '/usr/include/glib-2.0',
-						  '/usr/lib/glib-2.0/include',
-						  '/usr/include/pango-1.0',
-						  '/usr/include/atk-1.0',
-						  '/usr/lib/atk-1.0/include']
-						  
-platform_cc_flags = ''
-platform_ld_flags = ''
+    linux_ogre_lib_path = {'LIBPATH':['/usr/local/lib']}
+    env.MergeFlags(linux_ogre_lib_path)
 
-wx_cc_flags = os.popen(wx_ccflags_cmd).readlines()[0].replace("\n","")
-wx_ld_flags = os.popen(wx_ldflags_cmd).readlines()[0].replace("\n","")
+    linux_ogre_libraries = {'LIBS':'OgreMain'}
+    env.MergeFlags(linux_ogre_libraries)
 
-project_cc_flags = '-c -Wall -Wno-non-virtual-dtor -Wno-reorder -MD -fno-common' + ' ' + platform_cc_flags + ' ' + wx_cc_flags
-# Mac only
-#project_ld_flags = '-framework Ogre -framework Cg -framework Carbon' + ' ' + platform_ld_flags + ' ' + wx_ld_flags
-project_ld_flags = platform_ld_flags + ' ' + wx_ld_flags
+    linux_ogre_plugin_path = {'LIBPATH':['/usr/local/lib/OGRE']}
+    env.MergeFlags(linux_ogre_plugin_path)
+else:
+    mac_ogre_include_path = {'CCFLAGS':'-F/org/opt/OgreSDK/Dependencies'}
+    env.MergeFlags(mac_ogre_include_path)
+    mac_ogre_lib_flags = {'LIBS':['-framework Ogre', '-framework Cg', '-framework Carbon']}
+    env.MergeFlags(mac_ogre_lib_flags)
 
-include_paths = ['.'] + ['./dotScene'] + platform_include_paths + paths_to_local_includes + ogre_include_path
+## Xerces
+xerces_lib = {'LIBS':'xerces-c'}
+env.MergeFlags(xerces_lib)
 
-library_paths = [''] + paths_to_local_libs + ogre_lib_path + ogre_plugin_path
+## PropertyGrid
+if(myplatform == 'Linux'):
+    property_grid_lib = {'LIBS':['wxcode_gtk2u_propgrid-2.8']}
+else:
+    property_grid_lib = {'LIBS':['']}
+env.MergeFlags(property_grid_lib)
 
-system_libraries = ['gcc', 'System', 'stdc++', 'SystemStubs']
-project_libraries = ['OgreMain', 'xerces-c', 'wxcode_gtk2u_propgrid-2.8']
+## Local
+if(myplatform == 'Linux'):
+    linux_paths_to_local_includes = {'CPPPATH':['/home/staff/akasper/include']}
+    env.MergeFlags(linux_paths_to_local_includes)
 
-libraries = system_libraries + project_libraries
+    linux_include_paths = {'CPPPATH': Split('''.
+                                           ./dotScene''')}
+    env.MergeFlags(linux_include_paths)
 
-input_files = Glob('*.cpp') + Glob('dotScene/*.cpp')
+    linux_paths_to_local_libs = {'LIBPATH':'/home/staff/akasper/lib'}
+    env.MergeFlags(linux_paths_to_local_libs)
+else:
+    mac_paths_to_local_includes = {'CPPPATH':['/Users/martinloesch/Source/local/include/']}
+    env.MergeFlags(mac_paths_to_local_includes)
 
+    mac_paths_to_local_libs = {'LIBPATH':['/Users/martinloesch/Source/local/lib']}
+    env.MergeFlags(mac_paths_to_local_libs)
 
-progOvise = Program('OViSE', input_files,
-                    CPPPATH = include_paths,
-                    LIBPATH = library_paths,
-                    LIBS = libraries,
-                    CCFLAGS = project_cc_flags,
-                    LDFLAGS = project_ld_flags)
+    mac_include_paths = {'CPPPATH': Split('''.
+                                         ./dotScene''')}
+    env.MergeFlags(mac_include_paths)
+
+## System
+if(myplatform == 'Linux'):
+    linux_project_cc_flags = {'CCFLAGS':Split('''-c
+                                                -Wno-non-virtual-dtor
+                                                -Wno-reorder
+                                                -MD
+                                                -fno-common''')}
+    env.MergeFlags(linux_project_cc_flags)
+
+    linux_platform_include_paths = {'CPPPATH': Split('''/usr/include/gtk-2.0
+                                                        /usr/lib/gtk-2.0/include
+                                                        /usr/include/cairo
+                                                        /usr/include/glib-2.0
+                                                        /usr/lib/glib-2.0/include
+                                                        /usr/include/pango-1.0
+                                                        /usr/include/atk-1.0
+                                                        /usr/lib/atk-1.0/include''')}
+    env.MergeFlags(linux_platform_include_paths)
+
+    linux_platform_libraries = {'LIBS':['gcc', 'GL']}
+    env.MergeFlags(linux_platform_libraries)
+else:
+    mac_platform_include_paths = {'CPPPATH':['']}
+    env.MergeFlags(mac_platform_include_paths)
+
+    mac_platform_libraries = {'LIBS':['gcc', 'System', 'stdc++', 'SystemStubs']}
+    env.MergeFlags(mac_platform_libraries)
+
+## Input files
+if(myplatform == 'Linux'):
+    input_files = Glob('*.cpp')
+    input_files += Glob('dotScene/*.cpp')
+else:
+    input_files = Glob('*.cpp')
+    input_files += Glob('dotScene/*.cpp')
+
+## Debug
+#printDbg(env)
+
+### Build
+progOvise = env.Program('OViSE', input_files)
+

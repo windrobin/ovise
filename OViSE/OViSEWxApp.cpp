@@ -27,7 +27,7 @@ bool OViSEWxApp::OnInit()
 	wxSplashScreen *splash = NULL;
 	if (bitmap.LoadFile(wxT("../OViSESplash.png"), wxBITMAP_TYPE_PNG))
 	{
-		splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition, 
+		splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
 			wxDefaultSize, wxBORDER_NONE | wxSTAY_ON_TOP);
 	}
 	Yield(true);
@@ -70,6 +70,12 @@ bool OViSEWxApp::OnInit()
 		mRoot->loadPlugin("Plugin_OctreeSceneManager");
 		mRoot->loadPlugin("Plugin_CgProgramManager");
 #endif
+#else
+        mRoot->loadPlugin("RenderSystem_GL");
+		mRoot->loadPlugin("Plugin_ParticleFX");
+		mRoot->loadPlugin("Plugin_BSPSceneManager");
+		mRoot->loadPlugin("Plugin_OctreeSceneManager");
+		//mRoot->loadPlugin("Plugin_CgProgramManager");
 #endif
 	}
 	catch (Ogre::InternalErrorException e)
