@@ -302,11 +302,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEException.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OViSEInputHandler.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\OViSELogListener.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEObjectTitle.cpp"
 				>
 			</File>
 			<File
@@ -460,11 +468,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEException.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OViSEInputHandler.h"
 				>
 			</File>
 			<File
 				RelativePath=".\OViSELogListener.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEObjectTitle.h"
 				>
 			</File>
 			<File
