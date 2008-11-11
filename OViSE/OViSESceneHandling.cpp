@@ -395,6 +395,10 @@ void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneM
 	{
 		// yes, delete old structure
 		scnMgr->destroyManualObject("SceneGraphStructure");
+		// kill all object titles
+		for(OViSEObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
+			delete *iter;
+		mObjectTitlesVector.clear();
 		// if we're not requesting an update, return
 		if(!update)	return;
 	}
@@ -419,6 +423,14 @@ void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneM
 		sgsMaterial->getTechnique(0)->getPass(0)->setAmbient(1,0,0);
 	}
 
+	Ogre::SceneManager::MovableObjectIterator iter = scnMgr->getMovableObjectIterator("Entity");
+	while(iter.hasMoreElements())
+	{
+		Ogre::MovableObject *mobj = iter.getNext();
+		OViSEObjectTitle *tmp = new OViSEObjectTitle(mobj->getName(), mobj, scnMgr->getCurrentViewport()->getCamera(), mobj->getName(), "BlueHighway");
+		mObjectTitlesVector.push_back(tmp);
+	}
+
 	sgs->begin("SceneStructureMaterial", Ogre::RenderOperation::OT_LINE_LIST);
 	std::list<Ogre::Node*> nodeQueue;
 	nodeQueue.push_back(scnMgr->getRootSceneNode());
@@ -438,6 +450,14 @@ void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneM
 	sgs->end();
 	nodeQueue.clear();
 	scnMgr->getRootSceneNode()->attachObject(sgs);
+}
+
+void OViSESceneHandling::updateObjectTitles()
+{
+	for(OViSEObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
+	{
+		(*iter)->update();
+	}
 }
 
 OViSESceneHandling::~OViSESceneHandling()

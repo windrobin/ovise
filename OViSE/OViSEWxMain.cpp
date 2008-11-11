@@ -59,6 +59,10 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
+	
+	mFrameListener = new OViSEFrameListener();
+	mRoot->addFrameListener(mFrameListener);
+
 	mMainRenderWin = new wxOgreRenderWindow(NULL, NULL, mSecondSplitter, WINDOW_MainRender);
 	mMainRenderWin->SetStatusBar(statusBar);
 

@@ -36,7 +36,7 @@ bool OViSEWxApp::OnInit()
 	Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("OViSE.log", true, true, false);
 
 	mRoot = new Ogre::Root("", "");
-
+	
 	Ogre::ConfigFile cf;
 	cf.load("resources.cfg");
 

@@ -306,6 +306,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEFrameListener.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OViSEInputHandler.cpp"
 				>
 			</File>
@@ -469,6 +473,10 @@
 			</File>
 			<File
 				RelativePath=".\OViSEException.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEFrameListener.h"
 				>
 			</File>
 			<File

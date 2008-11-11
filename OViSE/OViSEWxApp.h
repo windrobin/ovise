@@ -17,6 +17,7 @@
 #else
 #include <Ogre.h>
 #endif
+#include "OViSEFrameListener.h"
 
 class OViSEWxApp : public wxApp
 {

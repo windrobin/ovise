@@ -7,6 +7,7 @@
 #include "Ogre.h"
 #endif
 #include "OViSEException.h"
+#include "OViSEObjectTitle.h"
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
@@ -16,6 +17,8 @@ typedef std::map<std::string, Ogre::RaySceneQuery*> OViSERayQueryMap;
 typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
 /// Map containing all object selection maps.
 typedef std::map<std::string, OViSESelectionMap> OViSESelections;
+/// Map containing object title instances (for updating in the frame listener)
+typedef std::vector<OViSEObjectTitle*> OViSEObjectTitleVector;
 
 /**
  * Singleton class responsible for managing initial scene creation and manipulation.
@@ -136,6 +139,10 @@ public:
 	 */
 	void addCOS(float scale = 1.0, bool castShadows=false, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node=NULL);
 
+	/** Updates the object titles in the internal map.
+	 */
+	void updateObjectTitles();
+
 protected:
 	OViSESceneHandling();
 	virtual ~OViSESceneHandling();
@@ -152,6 +159,9 @@ private:
 
 	/// Map of maps of selected scene nodes
 	OViSESelections mObjectSelectionsMap;
+
+	/// Map of all object titles
+	OViSEObjectTitleVector mObjectTitlesVector;
 };
 
 #endif /*OVISESCENEHANDLING_H_*/
