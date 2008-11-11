@@ -23,6 +23,12 @@ if ARGUMENTS.get('verbose') != "1":
     env['CCCOMSTR'] = "Compiling $TARGET"
     env['LINKCOMSTR'] = "Linking $TARGET"
 
+mode = ARGUMENTS.get('mode', "debug")
+
+Help("""\nUsage:
+        'scons' or 'scons mode=debug' to build debug configuration.\n
+        'scons mode=release' to build release configuration.\n""")
+
 conf = Configure(env)
 if not env.GetOption('clean'):
     if(myplatform == 'Linux'):
@@ -32,14 +38,15 @@ if not env.GetOption('clean'):
             Exit(1)
 env = conf.Finish()
 
-#dbgenv = env.Clone()
-
 ## wxWidgets
 # command for include flags
 if(myplatform == 'Linux'):
     wxflags_cmd = '/usr/bin/wx-config --cxxflags --libs'
-else:
+elif(myplatform == 'Darwin'):
     wxflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags --libs'
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 env.ParseConfig(wxflags_cmd)
 
 ## Ogre3D
@@ -55,11 +62,14 @@ if(myplatform == 'Linux'):
 
     linux_ogre_plugin_path = {'LIBPATH':['/usr/local/lib/OGRE']}
     env.MergeFlags(linux_ogre_plugin_path)
-else:
+elif(myplatform == 'Darwin'):
     mac_ogre_include_path = {'CCFLAGS':['-F/org/opt/OgreSDK/Dependencies']}
     env.MergeFlags(mac_ogre_include_path)
     mac_ogre_lib_flags = {'LIBS':['-framework Ogre', '-framework Cg', '-framework Carbon']}
     env.MergeFlags(mac_ogre_lib_flags)
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 
 ## Xerces
 xerces_lib = {'LIBS':['xerces-c']}
@@ -68,8 +78,11 @@ env.MergeFlags(xerces_lib)
 ## PropertyGrid
 if(myplatform == 'Linux'):
     property_grid_lib = {'LIBS':['wxcode_gtk2u_propgrid-2.8']}
-else:
+elif(myplatform == 'Darwin'):
     property_grid_lib = {'LIBS':['']}
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 env.MergeFlags(property_grid_lib)
 
 ## Local
@@ -83,7 +96,7 @@ if(myplatform == 'Linux'):
 
     linux_paths_to_local_libs = {'LIBPATH':['/home/staff/akasper/lib']}
     env.MergeFlags(linux_paths_to_local_libs)
-else:
+elif(myplatform == 'Darwin'):
     mac_paths_to_local_includes = {'CPPPATH':['/Users/martinloesch/Source/local/include/']}
     env.MergeFlags(mac_paths_to_local_includes)
 
@@ -93,6 +106,9 @@ else:
     mac_include_paths = {'CPPPATH': Split('''.
                                          ./dotScene''')}
     env.MergeFlags(mac_include_paths)
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 
 ## System
 if(myplatform == 'Linux'):
@@ -115,24 +131,43 @@ if(myplatform == 'Linux'):
 
     linux_platform_libraries = {'LIBS':['gcc', 'GL']}
     env.MergeFlags(linux_platform_libraries)
-else:
+elif(myplatform == 'Darwin'):
     mac_platform_include_paths = {'CPPPATH':['']}
     env.MergeFlags(mac_platform_include_paths)
 
     mac_platform_libraries = {'LIBS':['gcc', 'System', 'stdc++', 'SystemStubs']}
     env.MergeFlags(mac_platform_libraries)
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 
 ## Input files
 if(myplatform == 'Linux'):
     input_files = Glob('*.cpp')
     input_files += Glob('dotScene/*.cpp')
-else:
+elif(myplatform == 'Darwin'):
     input_files = Glob('*.cpp')
     input_files += Glob('dotScene/*.cpp')
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
 
 ## Debug
-printDbg(env)
+#printDbg(env)
+#print COMMAND_LINE_TARGETS
+
+### Debug and optimised environments
+optenv = env.Clone(CCFLAGS = '-O2')
+dbgenv = env.Clone(CCFLAGS = '-g')
 
 ### Build
-progOvise = env.Program('OViSE', input_files)
+if mode == "debug":
+    print "Building in debug configuration..."
+    OViSEDbg = dbgenv.Program('OViSE-dbg', input_files)
+elif mode == "release":
+    print "Building in release configuration..."
+    OViSEOpt = optenv.Program('/OViSE-opt', input_files)
+
+
+
 

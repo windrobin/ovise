@@ -59,7 +59,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
-	
+
 	mFrameListener = new OViSEFrameListener();
 	mRoot->addFrameListener(mFrameListener);
 
@@ -67,7 +67,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	mMainRenderWin->SetStatusBar(statusBar);
 
 	mMainRenderWin->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler( OViSEWxFrame::OnViewClick ), NULL, this);
-	
+
     finishOgreInitialization();
 	setupObjectProperties();
 
@@ -126,7 +126,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties = new wxPropertyGrid(mSecondSplitter, PGID);
 	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEWxFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
-	
+
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Node Properties")));
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("NodeName")));
 	mObjectProperties->SetPropertyValidator(wxT("NodeName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
@@ -450,7 +450,7 @@ void OViSEWxFrame::setObjectProperties(Ogre::MovableObject *object)
 	mObjectProperties->SetPropertyValue(wxT("Scale.sz"), (float)pnode->getScale().z);
 
 	mObjectProperties->SetPropertyValue(wxT("MeshName"), wxString(object->getName().c_str(), wxConvUTF8));
-	
+
 	mObjectProperties->SetPropertyValue(wxT("MeshMaterial"), wxT("TODO"));
 }
 
@@ -467,7 +467,7 @@ void OViSEWxFrame::clearObjectProperties()
 	mObjectProperties->ClearPropertyValue(wxT("Translation.tx"));
 	mObjectProperties->ClearPropertyValue(wxT("Translation.ty"));
 	mObjectProperties->ClearPropertyValue(wxT("Translation.tz"));
-	
+
 	mObjectProperties->ClearPropertyValue(wxT("Rotation"));
 	mObjectProperties->ClearPropertyValue(wxT("Rotation.rx"));
 	mObjectProperties->ClearPropertyValue(wxT("Rotation.ry"));
@@ -491,7 +491,7 @@ void OViSEWxFrame::deleteMeshes()
 		dlg.ShowModal();
 		return;
 	}
-	
+
 	wxMessageDialog confirmationDialog(this, wxT("Delete selected meshes?"), wxT("Confirmation required"), wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION);
 	if(confirmationDialog.ShowModal() == wxID_YES)
 	{

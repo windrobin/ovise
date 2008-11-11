@@ -2,7 +2,7 @@
 
 using namespace Ogre;
 
-OViSEObjectTitle::OViSEObjectTitle(const String& name, MovableObject* object, Camera* camera, const String& title, 
+OViSEObjectTitle::OViSEObjectTitle(const String& name, MovableObject* object, Camera* camera, const String& title,
 	const String& fontName, const Ogre::ColourValue& color) : object(object), camera(camera)
 {
 	overlay = OverlayManager::getSingleton().create(name+"_TitleOverlay");
@@ -68,7 +68,7 @@ void OViSEObjectTitle::update()
 		overlay->hide();
 		return;
 	}
-	
+
 	// Derive the 2D screen-space coordinates for that point
 	point = camera->getProjectionMatrix() * (camera->getViewMatrix() * point);
 
@@ -88,7 +88,7 @@ Vector2 OViSEObjectTitle::getTextDimensions(String text)
 	Vector2 result(0, 0);
 
 	for(String::iterator i = text.begin(); i < text.end(); i++)
-	{   
+	{
 		if (*i == 0x0020)
 			result.x += font->getGlyphAspectRatio(0x0030);
 		else

@@ -3,7 +3,7 @@
 #ifdef __APPLE__
 #include <Ogre/OgreLog.h>
 #else
-#include "ogrelog.h"
+#include "OgreLog.h"
 #endif
 #include <wx/wx.h>
 #include <wx/datetime.h>
