@@ -178,7 +178,8 @@ void wxOgreRenderWindow::OnKeyEvents(wxKeyEvent &evt)
 	mInputHandler->handleKeyboardInput(evt);
 }
 //------------------------------------------------------------------------------
-void wxOgreRenderWindow::CreateRenderWindow () {
+void wxOgreRenderWindow::CreateRenderWindow ()
+{
 	Ogre::NameValuePairList params;
 	params["externalWindowHandle"] = GetOgreHandle ();
 
@@ -186,11 +187,13 @@ void wxOgreRenderWindow::CreateRenderWindow () {
 	int width;
 	int height;
 	GetSize (&width, &height);
+	printf("DEBUG: Before Ogre::createRenderWindow\n");
 	// Create the render window
 	mRenderWindow = Ogre::Root::getSingleton ().createRenderWindow (
 					Ogre::String ("OgreRenderWindow") + Ogre::StringConverter::toString (msNextRenderWindowId++),
 					width, height, false, &params);
 
+    printf("DEBUG: After Ogre::createRenderWindow\n");
 	mRenderWindow->setActive (true);
 }
 //------------------------------------------------------------------------------
@@ -204,34 +207,41 @@ Ogre::String wxOgreRenderWindow::GetOgreHandle () const {
 	// Handle for GTK-based systems
 
 	GtkWidget *widget = m_wxwindow;
+
 	gtk_widget_set_double_buffered (widget, FALSE);
-  gtk_widget_realize( widget );
 
-  // Grab the window object
-  GdkWindow *gdkWin = GTK_PIZZA (widget)->bin_window;
-  Display* display = GDK_WINDOW_XDISPLAY(gdkWin);
-  Window wid = GDK_WINDOW_XWINDOW(gdkWin);
+    gtk_widget_realize( widget );
+    if(!GTK_WIDGET_REALIZED(widget))
+        printf("Error, GtkWidget not realized!\n");
 
-  std::stringstream str;
+    // Grab the window object
+    GdkWindow *gdkWin = GTK_PIZZA(widget)->bin_window;
 
-  // Display
-  str << (unsigned long)display << ':';
+    Display* display = GDK_WINDOW_XDISPLAY(gdkWin);
 
-  // Screen (returns "display.screen")
-  std::string screenStr = DisplayString(display);
-  std::string::size_type dotPos = screenStr.find(".");
-  screenStr = screenStr.substr(dotPos+1, screenStr.size());
-  str << screenStr << ':';
+    Window wid = GDK_WINDOW_XWINDOW(gdkWin);
 
-  // XID
-  str << wid << ':';
+    std::stringstream str;
 
-  // Retrieve XVisualInfo
-  int attrlist[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, None };
-  XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), attrlist);
-  str << (unsigned long)vi;
+    // Display
+    str << (unsigned long)display << ':';
 
-  handle = str.str();
+    // Screen (returns "display.screen")
+    std::string screenStr = DisplayString(display);
+    std::string::size_type dotPos = screenStr.find(".");
+    screenStr = screenStr.substr(dotPos+1, screenStr.size());
+    str << screenStr << ':';
+
+    // XID
+    str << wid;
+
+    // Retrieve XVisualInfo
+    /*int attrlist[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, None };
+    XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), attrlist);
+    str << (unsigned long)vi;*/
+
+    handle = str.str();
+
 #else
 	// Any other unsupported system
 	#error Not supported on this platform.
