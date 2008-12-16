@@ -93,8 +93,7 @@ void OViSEWxFrame::finishOgreInitialization()
 
     mCam = mSceneMgr->createCamera("MainCam");
 
-	// Position it at 500 in Z direction
-    mCam->setPosition(Ogre::Vector3(0,10,20));
+	mCam->setPosition(Ogre::Vector3(0,0,20));
 	// Look back along -Z
 	mCam->lookAt(Ogre::Vector3::ZERO);
     mCam->setNearClipDistance(5);
@@ -106,7 +105,7 @@ void OViSEWxFrame::finishOgreInitialization()
 	camFocusNode->setFixedYawAxis(true);
 	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
 	camNode->setFixedYawAxis(true);
-	camNode->setPosition(0, 0, 10);
+	camNode->setPosition(0, 0, 0);
 	camNode->attachObject(mCam);
 
     Ogre::Viewport *mVp = mMainRenderWin->GetRenderWindow()->addViewport(mCam);

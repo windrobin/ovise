@@ -88,7 +88,7 @@ void OViSEAddMeshDialog::updateMeshList()
 					mMeshList->Insert(wxString(iter->c_str(), wxConvUTF8), 0);
 			}
 		}
-		catch (std::exception e)
+		catch (OViSEException e)
 		{
 			Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 		}

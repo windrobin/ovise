@@ -7,7 +7,6 @@ OViSEInputHandler::OViSEInputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode
 	mParent = parent;
 	mRotateSpeed = 1.0;
 	mMoveSpeed = 1.0;
-	mRightMouseDown = false;
 	mMouseCaptured = false;
 }
 
@@ -17,20 +16,22 @@ OViSEInputHandler::~OViSEInputHandler(void)
 
 void OViSEInputHandler::handleMouseInput(wxMouseEvent &evt)
 {
-	if(evt.RightUp())
+	/*if(evt.RightUp())
 	{
-		mRightMouseDown = false;
 		mParent->ReleaseMouse();
 		mMouseCaptured = false;
 	}
+	if(evt.MiddleUp())
+	{
+		mParent->ReleaseMouse();
+		mMouseCaptured = false;*/
 	if(evt.RightIsDown())
 	{
-		mRightMouseDown = true;
-		if(!mMouseCaptured)
+		/*if(!mMouseCaptured)
 		{
 			mParent->CaptureMouse();
 			mMouseCaptured = true;
-		}
+		}*/
 		if(evt.Dragging())
 		{
 			int newX = evt.GetPosition().x;
@@ -57,37 +58,57 @@ void OViSEInputHandler::handleMouseInput(wxMouseEvent &evt)
 		else
 			zoomCamera(mMoveSpeed);
 	}
+	if(evt.MiddleIsDown())
+	{
+		if(evt.Dragging())
+		{
+			int newX = evt.GetPosition().x;
+			int newY = evt.GetPosition().y;
+
+			if(newX > mX)
+				translateCameraHorizontal(mMoveSpeed * 0.5);
+			else if(newX < mX)
+				translateCameraHorizontal(-mMoveSpeed * 0.5);
+
+			if(newY > mY)
+				translateCameraVertical(-mMoveSpeed);
+			else if(newY < mY)
+				translateCameraVertical(mMoveSpeed);
+	
+			mX = newX;
+			mY = newY;
+		}
+	}
 	evt.Skip();
 }
 
 void OViSEInputHandler::handleKeyboardInput(wxKeyEvent &evt)
 {
-	Ogre::Vector3 transVec = Ogre::Vector3::ZERO;
 	switch(evt.GetKeyCode())
 	{
 	case 'a':
 	case 'A':
-		translateCamera(Ogre::Vector3(-mMoveSpeed, 0, 0));
+		translateCameraHorizontal(-mMoveSpeed);
 		break;
 	case 'd':
 	case 'D':
-		translateCamera(Ogre::Vector3(mMoveSpeed, 0, 0));
+		translateCameraHorizontal(mMoveSpeed);
 		break;
 	case 'w':
 	case 'W':
-		translateCamera(Ogre::Vector3(0, 0, -mMoveSpeed));
+		translateCameraDirectional(-mMoveSpeed);
 		break;
 	case 's':
 	case 'S':
-		translateCamera(Ogre::Vector3(0, 0, mMoveSpeed));
+		translateCameraDirectional(mMoveSpeed);
 		break;
 	case 'q':
 	case 'Q':
-		translateCamera(Ogre::Vector3(0, mMoveSpeed, 0));
+		translateCameraVertical(mMoveSpeed);
 		break;
 	case 'e':
 	case 'E':
-		translateCamera(Ogre::Vector3(0, -mMoveSpeed, 0));
+		translateCameraVertical(-mMoveSpeed);
 		break;
 	case 'f':
 	case 'F':
@@ -112,6 +133,33 @@ void OViSEInputHandler::translateCamera(Ogre::Vector3 trans)
 	{
 		mCameraNode->translate(trans, Ogre::Node::TS_PARENT);
 	}
+}
+
+void OViSEInputHandler::translateCameraVertical(double moveSpeed)
+{
+	Ogre::Matrix3 localAxes = mCameraNode->getLocalAxes();
+	Ogre::Vector3 vertical = localAxes.GetColumn(1);
+	vertical.normalise();
+
+	translateCamera(moveSpeed * vertical);
+}
+
+void OViSEInputHandler::translateCameraHorizontal(double moveSpeed)
+{
+	Ogre::Matrix3 localAxes = mCameraNode->getLocalAxes();
+	Ogre::Vector3 horizontal = localAxes.GetColumn(0);
+	horizontal.normalise();
+
+	translateCamera(moveSpeed * horizontal);
+}
+
+void OViSEInputHandler::translateCameraDirectional(double moveSpeed)
+{
+	Ogre::Matrix3 localAxes = mCameraNode->getLocalAxes();
+	Ogre::Vector3 directional = localAxes.GetColumn(2);	
+	directional.normalise();
+
+	translateCamera(moveSpeed * directional);
 }
 
 void OViSEInputHandler::zoomCamera(double amount)

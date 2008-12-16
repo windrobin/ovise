@@ -35,6 +35,12 @@ public:
 protected:
 	/// Translate camera.
 	void translateCamera(Ogre::Vector3 trans);
+	/// Translatae camera vertically orthogonal to view direction (positive amount is up, negative is down)
+	void translateCameraVertical(double moveSpeed);
+	/// Translatae camera horizontally orthogonal to view direction (positive amount is right, negative is left)
+	void translateCameraHorizontal(double moveSpeed);
+	/// Tranlsate camera in view direction (positive amount is back, negative is forward)
+	void translateCameraDirectional(double moveSpeed);
 	/// Zoom camera (makes most sense when using a focusnode, see constructor documentation).
 	void zoomCamera(double amount);
 	/// Yaw camera.
@@ -57,6 +63,6 @@ private:
 	int mX, mY;
 	/// Default move and rotate speeds.
 	double mRotateSpeed, mMoveSpeed;
-	bool mRightMouseDown, mMouseCaptured;
+	bool mMouseCaptured;
 
 };
