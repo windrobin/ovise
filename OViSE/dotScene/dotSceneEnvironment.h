@@ -27,22 +27,23 @@ namespace dotSceneObjects
 	/**
 	 * This class hold values for all objects, which can occure in environment-definition.
 	 */
-	class dotSceneEnvironment : public dotSceneObject
+	class dotSceneEnvironment : virtual public dotSceneObject
     {
 	private:
-		dotSceneFog _fog;							/**< Property fog.*/
-		dotSceneColourBackground _colourBackground;	/**< Property colourBackground.*/
-		dotSceneColourAmbient _colourAmbient;		/**< Property colourAmbient.*/
+		dotSceneFog _fog;											/**< Property fog.*/
+		dotSceneColourBackground _colourBackground;					/**< Property colourBackground.*/
+		dotSceneColourAmbient _colourAmbient;						/**< Property colourAmbient.*/
+
+	public:
+		dotSceneFog get_fog() const;								/**< Get-method for property fog. @return Returns a dotSceneFog-object.*/
+		dotSceneColourBackground get_colourBackground() const;		/**< Get-method for property colourBackground. @return Returns a dotSceneColourBackground-object.*/
+		dotSceneColourAmbient get_colourAmbient() const;			/**< Get-method for property colourAmbient. @return Returns a dotSceneColourAmbient-object.*/
 
 		void set_fog(dotSceneFog value);							/**< Set-method for property fog. @param value A dotSceneFog-object.*/
 		void set_colourBackground(dotSceneColourBackground value);	/**< Set-method for property colourBackground. @param value A dotSceneColourBackground-object.*/
 		void set_colourAmbient(dotSceneColourAmbient value);		/**< Set-method for property colourAmbient. @param value A dotSceneColourAmbient-object.*/
 
-	public:
-		dotSceneFog get_fog() const;							/**< Get-method for property fog. @return Returns a dotSceneFog-object.*/
-		dotSceneColourBackground get_colourBackground() const;	/**< Get-method for property colourBackground. @return Returns a dotSceneColourBackground-object.*/
-		dotSceneColourAmbient get_colourAmbient() const;		/**< Get-method for property colourAmbient. @return Returns a dotSceneColourAmbient-object.*/
-
+		bool IsValid() const;										/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
 		/**
 		 * Simple constructor.
 		 * It calls the constructor of baseobject.
@@ -56,11 +57,6 @@ namespace dotSceneObjects
 		 * @param obj_colorAmbient A pre-constrcted dotSceneColorAmbient-object.
 		 * @param obj_colorBackground A pre-constrcted dotSceneColorBackground-object.
 		 */
-		dotSceneEnvironment(dotSceneFog, dotSceneColourAmbient, dotSceneColourBackground);
-
-		/**
-		 * Simple destructor.
-		 */
-        ~dotSceneEnvironment();
+		dotSceneEnvironment(dotSceneFog obj_fog, dotSceneColourAmbient obj_colorAmbient, dotSceneColourBackground obj_colorBackground);
     };
 }

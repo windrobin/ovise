@@ -3,8 +3,13 @@
 #include "dotSceneSpecific.h"
 #endif
 
-dotSceneObjects::dotSceneSpecific::dotSceneSpecific() : dotSceneObject(entity) { } /// emergency constructor for a empty constructions.
-dotSceneObjects::dotSceneSpecific::dotSceneSpecific(dotSceneElementTags tag) : dotSceneObject(tag) { }
-// In C++ leider nicht möglich (vererbt) //dotSceneObjects::dotSceneSpecific::dotSceneSpecific(std::string ElenentName) : dotSceneObject(ElenentName) { }
-//dotSceneObjects::dotSceneSpecific::dotSceneSpecific(dotSceneSpecific obj) : dotSceneObject(obj) { }
-dotSceneObjects::dotSceneSpecific::~dotSceneSpecific(void) { }
+bool dotSceneObjects::dotSceneSpecific::IsValid() const
+{
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
+}
+dotSceneObjects::dotSceneSpecific::dotSceneSpecific() : dotSceneObject(dotSceneEnums::INVALID) { }
+dotSceneObjects::dotSceneSpecific::dotSceneSpecific(dotSceneEnums::dotSceneElementTags incomingTag) : dotSceneObject(incomingTag) { }
+
+

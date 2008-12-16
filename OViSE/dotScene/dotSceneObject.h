@@ -25,34 +25,51 @@ namespace dotSceneObjects
 	class dotSceneObject
     {    
 	private:
-		dotSceneElementTags _NameSymbol; /**< Property NameSymbol. This property identifies the kind of dotScene-Object by a dotSceneElementTags-enum.*/
+		dotSceneEnums::dotSceneElementTags _NameSymbol; /**< Property NameSymbol. This property identifies the kind of dotScene-Object by a dotSceneElementTags-enum.*/
 		std::string _Name; /**< Property Name. This property identifies the kind of dotScene-Object by a string.*/
 
-		void set_NameSymbol(dotSceneElementTags value); /**< Set-method for property NameSymbol. @param value A value of enum dotSceneElementTags.*/
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-		 * Can't be implemented good in C/C++. In C# that's no problem.				   *
-		 * A possible solution for this can be found under:							   *
-		 * http:://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4067/				   *
-		 *																			   *
-		 * It can help, but at last that solution bind the implemetation to            *
-		 * MS systems again. In that case, you can use a C# implementation anyway ;-)  *
-		 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		//void set_Name(std::string);
-
 	public:
-		dotSceneElementTags get_NameSymbol() const; /**< Get-method for property NameSymbol. @return Returns NameSymbol as a value of enum dotSceneElementTags.*/
-		std::string get_Name() const;				/**< Get-method for property Name. @return Returns name as std::string.*/
+		bool set_NameSymbol(dotSceneEnums::dotSceneElementTags value); /**< Set-method for property NameSymbol. @param value A value of enum dotSceneElementTags.*/
+		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * set_Name() can't be implemented good in C/C++. In C# that's no problem. *
+		 * A possible solution for this can be found under:						   *
+		 * http:://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4067/			   *
+		 *																		   *
+		 * It can help, but at last that solution bind the implemetation to		   *
+		 * MS systems again. In that case, but you can use std::string anyway	   *
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		bool set_Name(std::string value);							/**< Set-method for property Name. @param value A std::string.*/
+
+		dotSceneEnums::dotSceneElementTags get_NameSymbol() const;	/**< Get-method for property NameSymbol. @return Returns NameSymbol as a value of enum dotSceneElementTags.*/
+		std::string get_Name() const;								/**< Get-method for property Name. @return Returns name as std::string.*/
+		virtual bool IsValid() const;										/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
+
+		/**
+		 * Default-constructor.
+		 */
+		//dotSceneObject(); 
 
 		/**
 		 * Constructor for class dotSceneObject.
 		 * A simple constuctor without any parameters is not supported.
 		 * @param ElementTag Has to be a possible value of dotSceneElementTags.
 		 */
-		dotSceneObject(dotSceneElementTags ElementTag); 
-		// siehe oben !!!
-		//dotSceneObject(std::string); // Constructor for class dotSceneObject. A simple constuctor without any parameters is not supported. // <param name="ElementName">string MUST correspond to text of one possiple value of dotSceneElementTags</param>
-		//dotSceneObject(dotSceneObject); // Copy-constructor of class dotSceneObject. // <param name="obj">dotSceneObject, where is copied from.</param>
+		dotSceneObject(dotSceneEnums::dotSceneElementTags ElementTag); 
+		
+		/**
+		 * Constructor for class dotSceneObject.
+		 * A simple constuctor without any parameters is not supported.
+		 * @param ElementTag String MUST correspond to text of one possiple value of dotSceneElementTags.
+		 */
+		dotSceneObject(std::string ElementName);
+		
+		/**
+		 * Copy-constructor of class dotSceneObject.
+		 * A simple constuctor without any parameters is not supported.
+		 * @param Another instance of dotSceneObject.
+		 */
+		dotSceneObject(const dotSceneObject& obj);
         
 		/**
 		 * Simple destructor.

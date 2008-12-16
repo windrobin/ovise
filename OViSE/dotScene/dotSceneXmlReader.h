@@ -22,7 +22,7 @@
 
 XERCES_CPP_NAMESPACE_USE
 using namespace std;
-
+using namespace dotSceneObjects;
 /**
  * Struct defining a light source.
  * A node can be a light source, in which case the needed information can be found here.
@@ -189,17 +189,17 @@ private:
  * schema (.xsd). After that the class stores a "blueprint" of the given scene which can then
  * be used to create the scene in Ogre.
  */
-class DotSceneXmlReader
+class dotSceneXmlReader
 {
 public:
 	/// Constructor that wants a XSD schema file. 
-	DotSceneXmlReader(string URLofDotSceneXSD, bool DbgMode = false);
+	dotSceneXmlReader(string URLofDotSceneXSD, bool DbgMode = false);
 	
 	/**
 	 * Parse a dotScene xml-file into the internal structure.
 	 * 
 	 */
-	bool importDotScene(dotSceneObjects::dotScene *pScene);
+	bool importDotScene(/*dotSceneObjects::dotScene *pScene*/);
 	
 	/**
 	 * Validates and parses the given XML-scenefile.
@@ -214,9 +214,12 @@ public:
 	bool processDotScene(Scene *newScene);
 	
 	/// Destructor.
-	~DotSceneXmlReader();
-	
+	~dotSceneXmlReader();
+	dotSceneObjects::dotSceneObject* loadDotScene();
+
 private:
+	dotSceneObjects::dotSceneObject* recursiveNodeProcessing(DOMElement* ParentNode);
+
 	/// Stores the location of the used schema file.
 	string mURLofDotSceneXSD;
 	/// Stores the location of the XML-scenefile.
@@ -249,48 +252,71 @@ private:
 	dotSceneObjects::dotSceneObject* parseNodeItem(DOMNode *node);
 	
 	// Used XML-Tags and attributes
+	// Stage 1
 	XMLCh* TAG_scene;
 	XMLCh* ATTR_formatVersion;
+
+	// Stage 2
 	XMLCh* TAG_nodes;
-	XMLCh* TAG_node;
+
 	XMLCh* TAG_environment;
+
+	XMLCh* TAG_externals;
+
+	// Stage 3+
+	XMLCh* TAG_node;
 	XMLCh* ATTR_name;
+
 	XMLCh* TAG_position;
-	XMLCh *ATTR_x, *ATTR_y, *ATTR_z;
-	XMLCh* TAG_quaternion;
-	XMLCh* ATTR_w;
 	XMLCh* TAG_scale;
+	XMLCh* TAG_normal;
+	XMLCh* ATTR_x;
+	XMLCh* ATTR_y;
+	XMLCh* ATTR_z;
+
+	XMLCh* TAG_quaternion;			// ...and x, y, z
+	XMLCh* ATTR_w;
+	
 	XMLCh* TAG_entity;
 	XMLCh* ATTR_meshFile;
 	XMLCh* ATTR_static;
 	XMLCh* ATTR_visible;
 	XMLCh* ATTR_castShadows;
 	XMLCh* ATTR_renderingDistance;
+
 	XMLCh* TAG_light;
 	XMLCh* TAG_lightRange;
-	XMLCh* TAG_normal;
+
+	XMLCh* TAG_colourAmbient;
+	XMLCh* TAG_colourBackground;
+	XMLCh* TAG_colourDiffuse;
+	XMLCh* TAG_colourSpecular;
 	XMLCh* ATTR_r;
 	XMLCh* ATTR_g;
 	XMLCh* ATTR_b;
-	XMLCh* TAG_colourSpecular;
-	XMLCh* TAG_colourDiffuse;
-	XMLCh* TAG_colourAmbient;
-	XMLCh* TAG_colourBackground;
+
 	XMLCh* TAG_fog;
+	//? <- IMPORTANT: missing attribute linearStart
+	//? <- IMPORTANT: missing attribute linearEnd
+	//? <- IMPORTANT: missing attribute mode
+
 	XMLCh* TAG_lightAttenuation;
 	XMLCh* ATTR_range;
 	XMLCh* ATTR_constant;
 	XMLCh* ATTR_linear;
 	XMLCh* ATTR_quadratic;
-	XMLCh* TAG_camera;
+
+	XMLCh* TAG_camera; // ...and name
 	XMLCh* ATTR_fov;
 	XMLCh* ATTR_projectionType;
+
 	XMLCh* TAG_clipping;
 	XMLCh* ATTR_nearPlaneDist;
 	XMLCh* ATTR_farPlaneDist;
-	XMLCh* TAG_externals;
+	
 	XMLCh* TAG_item;
 	XMLCh* ATTR_type;
+
 	XMLCh* TAG_file;
 };
 

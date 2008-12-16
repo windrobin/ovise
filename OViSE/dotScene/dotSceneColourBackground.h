@@ -14,7 +14,7 @@ namespace dotSceneObjects
 	 * It describes with its RGB-values the backgroud-colour. It's a property of the entire world.
 	 * Not of a special visible object or a source of light.
 	 */
-	class dotSceneColourBackground : public dotSceneColour
+	class dotSceneColourBackground : virtual public dotSceneColour
     {
 	public:
 		/**

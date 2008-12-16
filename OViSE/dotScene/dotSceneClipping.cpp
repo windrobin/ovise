@@ -3,27 +3,53 @@
 #include "dotSceneClipping.h"
 #endif
 
-void dotSceneObjects::dotSceneClipping::set_nearPlaneDist(double value) { _nearPlaneDist = value; }
-void dotSceneObjects::dotSceneClipping::set_farPlaneDist(double value) { _farPlaneDist = value; }
+double dotSceneObjects::dotSceneClipping::get_NearPlaneDist() const { return this->_NearPlaneDist; }
+double dotSceneObjects::dotSceneClipping::get_FarPlaneDist() const { return this->_FarPlaneDist; }
 
-double dotSceneObjects::dotSceneClipping::get_nearPlaneDist() const { return _nearPlaneDist; }
-double dotSceneObjects::dotSceneClipping::get_farPlaneDist() const { return _farPlaneDist; }
+void dotSceneObjects::dotSceneClipping::set_NearPlaneDist(double value) { this->_NearPlaneDist = value; }
+void dotSceneObjects::dotSceneClipping::set_FarPlaneDist(double value) { this->_FarPlaneDist = value; }
 
-/// region constructors & destructors
-dotSceneObjects::dotSceneClipping::dotSceneClipping() : dotSceneObject(clipping) { }
-dotSceneObjects::dotSceneClipping::dotSceneClipping(std::string str_nearPlaneDist, std::string str_farPlaneDist) : dotSceneObject(clipping)
+void dotSceneObjects::dotSceneClipping::set_NearPlaneDist(std::string value)
 {
-	double tmp1, tmp2;
-	sscanf(str_nearPlaneDist.c_str(), "%lf", &tmp1);
-	this->set_nearPlaneDist(tmp1);
-	sscanf(str_farPlaneDist.c_str(), "%lf", &tmp2);
-    this->set_farPlaneDist(tmp2);
+	double tmp;
+	sscanf_s(value.c_str(), "%lf", &tmp);
+	this->set_NearPlaneDist(tmp);
 }
 
-dotSceneObjects::dotSceneClipping::dotSceneClipping(double double_nearPlaneDist, double double_farPlaneDist) : dotSceneObject(clipping)
+void dotSceneObjects::dotSceneClipping::set_FarPlaneDist(std::string value)
 {
-    this->set_nearPlaneDist(double_nearPlaneDist);
-    this->set_farPlaneDist(double_farPlaneDist);
+	double tmp;
+	sscanf_s(value.c_str(), "%lf", &tmp);
+	this->set_FarPlaneDist(tmp);
+}
+
+
+bool dotSceneObjects::dotSceneClipping::IsValid() const
+{
+	// NearPlaneDist & FarPlaneDist are no useable for valid-check!
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
+}
+
+/// region constructors & destructors
+dotSceneObjects::dotSceneClipping::dotSceneClipping() : dotSceneObject(dotSceneEnums::clipping)
+{
+	double dummy = 0;
+	this->set_NearPlaneDist(dummy);
+	this->set_FarPlaneDist(dummy);
+}
+
+dotSceneObjects::dotSceneClipping::dotSceneClipping(std::string str_NearPlaneDist, std::string str_FarPlaneDist) : dotSceneObject(dotSceneEnums::clipping)
+{
+	this->set_NearPlaneDist(str_NearPlaneDist);
+    this->set_FarPlaneDist(str_FarPlaneDist);
+}
+
+dotSceneObjects::dotSceneClipping::dotSceneClipping(double double_NearPlaneDist, double double_FarPlaneDist) : dotSceneObject(dotSceneEnums::clipping)
+{
+    this->set_NearPlaneDist(double_NearPlaneDist);
+    this->set_FarPlaneDist(double_FarPlaneDist);
 }
 
 dotSceneObjects::dotSceneClipping::~dotSceneClipping() { }
