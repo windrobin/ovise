@@ -5,21 +5,29 @@
 
 using namespace dotSceneObjects;
 
-void dotSceneObjects::dotSceneEnvironment::set_fog(dotSceneFog value) { _fog = value; }
-void dotSceneObjects::dotSceneEnvironment::set_colourBackground(dotSceneColourBackground value) { _colourBackground = value; }
-void dotSceneObjects::dotSceneEnvironment::set_colourAmbient(dotSceneColourAmbient value) { _colourAmbient = value; }
+void dotSceneObjects::dotSceneEnvironment::set_fog(dotSceneFog value) { this->_fog = value; }
+void dotSceneObjects::dotSceneEnvironment::set_colourBackground(dotSceneColourBackground value) { this->_colourBackground = value; }
+void dotSceneObjects::dotSceneEnvironment::set_colourAmbient(dotSceneColourAmbient value) { this->_colourAmbient = value; }
 
-dotSceneFog dotSceneObjects::dotSceneEnvironment::get_fog() const { return _fog; }
-dotSceneColourBackground dotSceneObjects::dotSceneEnvironment::get_colourBackground() const { return _colourBackground; }
-dotSceneColourAmbient dotSceneObjects::dotSceneEnvironment::get_colourAmbient() const { return _colourAmbient; }
+dotSceneFog dotSceneObjects::dotSceneEnvironment::get_fog() const { return this->_fog; }
+dotSceneColourBackground dotSceneObjects::dotSceneEnvironment::get_colourBackground() const { return this->_colourBackground; }
+dotSceneColourAmbient dotSceneObjects::dotSceneEnvironment::get_colourAmbient() const { return this->_colourAmbient; }
 
-///region constructors & destructors
-dotSceneObjects::dotSceneEnvironment::dotSceneEnvironment() : dotSceneObject(environment) { } /// Simple constructor. It calls the constructor of baseobject   
-dotSceneObjects::dotSceneEnvironment::dotSceneEnvironment(dotSceneFog obj_fog, dotSceneColourAmbient obj_colourAmbient, dotSceneColourBackground obj_colourBackground) : dotSceneObject(environment) /// The dotScene-objects have to be constructed before./// <param name="obj_fog">A pre-constrcted dotSceneFog-object.</param>/// <param name="obj_colorAmbient">A pre-constrcted dotSceneColorAmbient-object.</param>/// <param name="obj_colorBackground">A pre-constrcted dotSceneColorBackground-object.</param>
+bool dotSceneObjects::dotSceneEnvironment::IsValid() const
 {
-    this->_fog = obj_fog;
-    this->_colourAmbient = obj_colourAmbient;
-    this->_colourBackground = obj_colourBackground;
+	if (!this->_fog.IsValid()) return false;
+	if (!this->_colourAmbient.IsValid()) return false;
+	if (!this->_colourBackground.IsValid()) return false;
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
+}
+///region constructors & destructors
+dotSceneObjects::dotSceneEnvironment::dotSceneEnvironment() : dotSceneObject(dotSceneEnums::environment) { }
+dotSceneObjects::dotSceneEnvironment::dotSceneEnvironment(dotSceneFog obj_fog, dotSceneColourAmbient obj_colourAmbient, dotSceneColourBackground obj_colourBackground) : dotSceneObject(dotSceneEnums::environment)
+{
+    this->set_fog(obj_fog);
+    this->set_colourAmbient(obj_colourAmbient);
+    this->set_colourBackground(obj_colourBackground);
 }
 
-dotSceneObjects::dotSceneEnvironment::~dotSceneEnvironment() { }

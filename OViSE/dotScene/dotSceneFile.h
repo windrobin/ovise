@@ -12,15 +12,15 @@ namespace dotSceneObjects
 	/**
 	 * This class holds a string, representing a filename.
 	 */
-	class dotSceneFile : public dotSceneObject
+	class dotSceneFile : virtual public dotSceneObject
     {
 	private:
-		std::string _name; /**< Property name. A filename in std::string -format.*/
-
-		void set_name(std::string value);	/**< Set-method for property name. @param value Value of a std::string.*/
+		std::string _FileName; /**< Property name. A filename in std::string -format.*/
 
 	public:
-		std::string get_name();				/**< Get-method for property name. @return Returns name as std::string.*/
+		std::string get_FileName() const;		/**< Get-method for property name. @return Returns name as std::string.*/
+		void set_FileName(std::string value);	/**< Set-method for property name. @param value Value of a std::string.*/
+		bool IsValid() const;					/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
 
 		/**
 		 * Simple constructor.
@@ -33,6 +33,6 @@ namespace dotSceneObjects
 		 * Constructor for filestring-object.
 		 * @param name Filename-value in std::string -format.
 		 */
-		dotSceneFile(std::string name);
+		dotSceneFile(std::string FileName);
     };
 }

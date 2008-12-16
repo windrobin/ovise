@@ -1,87 +1,18 @@
 #include "dotSceneXmlReader.h"
 
 /*
- * *********** Implementierung XMLSceneNode**************************
- */
-void XMLSceneNode::deleteChildren()
-{
-	for(vector<XMLSceneNode*>::iterator it = children.begin(); it != children.end(); it++)
-	{
-		XMLSceneNode *tmp = *it;
-		if(tmp->children.size() == 0)
-			delete tmp;
-		else
-			tmp->deleteChildren();
-	}
-}
-/*
- * *********** Implementierung Scene ********************************
- */
-Scene::Scene(string name)
-{
-	mName = name;
-}
-
-string Scene::getName()
-{
-	return mName;
-}
-
-int Scene::getNumberOfNodes()
-{
-	return mNodes.size();
-}
-
-XMLSceneNode* Scene::getNodeByName(string name)
-{
-	for(vector<XMLSceneNode*>::iterator it = mNodes.begin(); it != mNodes.end(); it++)
-	{
-		if(name.compare((*it)->mName) == 0)
-			return *it;
-	}
-	return NULL;
-}
-
-XMLSceneNode* Scene::getNode(int index)
-{
-	if(index < (int)mNodes.size())
-	{
-		return mNodes[index];
-	}
-	return NULL;		
-}
-
-bool Scene::addNode(XMLSceneNode *node)
-{
-	if(node != NULL)
-	{
-		mNodes.push_back(node);
-		return true;
-	}
-	else return false;
-}
-
-Scene::~Scene()
-{
-	for(vector<XMLSceneNode*>::iterator iter = mNodes.begin(); iter != mNodes.end(); iter++)
-	{
-		(*iter)->deleteChildren();
-	}
-}
-
-/*
- * *********** Implementierung DotSceneXMLReader ********************
+ * *********** Implementierung dotSceneXMLReader ********************
  */
 
-DotSceneXmlReader::DotSceneXmlReader(std::string URLofDotSceneXSD, bool DbgMode)
+dotSceneXmlReader::dotSceneXmlReader(std::string URLofDotSceneXSD, bool DbgMode)
 {
-	mURLofDotSceneXSD = URLofDotSceneXSD;
-	mDebugMode = DbgMode;
+	this->mURLofDotSceneXSD = URLofDotSceneXSD;
+	this->mDebugMode = DbgMode;
 	
 	try
 	{
 		XMLPlatformUtils::Initialize();
-		Ogre::LogManager::getSingletonPtr()->logMessage("*** Xerces initialised. ***");
+		cout << "*** Xerces initialised. ***\n";
 	}
 	catch (const XMLException& toCatch) 
 	{
@@ -138,7 +69,7 @@ DotSceneXmlReader::DotSceneXmlReader(std::string URLofDotSceneXSD, bool DbgMode)
 	ATTR_renderingDistance= XMLString::transcode("renderingDistance");
 }
 
-bool DotSceneXmlReader::parseDotSceneXML(string URLofXML)
+bool dotSceneXmlReader::parseDotSceneXML(string URLofXML) // validation only
 {
 	mParser = new XercesDOMParser();
     mParser->setValidationScheme(XercesDOMParser::Val_Always);    
@@ -150,10 +81,9 @@ bool DotSceneXmlReader::parseDotSceneXML(string URLofXML)
 
     try 
     {
-    	string logMsg = "Parsing file " + URLofXML + " ...";
-    	Ogre::LogManager::getSingletonPtr()->logMessage(logMsg);
+		std::cout << "Parsing file " + URLofXML + " ...";
         mParser->parse(URLofXML.c_str());
-        Ogre::LogManager::getSingletonPtr()->logMessage("success!");
+        std::cout << "success!\n";
     }
     catch (const XMLException& toCatch) 
     {
@@ -173,839 +103,896 @@ bool DotSceneXmlReader::parseDotSceneXML(string URLofXML)
     }
     catch (...) 
     {
-        Ogre::LogManager::getSingletonPtr()->logMessage("Unexpected Exception", Ogre::LML_CRITICAL);
+        std::cout << "Unexpected Exception";
         return false;
     }
     
     return true;
 }
 
-bool DotSceneXmlReader::importDotScene(dotSceneObjects::dotScene *pScene)
+bool dotSceneXmlReader::importDotScene(/*dotSceneObjects::dotScene Scene*/) 
 {
-	try
-    {
-    	Ogre::LogManager::getSingletonPtr()->logMessage("Processing dotScene...");
-    	// no need to free this pointer - owned by the parent parser object
-        DOMDocument* xmlDoc = mParser->getDocument();
+	DOMDocument	*xmlDocument;
+	DOMElement	*xmlRootNode;
+	DOMNodeList *xmlChildNodeList;
+	XMLSize_t	 xmlChildNodeCount = 0;
+	DOMNode		*xmlCurrentNode;
+	DOMElement	*xmlCurrentElement;
+	DOMAttr     *xmlCurrentAttribute;
 
-        // Get the top-level element: Name is "root". No attributes for "root"
-        DOMElement* elementRoot = xmlDoc->getDocumentElement();
-        if( !elementRoot )
-        {
-        	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Empty XML File", Ogre::LML_CRITICAL);
-        }
+
+
+
+
+	// no need to free this pointer - owned by the parent parser object
+    xmlDocument = this->mParser->getDocument();
+
+    // Get the top-level element: Name is "root". No attributes for "root"
+    xmlRootNode = xmlDocument->getDocumentElement();
+    if(!xmlRootNode)
+    {
+    	std::cout << "Empty RootNode\n";
+    }
+	else
+	{
+		std::cout << "No empty RootNode\n";
 		
+		DOMNamedNodeMap *test = xmlRootNode->getAttributes();
+
 		// Parse XML file for tags of interest: "nodes"/"externals"
-        // Look one level nested within "root". (child of root)
-        DOMNodeList*      children = elementRoot->getChildNodes();
-        const  XMLSize_t nodeCount = children->getLength();
+		// Look one level nested within "root". (child of root)
+		xmlChildNodeList = xmlRootNode->getChildNodes();
+		xmlChildNodeCount = xmlChildNodeList->getLength();
 
-        // For all nodes, children of "root" in the XML tree.
-        for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-        {
-    	    DOMNode* currentNode = children->item(xx);
-            if( currentNode->getNodeType() &&  // true is not NULL
-                currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element 
-         	{
-            	// Found node which is an Element. Re-cast node as element
-            	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	            // See if we can find the <nodes>-tag and process it
-	            if( XMLString::equals(currentElement->getTagName(), TAG_nodes))
-	            {
-	            	dotSceneObjects::dotSceneNodes currNodes;
-	            	// Search for the first <node>-tag and send it to the recursive parseNode() for processing
-	            	DOMNodeList* currentNodeChildren = currentNode->getChildNodes();
-	            	for(XMLSize_t i = 0; i < currentNodeChildren->getLength(); i++)
-	            	{
-	            		// Check if current child is a ELEMENT_NODE
-	            		DOMNode *hlp = currentNodeChildren->item(i);
-	            		if(hlp->getNodeType() == DOMNode::ELEMENT_NODE)
-	            		{
-	            			DOMElement *hlpElement = dynamic_cast<xercesc::DOMElement*>(hlp);
-	            			// Check if it is a <node>-element
-	            			if(XMLString::equals(hlpElement->getTagName(), TAG_node))
-	            			{
-	            				//currNodes.addItem(parseNodeItems(hlp, NULL));
-	            			}
-	            		}
-	            	}
-	            	//pScene->set_nodes(currNodes);
-	            }
-	            if( XMLString::equals(currentElement->getTagName(), TAG_externals))
-	            {
-	            	dotSceneObjects::dotSceneExternals currExternals;
-	            	
-	            	//pScene->set_externals(currExternals);
-	            }
-	         }
-      	}
-      	Ogre::LogManager::getSingletonPtr()->logMessage("done.");
-      	return true;
-   	}
-   	catch( xercesc::XMLException& e )
-   	{
-    	char* message = xercesc::XMLString::transcode( e.getMessage() );
-      	string logMsg = "Error parsing file: " + (string)message;
-      	Ogre::LogManager::getSingletonPtr()->logMessage(logMsg, Ogre::LML_CRITICAL);
-      	XMLString::release( &message );
-      	return false;
-   	}
+		// For all nodes, children of "root" in the XML tree.
+		for(XMLSize_t NodeIterator = 0; NodeIterator < xmlChildNodeCount; ++NodeIterator)
+		{
+			xmlCurrentNode = xmlChildNodeList->item(NodeIterator);
+			//xmlCurrentElement = dynamic_cast<xercesc::DOMElement*>(xmlCurrentNode);
+			//const XMLCh* dummy = xmlCurrentElement->getNodeName();
+			std::string s1;
+			switch(xmlCurrentNode->getNodeType())
+			{
+				case DOMNode::NodeType::ATTRIBUTE_NODE :
+					s1 = "ATTRIBUTE_NODE";
+					break;
+				case DOMNode::NodeType::CDATA_SECTION_NODE :
+					s1 = "CDATA_SECTION_NODE";
+					break;
+				case DOMNode::NodeType::COMMENT_NODE :
+					s1 = "COMMENT_NODE";
+					break;
+				case DOMNode::NodeType::DOCUMENT_FRAGMENT_NODE :
+					s1 = "DOCUMENT_FRAGMENT_NODE";
+					break;
+				case DOMNode::NodeType::DOCUMENT_NODE :
+					s1 = "DOCUMENT_NODE";
+					break;
+				case DOMNode::NodeType::DOCUMENT_TYPE_NODE :
+					s1 = "DOCUMENT_TYPE_NODE";
+					break;
+				case DOMNode::NodeType::ELEMENT_NODE :
+					s1 = "ELEMENT_NODE";
+					break;
+				case DOMNode::NodeType::ENTITY_NODE :
+					s1 = "ENTITY_NODE";
+					break;
+				case DOMNode::NodeType::ENTITY_REFERENCE_NODE :
+					s1 = "ENTITY_REFERENCE_NODE";
+					break;
+				case DOMNode::NodeType::NOTATION_NODE :
+					s1 = "NOTATION_NODE";
+					break;
+				case DOMNode::NodeType::PROCESSING_INSTRUCTION_NODE :
+					s1 = "PROCESSING_INSTRUCTION_NODE";
+					break;
+				case DOMNode::NodeType::TEXT_NODE :
+					s1 = "TEXT_NODE";
+					break;
+				default:
+					s1 = "Should not occure!";
+					break;
+			}
+			const XMLCh* dummy2 = xmlCurrentNode->getNodeName();
+			const XMLCh* dummy3 = xmlCurrentNode->getNodeValue();
+			std::string s2 = XMLString::transcode(dummy2);
+			std::string s3;
+			if (dummy3 == 0) s3 = "null";
+			else s3 = XMLString::transcode(dummy3);
+			std::cout << NodeIterator << ": " << s1 << " , " <<  s2 << " , " <<  s3 << "\n";
+		}
+	}
+  	return true;
 }
 
-bool DotSceneXmlReader::processDotScene(Scene *newScene)
+
+
+dotSceneObjects::dotSceneObject* dotSceneXmlReader::loadDotScene()
 {
-	try
+	DOMDocument	*xmlDocument;
+	DOMElement	*xmlRootNode;
+
+	DOMNodeList *xmlChildNodeList;
+	XMLSize_t	 xmlChildNodeCount = 0;
+	DOMNode		*xmlCurrentNode;
+	DOMElement	*xmlCurrentElement;
+	DOMAttr     *xmlCurrentAttribute;
+
+	// no need to free this pointer - owned by the parent parser object
+    xmlDocument = this->mParser->getDocument();
+
+    // Get the top-level element: Name is "root". No attributes for "root"
+    xmlRootNode = xmlDocument->getDocumentElement();
+    if(!xmlRootNode)
     {
-    	Ogre::LogManager::getSingletonPtr()->logMessage("Processing dotScene...");
-    	// no need to free this pointer - owned by the parent parser object
-        DOMDocument* xmlDoc = mParser->getDocument();
-
-        // Get the top-level element: Name is "root". No attributes for "root"
-        DOMElement* elementRoot = xmlDoc->getDocumentElement();
-        if( !elementRoot )
-        {
-        	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Empty XML File", Ogre::LML_CRITICAL);
-        }
-		
-		// Parse XML file for tags of interest: "nodes"/"externals"
-        // Look one level nested within "root". (child of root)
-        DOMNodeList*      children = elementRoot->getChildNodes();
-        const  XMLSize_t nodeCount = children->getLength();
-
-        // For all nodes, children of "root" in the XML tree.
-        for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-        {
-    	    DOMNode* currentNode = children->item(xx);
-            if( currentNode->getNodeType() &&  // true is not NULL
-                currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element 
-         	{
-            	// Found node which is an Element. Re-cast node as element
-            	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	            // See if we can find the <nodes>-tag and process it
-	            if( XMLString::equals(currentElement->getTagName(), TAG_nodes))
-	            {
-	            	// Search for the first <node>-tag and send it to the recursive parseNode() for processing
-	            	DOMNodeList* currentNodeChildren = currentNode->getChildNodes();
-	            	char logMsg[256];
-		        	sprintf(logMsg, "Found %i nodes.", (int)currentNodeChildren->getLength());
-			      	Ogre::LogManager::getSingletonPtr()->logMessage(logMsg);
-	            	for(XMLSize_t i = 0; i < currentNodeChildren->getLength(); i++)
-	            	{
-	            		// Check if current child is a ELEMENT_NODE
-	            		DOMNode *hlp = currentNodeChildren->item(i);
-	            		if(hlp->getNodeType() == DOMNode::ELEMENT_NODE)
-	            		{
-	            			DOMElement *hlpElement = dynamic_cast<xercesc::DOMElement*>(hlp);
-	            			// Check if it is a <node>-element
-	            			if(XMLString::equals(hlpElement->getTagName(), TAG_node))
-	            			{
-	            				newScene->addNode(parseNode(hlp, NULL));
-	            				Ogre::LogManager::getSingletonPtr()->logMessage("Added new node to scene.");
-	            			}
-	            		}
-	            	}	            		
-	            }
-	            if( XMLString::equals(currentElement->getTagName(), TAG_externals))
-	            {
-	            	
-	            }
-	         }
-      	}
-      	Ogre::LogManager::getSingletonPtr()->logMessage("done.");
-      	return true;
-   	}
-   	catch( xercesc::XMLException& e )
-   	{
-    	char* message = xercesc::XMLString::transcode( e.getMessage() );
-      	string logMsg = "Error parsing file: " + (string)message;
-      	Ogre::LogManager::getSingletonPtr()->logMessage(logMsg, Ogre::LML_CRITICAL);
-      	XMLString::release( &message );
-      	return false;
-   	}		
+    	std::cout << "Empty RootNode\n";
+		return 0;
+    }
+	else
+	{
+		return this->recursiveNodeProcessing(xmlRootNode);
+	}
+	return 0;
 }
 
-XMLSceneNode* DotSceneXmlReader::parseNode(DOMNode *node, XMLSceneNode *parent)
+dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOMElement* ParentElement)
 {
-	DOMNodeList*      children = node->getChildNodes();
-    const  XMLSize_t nodeCount = children->getLength();
-    XMLSceneNode *currNode = new XMLSceneNode();
-    if(parent != NULL)
-    	currNode->parent = parent;
-    if(node->getNodeType() && node->getNodeType() == DOMNode::ELEMENT_NODE)
-    {
-    	DOMElement *nodeElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	const XMLCh* xmlch_name = nodeElement->getAttribute(ATTR_name);
-    	currNode->mName = XMLString::transcode(xmlch_name);
-    	string lgMsg = "Xerces: Found Node with name " + currNode->mName;
-    	Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg.c_str());
-    }
-    else
-    {
-    	char lgMsg[255];
-    	sprintf(lgMsg, "Xerces: Found node with type %i. Aborting.", node->getNodeType());
-    	Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg);
-    	return NULL;
-    }
-	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-    {
-	    DOMNode* currentNode = children->item(xx);
-        if( currentNode->getNodeType() &&  // true is not NULL
-            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-        {
-        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-        	if( XMLString::equals(currentElement->getTagName(), TAG_position))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_position");
-            	const XMLCh* xmlch_positionx = currentElement->getAttribute(ATTR_x);
-                char* poshelperx = XMLString::transcode(xmlch_positionx);
-                sscanf(poshelperx, "%lf", &(currNode->mPosition[0]));
-                XMLString::release(&poshelperx);
-                
-                const XMLCh* xmlch_positiony = currentElement->getAttribute(ATTR_y);
-                char* poshelpery = XMLString::transcode(xmlch_positiony);
-                sscanf(poshelpery, "%lf", &(currNode->mPosition[1]));
-                XMLString::release(&poshelpery);
-                
-                const XMLCh* xmlch_positionz = currentElement->getAttribute(ATTR_z);
-                char* poshelperz = XMLString::transcode(xmlch_positionz);
-                sscanf(poshelperz, "%lf", &(currNode->mPosition[2]));
-                XMLString::release(&poshelperz);
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_quaternion))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_quaternion");
-            	const XMLCh* xmlch_quaternionx = currentElement->getAttribute(ATTR_x);
-                char* quathelperx = XMLString::transcode(xmlch_quaternionx);
-                sscanf(quathelperx, "%lf", &(currNode->mQuaternion[0]));
-                XMLString::release(&quathelperx);
-                
-                const XMLCh* xmlch_quaterniony = currentElement->getAttribute(ATTR_y);
-                char* quathelpery = XMLString::transcode(xmlch_quaterniony);
-                sscanf(quathelpery, "%lf", &(currNode->mQuaternion[1]));
-                XMLString::release(&quathelpery);
-                
-                const XMLCh* xmlch_quaternionz = currentElement->getAttribute(ATTR_z);
-                char* quathelperz = XMLString::transcode(xmlch_quaternionz);
-                sscanf(quathelperz, "%lf", &(currNode->mQuaternion[2]));
-                XMLString::release(&quathelperz);
-                
-                const XMLCh* xmlch_quaternionw = currentElement->getAttribute(ATTR_w);
-                char* quathelperw = XMLString::transcode(xmlch_quaternionw);
-                sscanf(quathelperw, "%lf", &(currNode->mQuaternion[3]));
-                XMLString::release(&quathelperw);
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_scale))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_scale");
-            	const XMLCh* xmlch_scalex = currentElement->getAttribute(ATTR_x);
-                char* scalehelperx = XMLString::transcode(xmlch_scalex);
-                sscanf(scalehelperx, "%lf", &(currNode->mScale[0]));
-                XMLString::release(&scalehelperx);
-                
-                const XMLCh* xmlch_scaley = currentElement->getAttribute(ATTR_y);
-                char* scalehelpery = XMLString::transcode(xmlch_scaley);
-                sscanf(scalehelpery, "%lf", &(currNode->mScale[1]));
-                XMLString::release(&scalehelpery);
-                
-                const XMLCh* xmlch_scalez = currentElement->getAttribute(ATTR_z);
-                char* scalehelperz = XMLString::transcode(xmlch_scalez);
-                sscanf(scalehelperz, "%lf", &(currNode->mScale[2]));
-                XMLString::release(&scalehelperz);
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_entity))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_entity");
-            	currNode->mType = XMLSceneNode::ENTITY;
-            	const XMLCh* xmlch_entName = currentElement->getAttribute(ATTR_name);
-            	currNode->mEntityName = XMLString::transcode(xmlch_entName);
-            	const XMLCh* xmlch_entMshFileName = currentElement->getAttribute(ATTR_meshFile);
-            	currNode->mEntityMeshFile = XMLString::transcode(xmlch_entMshFileName);
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_light))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_light");
-            	currNode->mType = XMLSceneNode::LIGHT;
-            	const XMLCh* xmlch_lightName = currentElement->getAttribute(ATTR_name);
-            	currNode->mLight.mName = XMLString::transcode(xmlch_lightName);
-            	const XMLCh* xmlch_lightType = currentElement->getAttribute(ATTR_type);
-            	currNode->mLight.mType = XMLString::transcode(xmlch_lightType);
-            	DOMNodeList *lightChilds = currentNode->getChildNodes();
-            	const  XMLSize_t l = lightChilds->getLength();
-            	for(XMLSize_t i = 0; i < l; i++)
-            	{
-            		DOMNode *lightChild = lightChilds->item(i);
-            		if(lightChild && lightChild->getNodeType() == DOMNode::ELEMENT_NODE)
-            		{
-            			DOMElement* lightElement = dynamic_cast< xercesc::DOMElement* >( lightChild );
-            			if(XMLString::equals(lightElement->getTagName(), TAG_colourDiffuse))
-            			{
-            				Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_colourDiffuse");
-            				const XMLCh* xmlch_colDiffr = lightElement->getAttribute(ATTR_r);
-            				char* colhelperr = XMLString::transcode(xmlch_colDiffr);
-            				sscanf(colhelperr, "%lf", &(currNode->mLight.mColourDiffuse[0]));
-            				XMLString::release(&colhelperr);
-            				const XMLCh* xmlch_colDiffg = lightElement->getAttribute(ATTR_g);
-            				char* colhelperg = XMLString::transcode(xmlch_colDiffg);
-            				sscanf(colhelperg, "%lf", &(currNode->mLight.mColourDiffuse[1]));
-            				XMLString::release(&colhelperg);
-            				const XMLCh* xmlch_colDiffb = lightElement->getAttribute(ATTR_b);
-            				char* colhelperb = XMLString::transcode(xmlch_colDiffb);
-            				sscanf(colhelperb, "%lf", &(currNode->mLight.mColourDiffuse[2]));
-            				XMLString::release(&colhelperb);
-            			}
-            			if(XMLString::equals(lightElement->getTagName(), TAG_colourSpecular))
-            			{
-            				Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_colourSpecular");
-            				const XMLCh* xmlch_colSpecr = lightElement->getAttribute(ATTR_r);
-            				char* colhelperr = XMLString::transcode(xmlch_colSpecr);
-            				sscanf(colhelperr, "%lf", &(currNode->mLight.mColourSpecular[0]));
-            				XMLString::release(&colhelperr);
-            				const XMLCh* xmlch_colSpecg = lightElement->getAttribute(ATTR_g);
-            				char* colhelperg = XMLString::transcode(xmlch_colSpecg);
-            				sscanf(colhelperg, "%lf", &(currNode->mLight.mColourSpecular[1]));
-            				XMLString::release(&colhelperg);
-            				const XMLCh* xmlch_colSpecb = lightElement->getAttribute(ATTR_b);
-            				char* colhelperb = XMLString::transcode(xmlch_colSpecb);
-            				sscanf(colhelperb, "%lf", &(currNode->mLight.mColourSpecular[2]));
-            				XMLString::release(&colhelperb);
-            			}
-            			if(XMLString::equals(lightElement->getTagName(), TAG_lightAttenuation))
-            			{
-            				Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_lightAttenuation");
-            				const XMLCh* xmlch_range = lightElement->getAttribute(ATTR_range);
-            				char* rangehelper = XMLString::transcode(xmlch_range);
-            				sscanf(rangehelper, "%lf", &(currNode->mLight.mLightAttenuationRange));
-            				XMLString::release(&rangehelper);
-            				const XMLCh* xmlch_const = lightElement->getAttribute(ATTR_constant);
-            				char* consthelper = XMLString::transcode(xmlch_const);
-            				sscanf(consthelper, "%lf", &(currNode->mLight.mLightAttenuationConst));
-            				XMLString::release(&consthelper);
-            				const XMLCh* xmlch_linear = lightElement->getAttribute(ATTR_linear);
-            				char* linearhelper = XMLString::transcode(xmlch_linear);
-            				sscanf(linearhelper, "%lf", &(currNode->mLight.mLightAttenuationLinear));
-            				XMLString::release(&linearhelper);
-            				const XMLCh* xmlch_quad = lightElement->getAttribute(ATTR_quadratic);
-            				char* quadhelper = XMLString::transcode(xmlch_quad);
-            				sscanf(quadhelper, "%lf", &(currNode->mLight.mLightAttenuationQuad));
-            				XMLString::release(&quadhelper);
-            			}
-            		}
-            	}
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_camera))
-            {
-            	Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_camera");
-            	currNode->mType = XMLSceneNode::CAMERA;
-            	const XMLCh* xmlch_camName = currentElement->getAttribute(ATTR_name);
-            	currNode->mCamera.mName = XMLString::transcode(xmlch_camName);
-            	const XMLCh* xmlch_camProjType = currentElement->getAttribute(ATTR_projectionType);
-            	currNode->mCamera.mProjectionType = XMLString::transcode(xmlch_camProjType);
-            	const XMLCh* xmlch_camFov = currentElement->getAttribute(ATTR_fov);
-            	char *fovhelper = XMLString::transcode(xmlch_camFov);
-            	sscanf(fovhelper, "%lf", &(currNode->mCamera.mFOV));
-            	XMLString::release(&fovhelper);
-            	DOMNodeList *camChilds = currentNode->getChildNodes();
-            	const  XMLSize_t l = camChilds->getLength();
-            	for(XMLSize_t i = 0; i < l; i++)
-            	{
-            		DOMNode *camChild = camChilds->item(i);
-            		if(camChild && camChild->getNodeType() == DOMNode::ELEMENT_NODE)
-            		{
-            			DOMElement* camElement = dynamic_cast< xercesc::DOMElement* >( camChild );
-            			if(XMLString::equals(camElement->getTagName(), TAG_clipping))
-            			{
-            				Ogre::LogManager::getSingletonPtr()->logMessage("Xerces: Found TAG_clipping");
-            				const XMLCh* xmlch_clipNPDist = camElement->getAttribute(ATTR_nearPlaneDist);
-            				char* clipNPDhelper = XMLString::transcode(xmlch_clipNPDist);
-            				sscanf(clipNPDhelper, "%lf", &(currNode->mCamera.mClippingNearPlaneDist));
-            				XMLString::release(&clipNPDhelper);
-            				const XMLCh* xmlch_clipFPDist = camElement->getAttribute(ATTR_farPlaneDist);
-            				char* clipFPDhelper = XMLString::transcode(xmlch_clipFPDist);
-            				sscanf(clipFPDhelper, "%lf", &(currNode->mCamera.mClippingFarPlaneDist));
-            				XMLString::release(&clipFPDhelper);
-            			}
-            		}
-            	}
-            }
-            if( XMLString::equals(currentElement->getTagName(), TAG_node))
-            {
-            	XMLSceneNode *XMLChildNode = parseNode(currentNode, currNode);
-            	currNode->children.push_back(XMLChildNode);
-            }
-        }
-    }
-    
-    return currNode;           
+	DOMNodeList *ChildNodes = ParentElement->getChildNodes();
+	XMLSize_t	 ChildCount = ChildNodes->getLength();
+	DOMNode		*CurrentNode = 0;
+	DOMElement	*CurrentElement = 0;
+	const XMLCh* StringBuffer;
+	std::string StringBuffer2;
+
+	dotSceneObjects::dotSceneObject* ObjectReturnedFromRecursiveCall = 0;
+	dotSceneObjects::dotSceneObject* ObjectForPolymorphReturn = 0;
+
+	// Stage 0
+	dotSceneObjects::dotScene* someScene;
+
+	// Stage 1
+	dotSceneObjects::dotSceneNodes* someNodes;
+	dotSceneObjects::dotSceneEnvironment* someEnvironment;
+	dotSceneObjects::dotSceneExternals* someExternals;
+
+	// Stage 2
+	dotSceneObjects::dotSceneNode* someNode;
+//	dotSceneObjects::dotSceneNode NodeBuffer;
+	
+	// Stage 3+4
+	dotSceneObjects::dotScenePosition* somePosition;
+	dotSceneObjects::dotSceneNormal* someNormal;
+
+	dotSceneObjects::dotSceneQuaternion* someQuaternion;
+	dotSceneObjects::dotSceneScale* someScale;
+	dotSceneObjects::dotSceneCamera* someCamera;
+	dotSceneObjects::dotSceneEntity* someEntity;
+	dotSceneObjects::dotSceneLight* someLight;
+	dotSceneObjects::dotSceneColourAmbient* someColourAmbient;
+	dotSceneObjects::dotSceneColourBackground* someColourBackground;
+	dotSceneObjects::dotSceneColourDiffuse* someColourDiffuse;
+	dotSceneObjects::dotSceneColourSpecular* someColourSpecular;
+	dotSceneObjects::dotSceneItem* someItem;
+	dotSceneObjects::dotSceneFile* someFile;
+
+	// There is noc switch/case for strings in C+ :-(
+	// Here a helper-method is used, to find a matching value of a dotSceneElementaryTags-enum.
+	StringBuffer2 = XMLString::transcode(ParentElement->getNodeName());
+	dotSceneObjects::dotSceneObject ObjectUsedForIdentificationOfEnumValue = dotSceneObjects::dotSceneObject(StringBuffer2);
+	dotSceneEnums::dotSceneElementTags TagType = ObjectUsedForIdentificationOfEnumValue.get_NameSymbol();
+
+	// *************************************** Attribute-Handling *************************************************
+	switch(TagType)
+	{
+		case dotSceneEnums::billboard:
+			break;
+		case dotSceneEnums::billboardSet:
+			break;
+		case dotSceneEnums::camera: // not ready!!!
+			/*std::cout << " element-identification: 'dotSceneCamera'\n";
+
+			// Create dotSceneObject
+			someCamera = new dotSceneObjects::dotSceneCamera();
+			ObjectForPolymorphReturn = someCamera;
+			
+			// Lookup for specialized attributes
+			// KNOWLEGE: No errors can occure. If an attribute is not included in element, NOT_FOUND_IN_XMLis used here.
+			//			 That marks a not existing attribute.
+			if (ParentElement->hasAttribute(XMLString::transcode("name")))
+			{
+				someEntity->set_name(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			}
+			else
+			{
+				someEntity->set_name("NOT_FOUND_IN_XML");
+			}
+			std::cout << "Has attribute 'name': \"" << someEntity->get_name() << "\"\n";
+
+			if (ParentElement->hasAttribute(XMLString::transcode("meshFile")))
+			{
+				someEntity->set_meshFile(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("meshFile"))));
+			}
+			else
+			{
+				someEntity->set_meshFile("NOT_FOUND_IN_XML");
+			}
+			std::cout << "Has attribute 'meshFile': \"" << someEntity->get_meshFile() << "\"\n";
+*/
+			break;
+
+		case dotSceneEnums::clipping:
+			break;
+		case dotSceneEnums::colourAmbient:
+			// Create dotSceneObject
+			someColourAmbient = new dotSceneObjects::dotSceneColourAmbient();
+			ObjectForPolymorphReturn = someColourAmbient;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("r"))) someColourAmbient->set_r(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("r"))));
+			else someColourAmbient->set_r(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("g")))	someColourAmbient->set_g(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("g"))));
+			else someColourAmbient->set_g(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("b")))	someColourAmbient->set_b(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("b"))));
+			else someColourAmbient->set_b(0.0);
+
+			std::cout << " element-identification: 'dotSceneColourAmbient'\n";
+			std::cout << "Has attribute 'r': \"" << someColourAmbient->get_r() << "\"\n";
+			std::cout << "Has attribute 'g': \"" << someColourAmbient->get_g() << "\"\n";
+			std::cout << "Has attribute 'b': \"" << someColourAmbient->get_b() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::colourBackground:
+			// Create dotSceneObject
+			someColourBackground = new dotSceneObjects::dotSceneColourBackground();
+			ObjectForPolymorphReturn = someColourBackground;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("r"))) someColourBackground->set_r(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("r"))));
+			else someColourBackground->set_r(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("g")))	someColourBackground->set_g(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("g"))));
+			else someColourBackground->set_g(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("b")))	someColourBackground->set_b(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("b"))));
+			else someColourBackground->set_b(0.0);
+
+			std::cout << " element-identification: 'dotSceneColourBackground'\n";
+			std::cout << "Has attribute 'r': \"" << someColourBackground->get_r() << "\"\n";
+			std::cout << "Has attribute 'g': \"" << someColourBackground->get_g() << "\"\n";
+			std::cout << "Has attribute 'b': \"" << someColourBackground->get_b() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::colourDiffuse:
+			// Create dotSceneObject
+			someColourDiffuse = new dotSceneObjects::dotSceneColourDiffuse();
+			ObjectForPolymorphReturn = someColourDiffuse;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("r"))) someColourDiffuse->set_r(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("r"))));
+			else someColourDiffuse->set_r(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("g")))	someColourDiffuse->set_g(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("g"))));
+			else someColourDiffuse->set_g(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("b")))	someColourDiffuse->set_b(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("b"))));
+			else someColourDiffuse->set_b(0.0);
+
+			//#IMPLIED
+			if (ParentElement->hasAttribute(XMLString::transcode("a")))	someColourDiffuse->set_a(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("a"))));
+
+			std::cout << " element-identification: 'dotSceneColourDiffuse'\n";
+			std::cout << "Has attribute 'r': \"" << someColourDiffuse->get_r() << "\"\n";
+			std::cout << "Has attribute 'g': \"" << someColourDiffuse->get_g() << "\"\n";
+			std::cout << "Has attribute 'b': \"" << someColourDiffuse->get_b() << "\"\n";
+			std::cout << "Has attribute 'a': \"" << someColourDiffuse->get_a() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::colourSpecular:
+			// Create dotSceneObject
+			someColourSpecular = new dotSceneObjects::dotSceneColourSpecular();
+			ObjectForPolymorphReturn = someColourSpecular;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("r"))) someColourSpecular->set_r(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("r"))));
+			else someColourSpecular->set_r(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("g")))	someColourSpecular->set_g(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("g"))));
+			else someColourSpecular->set_g(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("b")))	someColourSpecular->set_b(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("b"))));
+			else someColourSpecular->set_b(0.0);
+
+			std::cout << " element-identification: 'dotSceneColourSpecular'\n";
+			std::cout << "Has attribute 'r': \"" << someColourSpecular->get_r() << "\"\n";
+			std::cout << "Has attribute 'g': \"" << someColourSpecular->get_g() << "\"\n";
+			std::cout << "Has attribute 'b': \"" << someColourSpecular->get_b() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::entity: // not ready
+			// Create dotSceneObject
+			someEntity = new dotSceneObjects::dotSceneEntity();
+			ObjectForPolymorphReturn = someEntity;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("meshFile"))) someEntity->set_meshFile(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("meshFile"))));
+			else someEntity->set_meshFile("NOT_FOUND_IN_XML");
+
+			//#IMPLIED
+			if (ParentElement->hasAttribute(XMLString::transcode("name"))) someEntity->set_name(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			else someEntity->set_name("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("id"))) someEntity->set_ID(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("id"))));
+			else someEntity->set_ID("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("materialName"))) someEntity->set_materialName(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("materialName"))));
+			else someEntity->set_materialName("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("displaySkeleton"))) someEntity->set_displaySkeleton(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("displaySkeleton"))));
+			else someEntity->set_displaySkeleton(false);
+			if (ParentElement->hasAttribute(XMLString::transcode("polygonModeOverrideable"))) someEntity->set_polygonModeOverrideable(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("polygonModeOverrideable"))));
+			else someEntity->set_polygonModeOverrideable(false);
+			if (ParentElement->hasAttribute(XMLString::transcode("vertexBufferUsage"))) someEntity->set_vertexBufferUsage(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			else someEntity->set_vertexBufferUsage(dotSceneEnums::dotSceneEntityEnums::BufferUsage::BufferUsage_staticWriteOnly);
+			if (ParentElement->hasAttribute(XMLString::transcode("vertexBufferUseShadow"))) someEntity->set_vertexBufferUseShadow(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			else someEntity->set_vertexBufferUseShadow(false);
+			if (ParentElement->hasAttribute(XMLString::transcode("indexBufferUsage"))) someEntity->set_indexBufferUsage(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			else someEntity->set_indexBufferUsage(dotSceneEnums::dotSceneEntityEnums::BufferUsage::BufferUsage_staticWriteOnly);
+			if (ParentElement->hasAttribute(XMLString::transcode("indexBufferUseShadow"))) someEntity->set_indexBufferUseShadow(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			else someEntity->set_indexBufferUseShadow(false);
+
+			std::cout << " element-identification: 'dotSceneEntity'\n";
+			std::cout << "Has attribute 'meshFile': \"" << someEntity->get_meshFile() << "\"\n";
+			std::cout << "Has attribute 'name': \"" << someEntity->get_name() << "\"\n";
+			std::cout << "Has attribute 'ID': \"" << someEntity->get_ID() << "\"\n";
+			std::cout << "Has attribute 'materialName': \"" << someEntity->get_materialName() << "\"\n";
+			std::cout << "Has attribute 'displaySkeleton': \"" << someEntity->get_displaySkeleton() << "\"\n";
+			std::cout << "Has attribute 'polygonModeOverrideable': \"" << someEntity->get_polygonModeOverrideable() << "\"\n";
+			std::cout << "Has attribute 'vertexBufferUsage': \"" << someEntity->get_vertexBufferUsage() << "\"\n";
+			std::cout << "Has attribute 'vertexBufferUseShadow': \"" << someEntity->get_vertexBufferUseShadow() << "\"\n";
+			std::cout << "Has attribute 'indexBufferUsage': \"" << someEntity->get_indexBufferUsage() << "\"\n";
+			std::cout << "Has attribute 'indexBufferUseShadow': \"" << someEntity->get_indexBufferUseShadow() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::environment:
+			std::cout << " element-identification: 'dotSceneEnvironment'\n";
+
+			// Create dotSceneObject
+			someEnvironment = new dotSceneObjects::dotSceneEnvironment();
+			ObjectForPolymorphReturn = someEnvironment;
+			
+			// Lookup for specialized attributes
+			// HAS NOT POSSIBLE ATRIBUTES (not sure, check that!)
+			break;
+
+		case dotSceneEnums::externals:
+			std::cout << " element-identification: 'dotSceneExternals'\n";
+
+			// Create dotSceneObject
+			someExternals = new dotSceneObjects::dotSceneExternals();
+			
+			// Lookup for specialized attributes
+			// HAS NOT POSSIBLE ATRIBUTES (not sure, check that!)
+			break;
+		case dotSceneEnums::file:
+			std::cout << " element-identification: 'dotSceneFile'\n";
+
+			// Create dotSceneObject
+			someFile = new dotSceneObjects::dotSceneFile();
+			ObjectForPolymorphReturn = someFile;
+			
+			// Lookup for specialized attributes
+			// KNOWLEGE: No errors can occure. If an attribute is not included in element, NOT_FOUND_IN_XMLis used here.
+			//			 That marks a not existing attribute.
+			if (ParentElement->hasAttribute(XMLString::transcode("name")))
+			{
+				someFile->set_FileName(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			}
+			else
+			{
+				someFile->set_FileName("NOT_FOUND_IN_XML");
+			}
+			std::cout << "Has attribute 'name': \"" << someFile->get_FileName() << "\"\n";
+			break;
+
+		case dotSceneEnums::fog:
+			break;
+		case dotSceneEnums::indexBuffer:
+			break;
+		case dotSceneEnums::item:
+			std::cout << " element-identification: 'dotSceneItem'\n";
+
+			// Create dotSceneObject
+			someItem = new dotSceneObjects::dotSceneItem();
+			ObjectForPolymorphReturn = someItem;
+			
+			// Lookup for specialized attributes
+			// KNOWLEGE: No errors can occure. If an attribute is not included in element, NOT_FOUND_IN_XMLis used here.
+			//			 That marks a not existing attribute.
+			if (ParentElement->hasAttribute(XMLString::transcode("type")))
+			{
+				someItem->set_Type(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("type"))));
+			}
+			else
+			{
+				someItem->set_Type("NOT_FOUND_IN_XML");
+			}
+			std::cout << "Has attribute 'type': \"" << someItem->get_Type() << "\"\n";
+			break;
+
+		case dotSceneEnums::light:
+			break;
+		case dotSceneEnums::lightAttenuation:
+			break;
+		case dotSceneEnums::lightRange:
+			break;
+		case dotSceneEnums::localDirection:
+			break;
+		case dotSceneEnums::lookTarget:
+			break;
+		case dotSceneEnums::node:
+			std::cout << " element-identification: 'dotSceneNode'\n";
+
+			// Create dotSceneObject
+			someNode = new dotSceneObjects::dotSceneNode();
+			ObjectForPolymorphReturn = someNode;
+			
+			// Lookup for specialized attributes
+			// KNOWLEGE: No errors can occure. If an attribute is not included in element, NOT_FOUND_IN_XMLis used here.
+			//			 That marks a not existing attribute.
+			if (ParentElement->hasAttribute(XMLString::transcode("name")))
+			{
+				someNode->set_name(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("name"))));
+			}
+			else
+			{
+				someNode->set_name("NOT_FOUND_IN_XML");
+			}
+
+			std::cout << "Has attribute 'name': \"" << someNode->get_name() << "\"\n";
+			break;
+
+		case dotSceneEnums::nodes:
+			std::cout << " element-identification: 'dotSceneNodes'\n";
+
+			// Create dotSceneObject
+			someNodes = new dotSceneObjects::dotSceneNodes();
+			ObjectForPolymorphReturn = someNodes;
+			
+			// Lookup for specialized attributes
+			// HAS NOT POSSIBLE ATRIBUTES (not sure, check that!)
+			break;
+
+		case dotSceneEnums::normal:
+			// Create dotSceneObject
+			someNormal = new dotSceneObjects::dotSceneNormal();
+			ObjectForPolymorphReturn = someNormal;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("x")))	someNormal->set_x(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("x"))));
+			else someNormal->set_x(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("y"))) someNormal->set_y(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("y"))));
+			else someNormal->set_y(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("z"))) someNormal->set_z(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("z"))));
+			else someNormal->set_z(0.0);
+			
+			std::cout << " element-identification: 'dotSceneNormal'\n";
+			std::cout << "Has attribute 'x': \"" << someNormal->get_x() << "\"\n";
+			std::cout << "Has attribute 'y': \"" << someNormal->get_y() << "\"\n";
+			std::cout << "Has attribute 'z': \"" << someNormal->get_z() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::octGeometry:
+			break;
+		case dotSceneEnums::octMaterial:
+			break;
+		case dotSceneEnums::octMesh:
+			break;
+		case dotSceneEnums::octNode:
+			break;
+		case dotSceneEnums::octree:
+			break;
+		case dotSceneEnums::offset:
+			break;
+		case dotSceneEnums::particleSystem:
+			break;
+		case dotSceneEnums::plane:
+			break;
+		case dotSceneEnums::position:
+			// Create dotSceneObject
+			somePosition = new dotSceneObjects::dotScenePosition();
+			ObjectForPolymorphReturn = somePosition;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("x")))	somePosition->set_x(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("x"))));
+			else somePosition->set_x(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("y"))) somePosition->set_y(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("y"))));
+			else somePosition->set_y(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("z"))) somePosition->set_z(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("z"))));
+			else somePosition->set_z(0.0);
+			
+			std::cout << " element-identification: 'dotScenePosition'\n";
+			std::cout << "Has attribute 'x': \"" << somePosition->get_x() << "\"\n";
+			std::cout << "Has attribute 'y': \"" << somePosition->get_y() << "\"\n";
+			std::cout << "Has attribute 'z': \"" << somePosition->get_z() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::property_tag:
+			break;
+		case dotSceneEnums::quaternion:
+			// Create dotSceneObject
+			someQuaternion = new dotSceneObjects::dotSceneQuaternion();
+			ObjectForPolymorphReturn = someQuaternion;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("x"))) someQuaternion->set_qx(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("x"))));
+			else someQuaternion->set_qx("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("y"))) someQuaternion->set_qy(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("y"))));
+			else someQuaternion->set_qy("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("z"))) someQuaternion->set_qz(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("z"))));
+			else someQuaternion->set_qz("NOT_FOUND_IN_XML");
+			if (ParentElement->hasAttribute(XMLString::transcode("w"))) someQuaternion->set_qw(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("w"))));
+			else someQuaternion->set_qw("NOT_FOUND_IN_XML");
+
+			std::cout << " element-identification: 'dotSceneQuaternion'\n";
+			std::cout << "Has attribute 'x': \"" << someQuaternion->get_qx() << "\"\n";
+			std::cout << "Has attribute 'y': \"" << someQuaternion->get_qy() << "\"\n";
+			std::cout << "Has attribute 'z': \"" << someQuaternion->get_qz() << "\"\n";
+			std::cout << "Has attribute 'w': \"" << someQuaternion->get_qw() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::scale:
+			// Create dotSceneObject
+			someScale = new dotSceneObjects::dotSceneScale();
+			ObjectForPolymorphReturn = someScale;
+			
+			// Lookup for specialized attributes
+			//#REQUIRED
+			if (ParentElement->hasAttribute(XMLString::transcode("x")))	someScale->set_x(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("x"))));
+			else someScale->set_x(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("y"))) someScale->set_y(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("y"))));
+			else someScale->set_y(0.0);
+			if (ParentElement->hasAttribute(XMLString::transcode("z"))) someScale->set_z(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("z"))));
+			else someScale->set_z(0.0);
+			
+			std::cout << " element-identification: 'dotSceneScale'\n";
+			std::cout << "Has attribute 'x': \"" << someScale->get_x() << "\"\n";
+			std::cout << "Has attribute 'y': \"" << someScale->get_y() << "\"\n";
+			std::cout << "Has attribute 'z': \"" << someScale->get_z() << "\"\n";
+
+			break;
+
+		case dotSceneEnums::scene:
+			std::cout << " element-identification: 'dotScene'\n";
+
+			// Create dotSceneObject
+			someScene = new dotSceneObjects::dotScene();
+			ObjectForPolymorphReturn = someScene;
+			
+			// Lookup for specialized attributes
+			// KNOWLEGE: No errors can occure. If an attribute is not included in element, NOT_FOUND_IN_XMLis used here.
+			//			 That marks a not existing attribute.
+			if (ParentElement->hasAttribute(XMLString::transcode("formatVersion")))
+			{
+				someScene->set_formatVersion(XMLString::transcode(ParentElement->getAttribute(XMLString::transcode("formatVersion"))));
+			}
+			else
+			{
+				someScene->set_formatVersion("NOT_FOUND_IN_XML");
+			}
+
+			std::cout << "Has attribute 'formatVersion': \"" << someScene->get_formatVersion() << "\"\n";
+			break;
+
+		case dotSceneEnums::skyBox:
+			break;
+		case dotSceneEnums::skyDome:
+			break;
+		case dotSceneEnums::skyPlane:
+			break;
+		case dotSceneEnums::terrain:
+			break;
+		case dotSceneEnums::trackTarget:
+			break;
+		case dotSceneEnums::upVector:
+			break;
+		case dotSceneEnums::userDataReference:
+			break;
+		case dotSceneEnums::vertexBuffer:
+			break;
+
+		// When nothin matches or entire node invalid
+		case dotSceneEnums::INVALID:
+		default:
+			ObjectForPolymorphReturn = 0;
+			break;
+	}
+	// ******************************************************** Attribute-Handling ****************************************
+	// ******************************************************** Recursiv Element-Handling *********************************
+	// Recursive calls for more detailed dotSceneObjects
+	// For all nodes, children of "root" in the XML tree.
+	for(XMLSize_t NodeIterator = 0; NodeIterator < ChildCount; ++NodeIterator)
+	{
+		CurrentNode = ChildNodes->item(NodeIterator);
+
+		// Lookup for ELEMENT_NODE only. If found: recurssive call!
+		// INFORMATION: Other node-types are defined for integrity.
+		switch(CurrentNode->getNodeType())
+		{
+			case DOMNode::NodeType::ATTRIBUTE_NODE :				break; // not interesting
+			case DOMNode::NodeType::CDATA_SECTION_NODE :			break; // not interesting
+			case DOMNode::NodeType::COMMENT_NODE :					break; // not interesting
+			case DOMNode::NodeType::DOCUMENT_FRAGMENT_NODE :		break; // not interesting
+			case DOMNode::NodeType::DOCUMENT_NODE :					break; // not interesting
+			case DOMNode::NodeType::DOCUMENT_TYPE_NODE :			break; // not interesting
+			case DOMNode::NodeType::ELEMENT_NODE : 
+				// Found node which is an Element. Re-cast node as element
+				std::cout << "Found ELEMENT_NODE: ";
+    			CurrentElement = dynamic_cast<xercesc::DOMElement*>(CurrentNode);
+				ObjectReturnedFromRecursiveCall = this->recursiveNodeProcessing(CurrentElement);
+				
+				// Identification of dotSceneObject
+				// INFORMATION: Other node-types are defined for integrity.
+				if (ObjectReturnedFromRecursiveCall != 0)
+				{
+					switch(ObjectReturnedFromRecursiveCall->get_NameSymbol())
+					{
+						case dotSceneEnums::billboard:			break; // can not occure
+						case dotSceneEnums::billboardSet:		break; // can not occure
+						case dotSceneEnums::camera:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									someCamera = dynamic_cast<dotSceneObjects::dotSceneCamera*>(ObjectReturnedFromRecursiveCall);
+									someNode->set_camera(*someCamera);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneEntity found! Until now looking for it in: 'dotSceneEnums::node'\n";
+									break;
+							}
+							break;
+
+						case dotSceneEnums::clipping:			break; // can not occure
+						case dotSceneEnums::colourAmbient:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::environment:
+									someColourAmbient = dynamic_cast<dotSceneObjects::dotSceneColourAmbient*>(ObjectReturnedFromRecursiveCall);
+									someEnvironment->set_colourAmbient(*someColourAmbient);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneColourAmbient found! Until now looking for it in: 'dotSceneEnums::environment'\n";
+									break;
+							}
+							break;
+
+						case dotSceneEnums::colourBackground:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::environment:
+									someColourBackground = dynamic_cast<dotSceneObjects::dotSceneColourBackground*>(ObjectReturnedFromRecursiveCall);
+									someEnvironment->set_colourBackground(*someColourBackground);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneColourBackground found! Until now looking for it in: 'dotSceneEnums::environment'\n";
+									break;
+							}
+							break;
+
+						case dotSceneEnums::colourDiffuse:		break; // can not occure
+						case dotSceneEnums::colourSpecular:		break; // can not occure
+						case dotSceneEnums::entity:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									someEntity = dynamic_cast<dotSceneObjects::dotSceneEntity*>(ObjectReturnedFromRecursiveCall);
+									someNode->set_entity(*someEntity);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneEntity found! Until now looking for it in: 'dotSceneEnums::node'\n";
+									break;
+							}
+							break;
+
+						case dotSceneEnums::environment:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::scene:
+									someEnvironment = dynamic_cast<dotSceneObjects::dotSceneEnvironment*>(ObjectReturnedFromRecursiveCall);
+									someScene->set_environment(*someEnvironment);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneEntity found! Until now looking for it in: 'dotSceneEnums::scene'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::externals:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::scene:
+									someExternals = dynamic_cast<dotSceneObjects::dotSceneExternals*>(ObjectReturnedFromRecursiveCall);
+									someScene->set_externals(*someExternals);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneEntity found! Until now looking for it in: 'dotSceneEnums::scene'\n";
+									break;
+							}
+							break;
+
+						case dotSceneEnums::file:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::item:
+									someFile = dynamic_cast<dotSceneObjects::dotSceneFile*>(ObjectReturnedFromRecursiveCall);
+									someItem->set_File(*someFile);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneFile found! Until now looking for it in: 'dotSceneEnums::item'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::fog:				break; // can not occure
+						case dotSceneEnums::indexBuffer:		break; // can not occure
+						case dotSceneEnums::item:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::externals:
+									someItem = dynamic_cast<dotSceneObjects::dotSceneItem*>(ObjectReturnedFromRecursiveCall);
+									someExternals->addItem(*someItem);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneItem found! Until now looking for it in: 'dotSceneEnums::externals'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::light:				break; // can not occure
+						case dotSceneEnums::lightAttenuation:	break; // can not occure
+						case dotSceneEnums::lightRange:			break; // can not occure
+						case dotSceneEnums::localDirection:		break; // can not occure
+						case dotSceneEnums::lookTarget:			break; // can not occure
+						case dotSceneEnums::node:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									someNode->addChildNode(*(dynamic_cast<dotSceneObjects::dotSceneNode*>(ObjectReturnedFromRecursiveCall)));
+									break;
+								
+								case dotSceneEnums::nodes:
+									someNode = dynamic_cast<dotSceneObjects::dotSceneNode*>(ObjectReturnedFromRecursiveCall);
+									//NodeBuffer = *someNode;
+									//someNodes->addNode(NodeBuffer);
+									someNodes->addNode(*someNode);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneNode found! Until now looking for it in: 'dotSceneEnums::node' and 'dotSceneEnums::nodes'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::nodes:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::scene:
+									someNodes = dynamic_cast<dotSceneObjects::dotSceneNodes*>(ObjectReturnedFromRecursiveCall);
+									someScene->set_nodes(*someNodes);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneNodes found! Until now looking for it in: 'dotSceneEnums::scene'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::normal:				break; // can not occure
+						case dotSceneEnums::octGeometry:		break; // can not occure
+						case dotSceneEnums::octMaterial:		break; // can not occure
+						case dotSceneEnums::octMesh:			break; // can not occure
+						case dotSceneEnums::octNode:			break; // can not occure
+						case dotSceneEnums::octree:				break; // can not occure
+						case dotSceneEnums::offset:				break; // can not occure
+						case dotSceneEnums::particleSystem:		break; // can not occure
+						case dotSceneEnums::plane:				break; // can not occure
+						case dotSceneEnums::position:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									somePosition = dynamic_cast<dotSceneObjects::dotScenePosition*>(ObjectReturnedFromRecursiveCall);
+									someNode->set_position(*somePosition);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotScenePosition found! Until now looking for it in: 'dotSceneEnums::node'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::property_tag:		break; // can not occure
+						case dotSceneEnums::quaternion:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									someQuaternion = dynamic_cast<dotSceneObjects::dotSceneQuaternion*>(ObjectReturnedFromRecursiveCall);
+									someNode->set_quaternion(*someQuaternion);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneQuaternion found! Until now looking for it in: 'dotSceneEnums::node'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::scale:
+							switch(TagType) // look for 
+							{
+								case dotSceneEnums::node:
+									someScale = dynamic_cast<dotSceneObjects::dotSceneScale*>(ObjectReturnedFromRecursiveCall);
+									someNode->set_scale(*someScale);
+									break;
+
+								default: // should not occure
+									cerr << "Not assigned dotSceneScale found! Until now looking for it in: 'dotSceneEnums::node'\n";
+									break;
+							}
+							break; 
+
+						case dotSceneEnums::scene: // should not occure
+
+							break;
+
+						case dotSceneEnums::skyBox:				break; // can not occure
+						case dotSceneEnums::skyDome:			break; // can not occure
+						case dotSceneEnums::skyPlane:			break; // can not occure
+						case dotSceneEnums::terrain:			break; // can not occure
+						case dotSceneEnums::trackTarget:		break; // can not occure
+						case dotSceneEnums::upVector:			break; // can not occure
+						case dotSceneEnums::userDataReference:	break; // can not occure
+						case dotSceneEnums::vertexBuffer:		break; // can not occure
+						case dotSceneEnums::INVALID:			break; // should not occure
+						default:								break; // should not occure
+					}
+				}
+				else std::cout << "Recursive call returned null!\n";
+				break;
+
+			case DOMNode::NodeType::ENTITY_NODE :					break; // not interesting
+			case DOMNode::NodeType::ENTITY_REFERENCE_NODE :			break; // not interesting
+			case DOMNode::NodeType::NOTATION_NODE :					break; // not interesting
+			case DOMNode::NodeType::PROCESSING_INSTRUCTION_NODE :	break; // not interesting
+			case DOMNode::NodeType::TEXT_NODE :						break; // not interesting
+			default:
+				// For integrity.
+				ObjectReturnedFromRecursiveCall = new dotSceneObjects::dotSceneObject(dotSceneEnums::INVALID);
+				break;
+		}
+	}
+	// ******************************************************** Recursiv Element-Handling *********************************
+
+	// Prepare polymorph return
+	return ObjectForPolymorphReturn;
 }
 
-dotSceneObjects::dotSceneObject* DotSceneXmlReader::parseNodeItem(DOMNode *node)
-{
-	DOMNodeList*      children = node->getChildNodes();
-    const  XMLSize_t nodeCount = children->getLength();
-    string nodeName = "";
-    
-    if(node->getNodeType() && node->getNodeType() == DOMNode::ELEMENT_NODE)
-    {
-    	DOMElement *nodeElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	const XMLCh* xmlch_name = nodeElement->getAttribute(ATTR_name);
-    	nodeName = XMLString::transcode(xmlch_name);
-    	string lgMsg = "Xerces: Found Node with name " + nodeName;
-    	Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg.c_str());
-    }
-    else
-    {
-    	char lgMsg[255];
-    	sprintf(lgMsg, "Xerces: Found node with type %i. Aborting.", node->getNodeType());
-    	Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg);
-    	return NULL;
-    }
-    
-    // If current Tag is "scene"
-    if(strcmp(nodeName.c_str(), "scene") == 0)
-    {
-    	DOMElement *sceneElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string formatVersion = "";
-    	if(sceneElement->hasAttribute(ATTR_formatVersion))
-    		formatVersion = XMLString::transcode(sceneElement->getAttribute(ATTR_formatVersion));
-    	
-    	dotSceneObjects::dotSceneNodes *scene_nodes = NULL;
-    	dotSceneObjects::dotSceneExternals *scene_externals = NULL;
-    	dotSceneObjects::dotSceneEnvironment *scene_environment = NULL;
-    	
-    	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_nodes))
-	        	{
-	        		scene_nodes = (dotSceneObjects::dotSceneNodes*)parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_externals))
-	        	{
-	        		scene_externals = (dotSceneObjects::dotSceneExternals*)parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_environment))
-	        	{
-	        		scene_environment = (dotSceneObjects::dotSceneEnvironment*)parseNodeItem(currentNode);
-	        	}
-	        }
-	    }
-    	if(scene_nodes == NULL)
-    		scene_nodes = new dotSceneObjects::dotSceneNodes();
-    	if(scene_externals == NULL)
-    		scene_externals = new dotSceneObjects::dotSceneExternals();
-    	if(scene_environment == NULL)
-    		scene_environment = new dotSceneObjects::dotSceneEnvironment();
-    	
-    	dotSceneObjects::dotScene *newScene = new dotSceneObjects::dotScene(formatVersion, *scene_nodes, *scene_externals, *scene_environment);
-    	return newScene;
-    }
-    
-    // If current Tag is "nodes"
-    if(strcmp(nodeName.c_str(), "nodes") == 0)
-    {
-    	dotSceneObjects::dotSceneNodes *nodes = new dotSceneObjects::dotSceneNodes();
-    	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_node))
-	        	{
-	        		dotSceneObjects::dotSceneNode *tmp = (dotSceneObjects::dotSceneNode*) parseNodeItem(currentNode);
-	        		nodes->addItem(*tmp);
-	        	}
-	        }
-	    }
-    	return nodes;
-    }
-    
-    // If current Tag is "node"
-    if(strcmp(nodeName.c_str(), "node") == 0)
-    {
-    	DOMElement *nodeElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string name = "";
-    	if(nodeElement->hasAttribute(ATTR_name))
-    		name = XMLString::transcode(nodeElement->getAttribute(ATTR_name));
-    	
-    	dotSceneObjects::dotScenePosition *pos = NULL;
-    	dotSceneObjects::dotSceneQuaternion *quat = NULL;
-    	dotSceneObjects::dotSceneScale *scale = NULL;
-    	dotSceneObjects::dotSceneSpecific *specific = NULL;
-    	dotSceneObjects::dotSceneNode *tmpNode = new dotSceneObjects::dotSceneNode();
-    	
-    	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_position))
-	        	{
-	        		pos = (dotSceneObjects::dotScenePosition*)parseNodeItem(currentNode);
-	        		tmpNode->set_position(*pos);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_quaternion))
-	        	{
-	        		quat = (dotSceneObjects::dotSceneQuaternion*)parseNodeItem(currentNode);
-	        		tmpNode->set_quaternion(*quat);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_scale))
-	        	{
-	        		scale = (dotSceneObjects::dotSceneScale*)parseNodeItem(currentNode);
-	        		tmpNode->set_scale(*scale);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_light))
-	        	{
-	        		specific = (dotSceneObjects::dotSceneSpecific*)parseNodeItem(currentNode);
-	        		tmpNode->set_specific(specific);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_camera))
-	        	{
-	        		specific = (dotSceneObjects::dotSceneSpecific*)parseNodeItem(currentNode);
-	        		tmpNode->set_specific(specific);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_entity))
-	        	{
-	        		specific = (dotSceneObjects::dotSceneSpecific*)parseNodeItem(currentNode);
-	        		tmpNode->set_specific(specific);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_node))
-	        	{
-	        		dotSceneObjects::dotSceneNode *helper = (dotSceneObjects::dotSceneNode*)parseNodeItem(currentNode);
-	        		tmpNode->addChildNode(*helper);
-	        	}
-	        }
-	    }
-    	return tmpNode;
-    }
-    
-    // If current Tag is "position"
-    if(strcmp(nodeName.c_str(), "position") == 0)
-    {
-    	DOMElement *posElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string x = XMLString::transcode(posElement->getAttribute(ATTR_x));
-    	string y = XMLString::transcode(posElement->getAttribute(ATTR_y));
-    	string z = XMLString::transcode(posElement->getAttribute(ATTR_z));
-    	dotSceneObjects::dotScenePosition *pos = new dotSceneObjects::dotScenePosition(x, y, z);
-    	return pos;
-    }
-    // If current Tag is "quaternion"
-    if(strcmp(nodeName.c_str(), "quaternion") == 0)
-    {
-    	DOMElement *quatElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string x = XMLString::transcode(quatElement->getAttribute(ATTR_x));
-    	string y = XMLString::transcode(quatElement->getAttribute(ATTR_y));
-    	string z = XMLString::transcode(quatElement->getAttribute(ATTR_z));
-    	string w = XMLString::transcode(quatElement->getAttribute(ATTR_w));
-    	dotSceneObjects::dotSceneQuaternion *quat = new dotSceneObjects::dotSceneQuaternion(x, y, z, w);
-    	return quat;
-    }
-    // If current Tag is "scale"
-    if(strcmp(nodeName.c_str(), "scale") == 0)
-    {
-    	DOMElement *scaleElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string x = XMLString::transcode(scaleElement->getAttribute(ATTR_x));
-    	string y = XMLString::transcode(scaleElement->getAttribute(ATTR_y));
-    	string z = XMLString::transcode(scaleElement->getAttribute(ATTR_z));
-    	dotSceneObjects::dotSceneScale *scale = new dotSceneObjects::dotSceneScale(x, y, z);
-    	return scale;
-    }
-    
-    // If current Tag is "entity"
-    if(strcmp(nodeName.c_str(), "entity") == 0)
-    {
-    	DOMElement *entityElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string entName = XMLString::transcode(entityElement->getAttribute(ATTR_name));
-    	string meshFile = XMLString::transcode(entityElement->getAttribute(ATTR_meshFile));
-    	string str_static = "0";
-    	if(entityElement->hasAttribute(ATTR_static))
-    		str_static = XMLString::transcode(entityElement->getAttribute(ATTR_static));
-    	string str_visible = "1";
-    	if(entityElement->hasAttribute(ATTR_visible))
-    		str_visible = XMLString::transcode(entityElement->getAttribute(ATTR_visible));
-    	string str_castShadows = "1";
-    	if(entityElement->hasAttribute(ATTR_castShadows))
-    		str_castShadows = XMLString::transcode(entityElement->getAttribute(ATTR_castShadows));
-    	string str_renderingDistance = "1000";
-    	if(entityElement->hasAttribute(ATTR_renderingDistance))
-    		str_renderingDistance = XMLString::transcode(entityElement->getAttribute(ATTR_renderingDistance));
-    	
-    	dotSceneObjects::dotSceneEntity *ent = new dotSceneObjects::dotSceneEntity(entName,
-    																			   meshFile,
-    																			   str_static,
-    																			   str_visible,
-    																			   str_castShadows,
-    																			   str_renderingDistance);
-    	return ent;
-    }
-    
-    // If current Tag is "camera"
-    if(strcmp(nodeName.c_str(), "camera") == 0)
-    {
-    	DOMElement *camElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string camName = XMLString::transcode(camElement->getAttribute(ATTR_name));
-    	string camFOV = XMLString::transcode(camElement->getAttribute(ATTR_fov));
-    	string camProjType = XMLString::transcode(camElement->getAttribute(ATTR_projectionType));
-    	
-    	dotSceneObjects::dotSceneClipping *clip = NULL;
-    	dotSceneObjects::dotSceneNormal *normal = NULL;
-    	
-    	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_clipping))
-	        	{
-	        		clip = (dotSceneObjects::dotSceneClipping*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_clipping))
-	        	{
-	        		normal = (dotSceneObjects::dotSceneNormal*) parseNodeItem(currentNode);
-	        	}
-	        }
-	    }
-    	if(clip == NULL)
-    		clip = new dotSceneObjects::dotSceneClipping();
-    	if(normal == NULL)
-    		normal = new dotSceneObjects::dotSceneNormal();
-    	dotSceneObjects::dotSceneCamera *cam = new dotSceneObjects::dotSceneCamera(camName,
-    																			   camFOV,
-    																			   camProjType,
-    																			   *normal,
-    																			   *clip);
-    	return cam;
-    }
-    
-    // If current Tag is "clipping"
-    if(strcmp(nodeName.c_str(), "clipping") == 0)
-    {
-    	DOMElement *clipElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string nearDist = XMLString::transcode(clipElement->getAttribute(ATTR_nearPlaneDist));
-    	string farDist = XMLString::transcode(clipElement->getAttribute(ATTR_farPlaneDist));
-    	dotSceneObjects::dotSceneClipping *clip = new dotSceneObjects::dotSceneClipping(nearDist, farDist);
-    	return clip;
-    }
-    
-    // If current Tag is "light"
-    if(strcmp(nodeName.c_str(), "light") == 0)
-    {
-    	DOMElement* lightElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string lightName = XMLString::transcode(lightElement->getAttribute(ATTR_name));
-    	string lightType = XMLString::transcode(lightElement->getAttribute(ATTR_type));
-    	
-    	dotSceneObjects::dotSceneColourDiffuse *colDiff = NULL;
-    	dotSceneObjects::dotSceneColourSpecular *colSpec = NULL;
-    	dotSceneObjects::dotSceneNormal *lightNor = NULL;
-    	dotSceneObjects::dotSceneLightRange *lRange = NULL;
-    	dotSceneObjects::dotSceneLightAttenuation *lightAtt = NULL;
-    	
-    	for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_colourDiffuse))
-	        	{
-	        		colDiff = (dotSceneObjects::dotSceneColourDiffuse*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_colourSpecular))
-	        	{
-	        		colSpec = (dotSceneObjects::dotSceneColourSpecular*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_lightAttenuation))
-	        	{
-	        		lightAtt = (dotSceneObjects::dotSceneLightAttenuation*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_lightRange))
-	        	{
-	        		lRange = (dotSceneObjects::dotSceneLightRange*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_normal))
-	        	{
-	        		lightNor = (dotSceneObjects::dotSceneNormal*) parseNodeItem(currentNode);
-	        	}
-	        }
-	    }
-    	if(colDiff == NULL)
-    		colDiff = new dotSceneObjects::dotSceneColourDiffuse();
-    	if(colSpec == NULL)
-    		colSpec = new dotSceneObjects::dotSceneColourSpecular();
-    	if(lightAtt == NULL)
-    		lightAtt = new dotSceneObjects::dotSceneLightAttenuation();
-    	if(lightNor == NULL)
-    		lightNor = new dotSceneObjects::dotSceneNormal();
-    	if(lRange == NULL)
-    		lRange = new dotSceneObjects::dotSceneLightRange();
-    	dotSceneObjects::dotSceneLight *light = new dotSceneObjects::dotSceneLight(lightName,
-    																			   lightType,
-    																			   *colDiff,
-    																			   *colSpec,
-    																			   *lightNor,
-    																			   *lRange,
-    																			   *lightAtt);
-    	return light;
-    }
-    
-    // If current Tag is "colourDiffuse"
-    if(strcmp(nodeName.c_str(), "colourDiffuse") == 0)
-    {
-    	DOMElement *colDiffElement = dynamic_cast<xercesc::DOMElement*>(node);
-    	string r = XMLString::transcode(colDiffElement->getAttribute(ATTR_r));
-    	string g = XMLString::transcode(colDiffElement->getAttribute(ATTR_g));
-    	string b = XMLString::transcode(colDiffElement->getAttribute(ATTR_b));
-    	
-    	dotSceneObjects::dotSceneColourDiffuse *diff = new dotSceneObjects::dotSceneColourDiffuse(r, g, b);
-    	return diff;
-    }
-    
-    // If current Tag is "colourDiffuse"
-	if(strcmp(nodeName.c_str(), "colourSpecular") == 0)
-	{
-		DOMElement *colSpecElement = dynamic_cast<xercesc::DOMElement*>(node);
-		string r = XMLString::transcode(colSpecElement->getAttribute(ATTR_r));
-		string g = XMLString::transcode(colSpecElement->getAttribute(ATTR_g));
-		string b = XMLString::transcode(colSpecElement->getAttribute(ATTR_b));
-		
-		dotSceneObjects::dotSceneColourSpecular *spec = new dotSceneObjects::dotSceneColourSpecular(r, g, b);
-		return spec;
-	}
-	
-	// If current Tag is "lightAttenuation"
-	if(strcmp(nodeName.c_str(), "lightAttenuation") == 0)
-	{
-		DOMElement* lAttElement = dynamic_cast<xercesc::DOMElement*>(node);
-		string lrange = XMLString::transcode(lAttElement->getAttribute(ATTR_range));
-		string lconst = XMLString::transcode(lAttElement->getAttribute(ATTR_constant));
-		string llin = XMLString::transcode(lAttElement->getAttribute(ATTR_linear));
-		string lquad = XMLString::transcode(lAttElement->getAttribute(ATTR_quadratic));
-		
-		dotSceneObjects::dotSceneLightAttenuation *lAtt = new dotSceneObjects::dotSceneLightAttenuation(lrange,
-																									    lconst,
-																									    llin,
-																									    lquad);
-		return lAtt;
-	}
-	
-	// If current Tag is "externals"
-	if(strcmp(nodeName.c_str(), "externals") == 0)
-	{
-		dotSceneObjects::dotSceneExternals *ext = new dotSceneObjects::dotSceneExternals();
-		
-		for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_item))
-	        	{
-	        		string itemtype = XMLString::transcode(currentElement->getAttribute(ATTR_type));
-	        		DOMNode *fileNode = currentNode->getFirstChild();
-	        		dotSceneObjects::dotSceneFile *f = NULL;
-	        		if(fileNode->getNodeType() && fileNode->getNodeType() == DOMNode::ELEMENT_NODE)
-	        		{
-	        			DOMElement* fileElement = dynamic_cast<xercesc::DOMElement*>(fileNode);
-	        			if(XMLString::equals(fileElement->getTagName(), TAG_file))
-	        			{
-	        				string fname = XMLString::transcode(fileElement->getAttribute(ATTR_name));
-	        				f = new dotSceneObjects::dotSceneFile(fname);
-	        			}
-	        		}
-	        		dotSceneObjects::dotSceneItem *i = new dotSceneObjects::dotSceneItem(itemtype, *f);
-	        		ext->addItem(*i);
-	        	}
-	        }
-	    }
-		return ext;
-	}
-	
-	// If current tag is "environment"
-	if(strcmp(nodeName.c_str(), "environment") == 0)
-	{
-		dotSceneObjects::dotSceneColourAmbient *amb = NULL;
-		dotSceneObjects::dotSceneColourBackground *bg = NULL;
-		dotSceneObjects::dotSceneFog *fog = NULL;
-		
-		for( XMLSize_t xx = 0; xx < nodeCount; ++xx )
-	    {
-		    DOMNode* currentNode = children->item(xx);
-	        if( currentNode->getNodeType() &&  // true is not NULL
-	            currentNode->getNodeType() == DOMNode::ELEMENT_NODE ) // is element
-	        {
-	        	DOMElement* currentElement = dynamic_cast< xercesc::DOMElement* >( currentNode );
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_colourAmbient))
-	        	{
-	        		amb = (dotSceneObjects::dotSceneColourAmbient*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_colourBackground))
-	        	{
-	        		bg = (dotSceneObjects::dotSceneColourBackground*) parseNodeItem(currentNode);
-	        	}
-	        	if(XMLString::equals(currentElement->getTagName(), TAG_fog))
-	        	{
-	        		fog = (dotSceneObjects::dotSceneFog*) parseNodeItem(currentNode);
-	        	}
-	        }
-	    }
-		if(amb == NULL)
-			amb = new dotSceneObjects::dotSceneColourAmbient();
-		if(bg == NULL)
-			bg = new dotSceneObjects::dotSceneColourBackground();
-		if(fog == NULL)
-			fog = new dotSceneObjects::dotSceneFog();
-		dotSceneObjects::dotSceneEnvironment *env = new dotSceneObjects::dotSceneEnvironment(*fog, *amb, *bg);
-		return env;
-	}
-	
-	// If current Tag is "colourAmbient"
-	if(strcmp(nodeName.c_str(), "colourAmbient") == 0)
-	{
-		DOMElement *ambElement = dynamic_cast<xercesc::DOMElement*>(node);
-		string r = XMLString::transcode(ambElement->getAttribute(ATTR_r));
-		string g = XMLString::transcode(ambElement->getAttribute(ATTR_g));
-		string b = XMLString::transcode(ambElement->getAttribute(ATTR_b));
-		
-		dotSceneObjects::dotSceneColourAmbient *amb = new dotSceneObjects::dotSceneColourAmbient(r, g, b);
-		return amb;
-	}
-	
-	// If current Tag is "colourBackground"
-	if(strcmp(nodeName.c_str(), "colourBackground") == 0)
-	{
-		DOMElement *bgElement = dynamic_cast<xercesc::DOMElement*>(node);
-		string r = XMLString::transcode(bgElement->getAttribute(ATTR_r));
-		string g = XMLString::transcode(bgElement->getAttribute(ATTR_g));
-		string b = XMLString::transcode(bgElement->getAttribute(ATTR_b));
-		
-		dotSceneObjects::dotSceneColourBackground *bg = new dotSceneObjects::dotSceneColourBackground(r, g, b);
-		return bg;
-	}
-	
-	// If current Tag is "fog"
-	if(strcmp(nodeName.c_str(), "fog") == 0)
-	{
-		// the xsd says the fog tag is build differently then dotSceneFog.h suggests. needs some fixing here
-		dotSceneObjects::dotSceneFog *fog = new dotSceneObjects::dotSceneFog();
-		return fog;
-	}
-    
-    return NULL;
-}
 
-DotSceneXmlReader::~DotSceneXmlReader()
+
+
+dotSceneXmlReader::~dotSceneXmlReader()
 {
 	delete mParser;
     delete mErrHandler;
@@ -1063,4 +1050,15 @@ DotSceneXmlReader::~DotSceneXmlReader()
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage("Unknown exception encountered in TAG-release", Ogre::LML_CRITICAL);
 	}
+}
+
+void main(void)
+{
+	dotSceneXmlReader *reader = new dotSceneXmlReader("z:/dotScene.xsd", true);
+	reader->parseDotSceneXML("Z:/KOS/KOS.xml");
+	//reader->importDotScene();
+	reader->loadDotScene();
+
+	int dummy;
+	std::cin >> dummy;
 }

@@ -12,28 +12,34 @@ namespace dotSceneObjects
 	/**
 	 * This class represents the w, x, y and z values of an 4D-vector, interpreted as quaternion.
 	 */
-    class dotSceneQuaternion : public dotSceneObject
+    class dotSceneQuaternion : virtual public dotSceneObject
     {
 	private:
-		double _qx;	/**< Property qx. X value of quaternion.*/
-		double _qy;	/**< Property qy. Y value of quaternion.*/
-		double _qw;	/**< Property qz. Z value of quaternion.*/
-		double _qz;	/**< Property qw. W value of quaternion.*/
+		double _qx;					/**< Property qx. X value of quaternion.*/
+		double _qy;					/**< Property qy. Y value of quaternion.*/
+		double _qw;					/**< Property qz. Z value of quaternion.*/
+		double _qz;					/**< Property qw. W value of quaternion.*/
+
+	public:
+		double get_qx() const;		/**< Get-method for property qx. @return Returns qx as double.*/
+		double get_qy() const;		/**< Get-method for property qy. @return Returns qy as double.*/
+		double get_qz() const;		/**< Get-method for property qz. @return Returns qz as double.*/
+		double get_qw() const;		/**< Get-method for property qw. @return Returns qw as double.*/
 
 		void set_qx(double value);	/**< Set-method for property qx. @param value Value of double.*/
 		void set_qy(double value);	/**< Set-method for property qy. @param value Value of double.*/
 		void set_qz(double value);	/**< Set-method for property qz. @param value Value of double.*/
 		void set_qw(double value);	/**< Set-method for property qw. @param value Value of double.*/
 
-	public:
-		double get_qx() const;	/**< Get-method for property qx. @return Returns qx as double.*/
-		double get_qy() const;	/**< Get-method for property qy. @return Returns qy as double.*/
-		double get_qz() const;	/**< Get-method for property qz. @return Returns qz as double.*/
-		double get_qw() const;	/**< Get-method for property qw. @return Returns qw as double.*/
+		void set_qx(std::string value);	/**< Set-method for property qx. @param value Value in std::string-format. Will be parsed to double.*/
+		void set_qy(std::string value);	/**< Set-method for property qy. @param value Value in std::string-format. Will be parsed to double.*/
+		void set_qz(std::string value);	/**< Set-method for property qz. @param value Value in std::string-format. Will be parsed to double.*/
+		void set_qw(std::string value);	/**< Set-method for property qw. @param value Value in std::string-format. Will be parsed to double.*/
+
+		bool IsValid() const;		/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
 
 		/**
 		 * Simple constructor. 
-		 * Implemented, because Rotation-attribute is #IMPLIED but not #REQUIRED in original dotScene.dtd. It calls th constructor of base-object.
 		 */
 		dotSceneQuaternion();
 
@@ -56,10 +62,5 @@ namespace dotSceneObjects
 		 * @param double_qw qW-value in double-format.
 		 */
 		dotSceneQuaternion(double double_qx, double double_qy, double double_qz, double double_qw);
-
-		/**
-		 * Simple destructor.
-		 */
-        ~dotSceneQuaternion();
     };
 }

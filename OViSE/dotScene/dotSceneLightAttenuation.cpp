@@ -3,34 +3,67 @@
 #include "dotSceneLightAttenuation.h"
 #endif
 
-#include <stdlib.h>
+double dotSceneObjects::dotSceneLightAttenuation::get_Range() const { return this->_Range; }
+double dotSceneObjects::dotSceneLightAttenuation::get_Constant() const { return this->_Constant; }
+double dotSceneObjects::dotSceneLightAttenuation::get_Linear() const { return this->_Linear; }
+double dotSceneObjects::dotSceneLightAttenuation::get_Quadratic() const { return this->_Quadratic; }
 
-void dotSceneObjects::dotSceneLightAttenuation::set_range(double value){ _range = value; }
-void dotSceneObjects::dotSceneLightAttenuation::set_constant(double value){ _constant = value; }
-void dotSceneObjects::dotSceneLightAttenuation::set_linear(double value){ _linear = value; }
-void dotSceneObjects::dotSceneLightAttenuation::set_quadratic(double value){ _quadratic = value; }
+void dotSceneObjects::dotSceneLightAttenuation::set_Range(double value){ this->_Range = value; }
+void dotSceneObjects::dotSceneLightAttenuation::set_Constant(double value){ this->_Constant = value; }
+void dotSceneObjects::dotSceneLightAttenuation::set_Linear(double value){ this->_Linear = value; }
+void dotSceneObjects::dotSceneLightAttenuation::set_Quadratic(double value){ this->_Quadratic = value; }
 
-double dotSceneObjects::dotSceneLightAttenuation::get_range() const { return _range; }
-double dotSceneObjects::dotSceneLightAttenuation::get_constant() const { return _constant; }
-double dotSceneObjects::dotSceneLightAttenuation::get_linear() const { return _linear; }
-double dotSceneObjects::dotSceneLightAttenuation::get_quadratic() const { return _quadratic; }
+void dotSceneObjects::dotSceneLightAttenuation::set_Range(std::string value)
+{
+	double tmp;
+	sscanf(value.c_str(), "%lf", &tmp);
+	this->_Range = tmp;
+}
+
+void dotSceneObjects::dotSceneLightAttenuation::set_Constant(std::string value)
+{
+	double tmp;
+	sscanf(value.c_str(), "%lf", &tmp);
+	this->_Constant = tmp;
+}
+
+void dotSceneObjects::dotSceneLightAttenuation::set_Linear(std::string value)
+{
+	double tmp;
+	sscanf(value.c_str(), "%lf", &tmp);
+	this->_Linear = tmp;
+}
+
+void dotSceneObjects::dotSceneLightAttenuation::set_Quadratic(std::string value)
+{
+	double tmp;
+	sscanf(value.c_str(), "%lf", &tmp);
+	this->_Quadratic = tmp;
+}
+
+
+bool dotSceneObjects::dotSceneLightAttenuation::IsValid() const
+{
+	// Range, Constant, Linear & Quadratic are not useable for valid-check!
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
+}
 
 /// region constructors & destructors
-dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation() : dotSceneObject(lightAttenuation) { } /// Simple constructor./// It calls the constructor of baseobject
-dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation(std::string str_range, std::string str_constant, std::string str_linear, std::string str_quadratic) : dotSceneObject(lightAttenuation) /// Constructor for string-parameters. All strings will be parsed automatically to double-format./// <param name="str_range">range-value in string-format. Will be parsed to double.</param>/// <param name="str_constant">constant-value in string-format. Will be parsed to double.</param>/// <param name="str_linear">linear-value in string-format. Will be parsed to double.</param>/// <param name="str_quadratic">quadratic-value in string-format. Will be parsed to double.</param>
+dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation() : dotSceneObject(dotSceneEnums::lightAttenuation) { }
+dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation(std::string str_Range, std::string str_Constant, std::string str_Linear, std::string str_Quadratic) : dotSceneObject(dotSceneEnums::lightAttenuation)
 {
-    this->set_range(atof(str_range.c_str()));
-    this->set_constant(atof(str_constant.c_str()));
-    this->set_linear(atof(str_linear.c_str()));
-	this->set_quadratic(atof(str_quadratic.c_str()));
+    this->set_Range(str_Range);
+    this->set_Constant(str_Constant);
+    this->set_Linear(str_Linear);
+	this->set_Quadratic(str_Quadratic);
 }
 
-dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation(double double_range, double double_constant, double double_linear, double double_quadratic) : dotSceneObject(lightAttenuation) /// Constructor for double-parameters./// <param name="double_range">range-value in double-format.</param>/// <param name="double_constant">constant-value in double-format.</param>/// <param name="double_linear">linear-value in double-format.</param>/// <param name="double_quadratic">quadratic-value in double-format.</param>
+dotSceneObjects::dotSceneLightAttenuation::dotSceneLightAttenuation(double double_Range, double double_Constant, double double_Linear, double double_Quadratic) : dotSceneObject(dotSceneEnums::lightAttenuation)
 {
-    this->set_range(double_range);
-    this->set_constant(double_constant);
-    this->set_linear(double_linear);
-    this->set_quadratic(double_quadratic);
+    this->set_Range(double_Range);
+    this->set_Constant(double_Constant);
+    this->set_Linear(double_Linear);
+    this->set_Quadratic(double_Quadratic);
 }
-
-dotSceneObjects::dotSceneLightAttenuation::~dotSceneLightAttenuation() { }

@@ -17,24 +17,28 @@ namespace dotSceneObjects
 	/**
 	 * This object contains data for a fog-setup.
 	 */
-	class dotSceneFog : public dotSceneObject
+	class dotSceneFog : virtual public dotSceneObject
     {
 	private:
-		double _linearStart;					/**< Property linearStart. Distance, where fog begins and grows linear.*/
-		double _linearEnd;						/**< Property linearEnd. Distance, where fog ends.*/
-		std::string _mode;						/**< Property mode. Mode of fog.*/
-		dotSceneColourDiffuse _colourDiffuse;	/**< Property colourDiffuse. Diffuse colour of fog.*/
+		double _linearStart;								/**< Property linearStart. Distance, where fog begins and grows linear.*/
+		double _linearEnd;									/**< Property linearEnd. Distance, where fog ends.*/
+		std::string _mode;									/**< Property mode. Mode of fog.*/
+		dotSceneColourDiffuse _colourDiffuse;				/**< Property colourDiffuse. Diffuse colour of fog.*/
 
+	public:
+		double get_linearStart() const;						/**< Get-method for property linearStart. @return Returns linearStart as double.*/
+		double get_linearEnd() const;						/**< Get-method for property linearEnd. @return Returns linearEnd as double.*/
+		std::string get_mode() const;						/**< Get-method for property mode. @return Returns mode as std::string.*/
+		dotSceneColourDiffuse get_colourDiffuse() const;	/**< Get-method for property colourDiffuse. @return Returns a dotSceneColourDiffuse-object.*/
+		
 		void set_linearStart(double value);					/**< Set-method for property linearStart. @param value Value of a double.*/
 		void set_linearEnd(double value);					/**< Set-method for property linearEnd. @param value Value of a double.*/
+		void set_linearStart(std::string value);			/**< Set-method for property linearStart. @param value Value in std::string-format. Will be parsed to double.*/
+		void set_linearEnd(std::string value);				/**< Set-method for property linearEnd. @param value Value in std::string-format. Will be parsed to double.*/
 		void set_mode(std::string value);					/**< Set-method for property mode. @param value Value of a std::string.*/
 		void set_colourDiffuse(dotSceneColourDiffuse value);/**< Set-method for property colourDiffuse. @param value A dotSceneColourDiffuse-object.*/
 
-	public:
-		double get_linearStart() const;					/**< Get-method for property linearStart. @return Returns linearStart as double.*/
-		double get_linearEnd() const;					/**< Get-method for property linearEnd. @return Returns linearEnd as double.*/
-		std::string get_mode() const;					/**< Get-method for property mode. @return Returns mode as std::string.*/
-		dotSceneColourDiffuse get_colourDiffuse() const;/**< Get-method for property colourDiffuse. @return Returns a dotSceneColourDiffuse-object.*/
+		bool IsValid() const;								/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
 
 		/**
 		 * Simple constructor. It calls th constructor of baseobject.
@@ -59,10 +63,5 @@ namespace dotSceneObjects
 		 * @param obj_diffuseColour a pre-constrcted dotSceneColourDiffuse-object.
 		 */
 		dotSceneFog(double double_linearStart, double double_linearEnd, std::string str_mode, dotSceneColourDiffuse obj_diffuseColour);
-        
-		/**
-		 * Simple destructor.
-		 */
-		~dotSceneFog();
     };
 }

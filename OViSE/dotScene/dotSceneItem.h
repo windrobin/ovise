@@ -17,21 +17,21 @@ namespace dotSceneObjects
 	/**
 	 * This class holds a file-reference and information obout its type. For example "material".
 	 */
-    class dotSceneItem : public dotSceneObject
+    class dotSceneItem : virtual public dotSceneObject
     {
 	private:
-		std::string _type;	/**< Property type.*/
-		dotSceneFile _file; /**< Property file.*/
-
-		void set_type(std::string value);	/**< Set-method for property type. @param value Value of a std::string.*/
-		void set_file(dotSceneFile value);	/**< Set-method for property file. @param value A dotSceneFile-object.*/
+		std::string _Type;	/**< Property Type.*/
+		dotSceneFile _File; /**< Property File.*/
 
 	public:
-		std::string get_type() const;	/**< Get-method for property type. @return Returns type as std::string.*/
-		dotSceneFile get_file() const;	/**< Get-method for property file. @return Returns a dotSceneFile-object.*/
+		std::string get_Type() const;		/**< Get-method for property Type. @return Returns type as std::string.*/
+		dotSceneFile get_File() const;		/**< Get-method for property File. @return Returns a dotSceneFile-object.*/
+		void set_Type(std::string value);	/**< Set-method for property Type. @param value Value of a std::string.*/
+		void set_File(dotSceneFile value);	/**< Set-method for property File. @param value A dotSceneFile-object.*/
+		bool IsValid() const;				/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
 
 		/**
-		 * Simple constructor. It calls the constructor of baseobject.
+		 * Simple constructor. It calls constructor of baseobject.
 		 */
         dotSceneItem();
 
@@ -41,7 +41,7 @@ namespace dotSceneObjects
 		 * @param str_type type-value in string-format. Has to be "material" for material-ressources.
 		 * @param obj_file A pre-constrcted dotSceneFile-object.
 		 */
-		dotSceneItem(std::string str_type, dotSceneFile obj_file);
+		dotSceneItem(std::string str_Type, dotSceneFile obj_File);
 
 		/**
 		 * Simple destructor.

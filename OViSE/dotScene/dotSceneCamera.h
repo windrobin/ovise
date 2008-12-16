@@ -22,28 +22,32 @@ namespace dotSceneObjects
 	 * This class describes a Ogre::Camera.
 	 * It holds values of all parameters, which can occure between camera-tags in a dotScene-XML.
 	 */
-	class dotSceneCamera : public dotSceneSpecific 
+	class dotSceneCamera : virtual public dotSceneSpecific 
     { 
 	private:
-		std::string _name;				/**< Property name.*/
-		double _fov;					/**< Property fov.*/
-		std::string _projectionType;	/**< Property projectionType.*/
-		dotSceneNormal _normal;			/**< Property normal.*/
-		dotSceneClipping _clipping;		/**< Property clipping.*/
+		std::string _name;							/**< Property name.*/
+		double _fov;								/**< Property fov.*/
+		std::string _projectionType;				/**< Property projectionType.*/
+		dotSceneNormal _normal;						/**< Property normal.*/
+		dotSceneClipping _clipping;					/**< Property clipping.*/
 
+	public:
+		std::string get_name() const;				/**< Get-method for property name. @return Returns name as std::string.*/
+		double get_fov() const;						/**< Get-method for property fov. @return Returns fov as double.*/
+		std::string get_projectionType() const;		/**< Get-method for property projectionType. @return Returns projectionType as std::string.*/
+		dotSceneNormal get_normal() const;			/**< Get-method for property normal. @return Returns a dotSceneNormal-object.*/
+		dotSceneClipping get_clipping() const;		/**< Get-method for property clipping. @return Returns a dotSceneClipping-object.*/
+        
 		void set_name(std::string value);			/**< Set-method for property name. @param value Value of a std::string.*/
 		void set_fov(double value);					/**< Set-method for property fov. @param value A double-value.*/
 		void set_projectionType(std::string value);	/**< Set-method for property projectionType. @param value Value of a std::string.*/
 		void set_normal(dotSceneNormal value);		/**< Set-method for property normal. @param value A dotSceneNormal-object.*/
 		void set_clipping(dotSceneClipping value);	/**< Set-method for property clipping. @param value A dotSceneClipping-object.*/
 
-	public:
-		std::string get_name() const;			/**< Get-method for property name. @return Returns name as std::string.*/
-		double get_fov() const;					/**< Get-method for property fov. @return Returns fov as double.*/
-		std::string get_projectionType() const;	/**< Get-method for property projectionType. @return Returns projectionType as std::string.*/
-		dotSceneNormal get_normal() const;		/**< Get-method for property normal. @return Returns a dotSceneNormal-object.*/
-		dotSceneClipping get_clipping() const;	/**< Get-method for property clipping. @return Returns a dotSceneClipping-object.*/
-        
+		void set_fov(std::string value);			/**< Set-method for property fov. @param value Value in std::string-format. Will be parsed to double.*/
+
+		bool IsValid() const;						/**< Checks if all data-field contain data. @return Returns TRUE, if all fields contain data. Else FALSE.*/
+
         /**
 		 * Simple constructor.
 		 * It calls the constructor of base-object.
@@ -65,16 +69,11 @@ namespace dotSceneObjects
 		 * Standard-constructor for double-parameters.
 		 * The dotScene-objects have to be constructed before.
 		 * @param str_name name-value in string-format.
-		 * @param str_fov fov-value in double-format. Will be parsed to double.
+		 * @param double_fov fov-value in double-format. Will be parsed to double.
 		 * @param str_projectionType projectionType-value in string-format.
 		 * @param name obj_normal A pre-constrcted dotSceneNormal-object.
 		 * @param name obj_clipping A pre-constrcted dotSceneClipping-object.
 		 */
 		dotSceneCamera(std::string str_name, double double_fov, std::string str_projectionType, dotSceneNormal obj_normal, dotSceneClipping obj_clipping);
-        
-		/**
-		 * Simple destructor.
-		 */
-		~dotSceneCamera();
     };
 }

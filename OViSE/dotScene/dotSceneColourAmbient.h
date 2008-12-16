@@ -15,7 +15,7 @@ namespace dotSceneObjects
 	 * But it is not defined to a visible object or a special light-source.
 	 * It describes the "world-light".
 	 */
-	class dotSceneColourAmbient : public dotSceneColour 
+	class dotSceneColourAmbient : virtual public dotSceneColour 
     {
 	public:
 		/**

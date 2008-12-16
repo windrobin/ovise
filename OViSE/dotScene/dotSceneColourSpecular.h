@@ -14,7 +14,7 @@ namespace dotSceneObjects
 	 * Specular-colour describes with the RGB-values the reflection-colour a visible object
 	 * or the corresponding light-value, witch causes the object-reflection-colours.
 	 */
-	class dotSceneColourSpecular : public dotSceneColour
+	class dotSceneColourSpecular : virtual public dotSceneColour
     {
 	public:
 		/**

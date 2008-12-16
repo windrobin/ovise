@@ -1,8 +1,7 @@
-#ifndef dotSceneObject_h_
-#define dotSceneObject_h_
-#include "dotSceneObject.h"
+#ifndef dotScene3D_h_
+#define dotScene3D_h_
+#include "dotScene3D.h"
 #endif
-
 #pragma once
 
 namespace dotSceneObjects
@@ -11,23 +10,11 @@ namespace dotSceneObjects
 
 	/**
 	 * This class represents the x, y and z values of an 3D-vector, interpreted as a scale-factors.
+	 * It inherits from dotScene3D.
 	 */
-    class dotSceneScale : public dotSceneObject
+    class dotSceneScale : virtual public dotScene3D
     {	
-	private:
-		double _x; /**< Property x. X value.*/
-		double _y; /**< Property y. Y value.*/
-		double _z; /**< Property z. Z value.*/
-
-		void set_x(double value);	/**< Set-method for property x. @param value Value of double.*/
-		void set_y(double value);	/**< Set-method for property y. @param value Value of double.*/
-		void set_z(double value);	/**< Set-method for property z. @param value Value of double.*/
-
 	public:
-		double get_x() const;	/**< Get-method for property x. @return Returns x as double.*/
-		double get_y() const;	/**< Get-method for property y. @return Returns y as double.*/
-		double get_z() const;	/**< Get-method for property z. @return Returns z as double.*/
-
 		/**
 		 * Simple constructor. It calls the constructor of base-object.
 		 */
@@ -49,10 +36,5 @@ namespace dotSceneObjects
 		 * @param double_z Z-value in double-format.
 		 */
 		dotSceneScale(double double_x, double double_y, double double_z);
-
-		/**
-		 * Simple destructor.
-		 */
-        ~dotSceneScale();
     };
 }

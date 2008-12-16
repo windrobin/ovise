@@ -1,13 +1,22 @@
-#include <Ogre.h>
+//Old comments of c# implementation:
+///
+/*
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
+using Mogre;
+*/
 
 #include <string>
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #include <hash_map>
-#elif OGRE_PLATFORM == OGRE_PLATFORM_LINUX
+#else
 #include <map>
 #endif
 
-#include "dotSceneXmlReader.h"
+#include <Ogre.h>
+#include "DotSceneXmlReader.h"
 #include "dotScene.h"
 
 
@@ -29,13 +38,13 @@ namespace dotSceneAdvanced
 	 * FLEXIBLE: the assembly can be used with C++ Code in a managed environment without problems.
 	 * Enjoy it ;-)
 	 * Written by H.R., ITEC TH Karlsruhe, Germany, 2007-2008
-	 */
+	 */ 
     class dotSceneAttachFactory
     {
 	private:
         // Properies (inner part) of general factory-setting
 		/**
-		 * Unique name of a dotSceneAttachFactory.
+		 * Unique name of a dotSceneAttachFactory. 
 		 * That's IMPORTANT, because every dotSceneAttachFactory has it's own resource-group in the ogre-engine (!).
 		 */
 		Ogre::String _UniqueFactoryName;
@@ -75,7 +84,7 @@ namespace dotSceneAdvanced
 		 * zero point of origin. So there is no change applyed to delivered Ogre::SceneNode.
 		 */
 		Ogre::SceneNode *_AttachRootNode;
-
+		
 		/// Converts a node from XML to Ogre, works recursively to catch all children
 		//void convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode);
 
@@ -108,7 +117,7 @@ namespace dotSceneAdvanced
 		void set_NameOfFactoryOwnedMaterialResourceGroup(Ogre::String);
 		Ogre::String get_NameOfFactoryOwnedMaterialResourceGroup() const;
 		//@}
-
+		
 		//@{
 		/// Properties of general scene-output configuration
 		double get_ScaleOffset() const;
@@ -130,7 +139,7 @@ namespace dotSceneAdvanced
 		Ogre::SceneNode* get_LastAttachRootNode() const;
 
 		///@name Factory configuration:
-		//@{
+		//@{ 
 		/// This value defines, if nodes (entities, lights, cameras) should be deployed.
 		bool doAttachNodes;
 		/// This value defines, if externals (for example materials) should be registered and used.
@@ -153,7 +162,7 @@ namespace dotSceneAdvanced
          * @param locationOfMeshFiles Location of .mesh and .material files, used in the scene.
          * @return "true", when adding the blue print was successful. Returns false, if not. For example, when uniqueSceneName is not unique.
          */
-		bool addSceneBluePrint(std::string uniqueSceneName, dotScene newScene, std::string locationOfMeshFiles);
+		bool addSceneBluePrint(std::string uniqueSceneName, dotScene newScene, std::string locationOfMeshFiles); 
 
 		//@{
 		/// region methods to attach "dotScene"-Objects
@@ -168,7 +177,7 @@ namespace dotSceneAdvanced
 		 * @param isBlenderImport Sets explicitly the "BlenderImport" factory configuration parameter.
 		 * @return "true", when process was successful. If not, it returns "false". For example, when "uniqueSceneName" is unknown.
 		 */
-		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName,
+		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName, 
 								bool doAttachNodes, bool doAttachExternals, bool doAttachEnvironment);
 		/**
 		 * Use this method, to deploy a scene into your ogre-world.
@@ -177,7 +186,7 @@ namespace dotSceneAdvanced
 		 * @param attachToNodeWithThisName Mogre.SceneNode, which should be used as zero point of origin of scene.
 		 * @return "true", when process was successful. If not, it returns "false". For example, when "uniqueSceneName" is unknown.
 		 */
-		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName);
+		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName); 
 		//@}
 		//@}
 	};
