@@ -317,6 +317,18 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	}
 }
 
+void OViSEWxFrame::OnDynamicShadowsChange(wxCommandEvent& event)
+{
+	if(event.IsChecked())
+	{
+		mSceneHdlr->dynamicShadows(true);
+	}
+	else
+	{
+		mSceneHdlr->dynamicShadows(false);
+	}
+}
+
 void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *prop = event.GetProperty();

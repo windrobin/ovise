@@ -114,6 +114,10 @@ void OViSEInputHandler::handleKeyboardInput(wxKeyEvent &evt)
 	case 'F':
 		focusCamera();
 		break;
+	case 't':
+	case 'T':
+		showHelpOverlay();
+		break;
 	default: break;
 	}
 	evt.Skip();
@@ -233,4 +237,14 @@ void OViSEInputHandler::focusCamera()
 			mCameraNode->setPosition(avgPos);
 		}
 	}
+}
+
+void OViSEInputHandler::showHelpOverlay()
+{
+	Ogre::OverlayManager *overlayMgr = Ogre::OverlayManager::getSingletonPtr();
+	Ogre::Overlay *hlpOverlay = overlayMgr->getByName("GeneralOverlays/HelpOverlay");
+	if(!hlpOverlay) throw OViSEException("Help Overlay not found!");
+	if(hlpOverlay->isVisible())
+		hlpOverlay->hide();
+	else hlpOverlay->show();		
 }

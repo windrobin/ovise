@@ -48,6 +48,9 @@ protected:
 	/// Pitch camera.
 	void pitchCamera(Ogre::Radian angle);
 
+	/// Show the help overlay
+	void showHelpOverlay();
+
 	/** Focuses the camera on the currently selected objects. 
 	 * @todo Check that all selected objects are visible
 	 * @todo Make smooth animation for camera change?

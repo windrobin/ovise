@@ -22,8 +22,8 @@ OViSESceneHandling::OViSESceneHandling()
 void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
 {
 	// Create default grid
-	Ogre::Vector3 gridColor(0.6,0.6,0.6);
-	addGrid(1, 20, 20, gridColor, sceneManagerName);
+	Ogre::Entity *gridEnt = mSceneManagers["BaseSceneManager"]->createEntity("BasePlane", "Plane.mesh");
+	mSceneManagers["BaseSceneManager"]->getRootSceneNode()->attachObject(gridEnt);
 	addCOS(0.1, true, sceneManagerName);
 
 	Ogre::SceneManager *tmp = mSceneManagers[sceneManagerName];
@@ -458,6 +458,13 @@ void OViSESceneHandling::updateObjectTitles()
 	{
 		(*iter)->update();
 	}
+}
+
+void OViSESceneHandling::dynamicShadows(bool state)
+{
+	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
+	if(state) scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	else scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
 }
 
 OViSESceneHandling::~OViSESceneHandling()

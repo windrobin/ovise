@@ -143,6 +143,9 @@ public:
 	 */
 	void updateObjectTitles();
 
+	/// Turn dynamic shadows (stencil) on or off
+	void dynamicShadows(bool state);
+
 protected:
 	OViSESceneHandling();
 	virtual ~OViSESceneHandling();
