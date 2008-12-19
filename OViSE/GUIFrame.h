@@ -30,10 +30,11 @@
 #define ID_ADD_VIEW 1001
 #define ID_SHOW_STRUCTURE 1002
 #define ID_SAVE_SCREENSHOT_TO_FILE 1003
-#define ID_ADD_MESH 1004
-#define ID_DELETE_MESHES 1005
-#define ID_LOAD_DOTSCENE 1006
-#define idMenuAbout 1007
+#define ID_DYNAMIC_SHADOWS 1004
+#define ID_ADD_MESH 1005
+#define ID_DELETE_MESHES 1006
+#define ID_LOAD_DOTSCENE 1007
+#define idMenuAbout 1008
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -56,6 +57,7 @@ class GUIFrame : public wxFrame
 		virtual void OnAddView( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnShowSceneStructure( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSaveScreenToFile( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDynamicShadowsChange( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
