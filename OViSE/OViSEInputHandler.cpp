@@ -118,6 +118,10 @@ void OViSEInputHandler::handleKeyboardInput(wxKeyEvent &evt)
 	case 'T':
 		showHelpOverlay();
 		break;
+	case 'z':
+	case 'Z':
+		OViSESceneHandling::getSingletonPtr()->testStuff();
+		break;
 	default: break;
 	}
 	evt.Skip();

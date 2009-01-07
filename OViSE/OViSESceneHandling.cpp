@@ -467,6 +467,12 @@ void OViSESceneHandling::dynamicShadows(bool state)
 	else scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
 }
 
+void OViSESceneHandling::testStuff()
+{
+	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
+	OViSEPointcloud *pc = (OViSEPointcloud*) scnMgr->createManualObject(
+}
+
 OViSESceneHandling::~OViSESceneHandling()
 {
 }

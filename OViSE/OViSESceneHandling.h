@@ -8,6 +8,7 @@
 #endif
 #include "OViSEException.h"
 #include "OViSEObjectTitle.h"
+#include "OViSEPointcloud.h"
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
@@ -145,6 +146,9 @@ public:
 
 	/// Turn dynamic shadows (stencil) on or off
 	void dynamicShadows(bool state);
+
+	/// debug function for testing
+	void testStuff();
 
 protected:
 	OViSESceneHandling();
