@@ -134,6 +134,6 @@ namespace dotSceneObjects
 		/**
 		 * Copy-Constructor.
 		 */
-		dotSceneNodes(const dotSceneNode& CopyObject);
+		dotSceneNodes(const dotSceneNodes& CopyObject);
     };
 }

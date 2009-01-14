@@ -275,7 +275,7 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 	dotSceneObjects::dotSceneItem* someItem;
 	dotSceneObjects::dotSceneFile* someFile;
 
-	// There is noc switch/case for strings in C+ :-(
+	// There is noc switch/case for strings in C++ :-(
 	// Here a helper-method is used, to find a matching value of a dotSceneElementaryTags-enum.
 	StringBuffer2 = XMLString::transcode(ParentElement->getNodeName());
 	dotSceneObjects::dotSceneObject ObjectUsedForIdentificationOfEnumValue = dotSceneObjects::dotSceneObject(StringBuffer2);

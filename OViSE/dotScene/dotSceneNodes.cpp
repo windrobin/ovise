@@ -148,7 +148,7 @@ dotSceneObjects::dotSceneNodes::dotSceneNodes(
 	this->set_Scale(obj_Scale);
 
 	this->_ListOfCameras = std::list<dotSceneCamera>();
-	this->_ListOfChildNodes = std::list<dotSceneNode>();
+	this->_ListOfNodes = std::list<dotSceneNode>();
 	this->_ListOfLights = std::list<dotSceneLight>();
 }
 
@@ -166,7 +166,7 @@ dotSceneObjects::dotSceneNodes::dotSceneNodes(
 	this->set_Scale(obj_Scale);
 
 	this->_ListOfCameras = std::list<dotSceneCamera>();
-	this->_ListOfChildNodes = std::list<dotSceneNode>();
+	this->_ListOfNodes = std::list<dotSceneNode>();
 	this->_ListOfLights = std::list<dotSceneLight>();
 }
 dotSceneObjects::dotSceneNodes::dotSceneNodes(const dotSceneNodes& CopyObject) : dotSceneObject(dotSceneEnums::nodes)
@@ -179,6 +179,6 @@ dotSceneObjects::dotSceneNodes::dotSceneNodes(const dotSceneNodes& CopyObject) :
 	this->set_Scale(CopyObject.get_Scale());
 
 	this->_ListOfCameras = CopyObject._ListOfCameras;
-	this->_ListOfChildNodes = CopyObject._ListOfChildNodes;
+	this->_ListOfNodes = CopyObject._ListOfNodes;
 	this->_ListOfLights = CopyObject._ListOfLights;
 }
