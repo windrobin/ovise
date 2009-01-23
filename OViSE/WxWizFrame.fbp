@@ -272,6 +272,26 @@
                         <event name="OnUpdateUI"></event>
                     </object>
                 </object>
+                <object class="wxMenu" expanded="1">
+                    <property name="label">Debug</property>
+                    <property name="name">debug</property>
+                    <property name="permission">protected</property>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help"></property>
+                        <property name="id">ID_TESTSTUFF</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">TestStuff</property>
+                        <property name="name">teststuff</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">OnTestStuff</event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                </object>
             </object>
             <object class="wxStatusBar" expanded="1">
                 <property name="bg"></property>

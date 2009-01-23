@@ -1,47 +1,59 @@
 #include "OViSEPointcloud.h"
 
-OViSEPointcloud::OViSEPointcloud(const std::string& name, std::string material) : Ogre::ManualObject(name)
+OViSEPointcloud::OViSEPointcloud(const std::string& name) : Ogre::ManualObject(name)
 {
-	mMaterialName = material;
+	mSize = 0;
 }
 
-void OViSEPointcloud::create(int size, float **points)
+void OViSEPointcloud::create(int size, float *points, const std::string material, bool dynamic)
 {
 	mSize = size;
-	estimateVertexCount(mSize *4);
+	this->estimateVertexCount(mSize*4);
+	this->setDynamic(dynamic);
 
 	Ogre::Vector3 tmp = Ogre::Vector3::ZERO;
-	Ogre::Vector3 a(-0.5, -0.5, -0.5);
-	Ogre::Vector3 b(0.5, -0.5, 0);
-	Ogre::Vector3 c(0, -0.5, 0.5);
-	Ogre::Vector3 o(0, 1, 0);
+	Ogre::Vector3 a(-0.1, -0.1, -0.1);
+	Ogre::Vector3 b(0.1, -0.1, 0);
+	Ogre::Vector3 c(0, -0.1, 0.1);
+	Ogre::Vector3 o(0, 0.1, 0);
 
-	for(int i=0; i<mSize; i+=3)
+	this->begin(material, Ogre::RenderOperation::OT_TRIANGLE_LIST);
+
+	for(int i=0, j=0; i<mSize*3; i+=3, j+=4)
 	{
-		begin(mMaterialName, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-		tmp = Ogre::Vector3(points[i][0], points[i][1], points[i][2]);
-		position(tmp + o);
-		normal(Ogre::Vector3(0,1,0));
-		position(tmp + a);
-		normal(Ogre::Vector3(-1, -1, -1));
-		position(tmp + b);
-		normal(Ogre::Vector3(1, 0, 0));
-		position(tmp + c);
-		normal(Ogre::Vector3(0, 0, 1));
+		tmp = Ogre::Vector3(points[i], points[i+1], points[i+2]);
+		this->position(tmp + o);
+		this->normal(Ogre::Vector3(0,1,0));
+		this->position(tmp + a);
+		this->normal(Ogre::Vector3(-1, -1, -1));
+		this->position(tmp + b);
+		this->normal(Ogre::Vector3(1, 0, 0));
+		this->position(tmp + c);
+		this->normal(Ogre::Vector3(0, 0, 1));
 
-		triangle(i, i+1, i+2);
-		triangle(i, i+2, i+3);
-		triangle(i, i+3, i+1);
-		triangle(i+2, i+3, i+1);
-		end();
+		this->triangle(j+2, j+1, j);
+		this->triangle(j+3, j+2, j);
+		this->triangle(j+1, j+3, j);
+		this->triangle(j+3, j+1, j+2);
+	}
+	this->end();
+}
+
+void OViSEPointcloud::update(int size, float *points, const std::string material, int index, int numpoints)
+{
+	if(index == -1)
+	{
+		// we need to update everything
+		this->clear();
+		this->create(size, points, material);
+	}
+	else
+	{
+		
 	}
 }
 
-void OViSEPointcloud::update(int size, float **points, int index)
+OViSEPointcloud::~OViSEPointcloud()
 {
-
-}
-
-OViSEPointcloud::~OViSEPointcloud(void)
-{
+	clear();
 }

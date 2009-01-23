@@ -470,7 +470,20 @@ void OViSESceneHandling::dynamicShadows(bool state)
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
-	OViSEPointcloud *pc = (OViSEPointcloud*) scnMgr->createManualObject(
+	OViSEPointcloud *pc = new OViSEPointcloud("Pointcloud");
+	float *pointcloud = new float[320*240*3];
+
+	int k=0;
+	for(int i=0; i<320*240*3; i+=3)
+	{
+		pointcloud[i] = (i/3) % 320;
+		pointcloud[i+1] = (int) floor((double)(i/320));
+		pointcloud[i+2] = 10 * sin((double)(pointcloud[i]/100)) * 10 * cos((double)(pointcloud[i+1]/100));
+	}
+
+	pc->create(320*240, pointcloud, "Examples/Pointcloud");
+	scnMgr->getRootSceneNode()->attachObject(pc);
+	delete[] pointcloud;
 }
 
 OViSESceneHandling::~OViSESceneHandling()

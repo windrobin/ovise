@@ -4,14 +4,15 @@
 class OViSEPointcloud :	public Ogre::ManualObject
 {
 public:
-	OViSEPointcloud(const std::string& name, std::string material);
+	OViSEPointcloud(const std::string& name);
 
-	void create(int size, float **points);
-	void update(int size, float **points, int index = -1);
+	/// Create a pointcloud with size points.
+	void create(int size, float *points, const std::string material, bool dynamic = true);
+	/// Update a created pointcloud with size points.
+	void update(int size, float *points, const std::string material, int index = -1, int numpoints = 0);
 
-	~OViSEPointcloud(void);
+	virtual ~OViSEPointcloud();
 
 private:
 	int mSize;
-	std::string mMaterialName;
 };
