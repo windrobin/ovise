@@ -35,6 +35,7 @@
 #define ID_DELETE_MESHES 1006
 #define ID_LOAD_DOTSCENE 1007
 #define idMenuAbout 1008
+#define ID_TESTSTUFF 1009
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -49,6 +50,7 @@ class GUIFrame : public wxFrame
 		wxMenu* view;
 		wxMenu* scene;
 		wxMenu* helpMenu;
+		wxMenu* debug;
 		wxStatusBar* statusBar;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -62,6 +64,7 @@ class GUIFrame : public wxFrame
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnTestStuff( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

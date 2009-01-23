@@ -525,3 +525,9 @@ void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 {
 	mSceneHdlr->showSceneGraphStructure();
 }
+
+
+void OViSEWxFrame::OnTestStuff( wxCommandEvent& event )
+{
+	mSceneHdlr->testStuff();
+}
