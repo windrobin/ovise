@@ -6,13 +6,13 @@
 using namespace dotSceneObjects;
 
 std::string dotSceneObjects::dotSceneCamera::get_name() const { return this->_name; }		
-double dotSceneObjects::dotSceneCamera::get_fov() const { return this->_fov; }
+double dotSceneObjects::dotSceneCamera::get_fov() const { return this->_FOVy; }
 std::string dotSceneObjects::dotSceneCamera::get_projectionType() const { return this->_projectionType; }
 dotSceneNormal dotSceneObjects::dotSceneCamera::get_normal() const { return _normal; }
 dotSceneClipping dotSceneObjects::dotSceneCamera::get_clipping() const { return this->_clipping; }
 
 void dotSceneObjects::dotSceneCamera::set_name(std::string value) { this->_name = value; }
-void dotSceneObjects::dotSceneCamera::set_fov(double value) { this->_fov = value; }
+void dotSceneObjects::dotSceneCamera::set_fov(double value) { this->_FOVy = value; }
 void dotSceneObjects::dotSceneCamera::set_projectionType(std::string value) { this->_projectionType = value; }
 void dotSceneObjects::dotSceneCamera::set_normal(dotSceneNormal value) { this->_normal = value; }
 void dotSceneObjects::dotSceneCamera::set_clipping(dotSceneClipping value) { this->_clipping = value; }
@@ -21,7 +21,7 @@ void dotSceneObjects::dotSceneCamera::set_fov(std::string value)
 {
 	double tmp;
 	sscanf(value.c_str(), "%lf", &tmp);
-	this->_fov = tmp;
+	this->_FOVy = tmp;
 }
 
 bool dotSceneObjects::dotSceneCamera::IsValid() const

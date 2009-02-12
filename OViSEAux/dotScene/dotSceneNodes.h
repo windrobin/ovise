@@ -8,11 +8,6 @@
 #include "dotScenePosition.h"
 #endif
 
-#ifndef dotSceneOrientation_h_
-#define dotSceneOrientation_h_
-#include "dotSceneOrientation.h"
-#endif
-
 #ifndef dotSceneScale_h_
 #define dotSceneScale_h_
 #include "dotSceneScale.h"
@@ -31,6 +26,11 @@
 #ifndef dotSceneNode_h_
 #define dotSceneNode_h_
 #include "dotSceneNode.h"
+#endif
+
+#ifndef dotSceneOrientation_h_
+#define dotSceneOrientation_h_
+#include "dotSceneOrientation.h"
 #endif
 
 #pragma once

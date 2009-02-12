@@ -26,7 +26,9 @@ namespace dotSceneObjects
     { 
 	private:
 		std::string _name;							/**< Property name.*/
-		double _fov;								/**< Property fov.*/
+		std::string _id;							/**< Property ID.*/
+		double _FOVy;								/**< Property FOVy.*/
+		double _aspectRatio;						/**< Property AspectRatio.*/
 		std::string _projectionType;				/**< Property projectionType.*/
 		dotSceneNormal _normal;						/**< Property normal.*/
 		dotSceneClipping _clipping;					/**< Property clipping.*/

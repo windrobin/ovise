@@ -3,7 +3,7 @@
 #include "dotSceneSpecific.h"
 #endif
 
-#ifndef dotSceneCommonMoveFableObjectParams_h_
+#ifndef dotSceneCommonMovableObjectParams_h_
 #define dotSceneCommonMovableObjectParams_h_
 #include "dotSceneCommonMovableObjectParams.h"
 #endif
