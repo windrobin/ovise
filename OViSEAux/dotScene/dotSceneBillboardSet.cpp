@@ -25,6 +25,8 @@ bool		dotSceneObjects::dotSceneBillboardSet::get_PointRenderingEnabled() const {
 dotSceneCommonMovableObjectParams	dotSceneObjects::dotSceneBillboardSet::get_CommonMovableObjectParams() const { return this->_CommonMovableObjectParams; }
 dotSceneCommonDirection				dotSceneObjects::dotSceneBillboardSet::get_CommonDirection() const { return this->_CommonDirection; }
 dotSceneCommonUpVector				dotSceneObjects::dotSceneBillboardSet::get_CommonUpVector() const { return this->_CommonUpVector; }
+dotSceneTextureCoords				dotSceneObjects::dotSceneBillboardSet::get_TextureCoords() const { return this->_TextureCoords; }
+dotSceneTextureStacksAndSlices		dotSceneObjects::dotSceneBillboardSet::get_TextureStacksAndSlices() const { return this->_TextureStacksAndSlices; }
 
 void dotSceneObjects::dotSceneBillboardSet::set_name(std::string value) { this->_name = value; }
 void dotSceneObjects::dotSceneBillboardSet::set_ID(std::string value) { this->_ID = value; }
@@ -45,6 +47,8 @@ void dotSceneObjects::dotSceneBillboardSet::set_PointRenderingEnabled(bool value
 void dotSceneObjects::dotSceneBillboardSet::set_CommonMovableObjectParams(dotSceneCommonMovableObjectParams value) { this->_CommonMovableObjectParams = value; }
 void dotSceneObjects::dotSceneBillboardSet::set_CommonDirection(dotSceneCommonDirection value) { this->_CommonDirection = value; }
 void dotSceneObjects::dotSceneBillboardSet::set_CommonUpVector(dotSceneCommonUpVector value) { this->_CommonUpVector = value; }
+void dotSceneObjects::dotSceneBillboardSet::set_TextureCoords(dotSceneTextureCoords value) { this->_TextureCoords = value; }
+void dotSceneObjects::dotSceneBillboardSet::set_TextureStacksAndSlices(dotSceneTextureStacksAndSlices value) { this->_TextureStacksAndSlices = value; }
 
 void dotSceneObjects::dotSceneBillboardSet::set_PoolSize(std::string value)
 {
@@ -174,9 +178,6 @@ bool dotSceneObjects::dotSceneBillboardSet::IsValid() const
 	// basics valid?
 	if (this->_MaterialName == "INVALID") return false;
 	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
-	if (!this->_CommonMovableObjectParams.IsValid()) return false;
-	if (!this->_CommonDirection.IsValid()) return false;
-	if (!this->_CommonUpVector.IsValid()) return false;
 
 	return true;
 }

@@ -23,6 +23,16 @@
 #include "dotSceneBillboard.h"
 #endif
 
+#ifndef dotSceneTextureCoords_h_
+#define dotSceneTextureCoords_h_
+#include "dotSceneTextureCoords.h"
+#endif
+
+#ifndef dotSceneTextureStacksAndSlices_h_
+#define dotSceneTextureStacksAndSlices_h_
+#include "dotSceneTextureStacksAndSlices.h"
+#endif
+
 #ifndef list_h_
 #define list_h_
 #include <list>
@@ -60,6 +70,8 @@ namespace dotSceneObjects
 		dotSceneCommonMovableObjectParams _CommonMovableObjectParams;	/**< Property CommonMovableObjectParams.*/
 		dotSceneCommonDirection _CommonDirection;						/**< Property CommonDirection.*/
 		dotSceneCommonUpVector _CommonUpVector;							/**< Property CommonUpVector.*/
+		dotSceneTextureCoords _TextureCoords;							/**< Property TextureCoords.*/
+		dotSceneTextureStacksAndSlices _TextureStacksAndSlices;			/**< Property TextureStacksAndSlices.*/
 
 	public:
 		// lists
@@ -84,6 +96,8 @@ namespace dotSceneObjects
 		dotSceneCommonMovableObjectParams get_CommonMovableObjectParams() const;/**< Get-method for property CommonMovableObjectParams. @return Returns a "dotSceneCommonMovableObjectParams"-object.*/
 		dotSceneCommonDirection get_CommonDirection() const;					/**< Get-method for property CommonDirection. @return Returns a "dotSceneCommonDirection"-object.*/
 		dotSceneCommonUpVector get_CommonUpVector() const;						/**< Get-method for property CommonUpVector. @return Returns a "dotSceneCommonUpVector"-object.*/
+		dotSceneTextureCoords get_TextureCoords() const;						/**< Get-method for property TextureCoords. @return Returns a "dotSceneTextureCoords"-object.*/
+		dotSceneTextureStacksAndSlices get_TextureStacksAndSlices() const;		/**< Get-method for property TextureStacksAndSlices. @return Returns a "dotSceneTextureStacksAndSlices"-object.*/
 
 		void set_name(std::string value);							/**< Set-method for property name. @param value Value of a std::string.*/
 		void set_ID(std::string value);								/**< Set-method for property ID. @param value Value of a std::string.*/
@@ -105,6 +119,8 @@ namespace dotSceneObjects
 		void set_CommonMovableObjectParams(dotSceneCommonMovableObjectParams value);/**< Set-method for property CommonMovableObjectParams. @param value A "dotSceneCommonMovableObjectParams"-object.*/
 		void set_CommonDirection(dotSceneCommonDirection value);					/**< Set-method for property CommonDirection. @param value A "dotSceneCommonDirection"-object.*/
 		void set_CommonUpVector(dotSceneCommonUpVector value);						/**< Set-method for property CommonUpVector. @param value A "dotSceneCommonUpVector"-object.*/
+		void set_TextureCoords(dotSceneTextureCoords value);						/**< Set-method for property TextureCoords. @param value A "dotSceneTextureCoords"-object.*/
+		void set_TextureStacksAndSlices(dotSceneTextureStacksAndSlices value);		/**< Set-method for property TextureStacksAndSlices. @param value A "dotSceneTextureStacksAndSlices"-object.*/
 
 		void set_PoolSize(std::string value);						/**< Set-method for property PoolSize. @param value Value of a std::string.*/
 		void set_Autoextend(std::string value);						/**< Set-method for property Autoextend. @param value Value of a std::string.*/

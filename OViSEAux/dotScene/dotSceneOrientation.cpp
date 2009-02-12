@@ -49,8 +49,12 @@ dotSceneQuaternion dotSceneObjects::dotSceneOrientation::convert(dotSceneAxisXYZ
 	return someQuaternion;
 }
 
-/// constructors & destructors
-dotSceneObjects::dotSceneAngleAxis::dotSceneAngleAxis() : dotSceneObject(dotSceneEnums::angle_axis)
+bool dotSceneObjects::dotSceneOrientation::IsValid() const
 {
-	
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
 }
+
+/// constructors & destructors
+dotSceneObjects::dotSceneOrientation::dotSceneOrientation() : dotSceneObject(dotSceneEnums::orientation) { }

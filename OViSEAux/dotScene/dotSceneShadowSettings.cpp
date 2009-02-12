@@ -37,6 +37,7 @@ void dotSceneObjects::dotSceneShadowSettings::set_ShadowTexturePixelFormat(Pixel
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowDirLightTextureOffset(double value) { this->_ShadowDirLightTextureOffset = value; }
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowTextureFadeStart(double value) { this->_ShadowTextureFadeStart = value; }
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowTextureFadeEnd(double value) { this->_ShadowTextureFadeEnd = value; }
+void dotSceneObjects::dotSceneShadowSettings::set_ShadowTextureSelfShadow(bool value) { this->_ShadowTextureSelfShadow = value; }
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowTextureCasterMaterial(std::string value) { this->_ShadowTextureCasterMaterial = value; }
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowTextureReceiverMaterial(std::string value) { this->_ShadowTextureReceiverMaterial = value; }
 void dotSceneObjects::dotSceneShadowSettings::set_ShadowCasterRenderBackFaces(bool value) { this->_ShadowCasterRenderBackFaces = value; }
@@ -208,6 +209,24 @@ void dotSceneObjects::dotSceneShadowSettings::set_ShadowCasterRenderBackFaces(st
 	if (value == "false")	{ this->_ShadowCasterRenderBackFaces = false;	match = true; }
 
 	if (!match) this->_ShadowCasterRenderBackFaces = false;
+}
+
+bool dotSceneObjects::dotSceneShadowSettings::IsValid() const
+{
+	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
+
+	return true;
+}
+
+bool dotSceneObjects::dotSceneShadowSettings::addShadowTextureConfig(dotSceneShadowTextureConfig someShadowTextureConfig)
+{
+	try
+	{
+		this->_ListOfShadowTextureConfig.push_back(someShadowTextureConfig);
+		return true;
+	}
+	catch (std::exception ex) { }
+	return false;
 }
 
 /// region constructors & destructors
