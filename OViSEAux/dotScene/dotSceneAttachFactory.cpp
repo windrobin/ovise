@@ -222,6 +222,8 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string uniqueSceneName,
 																	std::string attachToNodeWithThisName)
 {
+	// uncommented because not compilable in current state
+	/*
 	// save time, if list ist empty
 	if (Scenes.empty()) return false;
 	    
@@ -350,7 +352,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 			;// Just catch any exceptions like null reference exceptions
 		}
     }
-
+	*/
     return true;
 }
 
@@ -358,6 +360,8 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 																	Ogre::SceneNode* attachParentNode,
 																	std::string uniqueSceneName)
 {	
+	// commented out because not working in current state
+	/*
 	using namespace dotSceneObjects;
 	std::list<dotSceneNode>::const_iterator actualNodeListIterator;
 
@@ -657,7 +661,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 
 			actualNodeListIterator++;
 		}while(actualNodeListIterator != (actualNodeList.end()));
-	}
+	}*/
 }
 
 

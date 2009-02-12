@@ -9,7 +9,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <string>
 // Include for Ogre Logging
-#include "Ogre.h"
+#include <Ogre.h>
 
 #include "dotScene.h"
 

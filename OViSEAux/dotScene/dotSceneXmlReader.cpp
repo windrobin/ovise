@@ -1416,7 +1416,7 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 			// Create dotSceneObject
 			somePosition = new dotSceneObjects::dotScenePosition();
 			ObjectForPolymorphReturn = somePosition;
-			this->TestRef = new dotSceneObjects::dotScenePosition(1,2,3);
+			//this->TestRef = new dotSceneObjects::dotScenePosition(1,2,3);
 			
 			// Lookup for specialized attributes
 			if (ParentElement->hasAttribute(XMLString::transcode("x")))
