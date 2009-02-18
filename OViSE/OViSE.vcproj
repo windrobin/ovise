@@ -190,6 +190,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSECallbackObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSECallbackTester.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OViSEFrameListener.cpp"
 				>
 			</File>
@@ -237,6 +245,14 @@
 			</File>
 			<File
 				RelativePath=".\OViSEAddMeshDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSECallbackObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSECallbackTester.h"
 				>
 			</File>
 			<File

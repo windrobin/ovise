@@ -94,7 +94,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/OViSE"
+INPUT                  = "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/OViSE" \
+                         "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/OViSEAux/dotScene"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \

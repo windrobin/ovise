@@ -36,22 +36,6 @@ void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
 	globalLight->setSpecularColour(1, 1, 1);
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
-
-	// Debug
-	Ogre::SceneNode *n = mSceneManagers[sceneManagerName]->getRootSceneNode()->createChildSceneNode("DebugNode", Ogre::Vector3(20, 10, -4));
-	n->pitch(Ogre::Radian(Ogre::Degree(25)));
-	n->scale(1.5, 1, 0.7);
-	Ogre::Entity *e = mSceneManagers[sceneManagerName]->createEntity("Barrel", "Barrel.mesh");
-	n->attachObject(e);
-	Ogre::SceneNode *n2 = n->createChildSceneNode(Ogre::Vector3(10, 10, -4));
-	Ogre::Entity *e2 = mSceneManagers[sceneManagerName]->createEntity("Barrel2", "Barrel.mesh");
-	n2->attachObject(e2);
-	Ogre::SceneNode *n3 = n->createChildSceneNode(Ogre::Vector3(-10, 10, -4));
-	Ogre::Entity *e3 = mSceneManagers[sceneManagerName]->createEntity("Barrel3", "Barrel.mesh");
-	n3->attachObject(e3);
-	Ogre::SceneNode *n4 = n3->createChildSceneNode(Ogre::Vector3(-10, 10, -4));
-	Ogre::Entity *e4 = mSceneManagers[sceneManagerName]->createEntity("Barrel4", "Barrel.mesh");
-	n4->attachObject(e4);
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -471,19 +455,21 @@ void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 	OViSEPointcloud *pc = new OViSEPointcloud("Pointcloud");
-	float *pointcloud = new float[320*240*3];
+	float *pointcloud = new float[100*100*3];
 
 	int k=0;
-	for(int i=0; i<320*240*3; i+=3)
+	for(int i=0; i<100*100*3; i+=3)
 	{
-		pointcloud[i] = (i/3) % 320;
-		pointcloud[i+1] = (int) floor((double)(i/320));
+		pointcloud[i] = (i/3) % 100;
+		pointcloud[i+1] = (int) floor((double)(i/100));
 		pointcloud[i+2] = 10 * sin((double)(pointcloud[i]/100)) * 10 * cos((double)(pointcloud[i+1]/100));
 	}
 
-	pc->create(320*240, pointcloud, "Examples/Pointcloud");
+	pc->create(100*100, pointcloud, "Examples/Pointcloud");
 	scnMgr->getRootSceneNode()->attachObject(pc);
 	delete[] pointcloud;
+
+	//OViSECallbackTester *tester = new OViSECallbackTester("Tester");
 }
 
 OViSESceneHandling::~OViSESceneHandling()
