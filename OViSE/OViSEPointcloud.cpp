@@ -41,7 +41,7 @@ void OViSEPointcloud::create(int size, float *points, const std::string material
 
 void OViSEPointcloud::update(int size, float *points, const std::string material, int index, int numpoints)
 {
-	if(index == -1)
+	if(index <= 0)
 	{
 		// we need to update everything
 		this->clear();
@@ -49,7 +49,26 @@ void OViSEPointcloud::update(int size, float *points, const std::string material
 	}
 	else
 	{
-		
+		Ogre::Vector3 tmp = Ogre::Vector3::ZERO;
+		Ogre::Vector3 a(-0.1, -0.1, -0.1);
+		Ogre::Vector3 b(0.1, -0.1, 0);
+		Ogre::Vector3 c(0, -0.1, 0.1);
+		Ogre::Vector3 o(0, 0.1, 0);
+
+		this->beginUpdate(index);
+		for(int i=0, j=0; i<numpoints*3; i+=3, j+=4)
+		{
+			tmp = Ogre::Vector3(points[i], points[i+1], points[i+2]);
+			this->position(tmp + o);
+			this->normal(Ogre::Vector3(0,1,0));
+			this->position(tmp + a);
+			this->normal(Ogre::Vector3(-1, -1, -1));
+			this->position(tmp + b);
+			this->normal(Ogre::Vector3(1, 0, 0));
+			this->position(tmp + c);
+			this->normal(Ogre::Vector3(0, 0, 1));
+		}
+		this->end();
 	}
 }
 

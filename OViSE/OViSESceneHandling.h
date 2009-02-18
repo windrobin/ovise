@@ -9,6 +9,7 @@
 #include "OViSEException.h"
 #include "OViSEObjectTitle.h"
 #include "OViSEPointcloud.h"
+#include "OViSECallbackTester.h"
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
