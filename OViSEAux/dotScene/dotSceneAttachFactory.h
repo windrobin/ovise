@@ -1,13 +1,3 @@
-//Old comments of c# implementation:
-///
-/*
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using Mogre;
-*/
-
 #include <string>
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #include <hash_map>
@@ -15,9 +5,23 @@ using Mogre;
 #include <map>
 #endif
 
-#include <Ogre.h>
-#include "DotSceneXmlReader.h"
+// Include Ogre
+#ifndef Ogre_h_
+#define Ogre_h_
+#include "Ogre.h"
+#endif
+
+// Include dotSceneObjects
+#ifndef dotScene_h_
+#define dotScene_h_
 #include "dotScene.h"
+#endif
+
+// Include dotSceneObjects
+#ifndef dotSceneXmlReader_h_
+#define dotSceneXmlReader_h_
+#include "dotSceneXmlReader.h"
+#endif
 
 
 namespace dotSceneAdvanced
@@ -32,12 +36,8 @@ namespace dotSceneAdvanced
 	 * - any scene can be placed multible time in any project - like a complex object
 	 * - names of the components are modified comprehensible
 	 * - every single node can be adressed and modified by the usual Mogre.SceneManager methods
-	 * .
-	 * CLEARNESS: the Mogre.SceneNode, which the factory uses as attach-point is not modified hidden inside the factory.
-	 * PORTABLE: it works in the .NET-framework of Mikrosoft. Today, that means with a Windows-OS, using a .NET-Framework Version of 2.0 or grather.
-	 * FLEXIBLE: the assembly can be used with C++ Code in a managed environment without problems.
 	 * Enjoy it ;-)
-	 * Written by H.R., ITEC TH Karlsruhe, Germany, 2007-2008
+	 * Written by H.R., ITEC TH Karlsruhe, Germany, 2008-2009
 	 */ 
     class dotSceneAttachFactory
     {
@@ -83,19 +83,17 @@ namespace dotSceneAdvanced
 		 * is delivered, the factory creates a child-node , which is used as scene's own
 		 * zero point of origin. So there is no change applyed to delivered Ogre::SceneNode.
 		 */
-		Ogre::SceneNode *_AttachRootNode;
+		Ogre::SceneNode *_AttachRootNode; //<- Green List: rename to "SceneRootNode"
 		
 		/// Converts a node from XML to Ogre, works recursively to catch all children
 		//void convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode);
 
 		// HashMaps manage to blueprints and their locations
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-		//VeRsIoN//stdext::hash_map<std::string, Scene> Scenes;
 		stdext::hash_map<std::string, dotScene> Scenes;
 		stdext::hash_map<std::string, std::string> LocationsOfMeshFiles;
 		stdext::hash_map<std::string, std::string> LocationsOfMaterialFiles;
-#else
-		//VeRsIoN//std::map<std::string, Scene*> Scenes;
+#else // Unix Libs
 		std::map<std::string, dotScene> Scenes;
 		std::map<std::string, std::string> LocationsOfMeshFiles;
 		std::map<std::string, std::string> LocationsOfMaterialFiles;
@@ -104,7 +102,7 @@ namespace dotSceneAdvanced
 		// Attributes for interpretation
 		Ogre::String _UniqueManagerName;
 		Ogre::SceneManager *Mgr;
-		Ogre::SceneNode *deliverdExternalRootNode;
+		Ogre::SceneNode *deliverdExternalRootNode; //<- Green List: rename to "ExternalAnchorNode"
 
 		void recursiveNodeCreator(std::list<dotSceneNode> actualNodeList, Ogre::SceneNode* attachParentNode, std::string uniqueSceneName);
 	public:

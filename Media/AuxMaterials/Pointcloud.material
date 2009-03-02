@@ -1,0 +1,12 @@
+material Pointcloud
+{
+	technique
+	{
+		pass
+		{
+			point_size 0.05
+			point_sprites on
+			point_size_attenuation on
+		}
+	}
+}

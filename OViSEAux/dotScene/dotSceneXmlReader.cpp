@@ -1416,7 +1416,6 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 			// Create dotSceneObject
 			somePosition = new dotSceneObjects::dotScenePosition();
 			ObjectForPolymorphReturn = somePosition;
-			//this->TestRef = new dotSceneObjects::dotScenePosition(1,2,3);
 			
 			// Lookup for specialized attributes
 			if (ParentElement->hasAttribute(XMLString::transcode("x")))
@@ -2392,14 +2391,3 @@ dotSceneXmlReader::~dotSceneXmlReader()
 	}	   
 }
 
-void main(void)
-{
-	dotSceneXmlReader *reader = new dotSceneXmlReader("C:/OViSE/OViSE/dotScene/dotScene.xsd", true);
-	reader->parseDotSceneXML("C:/OViSE/OViSETestScene.xml");
-	dotSceneObjects::dotScene* myScene = reader->loadDotScene();
-	
-	std::cout << "\n\n   Letzter Check: " << myScene->get_FormatVersion() << " :-)\n\n";
-
-	int dummy;
-	std::cin >> dummy;
-}

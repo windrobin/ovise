@@ -10,6 +10,7 @@
 #include "OViSEObjectTitle.h"
 #include "OViSEPointcloud.h"
 #include "OViSECallbackTester.h"
+#include "OViSEFrameListener.h"
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
@@ -170,6 +171,9 @@ private:
 
 	/// Map of all object titles
 	OViSEObjectTitleVector mObjectTitlesVector;
+
+	/// FrameListener
+	OViSEFrameListener *mFrameListener;
 };
 
 #endif /*OVISESCENEHANDLING_H_*/
