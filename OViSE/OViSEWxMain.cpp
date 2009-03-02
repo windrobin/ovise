@@ -60,9 +60,6 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
 
-	mFrameListener = new OViSEFrameListener();
-	mRoot->addFrameListener(mFrameListener);
-
 	mMainRenderWin = new wxOgreRenderWindow(NULL, NULL, mSecondSplitter, WINDOW_MainRender);
 	mMainRenderWin->SetStatusBar(statusBar);
 
@@ -105,7 +102,7 @@ void OViSEWxFrame::finishOgreInitialization()
 	camFocusNode->setFixedYawAxis(true);
 	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
 	camNode->setFixedYawAxis(true);
-	camNode->setPosition(0, 0, 0);
+	camNode->setPosition(0, 10, 20);
 	camNode->attachObject(mCam);
 
     Ogre::Viewport *mVp = mMainRenderWin->GetRenderWindow()->addViewport(mCam);

@@ -24,7 +24,6 @@
 #include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
 #include "OViSEAddMeshDialog.h"
-#include "OViSEFrameListener.h"
 
 enum
 {
@@ -65,7 +64,6 @@ class OViSEWxFrame: public GUIFrame
 
     protected:
 		Ogre::Root *mRoot;
-		OViSEFrameListener *mFrameListener;
 
         wxOgreRenderWindow *mMainRenderWin;
 

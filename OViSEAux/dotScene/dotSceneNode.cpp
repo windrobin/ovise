@@ -70,19 +70,19 @@ bool dotSceneObjects::dotSceneNode::HasChilds() const
 
 bool dotSceneObjects::dotSceneNode::HasCamera() const
 {
-	if (this->_ListOfCameras.empty() == 0) return false;
+	if (this->_ListOfCameras.empty()) return false;
 	else return true;
 }
 
 bool dotSceneObjects::dotSceneNode::HasEntity() const
 {
-	if (this->_ListOfEntities.empty() == 0) return false;
+	if (this->_ListOfEntities.empty()) return false;
 	else return true;
 }
 
 bool dotSceneObjects::dotSceneNode::HasLight() const
 {
-	if (this->_ListOfLights.empty() == 0) return false;
+	if (this->_ListOfLights.empty()) return false;
 	else return true;
 }
 

@@ -1,17 +1,28 @@
 #ifndef DOTSCENEXMLREADER_H_
 #define DOTSCENEXMLREADER_H_
 
-// Xerces includes
+// Inlcude Xerces
+#ifndef Xerxes_Used
+#define Xerxes_Used
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <string>
-// Include for Ogre Logging
-#include <Ogre.h>
+#endif
 
+// Include Ogre (for logging)
+#ifndef Ogre_h_
+#define Ogre_h_
+#include "Ogre.h"
+#endif
+
+// Include dotSceneObjects
+#ifndef dotScene_h_
+#define dotScene_h_
 #include "dotScene.h"
+#endif
 
 #ifdef XERCES_NEW_IOSTREAMS
 #include <iostream>

@@ -82,26 +82,42 @@ Ogre::SceneNode* dotSceneAdvanced::dotSceneAttachFactory::get_LastAttachRootNode
 }
 
 // Con- & Destructors
-dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(Ogre::String UniqueFactoryName, Ogre::SceneManager* sceneMgr)         // Constructor for dotSceneAttachFactory. The following standard-valus will be set: // ScaleOffset = 1.0 // PositionOffset = (0.0, 0.0, 0.0) // RollOfEntireScene = PitchOfEntireScene = YawOfEntireScene = 0.0 // <param name="uniqueFactoryName">Unique name of the factoy-instance. That's essencial, because a resource-group in ogre engine 'll be allocaeted with this name.</param> // <param name="attachToThisManager">Mogre.SceneManager, which this factroy should belong to.</param>
+// Constructor for dotSceneAttachFactory.
+// The following standard-valus will be set:
+// ScaleOffset = 1.0
+// PositionOffset = (0.0, 0.0, 0.0)
+// RollOfEntireScene = PitchOfEntireScene = YawOfEntireScene = 0.0
+// <param name="uniqueFactoryName">Unique name of the factoy-instance. That's essencial, because a resource-group in ogre engine 'll be allocaeted with this name.</param>
+// <param name="attachToThisManager">Mogre.SceneManager, which this factroy should belong to.</param>
+dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(Ogre::String UniqueFactoryName, Ogre::SceneManager* sceneMgr)
 {
+	// Store factory's configuration...
 	this->set_UniqueFactoryName(UniqueFactoryName);
 	this->set_NameOfFactoryOwnedMaterialResourceGroup(UniqueFactoryName);
 
-    //setup data-structures in ogre engine for this factory
-	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
-
-    this->set_ScaleOffset(1.0);
+	this->set_ScaleOffset(1.0);
 	this->set_PositionOffset(Ogre::Vector3(0.0, 0.0, 0.0));
 	this->set_RollOfEntireScene(Ogre::Degree(0.0));
     this->set_PitchOfEntireScene(Ogre::Degree(0.0));
     this->set_YawOfEntireScene(Ogre::Degree(0.0));
 
+	// Create data-structures in ogre's engine for this factory...
+	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
+	
+	// Store reference to Ogre::SceneManager
 	this->Mgr = sceneMgr;
-	/*
-	this->Scenes = new stdext::hash_map<std::string, Scene>();
-    LocationsOfMeshFiles = new stdext::hash_map<std::string, std::string>();
-    LocationsOfMaterialFiles = new stdext::hash_map<std::string, std::string>();
-	*/
+
+	// Platform dependent containers.
+	// Linix-library contains map, instant of hash_map...
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+	this->Scenes = stdext::hash_map<std::string, dotScene>();
+    LocationsOfMeshFiles = stdext::hash_map<std::string, std::string>();
+    LocationsOfMaterialFiles = stdext::hash_map<std::string, std::string>();
+#else // Linux Libs
+	this->Scenes = std::map<std::string, dotScene>();
+	this->LocationsOfMeshFiles = std::map<std::string, std::string>();
+	this->LocationsOfMaterialFiles = std::map<std::string, std::string>();
+#endif
 }
 dotSceneAdvanced::dotSceneAttachFactory::~dotSceneAttachFactory() { }
 
@@ -182,24 +198,23 @@ void dotSceneAdvanced::dotSceneAttachFactory::convertXMLNode(XMLSceneNode *xmlNo
 bool dotSceneAdvanced::dotSceneAttachFactory::addSceneBluePrint(std::string uniqueSceneName, dotScene newScene, 
 																std::string locationOfMeshFiles)
 {
-    // filtering of "uniqueLocationOfMeshFiles"-path
-	/*locationOfMeshFiles.replace(locationOfMeshFiles.find_last_of("//"),1,"");
-	locationOfMeshFiles.replace(locationOfMeshFiles.find_last_of("//"),1,"");
-	locationOfMeshFiles.replace(locationOfMeshFiles.find_last_of("\\"),1,"");
-    locationOfMeshFiles = locationOfMeshFiles + '/';*/
+	// <------ If you want to implement a validity check of "locationOfMeshFiles",
+	//         do it here. A proper code-snippet in implemented in C# version.
 
-    // check, if the key is already used. // Remember it's name: it has to be unique! If it's not there, return false.			
+    // Check, if the key is already used.
+	// Remember it's name: it has to be unique! If it's not there, return false.			
 	if (Scenes.find(uniqueSceneName) != Scenes.end()) return false;
 	
-	// add new objects to both hashtables with same key
-    //Scenes[uniqueSceneName] = newScene;
+	// Add new objects to all hashtables with same key
 	Scenes[uniqueSceneName] = newScene;
     LocationsOfMeshFiles[uniqueSceneName] = locationOfMeshFiles;
 
-    //<- IMPLICIT: expext .material-File always (!) at Location of .mesh-Files
+    // IMPLICIT: Expexting ".material"-files always (!)
+	//           at location of ".mesh"-files.
     LocationsOfMaterialFiles[uniqueSceneName] = locationOfMeshFiles;
     
     return true;
+
     //maybe it's more useful to work with exceptions here
     //exception (in general) will be thrown into framework.
 }
@@ -222,32 +237,32 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string uniqueSceneName,
 																	std::string attachToNodeWithThisName)
 {
-	// uncommented because not compilable in current state
-	/*
-	// save time, if list ist empty
+	// Save time, if list ist empty...
 	if (Scenes.empty()) return false;
-	    
-    // Find a unique name
+	
+	// Store external anchor node...
+	this->deliverdExternalRootNode = this->Mgr->getSceneNode(Ogre::String(attachToNodeWithThisName)); 
+
+	// Generate unique new root SceneNode - Part 1
+    // Find a unique name...
     int rootNodeNameModificationCounter = 0;
 	char valueAsString[20];
-	Ogre::String rootNodeNameToApply = attachToNodeWithThisName + "_sceneRoot";		
+	Ogre::String rootNodeNameToApply = attachToNodeWithThisName + "_SceneRoot";		
 	while (this->Mgr->hasSceneNode(rootNodeNameToApply))
     {
-        rootNodeNameToApply = attachToNodeWithThisName + "_sceneRoot";
+        rootNodeNameToApply = attachToNodeWithThisName + "_SceneRoot";
 		rootNodeNameToApply = rootNodeNameToApply + "_";
-		//itoa(rootNodeNameModificationCounter, valueAsString, 10);
 		sprintf(valueAsString, "%i", rootNodeNameModificationCounter);
 		rootNodeNameToApply = rootNodeNameToApply + valueAsString;
         rootNodeNameModificationCounter++;
     }
+	
+	// Generate unique new root SceneNode - Part 2
+	// It is used for light- and camera-setup, because lights and cams working with world-coordinates
+	this->_AttachRootNode = this->deliverdExternalRootNode->createChildSceneNode(Ogre::String(rootNodeNameToApply));
 
-	// Generate unique new rootSceneNode
-    this->deliverdExternalRootNode = this->Mgr->getSceneNode(Ogre::String(attachToNodeWithThisName)); 
-    
-	// is used for light- and camera-setup, because lights and cams working with world-coordinates
-	_AttachRootNode = this->deliverdExternalRootNode->createChildSceneNode(Ogre::String(rootNodeNameToApply));
-
-    // rotate entire scene with factory-sttings for ROLL, PITCH, YAW
+	// Modify scene's rootnode
+    // Rotate entire scene with factory-settings for ROLL, PITCH, YAW
 	this->_AttachRootNode->pitch(Ogre::Radian(this->get_PitchOfEntireScene()), Ogre::Node::TS_WORLD);
     this->_AttachRootNode->yaw(Ogre::Radian(this->get_YawOfEntireScene()), Ogre::Node::TS_WORLD);
 	this->_AttachRootNode->roll(Ogre::Radian(this->get_RollOfEntireScene()), Ogre::Node::TS_WORLD);
@@ -255,12 +270,13 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
     // Scale rootnode
 	this->_AttachRootNode->scale((float)this->get_ScaleOffset(), (float)this->get_ScaleOffset(), (float)this->get_ScaleOffset());
 
-    // Complete interpretation of data-object                  
+    // * * * * * * * * Complete interpretation of data-object * * * * * * * * *                 
 	dotScene actualScene = Scenes.find(uniqueSceneName)->second;
 
 	// Create Ogre::String, describing the actual location of file
 	Ogre::String actualLocationOfMaterialFile = Ogre::String(this->LocationsOfMaterialFiles[uniqueSceneName]);
 
+	
     // Subsection of interpretation: Externals
     if (this->doAttachExternals)
     {   
@@ -268,14 +284,14 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedMaterialResourceGroup()));
         
         // Register new used .material-File factory-internal
-		dotSceneExternals _externals = actualScene.get_externals();
+		dotSceneExternals _externals = actualScene.get_Externals();
 		
 		if (!_externals.items.empty())
 		{
 			for(std::list<dotSceneItem>::const_iterator itemFromXMLIterator = _externals.items.begin(); itemFromXMLIterator != _externals.items.end(); itemFromXMLIterator++)
 			{
 				dotSceneItem itemFromXML = *itemFromXMLIterator;
-				if(itemFromXML.get_type() == "material")
+				if(itemFromXML.get_Type() == "material")
 				{
 					try
 					{                                    
@@ -298,16 +314,17 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 					}
 				}
 			}
-		}	
+		}
+		
     }
 
 	// Subsection of interpretation: Nodes (Entities, Cams, Lights)
     if (this->doAttachNodes)
     {
     	Ogre::LogManager::getSingletonPtr()->logMessage("Attaching nodes...");
-		recursiveNodeCreator(actualScene.get_nodes().listOfNodes, this->_AttachRootNode, uniqueSceneName);
+		recursiveNodeCreator(actualScene.get_Nodes()._ListOfNodes, this->_AttachRootNode, uniqueSceneName);
     }
-
+/*
 	// Subsection of interpretation: Environment <-- ATTENTION, malfunction source...because dotScene-format and blenderexporter aren't fully compatible to ogre (?) 
     if (this->doAttachEnvironment)
     {
@@ -352,7 +369,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 			;// Just catch any exceptions like null reference exceptions
 		}
     }
-	*/
+*/
     return true;
 }
 
@@ -360,8 +377,6 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 																	Ogre::SceneNode* attachParentNode,
 																	std::string uniqueSceneName)
 {	
-	// commented out because not working in current state
-	/*
 	using namespace dotSceneObjects;
 	std::list<dotSceneNode>::const_iterator actualNodeListIterator;
 
@@ -376,21 +391,21 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
             // Generate needed parameters from dotSceneObjects, with are relative to "attachRootNode"
             // Remember: "RelativeToRoot" means the transformingspace TS_PARENT!
 			Ogre::Vector3 nodeScaleRalativeToRoot = Ogre::Vector3(
-                actualNodeFromXML.get_scale().get_x(), 
-                actualNodeFromXML.get_scale().get_y(), 
-                actualNodeFromXML.get_scale().get_z());
+				actualNodeFromXML.get_Scale().get_x(), 
+                actualNodeFromXML.get_Scale().get_y(), 
+                actualNodeFromXML.get_Scale().get_z());
 				
             Ogre::Vector3 nodeTranslationRelativeToRoot = Ogre::Vector3(
-				actualNodeFromXML.get_position().get_x(), 
-                actualNodeFromXML.get_position().get_y(), 
-                actualNodeFromXML.get_position().get_z());
+				actualNodeFromXML.get_Position().get_x(), 
+                actualNodeFromXML.get_Position().get_y(), 
+                actualNodeFromXML.get_Position().get_z());
 
             Ogre::Quaternion nodeRotationRelativeToRoot = Ogre::Quaternion(
-				actualNodeFromXML.get_quaternion().get_qw(),
-                actualNodeFromXML.get_quaternion().get_qx(), 
-                actualNodeFromXML.get_quaternion().get_qy(), 
-                actualNodeFromXML.get_quaternion().get_qz());
-
+				actualNodeFromXML.get_Orientation().get_Quaternion().get_qw(),
+                actualNodeFromXML.get_Orientation().get_Quaternion().get_qx(), 
+                actualNodeFromXML.get_Orientation().get_Quaternion().get_qy(), 
+                actualNodeFromXML.get_Orientation().get_Quaternion().get_qz());
+			
             // Generate unique new SceneNode and apply relative parameters
             // Find a unique name
             int nodeNameModificationCounter = 0;
@@ -407,7 +422,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 
             // Create new SceneNode
 			Ogre::SceneNode* actualNode = this->Mgr->getSceneNode(attachParentNode->getName())->createChildSceneNode(nodeNameToApply);
-
+				
             // Apply relative parameters
 			actualNode->scale(nodeScaleRalativeToRoot);
 			actualNode->rotate(nodeRotationRelativeToRoot, Ogre::Node::TS_PARENT);                    
@@ -424,7 +439,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 
 			Ogre::Entity* actualEntity;
 			Ogre::String entityNameToApply;
-			dotSceneObjects::dotSceneEntity* formatedToDotSceneEntity;
+			dotSceneObjects::dotSceneEntity formatedToDotSceneEntity;
 			int entityNameModificationCounter;
 
 			Ogre::Light* actualLight;
@@ -437,20 +452,28 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 			dotSceneObjects::dotSceneCamera* formatedToDotSceneCamera;
 			int cameraNameModificationCounter;
 
+			// UNSOLVED. Ignore consistancy for a quick solution, H.R. 12.02.2009
+			dotSceneEnums::dotSceneElementTags Decider;
+			if (actualNodeFromXML.HasEntity()) Decider = dotSceneEnums::entity;
+			else Decider = dotSceneEnums::INVALID;
 
-			switch (actualNodeFromXML.get_specific()->get_NameSymbol())
+			dotSceneEntity Test;
+
+			// CONTINUE with modified premises...
+			switch (Decider) // <---- CHEATED LINE
 			{
-				case entity: // if node is an entity (mesh-structure)
+				case dotSceneEnums::entity: // if node is an entity (mesh-structure)
 					
-					formatedToDotSceneEntity = (dotSceneObjects::dotSceneEntity*) actualNodeFromXML.get_specific();
+					// <-- CHEATED LINES, expect only one entitiy...
+					formatedToDotSceneEntity = *actualNodeFromXML._ListOfEntities.begin();
                     
 					// Generate unique new entity
                     entityNameModificationCounter = 0;
 					
-					entityNameToApply = formatedToDotSceneEntity->get_name();
+					entityNameToApply = formatedToDotSceneEntity.get_name();
                     while(this->Mgr->hasEntity(entityNameToApply))
                     {
-                        entityNameToApply = formatedToDotSceneEntity->get_name();
+                        entityNameToApply = formatedToDotSceneEntity.get_name();
                         entityNameToApply = entityNameToApply + "_";
 						sprintf(valueAsString, "%i", entityNameModificationCounter);
 						entityNameToApply = entityNameToApply + valueAsString;
@@ -458,14 +481,14 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
                     }
 
 					// Create new Entity
-					actualEntity = this->Mgr->createEntity(entityNameToApply, this->LocationsOfMeshFiles[uniqueSceneName] + formatedToDotSceneEntity->get_meshFile());				
+					actualEntity = this->Mgr->createEntity(entityNameToApply, this->LocationsOfMeshFiles[uniqueSceneName] + formatedToDotSceneEntity.get_meshFile());				
 					// Note: this changed in Ogre 1.6, it is now a functionality of the scene manager
                     //actualEntity->setNormaliseNormals(true);
                     actualEntity->setCastShadows(true);
                     actualNode->attachObject(actualEntity);                                               
 
                     break;
-					
+				/*	
                 case light: // if node is a light-source
                                 
                     formatedToDotSceneLight = (dotSceneObjects::dotSceneLight*)actualNodeFromXML.get_specific();
@@ -651,17 +674,17 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 						// it's possible that clipping doesn't exists in formatedToDotSceneCamera -> do nothing						
 					}
                     break;
-
+				*/
                 default: // If node has no specifics (for example a invisible anchor-node)
 					break;
 			}
 			
 			// Recursive call for childnode structures
-			recursiveNodeCreator(actualNodeFromXML.childNodes, attachParentNode, uniqueSceneName);
-
+			recursiveNodeCreator(actualNodeFromXML._ListOfChildNodes, actualNode, uniqueSceneName);
+			
 			actualNodeListIterator++;
 		}while(actualNodeListIterator != (actualNodeList.end()));
-	}*/
+	}
 }
 
 
@@ -687,8 +710,11 @@ public bool attachAllScenesTo(  string attachToNodeWithThisName,
     this.BlenderImport = isBlenderImport;
 
     return this.attachAllScenesTo(attachToNodeWithThisName);
-}
+}*/
 
+void deletethisstub(){}
+
+/*
 /// <summary>
 /// Use this method, to deploy any scenes into your ogre-world, which blue prints are in factorys storage.
 /// </summary>
@@ -1158,3 +1184,21 @@ public bool attachAllScenesTo(  string attachToNodeWithThisName)
 #endregion
 }      
 */
+
+/*
+void main(void)
+{
+	
+	//dotSceneAdvanced::dotSceneAttachFactory *AttachFactory = new dotSceneAdvanced::dotSceneAttachFactory("MyFactory", 
+
+
+
+	dotSceneXmlReader *reader = new dotSceneXmlReader("C:/OViSE/OViSE/dotScene/dotScene.xsd", true);
+	reader->parseDotSceneXML("C:/OViSE/OViSETestScene.xml");
+	dotSceneObjects::dotScene* myScene = reader->loadDotScene();
+	
+	std::cout << "\n\n   Letzter Check: " << myScene->get_FormatVersion() << " :-)\n\n";
+
+	int dummy;
+	std::cin >> dummy;
+}*/

@@ -13,10 +13,16 @@ OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
 
 OViSESceneHandling::OViSESceneHandling()
 {
-	Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager");
-	mSceneManagers["BaseSceneManager"] = mainSceneManager;
-	mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
-	mObjectSelectionsMap["BaseSceneManager"] = OViSESelectionMap();
+	if(mInstance == NULL)
+	{
+		Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager");
+		mSceneManagers["BaseSceneManager"] = mainSceneManager;
+		mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
+		mObjectSelectionsMap["BaseSceneManager"] = OViSESelectionMap();
+
+		mFrameListener = new OViSEFrameListener();
+		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
+	}
 }
 
 void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
@@ -454,22 +460,35 @@ void OViSESceneHandling::dynamicShadows(bool state)
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
-	OViSEPointcloud *pc = new OViSEPointcloud("Pointcloud");
-	float *pointcloud = new float[100*100*3];
 
 	int k=0;
-	for(int i=0; i<100*100*3; i+=3)
+	int wi = 640;
+	int br = 480;
+
+	float *pointcloud = new float[wi*br*3];
+	float a, b, c;
+
+	for(int i=0; i<wi*br*3; i+=3)
 	{
-		pointcloud[i] = (i/3) % 100;
-		pointcloud[i+1] = (int) floor((double)(i/100));
-		pointcloud[i+2] = 10 * sin((double)(pointcloud[i]/100)) * 10 * cos((double)(pointcloud[i+1]/100));
+		a = i/3/wi;
+		c = i/3 % wi;
+		b = 8 * sin((double)(a/wi*2*3.14)) * 4 * cos((double)(c/br*2*3.14));
+
+		pointcloud[i] = a;
+		pointcloud[i+1] = b;
+		pointcloud[i+2] = c;
 	}
 
-	pc->create(100*100, pointcloud, "Examples/Pointcloud");
-	scnMgr->getRootSceneNode()->attachObject(pc);
-	delete[] pointcloud;
+	OViSEPointcloud *pc = new OViSEPointcloud("Pointcloud", "General", wi*br, pointcloud);
+	Ogre::Entity *pcloud = scnMgr->createEntity("PC", "Pointcloud");
+	pcloud->setMaterialName("Pointcloud");
 
-	//OViSECallbackTester *tester = new OViSECallbackTester("Tester");
+	scnMgr->getRootSceneNode()->attachObject(pcloud);
+
+	OViSECallbackTester *tester = new OViSECallbackTester("Tester");
+	tester->pc = pc;
+	tester->pcarray = pointcloud;
+	mFrameListener->registerCallbackObject(tester, 100);
 }
 
 OViSESceneHandling::~OViSESceneHandling()

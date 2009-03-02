@@ -1,78 +1,52 @@
 #include "OViSEPointcloud.h"
 
-OViSEPointcloud::OViSEPointcloud(const std::string& name) : Ogre::ManualObject(name)
+OViSEPointcloud::OViSEPointcloud(const std::string& name, const std::string& resourcegroup, int numpoints, float *parray)
 {
-	mSize = 0;
+	/// Create the mesh via the MeshManager
+	Ogre::MeshPtr msh = Ogre::MeshManager::getSingleton().createManual(name, resourcegroup);
+
+	/// Create one submesh
+	Ogre::SubMesh* sub = msh->createSubMesh();
+	
+	/// Create vertex data structure for vertices shared between submeshes
+	msh->sharedVertexData = new Ogre::VertexData();
+	msh->sharedVertexData->vertexCount = numpoints;
+
+	/// Create declaration (memory format) of vertex data
+	Ogre::VertexDeclaration* decl = msh->sharedVertexData->vertexDeclaration;
+	size_t offset = 0;
+	decl->addElement(0, offset, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
+	//offset += Ogre::VertexElement::getTypeSize(Ogre::VET_FLOAT3);
+
+	vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+		decl->getVertexSize(0), msh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+	/// Upload the vertex data to the card
+	vbuf->writeData(0, vbuf->getSizeInBytes(), parray, true);
+
+	/// Set vertex buffer binding so buffer 0 is bound to our vertex buffer
+	Ogre::VertexBufferBinding* bind = msh->sharedVertexData->vertexBufferBinding; 
+	bind->setBinding(0, vbuf);
+
+	sub->useSharedVertices = true;
+	sub->operationType = Ogre::RenderOperation::OT_POINT_LIST;
+	
+
+	msh->load();
 }
 
-void OViSEPointcloud::create(int size, float *points, const std::string material, bool dynamic)
+void OViSEPointcloud::update(int size, float *points)
 {
-	mSize = size;
-	this->estimateVertexCount(mSize*4);
-	this->setDynamic(dynamic);
-
-	Ogre::Vector3 tmp = Ogre::Vector3::ZERO;
-	Ogre::Vector3 a(-0.1, -0.1, -0.1);
-	Ogre::Vector3 b(0.1, -0.1, 0);
-	Ogre::Vector3 c(0, -0.1, 0.1);
-	Ogre::Vector3 o(0, 0.1, 0);
-
-	this->begin(material, Ogre::RenderOperation::OT_TRIANGLE_LIST);
-
-	for(int i=0, j=0; i<mSize*3; i+=3, j+=4)
+	float *pPArray = static_cast<float*>(vbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
+	for(int i=0; i<size*3; i+=3)
 	{
-		tmp = Ogre::Vector3(points[i], points[i+1], points[i+2]);
-		this->position(tmp + o);
-		this->normal(Ogre::Vector3(0,1,0));
-		this->position(tmp + a);
-		this->normal(Ogre::Vector3(-1, -1, -1));
-		this->position(tmp + b);
-		this->normal(Ogre::Vector3(1, 0, 0));
-		this->position(tmp + c);
-		this->normal(Ogre::Vector3(0, 0, 1));
-
-		this->triangle(j+2, j+1, j);
-		this->triangle(j+3, j+2, j);
-		this->triangle(j+1, j+3, j);
-		this->triangle(j+3, j+1, j+2);
+		pPArray[i] = points[i];
+		pPArray[i+1] = points[i+1];
+		pPArray[i+2] = points[i+2];
 	}
-	this->end();
-}
-
-void OViSEPointcloud::update(int size, float *points, const std::string material, int index, int numpoints)
-{
-	if(index <= 0)
-	{
-		// we need to update everything
-		this->clear();
-		this->create(size, points, material);
-	}
-	else
-	{
-		Ogre::Vector3 tmp = Ogre::Vector3::ZERO;
-		Ogre::Vector3 a(-0.1, -0.1, -0.1);
-		Ogre::Vector3 b(0.1, -0.1, 0);
-		Ogre::Vector3 c(0, -0.1, 0.1);
-		Ogre::Vector3 o(0, 0.1, 0);
-
-		this->beginUpdate(index);
-		for(int i=0, j=0; i<numpoints*3; i+=3, j+=4)
-		{
-			tmp = Ogre::Vector3(points[i], points[i+1], points[i+2]);
-			this->position(tmp + o);
-			this->normal(Ogre::Vector3(0,1,0));
-			this->position(tmp + a);
-			this->normal(Ogre::Vector3(-1, -1, -1));
-			this->position(tmp + b);
-			this->normal(Ogre::Vector3(1, 0, 0));
-			this->position(tmp + c);
-			this->normal(Ogre::Vector3(0, 0, 1));
-		}
-		this->end();
-	}
+	vbuf->unlock();
 }
 
 OViSEPointcloud::~OViSEPointcloud()
 {
-	clear();
+
 }
