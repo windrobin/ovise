@@ -12,6 +12,8 @@
 #include "OViSECallbackTester.h"
 #include "OViSEFrameListener.h"
 
+#include "dotSceneAttachFactory.h"
+
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
 /// Map containing all ray scene querys for object selection.
@@ -104,7 +106,7 @@ public:
 	 * If the node is NULL, then a new scene node will be created as a child of the root scene node.
 	 * @TODO Implement this.
 	 */
-	void loadSceneFromXML(std::string filename, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
+	void loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
 
 	/** Resolves a ray scene query to select an object.
 	 * Casts a ray from the screen position through the given camera into the scene and evaluates
@@ -149,6 +151,9 @@ public:
 	/// Turn dynamic shadows (stencil) on or off
 	void dynamicShadows(bool state);
 
+	/// Turn execution of listeners' commands on or off
+	void startStopFrameListeners(bool on = true);
+
 	/// debug function for testing
 	void testStuff();
 
@@ -174,6 +179,9 @@ private:
 
 	/// FrameListener
 	OViSEFrameListener *mFrameListener;
+
+	/// Standard factory for dotScene loading
+	dotSceneAdvanced::dotSceneAttachFactory *mStandardFactory;
 };
 
 #endif /*OVISESCENEHANDLING_H_*/

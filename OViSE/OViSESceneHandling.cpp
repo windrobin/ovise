@@ -1,5 +1,8 @@
 #include "OViSESceneHandling.h"
 
+#include <wx/image.h>
+#include <wx/bitmap.h>
+
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
 OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
@@ -22,6 +25,8 @@ OViSESceneHandling::OViSESceneHandling()
 
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
+
+		mStandardFactory = new dotSceneAdvanced::dotSceneAttachFactory("StandardFactory", mainSceneManager);
 	}
 }
 
@@ -370,9 +375,29 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 	}
 }
 
-void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string sceneManagerName, Ogre::SceneNode *node)
+void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName, Ogre::SceneNode *node)
 {
-	///@todo Implement this.
+	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
+	// Use "dotSceneXmlReader" to create dotScene...
+	dotSceneXmlReader *Reader = new dotSceneXmlReader("../Media/data/dotScene.xsd", true);
+	Reader->parseDotSceneXML(filename);
+	dotSceneObjects::dotScene* currScene = Reader->loadDotScene();
+
+	std::string sceneName = filename.substr(filename.find_last_of("\\"));
+	sceneName = sceneName.substr(0, sceneName.find_last_of("."));
+
+	// Basic setup of Factory
+	mStandardFactory->addSceneBluePrint(sceneName, *currScene, meshDirectory);
+	
+	// "attachSingleSceneTo" creates node automatically !
+	// Additional, "attachSingleSceneTo" ensures a unique name,
+	// while the name is used multible times by automatic generated variations.
+	if(node)
+		mStandardFactory->attachSingleSceneTo(sceneName, node->getName());
+	else
+		mStandardFactory->attachSingleSceneTo(sceneName, scnMgr->getRootSceneNode()->getName());
+
+	delete Reader;
 }
 
 void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
@@ -461,34 +486,15 @@ void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 
-	int k=0;
-	int wi = 640;
-	int br = 480;
+	
+}
 
-	float *pointcloud = new float[wi*br*3];
-	float a, b, c;
-
-	for(int i=0; i<wi*br*3; i+=3)
-	{
-		a = i/3/wi;
-		c = i/3 % wi;
-		b = 8 * sin((double)(a/wi*2*3.14)) * 4 * cos((double)(c/br*2*3.14));
-
-		pointcloud[i] = a;
-		pointcloud[i+1] = b;
-		pointcloud[i+2] = c;
-	}
-
-	OViSEPointcloud *pc = new OViSEPointcloud("Pointcloud", "General", wi*br, pointcloud);
-	Ogre::Entity *pcloud = scnMgr->createEntity("PC", "Pointcloud");
-	pcloud->setMaterialName("Pointcloud");
-
-	scnMgr->getRootSceneNode()->attachObject(pcloud);
-
-	OViSECallbackTester *tester = new OViSECallbackTester("Tester");
-	tester->pc = pc;
-	tester->pcarray = pointcloud;
-	mFrameListener->registerCallbackObject(tester, 100);
+void OViSESceneHandling::startStopFrameListeners(bool on)
+{
+	if(on)
+		mFrameListener->setFrameEventsProcessed(true);
+	else
+		mFrameListener->setFrameEventsProcessed(false);
 }
 
 OViSESceneHandling::~OViSESceneHandling()

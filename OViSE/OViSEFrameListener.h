@@ -22,6 +22,11 @@ public:
 	/// Removes callback object from registered objects list.
 	void unregisterCallbackObject(OViSECallbackObject *cbObject);
 
+	/// Check if registered listeners' commands are executed
+	bool isFrameEventsProcessed();
+	/// Set if registered listeners' commands should be executed
+	void setFrameEventsProcessed(bool frameEventsProcessed = true);
+
 protected:
 	virtual bool frameStarted(const Ogre::FrameEvent &evt);
 	virtual bool frameEnded(const Ogre::FrameEvent &evt);
@@ -37,4 +42,6 @@ protected:
 private:
 	std::map<std::string, OViSECallbackObject*> mCallbackObjects;
 	std::map<std::string, CallbackProps> mCallbackPropsMap;
+
+	bool mProcessFrameEvents;
 };

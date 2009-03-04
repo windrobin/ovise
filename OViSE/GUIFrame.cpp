@@ -67,6 +67,14 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	mbar->Append( scene, wxT("Scene") );
 	
+	actions = new wxMenu();
+	wxMenuItem* startstopFramelisteners;
+	startstopFramelisteners = new wxMenuItem( actions, ID_STARTSTOP_FRAMELISTENERS, wxString( wxT("Start/Stop FrameListeners") ) , wxEmptyString, wxITEM_CHECK );
+	actions->Append( startstopFramelisteners );
+	startstopFramelisteners->Check( true );
+	
+	mbar->Append( actions, wxT("Actions") );
+	
 	helpMenu = new wxMenu();
 	wxMenuItem* menuHelpAbout;
 	menuHelpAbout = new wxMenuItem( helpMenu, idMenuAbout, wxString( wxT("&About") ) + wxT('\t') + wxT("F1"), wxT("Show info about this application"), wxITEM_NORMAL );
@@ -97,6 +105,7 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Connect( addMesh->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Connect( deleteMeshes->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Connect( loadDotscene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
+	this->Connect( startstopFramelisteners->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );
 }
@@ -113,6 +122,7 @@ GUIFrame::~GUIFrame()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );
 }
