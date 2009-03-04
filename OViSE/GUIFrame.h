@@ -34,8 +34,9 @@
 #define ID_ADD_MESH 1005
 #define ID_DELETE_MESHES 1006
 #define ID_LOAD_DOTSCENE 1007
-#define idMenuAbout 1008
-#define ID_TESTSTUFF 1009
+#define ID_STARTSTOP_FRAMELISTENERS 1008
+#define idMenuAbout 1009
+#define ID_TESTSTUFF 1010
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -49,6 +50,7 @@ class GUIFrame : public wxFrame
 		wxMenu* fileMenu;
 		wxMenu* view;
 		wxMenu* scene;
+		wxMenu* actions;
 		wxMenu* helpMenu;
 		wxMenu* debug;
 		wxStatusBar* statusBar;
@@ -63,6 +65,7 @@ class GUIFrame : public wxFrame
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnStartStopFrameListeners( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ){ event.Skip(); }
 		

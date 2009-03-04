@@ -180,7 +180,7 @@ void OViSEWxFrame::OnAbout(wxCommandEvent &event)
 {
     wxAboutDialogInfo info;
     info.SetName(wxT("OViSE"));
-    info.SetVersion(wxT("0.1 Beta (goblin)"));
+    info.SetVersion(wxT("0.2 Beta (orc)"));
 
 	wxString description = wxT("Institute of Computer Science and Engineering (CSE)\n\r");
 	description += wxT("Industrial Applications of Computer Science and Micro Systems (IAIM)\n");
@@ -512,10 +512,19 @@ void OViSEWxFrame::deleteMeshes()
 
 void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 {
-	/** @TODO Add code for dotScene loading.
-	 * This should happen in OViSESceneHandling, see method stubs there.
-	 */
-	// mSceneHdlr->loadSceneFromXML(..);
+	wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
+	int ret = fd.ShowModal();
+
+	if(ret == wxID_CANCEL)
+		return;
+
+	std::string sFilename(fd.GetFilename().ToAscii());
+	std::string sFullpath(fd.GetPath().ToAscii());
+
+	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("."));
+
+	wxLogMessage(wxT("Filename: %s Fullpath: %s Path: %s"), sFilename.c_str(), sFullpath.c_str(), sPath.c_str());
+	
 }
 
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
@@ -527,4 +536,12 @@ void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 void OViSEWxFrame::OnTestStuff( wxCommandEvent& event )
 {
 	mSceneHdlr->testStuff();
+}
+
+void OViSEWxFrame::OnStartStopFrameListeners(wxCommandEvent& event)
+{
+	if(event.IsChecked())
+		mSceneHdlr->startStopFrameListeners(true);
+	else
+		mSceneHdlr->startStopFrameListeners(false);
 }
