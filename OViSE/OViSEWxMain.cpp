@@ -519,14 +519,18 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 		return;
 
 	std::string sFullpath(fd.GetPath().ToAscii());
+	std::string::size_type a, b;
+	a = sFullpath.find_last_of("\\")+1;
+	b = sFullpath.find_last_of(".");
+	std::string sName(sFullpath.substr(a, b-a));
 
 #ifdef _WIN32
-	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("\\"));
+	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("\\")+1);
 #else
 	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("/"));
 #endif
-
-	mSceneHdlr->loadSceneFromXML(sFullpath, sPath);
+	Ogre::SceneNode *dotSceneNode = mSceneHdlr->getSceneManager()->getRootSceneNode()->createChildSceneNode(sName);
+	mSceneHdlr->loadSceneFromXML(sFullpath, sPath, "BaseSceneManager", dotSceneNode);
 }
 
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
