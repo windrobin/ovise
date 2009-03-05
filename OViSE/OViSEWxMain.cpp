@@ -518,13 +518,15 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	if(ret == wxID_CANCEL)
 		return;
 
-	std::string sFilename(fd.GetFilename().ToAscii());
 	std::string sFullpath(fd.GetPath().ToAscii());
 
-	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("."));
+#ifdef _WIN32
+	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("\\"));
+#else
+	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("/"));
+#endif
 
-	wxLogMessage(wxT("Filename: %s Fullpath: %s Path: %s"), sFilename.c_str(), sFullpath.c_str(), sPath.c_str());
-	
+	mSceneHdlr->loadSceneFromXML(sFullpath, sPath);
 }
 
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
