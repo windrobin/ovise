@@ -383,7 +383,7 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 	Reader->parseDotSceneXML(filename);
 	dotSceneObjects::dotScene* currScene = Reader->loadDotScene();
 
-	std::string sceneName = filename.substr(filename.find_last_of("\\"));
+	std::string sceneName = filename.substr(filename.find_last_of("\\")+1);
 	sceneName = sceneName.substr(0, sceneName.find_last_of("."));
 
 	// Basic setup of Factory
