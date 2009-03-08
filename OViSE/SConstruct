@@ -67,22 +67,4 @@ env.MergeFlags(property_grid_lib)
 
 Export('env', 'myplatform')
 
-SConscript('OViSEAux/SConscript', export='env')
-SConscript('OViSE/SConscript', export='env')
-
-
-### Debug and optimised environments
-#optenv = env.Clone(CCFLAGS = '-O2')
-#dbgenv = env.Clone(CCFLAGS = '-g')
-
-### Build
-#if mode == "debug":
- #   print "Building in debug configuration..."
-   # OViSEDbg = dbgenv.Program('OViSE-dbg', input_files)
-#elif mode == "release":
-   # print "Building in release configuration..."
-    #OViSEOpt = optenv.Program('/OViSE-opt', input_files)
-
-
-
-
+SConscript('SConscript', export='env')

@@ -38,6 +38,7 @@ void dotSceneLight::set_Type(std::string value)
 {
 	bool match = false; 
 
+#ifdef _WIN32
 	if (value == "Light_Point")			{ this->_Type = dotSceneEnums::dotSceneLightEnums::LightTypes::Light_Point;			match = true; } 
 	if (value == "Light_Directional")	{ this->_Type = dotSceneEnums::dotSceneLightEnums::LightTypes::Light_Directional;	match = true; } 
 	if (value == "Light_SpotLight")		{ this->_Type = dotSceneEnums::dotSceneLightEnums::LightTypes::Light_SpotLight;		match = true; } 
@@ -45,6 +46,15 @@ void dotSceneLight::set_Type(std::string value)
 	if (value == "Light_INVALID")		{ this->_Type = dotSceneEnums::dotSceneLightEnums::LightTypes::Light_INVALID;		match = true; } 
 
 	if (!match) this->_Type = dotSceneEnums::dotSceneLightEnums::LightTypes::Light_INVALID;
+#else
+	if (value == "Light_Point")			{ this->_Type = dotSceneEnums::dotSceneLightEnums::Light_Point;			match = true; } 
+	if (value == "Light_Directional")	{ this->_Type = dotSceneEnums::dotSceneLightEnums::Light_Directional;	match = true; } 
+	if (value == "Light_SpotLight")		{ this->_Type = dotSceneEnums::dotSceneLightEnums::Light_SpotLight;		match = true; } 
+	if (value == "Light_RadPoint")		{ this->_Type = dotSceneEnums::dotSceneLightEnums::Light_RadPoint;		match = true; } 
+	if (value == "Light_INVALID")		{ this->_Type = dotSceneEnums::dotSceneLightEnums::Light_INVALID;		match = true; } 
+
+	if (!match) this->_Type = dotSceneEnums::dotSceneLightEnums::Light_INVALID;
+#endif
 }
 
 void dotSceneLight::set_PowerScale(std::string value)
@@ -75,7 +85,11 @@ dotSceneObjects::dotSceneLight::dotSceneLight() : dotSceneObject(dotSceneEnums::
 {
 	this->set_name("INITIAL_NOT_SET");
 	this->set_ID("INITIAL_NOT_SET");
+#ifdef _WIN32
 	this->set_Type(dotSceneEnums::dotSceneLightEnums::LightTypes::Light_Point); // default is "point"
+#else
+	this->set_Type(dotSceneEnums::dotSceneLightEnums::Light_Point); // default is "point"
+#endif
 	this->set_PowerScale(1.0); // default is 1.0
 
 	this->set_CommonMovableObjectParams(dotSceneCommonMovableObjectParams());

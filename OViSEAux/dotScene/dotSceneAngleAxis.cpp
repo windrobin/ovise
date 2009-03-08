@@ -26,10 +26,17 @@ void dotSceneObjects::dotSceneAngleAxis::set_AngleUnit(std::string value)
 {
 	bool match = false;
 
+#ifdef _WIN32
 	if (value == "degree") this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits::AngleAxisUnits_degree;
 	if (value == "radian") this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits::AngleAxisUnits_radian;
-
+	
 	if (!match) this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits::AngleAxisUnits_INVALID;
+#else
+	if (value == "degree") this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits_degree;
+	if (value == "radian") this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits_radian;
+	
+	if (!match) this->_AngleUnit = dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits_INVALID;
+#endif	
 }
 
 void dotSceneObjects::dotSceneAngleAxis::set_x(std::string value)
@@ -56,7 +63,11 @@ void dotSceneObjects::dotSceneAngleAxis::set_z(std::string value)
 bool dotSceneObjects::dotSceneAngleAxis::IsValid() const
 {
 	// double-attributes are no useable for valid-check!
+#ifdef _WIN32
 	if (this->_AngleUnit == dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits::AngleAxisUnits_INVALID) return false;
+#else
+	if (this->_AngleUnit == dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits_INVALID) return false;
+#endif
 	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
 
 	return true;
@@ -66,7 +77,11 @@ bool dotSceneObjects::dotSceneAngleAxis::IsValid() const
 dotSceneObjects::dotSceneAngleAxis::dotSceneAngleAxis() : dotSceneObject(dotSceneEnums::angle_axis)
 {
 	this->set_Angle(0.0);
+#ifdef _WIN32
 	this->set_AngleUnit(dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits::AngleAxisUnits_INVALID);
+#else
+	this->set_AngleUnit(dotSceneEnums::dotSceneAngleAxisEnums::AngleAxisUnits_INVALID);
+#endif
 	this->set_x(0.0);
 	this->set_y(0.0);
 	this->set_z(0.0);

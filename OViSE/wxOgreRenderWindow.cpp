@@ -181,7 +181,11 @@ void wxOgreRenderWindow::OnKeyEvents(wxKeyEvent &evt)
 void wxOgreRenderWindow::CreateRenderWindow ()
 {
 	Ogre::NameValuePairList params;
+#ifdef _WXMSW_
 	params["externalWindowHandle"] = GetOgreHandle ();
+#elif defined(_WXGTK_)
+	params["parentWindowHandle"] = GetOgreHandle ();
+#endif
 
 	// Get wx control window size
 	int width;
@@ -205,42 +209,42 @@ Ogre::String wxOgreRenderWindow::GetOgreHandle () const {
 	handle = Ogre::StringConverter::toString((size_t)((HWND)GetHandle()));
 #elif defined(__WXGTK__)
 	// Handle for GTK-based systems
-
+	
 	GtkWidget *widget = m_wxwindow;
 
 	gtk_widget_set_double_buffered (widget, FALSE);
 
-    gtk_widget_realize( widget );
-    if(!GTK_WIDGET_REALIZED(widget))
-        printf("Error, GtkWidget not realized!\n");
+	gtk_widget_realize( widget );
+	if(!GTK_WIDGET_REALIZED(widget))
+		printf("Error, GtkWidget not realized!\n");
 
-    // Grab the window object
-    GdkWindow *gdkWin = GTK_PIZZA(widget)->bin_window;
+	// Grab the window object
+	GdkWindow *gdkWin = GTK_PIZZA(widget)->bin_window;
 
-    Display* display = GDK_WINDOW_XDISPLAY(gdkWin);
+	Display* display = GDK_WINDOW_XDISPLAY(gdkWin);
 
-    Window wid = GDK_WINDOW_XWINDOW(gdkWin);
+	Window wid = GDK_WINDOW_XWINDOW(gdkWin);
 
-    std::stringstream str;
+	std::stringstream str;
 
-    // Display
-    str << (unsigned long)display << ':';
+	// Display
+	str << (unsigned long)display << ':';
 
-    // Screen (returns "display.screen")
-    std::string screenStr = DisplayString(display);
-    std::string::size_type dotPos = screenStr.find(".");
-    screenStr = screenStr.substr(dotPos+1, screenStr.size());
-    str << screenStr << ':';
+	// Screen (returns "display.screen")
+	std::string screenStr = DisplayString(display);
+	std::string::size_type dotPos = screenStr.find(".");
+	screenStr = screenStr.substr(dotPos+1, screenStr.size());
+	str << screenStr << ':';
 
-    // XID
-    str << wid;
+	// XID
+	str << wid;
 
-    // Retrieve XVisualInfo
-    /*int attrlist[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, None };
-    XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), attrlist);
-    str << (unsigned long)vi;*/
+	// Retrieve XVisualInfo
+	int attrlist[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, GLX_STENCIL_SIZE, 8, None };
+	XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), attrlist);
+	str << (unsigned long)vi;
 
-    handle = str.str();
+	handle = str.str();
 
 #else
 	// Any other unsupported system

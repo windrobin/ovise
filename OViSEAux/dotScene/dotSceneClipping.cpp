@@ -12,14 +12,22 @@ void dotSceneObjects::dotSceneClipping::set_FarPlaneDist(double value) { this->_
 void dotSceneObjects::dotSceneClipping::set_NearPlaneDist(std::string value)
 {
 	double tmp;
+#ifdef _WIN32
 	sscanf_s(value.c_str(), "%lf", &tmp);
+#else
+	sscanf(value.c_str(), "%lf", &tmp);
+#endif
 	this->set_NearPlaneDist(tmp);
 }
 
 void dotSceneObjects::dotSceneClipping::set_FarPlaneDist(std::string value)
 {
 	double tmp;
+#ifdef _WIN32
 	sscanf_s(value.c_str(), "%lf", &tmp);
+#else
+	sscanf(value.c_str(), "%lf", &tmp);
+#endif
 	this->set_FarPlaneDist(tmp);
 }
 
