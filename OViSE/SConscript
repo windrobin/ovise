@@ -1,0 +1,74 @@
+Import('env', 'myplatform')
+
+oviseEnv = env.Clone()
+
+## Functions
+def printDbg(e):
+    print 'CCFLAGS:'
+    print e['CCFLAGS']
+    print 'CPPPATH:'
+    print e['CPPPATH']
+    print 'LIBPATH:'
+    print e['LIBPATH']
+    print 'LIBS:'
+    print e['LIBS']
+
+
+## OViSEAux
+if(myplatform == 'Linux'):
+	linux_aux_include_paths = {'CPPPATH':Split('''../OViSEAux
+								../OViSEAux/dotScene
+								''')}
+	oviseEnv.MergeFlags(linux_aux_include_paths)
+	
+	linux_aux_lib_paths = { 'LIBPATH':['../OViSEAux']}
+	oviseEnv.MergeFlags(linux_aux_lib_paths)
+	
+	linux_aux_libs = {'LIBS':['OViSEAux']}
+	oviseEnv.MergeFlags(linux_aux_libs)
+
+## System
+if(myplatform == 'Linux'):
+    linux_project_cc_flags = {'CCFLAGS':Split('''-c
+                                                -Wno-non-virtual-dtor
+                                                -Wno-reorder
+                                                -MD
+                                                -fno-common''')}
+    oviseEnv.MergeFlags(linux_project_cc_flags)
+
+    linux_platform_include_paths = {'CPPPATH': Split('''/usr/include/gtk-2.0
+                                                        /usr/lib/gtk-2.0/include
+                                                        /usr/include/cairo
+                                                        /usr/include/glib-2.0
+                                                        /usr/lib/glib-2.0/include
+                                                        /usr/include/pango-1.0
+                                                        /usr/include/atk-1.0
+                                                        /usr/lib/atk-1.0/include''')}
+    oviseEnv.MergeFlags(linux_platform_include_paths)
+
+    linux_platform_libraries = {'LIBS':['gcc', 'GL']}
+    oviseEnv.MergeFlags(linux_platform_libraries)
+elif(myplatform == 'Darwin'):
+    mac_platform_include_paths = {'CPPPATH':['']}
+    oviseEnv.MergeFlags(mac_platform_include_paths)
+
+    mac_platform_libraries = {'LIBS':['gcc', 'System', 'stdc++', 'SystemStubs']}
+    oviseEnv.MergeFlags(mac_platform_libraries)
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
+
+## Input files
+if(myplatform == 'Linux'):
+    input_files = Glob('*.cpp')
+elif(myplatform == 'Darwin'):
+    input_files = Glob('*.cpp')
+else:
+    print 'Platform not yet supported.'
+    Exit(1)
+
+## Debug
+printDbg(oviseEnv)
+#print COMMAND_LINE_TARGETS
+
+oviseEnv.Program('OViSE', input_files)
