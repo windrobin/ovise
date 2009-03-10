@@ -442,15 +442,15 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 			dotSceneObjects::dotSceneEntity formatedToDotSceneEntity;
 			int entityNameModificationCounter;
 
-			Ogre::Light* actualLight;
+			//Ogre::Light* actualLight; // not referenced
 			Ogre::String lightNameToApply;
-			dotSceneObjects::dotSceneLight* formatedToDotSceneLight;
-			int lightNameModificationCounter;
+			//dotSceneObjects::dotSceneLight* formatedToDotSceneLight; // not referenced
+			//int lightNameModificationCounter; // not referenced
 
-			Ogre::Camera* actualCamera;
+			//Ogre::Camera* actualCamera; // not referenced
 			Ogre::String cameraNameToApply;
-			dotSceneObjects::dotSceneCamera* formatedToDotSceneCamera;
-			int cameraNameModificationCounter;
+			//dotSceneObjects::dotSceneCamera* formatedToDotSceneCamera; // not referenced
+			//int cameraNameModificationCounter; // not referenced
 
 			// UNSOLVED. Ignore consistancy for a quick solution, H.R. 12.02.2009
 			dotSceneEnums::dotSceneElementTags Decider;

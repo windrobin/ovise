@@ -44,19 +44,11 @@ void dotSceneObjects::dotSceneDirection::set_RelativeTo(std::string value)
 {
 	bool match = false;
 
-#ifdef _WIN32
-	if (value == "local") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToLocal;
-	if (value == "parent") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToParent;
-	if (value == "world") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToWorld;
-
-	if (!match) this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeTo_INVALID;
-#else
 	if (value == "local") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToLocal;
 	if (value == "parent") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToParent;
 	if (value == "world") this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToWorld;
 
 	if (!match) this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo_INVALID;
-#endif
 }
 
 void dotSceneObjects::dotSceneDirection::set_LocalDirX(std::string value)
@@ -83,11 +75,7 @@ void dotSceneObjects::dotSceneDirection::set_LocalDirZ(std::string value)
 bool dotSceneObjects::dotSceneDirection::IsValid() const
 {
 	// double-attributes are no useable for valid-check!
-#ifdef _WIN32
-	if (this->_RelativeTo == dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeTo_INVALID) return false;
-#else
 	if (this->_RelativeTo == dotSceneEnums::dotSceneGeneralEnums::RelativeTo_INVALID) return false;
-#endif
 	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
 
 	return true;
@@ -99,11 +87,7 @@ dotSceneObjects::dotSceneDirection::dotSceneDirection() : dotSceneObject(dotScen
 	this->set_x(0.0);
 	this->set_y(0.0);
 	this->set_z(0.0);
-#ifdef _WIN32
-	this->set_RelativeTo(dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeTo_INVALID);
-#else
 	this->set_RelativeTo(dotSceneEnums::dotSceneGeneralEnums::RelativeTo_INVALID);
-#endif
 	this->set_LocalDirX(0);
 	this->set_LocalDirY(0);
 	this->set_LocalDirZ(-1);

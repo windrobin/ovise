@@ -84,16 +84,6 @@ void dotSceneObjects::dotSceneBillboardSet::set_DefaultHeight(std::string value)
 void dotSceneObjects::dotSceneBillboardSet::set_BillboardType(std::string value)
 {
 	bool match = false;
-
-#ifdef _WIN32
-	if ((!match) && (value == "point"))					{ this->_BillboardType = BillboardType::BillboardType_Point;				match = true; }
-	if ((!match) && (value == "orientedCommon"))		{ this->_BillboardType = BillboardType::BillboardType_OrientedCommon;		match = true; }
-	if ((!match) && (value == "orientedSelf"))			{ this->_BillboardType = BillboardType::BillboardType_OrientedSelf;			match = true; }
-	if ((!match) && (value == "perpendicularCommon"))	{ this->_BillboardType = BillboardType::BillboardType_PerpendicularCommon;	match = true; }
-	if ((!match) && (value == "perpendicularSelf"))		{ this->_BillboardType = BillboardType::BillboardType_PerpendicularSelf;	match = true; }
-	
-	if (!match) { this->_BillboardType = BillboardType::BillboardType_INVALID; }
-#else
 	if ((!match) && (value == "point"))					{ this->_BillboardType = BillboardType_Point;				match = true; }
 	if ((!match) && (value == "orientedCommon"))		{ this->_BillboardType = BillboardType_OrientedCommon;		match = true; }
 	if ((!match) && (value == "orientedSelf"))			{ this->_BillboardType = BillboardType_OrientedSelf;			match = true; }
@@ -101,26 +91,12 @@ void dotSceneObjects::dotSceneBillboardSet::set_BillboardType(std::string value)
 	if ((!match) && (value == "perpendicularSelf"))		{ this->_BillboardType = BillboardType_PerpendicularSelf;	match = true; }
 	
 	if (!match) { this->_BillboardType = BillboardType_INVALID; }
-#endif
 }
 
 void dotSceneObjects::dotSceneBillboardSet::set_BillboardOrigin(std::string value)
 {
 	bool match = false;
 
-#ifdef _WIN32
-	if ((!match) && (value == "topLeft"))		{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_TopLeft;		match = true; }
-	if ((!match) && (value == "topCenter"))		{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_TopCenter;		match = true; }
-	if ((!match) && (value == "topRight"))		{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_TopRight;		match = true; }
-	if ((!match) && (value == "centerLeft"))	{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_CenterLeft;		match = true; }
-	if ((!match) && (value == "center"))		{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_Center;			match = true; }
-	if ((!match) && (value == "centerRight"))	{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_CenterRight;	match = true; }
-	if ((!match) && (value == "bottomLeft"))	{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_BottomLeft;		match = true; }
-	if ((!match) && (value == "bottomCenter"))	{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_BottomCenter;	match = true; }
-	if ((!match) && (value == "bottomRight"))	{ this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_BottomRight;	match = true; }
-	
-	if (!match) { this->_BillboardOrigin = BillboardOrigin::BillboardOrigin_INVALID; }
-#else
 	if ((!match) && (value == "topLeft"))		{ this->_BillboardOrigin = BillboardOrigin_TopLeft;		match = true; }
 	if ((!match) && (value == "topCenter"))		{ this->_BillboardOrigin = BillboardOrigin_TopCenter;		match = true; }
 	if ((!match) && (value == "topRight"))		{ this->_BillboardOrigin = BillboardOrigin_TopRight;		match = true; }
@@ -132,25 +108,16 @@ void dotSceneObjects::dotSceneBillboardSet::set_BillboardOrigin(std::string valu
 	if ((!match) && (value == "bottomRight"))	{ this->_BillboardOrigin = BillboardOrigin_BottomRight;	match = true; }
 	
 	if (!match) { this->_BillboardOrigin = BillboardOrigin_INVALID; }
-#endif
 }
 
 void dotSceneObjects::dotSceneBillboardSet::set_BillboardRotationType(std::string value)
 {
 	bool match = false;
 
-#ifdef _WIN32
-	if ((!match) && (value == "vertex"))	{ this->_BillboardRotationType = BillboardRotationType::BillboardRotationType_Vertex;	match = true; }
-	if ((!match) && (value == "texcoord"))	{ this->_BillboardRotationType = BillboardRotationType::BillboardRotationType_Texcoord;	match = true; }
-	
-	if (!match) { this->_BillboardRotationType = BillboardRotationType::BillboardRotationType_INVALID; }
-#else
 	if ((!match) && (value == "vertex"))	{ this->_BillboardRotationType = BillboardRotationType_Vertex;	match = true; }
 	if ((!match) && (value == "texcoord"))	{ this->_BillboardRotationType = BillboardRotationType_Texcoord;	match = true; }
 	
 	if (!match) { this->_BillboardRotationType = BillboardRotationType_INVALID; }
-#endif
-
 }
 
 void dotSceneObjects::dotSceneBillboardSet::set_SortingEnabled(std::string value)
@@ -232,15 +199,9 @@ dotSceneObjects::dotSceneBillboardSet::dotSceneBillboardSet() : dotSceneObject(d
 	this->set_MaterialName("INVALID"); // #REQUIRED
 	this->set_DefaultWidth(10);
 	this->set_DefaultHeight(10);
-#ifdef _WIN32
-	this->set_BillboardType(BillboardType::BillboardType_Point);
-	this->set_BillboardOrigin(BillboardOrigin::BillboardOrigin_Center);
-	this->set_BillboardRotationType(BillboardRotationType::BillboardRotationType_Texcoord);
-#else
 	this->set_BillboardType(BillboardType_Point);
 	this->set_BillboardOrigin(BillboardOrigin_Center);
 	this->set_BillboardRotationType(BillboardRotationType_Texcoord);
-#endif
 
 	this->set_SortingEnabled(false);
 	this->set_CullIndividually(false);
