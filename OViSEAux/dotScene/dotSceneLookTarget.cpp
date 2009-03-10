@@ -21,29 +21,17 @@ void dotSceneObjects::dotSceneLookTarget::set_RelativeTo(std::string value)
 {
 	bool match = false;
 
-#ifdef _WIN32
-	if ((value == "local") || (value == "Local") || (value == "RelativeToLocal")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToLocal; match = true; }
-	if ((value == "parent") || (value == "Parent") || (value == "RelativeToParent")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToParent; match = true; }
-	if ((value == "world") || (value == "World") || (value == "RelativeToWorld")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeToWorld; match = true; }
-
-	if (!match) this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeTo_INVALID;
-#else
 	if ((value == "local") || (value == "Local") || (value == "RelativeToLocal")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToLocal; match = true; }
 	if ((value == "parent") || (value == "Parent") || (value == "RelativeToParent")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToParent; match = true; }
 	if ((value == "world") || (value == "World") || (value == "RelativeToWorld")) { this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeToWorld; match = true; }
 
 	if (!match) this->_RelativeTo = dotSceneEnums::dotSceneGeneralEnums::RelativeTo_INVALID;
-#endif
 }
 
 bool dotSceneObjects::dotSceneLookTarget::IsValid() const
 {
 	// basics valid?
-#ifdef _WIN32
-	if (this->_RelativeTo == dotSceneEnums::dotSceneGeneralEnums::RelativeTo::RelativeTo_INVALID) return false;
-#else
 	if (this->_RelativeTo == dotSceneEnums::dotSceneGeneralEnums::RelativeTo_INVALID) return false;
-#endif
 	if (!dotSceneObjects::dotSceneObject::IsValid()) return false;
 
 	return true;
@@ -61,7 +49,9 @@ dotSceneObjects::dotSceneLookTarget::dotSceneLookTarget(std::string str_NodeName
 	this->set_NodeName(str_NodeName);
 	this->set_RelativeTo(str_RelativeTo);
 	this->set_Position(obj_Position);
-	this->set_LocalDirectionVector(obj_LocalDirectionVector);}
+	this->set_LocalDirectionVector(obj_LocalDirectionVector);
+}
+
 dotSceneObjects::dotSceneLookTarget::dotSceneLookTarget(std::string str_NodeName, dotSceneEnums::dotSceneGeneralEnums::RelativeTo enum_RelativeTo, dotScenePosition obj_Position, dotSceneLocalDirectionVector obj_LocalDirectionVector) : dotSceneObject(dotSceneEnums::lookTarget)
 {
 	this->set_NodeName(str_NodeName);

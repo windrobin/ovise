@@ -70,11 +70,11 @@ dotSceneObjects::dotScene* dotSceneXmlReader::loadDotScene()
 	DOMDocument	*xmlDocument;
 	DOMElement	*xmlRootNode;
 
-	DOMNodeList *xmlChildNodeList;
+	//DOMNodeList *xmlChildNodeList; // not referenced
 	XMLSize_t	 xmlChildNodeCount = 0;
-	DOMNode		*xmlCurrentNode;
-	DOMElement	*xmlCurrentElement;
-	DOMAttr     *xmlCurrentAttribute;
+	//DOMNode		*xmlCurrentNode; // not referenced
+	//DOMElement	*xmlCurrentElement; // not referenced
+	//DOMAttr     *xmlCurrentAttribute; // not referenced
 
 	// no need to free this pointer - owned by the parent parser object
     xmlDocument = this->mParser->getDocument();
@@ -101,7 +101,7 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 	XMLSize_t	 ChildCount = ChildNodes->getLength();
 	DOMNode		*CurrentNode = 0;
 	DOMElement	*CurrentElement = 0;
-	const XMLCh* StringBuffer;
+	//const XMLCh* StringBuffer; // not referenced
 	std::string StringBuffer2;
 	std::string TempEnumAsString;
 
@@ -113,7 +113,7 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 	// Stage 1
 	dotSceneObjects::dotSceneShadowSettings* someShadowSettings;
 	dotSceneObjects::dotSceneNodes* someNodes;
-	dotSceneObjects::dotSceneEnvironment* someEnvironment;
+	//dotSceneObjects::dotSceneEnvironment* someEnvironment; // not referenced
 	dotSceneObjects::dotSceneExternals* someExternals;
 
 	// Stage 2
@@ -141,8 +141,8 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 	dotSceneObjects::dotSceneAngleAxis* someAngleAxis;
 	dotSceneObjects::dotSceneDirection* someDirection;
 	dotSceneObjects::dotSceneCommonMovableObjectParams* someCommonMovableObjectParams;
-	dotSceneObjects::dotSceneColourAmbient* someColourAmbient;
-	dotSceneObjects::dotSceneColourBackground* someColourBackground;
+	//dotSceneObjects::dotSceneColourAmbient* someColourAmbient; // not referenced
+	//dotSceneObjects::dotSceneColourBackground* someColourBackground; // not referenced
 	dotSceneObjects::dotSceneColourDiffuse* someColourDiffuse;
 	dotSceneObjects::dotSceneColourSpecular* someColourSpecular;
 	dotSceneObjects::dotScenePosition* somePosition;
@@ -1870,15 +1870,6 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 		// INFORMATION: Other node-types are defined for integrity.
 		switch(CurrentNode->getNodeType())
 		{
-#ifdef _WIN32
-		case DOMNode::NodeType::ATTRIBUTE_NODE :				break; // not interesting
-		case DOMNode::NodeType::CDATA_SECTION_NODE :			break; // not interesting
-		case DOMNode::NodeType::COMMENT_NODE :					break; // not interesting
-		case DOMNode::NodeType::DOCUMENT_FRAGMENT_NODE :		break; // not interesting
-		case DOMNode::NodeType::DOCUMENT_NODE :					break; // not interesting
-		case DOMNode::NodeType::DOCUMENT_TYPE_NODE :			break; // not interesting
-		case DOMNode::NodeType::ELEMENT_NODE : 
-#else
 		case DOMNode::ATTRIBUTE_NODE :				break; // not interesting
 		case DOMNode::CDATA_SECTION_NODE :			break; // not interesting
 		case DOMNode::COMMENT_NODE :					break; // not interesting
@@ -1886,7 +1877,6 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 		case DOMNode::DOCUMENT_NODE :					break; // not interesting
 		case DOMNode::DOCUMENT_TYPE_NODE :			break; // not interesting
 		case DOMNode::ELEMENT_NODE : 
-#endif
 			// Found node which is an Element. Re-cast node as element
 			std::cout << "Found ELEMENT_NODE:\n";
 			CurrentElement = dynamic_cast<xercesc::DOMElement*>(CurrentNode);
@@ -2371,19 +2361,11 @@ dotSceneObjects::dotSceneObject* dotSceneXmlReader::recursiveNodeProcessing(DOME
 			else std::cout << "Unidentified child-element. Recursive processing returned 'null'.\n";
 			break;
 
-#ifdef _WIN32
-		case DOMNode::NodeType::ENTITY_NODE :					break; // not interesting
-		case DOMNode::NodeType::ENTITY_REFERENCE_NODE :			break; // not interesting
-		case DOMNode::NodeType::NOTATION_NODE :					break; // not interesting
-		case DOMNode::NodeType::PROCESSING_INSTRUCTION_NODE :	break; // not interesting
-		case DOMNode::NodeType::TEXT_NODE :						break; // not interesting
-#else
 		case DOMNode::ENTITY_NODE :					break; // not interesting
 		case DOMNode::ENTITY_REFERENCE_NODE :			break; // not interesting
 		case DOMNode::NOTATION_NODE :					break; // not interesting
 		case DOMNode::PROCESSING_INSTRUCTION_NODE :	break; // not interesting
 		case DOMNode::TEXT_NODE :						break; // not interesting
-#endif
 		default:												break;
 		}
 	}
