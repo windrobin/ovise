@@ -181,7 +181,7 @@ void wxOgreRenderWindow::OnKeyEvents(wxKeyEvent &evt)
 void wxOgreRenderWindow::CreateRenderWindow ()
 {
 	Ogre::NameValuePairList params;
-#ifdef _WXMSW_
+#ifdef __WXMSW__
 	params["externalWindowHandle"] = GetOgreHandle ();
 #elif defined(_WXGTK_)
 	params["parentWindowHandle"] = GetOgreHandle ();
