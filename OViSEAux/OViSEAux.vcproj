@@ -368,6 +368,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dotScene\dotSceneXmlWriter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\OViSE\OViSEException.cpp"
 				>
 			</File>
@@ -603,6 +607,10 @@
 			</File>
 			<File
 				RelativePath=".\dotScene\dotSceneXmlReader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\dotScene\dotSceneXmlWriter.h"
 				>
 			</File>
 			<File

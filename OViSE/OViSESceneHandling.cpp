@@ -400,6 +400,20 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 	delete Reader;
 }
 
+#ifdef __HenningsActualWork__
+
+void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::string filename)
+{
+	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
+
+	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter();
+	xmlWriter->copyOgreSceneToDOM(scnMgr);
+	xmlWriter->moveDOMToXML(filename);
+
+	delete xmlWriter;
+}
+
+#endif
 void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
