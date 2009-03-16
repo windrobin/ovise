@@ -14,6 +14,13 @@
 
 #include "dotSceneAttachFactory.h"
 
+
+#define __HenningsActualWork__
+
+#ifdef __HenningsActualWork__
+#include "dotSceneXmlWriter.h"
+#endif
+
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
 /// Map containing all ray scene querys for object selection.
@@ -107,6 +114,10 @@ public:
 	 * @TODO Implement this.
 	 */
 	void loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
+
+#ifdef __HenningsActualWork__
+	void saveSceneToXML(std::string sceneManagerName, std::string filename = "C:\\TestOutputFrom_dotSceneXmlWriter.xml");
+#endif
 
 	/** Resolves a ray scene query to select an object.
 	 * Casts a ray from the screen position through the given camera into the scene and evaluates
