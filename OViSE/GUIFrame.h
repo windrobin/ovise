@@ -37,6 +37,7 @@
 #define ID_STARTSTOP_FRAMELISTENERS 1008
 #define idMenuAbout 1009
 #define ID_TESTSTUFF 1010
+#define ID_HR_TEST 1011
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -68,6 +69,7 @@ class GUIFrame : public wxFrame
 		virtual void OnStartStopFrameListeners( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnHRTest( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:

@@ -1,11 +1,11 @@
 #include "dotSceneXmlWriter.h"
 
+
+
 void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
-	DOMImplementation *implementation = 0;
-	DOMDocument *document = 0;
-	implementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("SceneRoot"));
-	document = implementation->createDocument(0, XMLString::transcode("scene"), 0);
+	DOMImplementation *implementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
+	DOMDocument *document = implementation->createDocument(0, XMLString::transcode("scene"), 0);
 	
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement *SceneElement = document->getDocumentElement();
@@ -24,8 +24,23 @@ void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 	root->getPosition();
 	root->getScale();
 
+	// Step 2: Recursive walkthrough
+	std::fstream Testausgabe;
+	Testausgabe.open("C:\\Testausgabe.txt", std::ios::out);
+	
+	Ogre::SceneNode::ObjectIterator ObjIter = root->getAttachedObjectIterator();
+	Ogre::MovableObject* MovObj;
+	while(ObjIter.hasMoreElements())
+	{
+		MovObj = ObjIter.getNext();
+		Ogre::String moName = MovObj->getName();
+		Ogre::String moType = MovObj->getMovableType();
+		Testausgabe << moName << " " << moType << std::endl;
+	}
 
+	Testausgabe.close();
 
+	
 
 }
 void dotSceneXmlWriter::moveDOMToXML(std::string filename)

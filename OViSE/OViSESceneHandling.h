@@ -168,6 +168,9 @@ public:
 	/// debug function for testing
 	void testStuff();
 
+	/// test function of H.R.
+	void HRTest();
+
 protected:
 	OViSESceneHandling();
 	virtual ~OViSESceneHandling();
