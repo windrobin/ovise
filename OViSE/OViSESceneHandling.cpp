@@ -499,8 +499,11 @@ void OViSESceneHandling::dynamicShadows(bool state)
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
+}
 
-	
+void OViSESceneHandling::HRTest()
+{
+	this->saveSceneToXML("BaseSceneManager"); // using default file name
 }
 
 void OViSESceneHandling::startStopFrameListeners(bool on)

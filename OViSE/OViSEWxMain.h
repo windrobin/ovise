@@ -55,6 +55,7 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
 		virtual void OnTestStuff( wxCommandEvent& event );
+		virtual void OnHRTest( wxCommandEvent& event );
 		virtual void OnStartStopFrameListeners(wxCommandEvent& event);
 
 		void finishOgreInitialization();

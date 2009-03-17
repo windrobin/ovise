@@ -544,6 +544,11 @@ void OViSEWxFrame::OnTestStuff( wxCommandEvent& event )
 	mSceneHdlr->testStuff();
 }
 
+void OViSEWxFrame::OnHRTest( wxCommandEvent& event )
+{
+	mSceneHdlr->HRTest();
+}
+
 void OViSEWxFrame::OnStartStopFrameListeners(wxCommandEvent& event)
 {
 	if(event.IsChecked())
