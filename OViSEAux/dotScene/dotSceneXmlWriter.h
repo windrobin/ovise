@@ -33,8 +33,13 @@ XERCES_CPP_NAMESPACE_USE
 class dotSceneXmlWriter
 {
 private:
-	//DOMImplementation *mImplementation;
-	//DOMDocument *mDocument;
+	DOMImplementation *mImplementation;
+	DOMDocument *mDocument;
+
+	std::fstream Testausgabe;
+
+	void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode);
+
 public:
 	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
 	void moveDOMToXML(std::string filename = "C:\\TextOutputFrom_dotSceneWriter.xml");
