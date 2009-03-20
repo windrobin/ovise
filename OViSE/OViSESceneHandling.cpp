@@ -47,6 +47,7 @@ void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
 	globalLight->setSpecularColour(1, 1, 1);
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
+	tmp->getRootSceneNode()->attachObject(globalLight);
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -288,7 +289,19 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, std::string scene
 		yAxisEnt->setCastShadows(castShadows);
 		Ogre::Entity *zAxisEnt = tmp->createEntity("zAxis", "zAxis.mesh");
 		zAxisEnt->setCastShadows(castShadows);
-		Ogre::SceneNode *n = tmp->createSceneNode();
+		int i=0;
+		std::string nodeName;
+		std::stringstream nodeStream;
+		nodeStream << "KOSNode_" << i;
+		nodeStream >> nodeName;
+		while(tmp->hasSceneNode(nodeName))
+		{
+			i += 1;
+			nodeStream.flush();
+			nodeStream << "KOSNode_" << i;
+			nodeStream >> nodeName;
+		}
+		Ogre::SceneNode *n = tmp->createSceneNode(nodeName);
 		n->setScale(scale, scale, scale);
 		n->attachObject(xAxisEnt);
 		n->attachObject(yAxisEnt);
