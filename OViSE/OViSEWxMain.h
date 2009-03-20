@@ -18,17 +18,20 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/tokenzr.h>
 #include <wx/aboutdlg.h>
+#include <wx/treectrl.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"
 #include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
 #include "OViSEAddMeshDialog.h"
+#include "OViSESceneTree.h"
 
 enum
 {
     WINDOW_MainRender = wxID_HIGHEST + 1,
-	PGID
+	PGID,
+	SCENETREE
 };
 
 /** Mainwindow of the application.
@@ -58,20 +61,26 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnHRTest( wxCommandEvent& event );
 		virtual void OnStartStopFrameListeners(wxCommandEvent& event);
 
-		void finishOgreInitialization();
-		void setupObjectProperties();
 		void setObjectProperties(Ogre::MovableObject *object);
 		void clearObjectProperties();
 		void deleteMeshes();
 
     protected:
+		void finishOgreInitialization();
+
+		void setupObjectProperties();
+
+		void loadSceneTreeImageList(wxImageList *list);
+
 		Ogre::Root *mRoot;
 
         wxOgreRenderWindow *mMainRenderWin;
 
 		wxListBox *logBox;
 		wxSplitterWindow *mSplitter;
-		wxSplitterWindow *mSecondSplitter;
+		wxSplitterWindow *mSecondSplitter, *mThirdSplitter;
+
+		OViSESceneTree *mSceneTree;
 
 		wxPropertyGrid *mObjectProperties;
 		

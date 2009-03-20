@@ -7,14 +7,6 @@
  * License:
  **************************************************************/
 
-#ifdef WX_PRECOMP
-#include "wx_pch.h"
-#endif
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
 #include "OViSEWxMain.h"
 
 //helper functions
@@ -56,6 +48,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	mSplitter = new wxSplitterWindow(this, wxID_ANY);
 	mSecondSplitter = new wxSplitterWindow(mSplitter, wxID_ANY);
+	mThirdSplitter = new wxSplitterWindow(mSecondSplitter, wxID_ANY);
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
@@ -68,9 +61,17 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
     finishOgreInitialization();
 	setupObjectProperties();
 
+
+	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
+	loadSceneTreeImageList(sceneTreeImageList);
+	mSceneTree = new OViSESceneTree(mSceneHdlr->getSceneManager(), mThirdSplitter, SCENETREE, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	mSceneTree->SetImageList(sceneTreeImageList);
+	mSceneTree->initTree();
+
 	logBox = new wxListBox(mSplitter, wxID_ANY);
 	mSplitter->SplitHorizontally(mSecondSplitter, logBox, this->GetSize().GetHeight()*0.85);
-	mSecondSplitter->SplitVertically(mMainRenderWin, mObjectProperties, this->GetSize().GetWidth()*0.85);
+	mSecondSplitter->SplitVertically(mMainRenderWin, mThirdSplitter, this->GetSize().GetWidth()*0.85);
+	mThirdSplitter->SplitHorizontally(mObjectProperties, mSceneTree);
 	mLogBoxListener = new OViSELogListener(logBox);
 
 	mAddMeshDialog = NULL;
@@ -100,7 +101,7 @@ void OViSEWxFrame::finishOgreInitialization()
 
 	Ogre::SceneNode *camFocusNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("mainCamFocusNode");
 	camFocusNode->setFixedYawAxis(true);
-	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode();
+	Ogre::SceneNode *camNode = camFocusNode->createChildSceneNode("CamNode");
 	camNode->setFixedYawAxis(true);
 	camNode->setPosition(0, 10, 20);
 	camNode->attachObject(mCam);
@@ -119,7 +120,7 @@ void OViSEWxFrame::finishOgreInitialization()
 
 void OViSEWxFrame::setupObjectProperties()
 {
-	mObjectProperties = new wxPropertyGrid(mSecondSplitter, PGID);
+	mObjectProperties = new wxPropertyGrid(mThirdSplitter, PGID);
 	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEWxFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
 
@@ -156,6 +157,25 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->SetPropertyValidator(wxT("MeshName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 	mObjectProperties->Append(new wxStringProperty(wxT("Material"), wxT("MeshMaterial")));
 	mObjectProperties->SetPropertyValidator(wxT("MeshMaterial"), wxTextValidator(wxFILTER_ALPHANUMERIC));
+}
+
+void OViSEWxFrame::loadSceneTreeImageList(wxImageList *list)
+{
+	// index 0 = ROOT
+	wxBitmap rootIcon(wxT("../Media/data/home_16.png"), wxBITMAP_TYPE_PNG);
+	list->Add(rootIcon);
+	// index 1 = SCENE_NODE
+	wxBitmap nodeIcon(wxT("../Media/data/folder_16.png"), wxBITMAP_TYPE_PNG);
+	list->Add(nodeIcon);
+	// index 2 = MESH
+	wxBitmap meshIcon(wxT("../Media/data/box_16.png"), wxBITMAP_TYPE_PNG);
+	list->Add(meshIcon);
+	// index 3 = CAMERA
+	wxBitmap cameraIcon(wxT("../Media/data/camera_16.png"), wxBITMAP_TYPE_PNG);
+	list->Add(cameraIcon);
+	// index 4 = LIGHT
+	wxBitmap lightIcon(wxT("../Media/data/lightbulb_16.png"), wxBITMAP_TYPE_PNG);
+	list->Add(lightIcon);
 }
 
 void OViSEWxFrame::OnClose(wxCloseEvent &event)
@@ -236,7 +256,6 @@ void OViSEWxFrame::OnAddView(wxCommandEvent &event)
 	// Need to create a new Frame to display the new renderwindow in
 	wxFrame *newFrame = new wxFrame(this, wxID_ANY, wxCamName);
 	wxOgreRenderWindow *newRenderWin = new wxOgreRenderWindow(newCam, camFocusNode, newFrame, wxID_ANY);
-	//newRenderWin->SetCamera(newCam);
 	newRenderWin->SetOgreRoot(mRoot);
 	mViewWindows[std::string(wxCamName.ToAscii())] = newFrame;
 
@@ -244,7 +263,6 @@ void OViSEWxFrame::OnAddView(wxCommandEvent &event)
 	newRenderWin->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler( OViSEWxFrame::OnViewClick ), NULL, this);
 	newCam->setAutoAspectRatio(true);
 
-	newFrame->SetSize(50, 50, 640, 480);
 	newFrame->Show();
 	newFrame->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( OViSEWxFrame::OnAdditionalViewClose ), NULL, this);
 }
