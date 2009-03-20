@@ -33,12 +33,16 @@ XERCES_CPP_NAMESPACE_USE
 class dotSceneXmlWriter
 {
 private:
-	DOMImplementation *mImplementation;
-	DOMDocument *mDocument;
+	DOMImplementation* mImplementation;
+	DOMDocumentType* mDocType;
+	::DOMDocument* mDocument;
+
+	std::string mPathOfDotSceneXsd;
+	std::string mDestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
 
 	std::fstream Testausgabe;
 
-	void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode);
+	void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
 
 public:
 	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
