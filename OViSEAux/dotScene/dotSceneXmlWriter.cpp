@@ -6,8 +6,8 @@ void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
-	this->mDocType = this->mImplementation->createDocumentType(XMLString::transcode("dotScene"), XMLString::transcode("") /* some publicID - what's this used for? */, XMLString::transcode(this->mPathOfDotSceneXsd.c_str()));
-	this->mDocument = this->mImplementation->createDocument(XMLString::transcode(this->mDestinationURI.c_str()), XMLString::transcode("scene"), 0);
+	//this->mDocType = this->mImplementation->createDocumentType(XMLString::transcode("dotScene"), XMLString::transcode("") /* some publicID - what's this used for? */, XMLString::transcode(this->mPathOfDotSceneXsd.c_str()));
+	this->mDocument = this->mImplementation->createDocument(/*XMLString::transcode(this->mDestinationURI.c_str())*/0, XMLString::transcode("scene"), 0);
 	
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement* SceneElement = this->mDocument->getDocumentElement();
