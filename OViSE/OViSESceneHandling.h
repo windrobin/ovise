@@ -21,6 +21,10 @@
 #include "dotSceneXmlWriter.h"
 #endif
 
+// Declare event for scene changes
+//DECLARE_EVENT_TYPE(wxEVT_OGRE_SCENE_CHANGED, -1)
+//DEFINE_EVENT_TYPE(wxEVT_OGRE_SCENE_CHANGED)
+
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;
 /// Map containing all ray scene querys for object selection.
@@ -173,6 +177,9 @@ public:
 
 protected:
 	OViSESceneHandling();
+
+	void OViSESceneHandling::SendEvent();
+
 	virtual ~OViSESceneHandling();
 
 private:

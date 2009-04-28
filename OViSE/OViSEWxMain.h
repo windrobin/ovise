@@ -14,7 +14,8 @@
 
 #include "OViSEWxApp.h"
 
-#include <wx/splitter.h>
+#include <wx/aui/aui.h>
+//#include <wx/splitter.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/tokenzr.h>
 #include <wx/aboutdlg.h>
@@ -77,8 +78,10 @@ class OViSEWxFrame: public GUIFrame
         wxOgreRenderWindow *mMainRenderWin;
 
 		wxListBox *logBox;
-		wxSplitterWindow *mSplitter;
-		wxSplitterWindow *mSecondSplitter, *mThirdSplitter;
+		//wxSplitterWindow *mSplitter;
+		//wxSplitterWindow *mSecondSplitter, *mThirdSplitter;
+
+		wxAuiManager *mWindowManager;
 
 		OViSESceneTree *mSceneTree;
 
