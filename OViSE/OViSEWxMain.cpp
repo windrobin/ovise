@@ -46,14 +46,17 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	statusBar->SetStatusText(wxT("FPS:"), 1);
 #endif
 
-	mSplitter = new wxSplitterWindow(this, wxID_ANY);
-	mSecondSplitter = new wxSplitterWindow(mSplitter, wxID_ANY);
-	mThirdSplitter = new wxSplitterWindow(mSecondSplitter, wxID_ANY);
+	//mSplitter = new wxSplitterWindow(this, wxID_ANY);
+	//mSecondSplitter = new wxSplitterWindow(mSplitter, wxID_ANY);
+	//mThirdSplitter = new wxSplitterWindow(mSecondSplitter, wxID_ANY);
+
+	mWindowManager = new wxAuiManager(this);
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
 	mRoot = ogreRoot;
 
-	mMainRenderWin = new wxOgreRenderWindow(NULL, NULL, mSecondSplitter, WINDOW_MainRender);
+	mMainRenderWin = new wxOgreRenderWindow(NULL, NULL, this, WINDOW_MainRender);
+	mWindowManager->AddPane(mMainRenderWin, wxCENTER, wxT("RenderWindow"));
 	mMainRenderWin->SetStatusBar(statusBar);
 
 	mMainRenderWin->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler( OViSEWxFrame::OnViewClick ), NULL, this);
@@ -64,19 +67,23 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
 	loadSceneTreeImageList(sceneTreeImageList);
-	mSceneTree = new OViSESceneTree(mSceneHdlr->getSceneManager(), mThirdSplitter, SCENETREE, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	mSceneTree = new OViSESceneTree(mSceneHdlr->getSceneManager(), this, SCENETREE, wxDefaultPosition, wxDefaultSize, wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	mWindowManager->AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
 	mSceneTree->SetImageList(sceneTreeImageList);
 	mSceneTree->initTree();
 
-	logBox = new wxListBox(mSplitter, wxID_ANY);
-	mSplitter->SplitHorizontally(mSecondSplitter, logBox, this->GetSize().GetHeight()*0.85);
-	mSecondSplitter->SplitVertically(mMainRenderWin, mThirdSplitter, this->GetSize().GetWidth()*0.85);
-	mThirdSplitter->SplitHorizontally(mObjectProperties, mSceneTree);
+	logBox = new wxListBox(this, wxID_ANY);
+	mWindowManager->AddPane(logBox, wxBOTTOM, wxT("Log"));
+	//mSplitter->SplitHorizontally(mSecondSplitter, logBox, this->GetSize().GetHeight()*0.85);
+	//mSecondSplitter->SplitVertically(mMainRenderWin, mThirdSplitter, this->GetSize().GetWidth()*0.85);
+	//mThirdSplitter->SplitHorizontally(mObjectProperties, mSceneTree);
 	mLogBoxListener = new OViSELogListener(logBox);
 
 	mAddMeshDialog = NULL;
 
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener(mLogBoxListener);
+
+	mWindowManager->Update();
 }
 
 OViSEWxFrame::~OViSEWxFrame()
@@ -120,7 +127,8 @@ void OViSEWxFrame::finishOgreInitialization()
 
 void OViSEWxFrame::setupObjectProperties()
 {
-	mObjectProperties = new wxPropertyGrid(mThirdSplitter, PGID);
+	mObjectProperties = new wxPropertyGrid(this, PGID);
+	mWindowManager->AddPane(mObjectProperties, wxRIGHT, wxT("Properties"));
 	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEWxFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
 

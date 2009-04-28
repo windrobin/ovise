@@ -30,7 +30,7 @@
 #include <iostream.h>
 #endif
 
-XERCES_CPP_NAMESPACE_USE
+XERCES_CPP_NAMESPACE_USE;
 using namespace std;
 using namespace dotSceneObjects;
 
