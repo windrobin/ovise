@@ -1,9 +1,63 @@
 #include "dotSceneXmlWriter.h"
 
+dotSceneXmlWriter::dotSceneXmlWriter(OViSEPathProvider* PathProvider)
+{
+	this->mMeshPathList.clear();
 
+	this->mPathProvider = PathProvider;
+
+	if (this->mPathProvider != 0)
+	{
+		this->mPathOfDotSceneXsd = this->mPathProvider->getPath_OViSE_Media() + "data";
+		this->mPathOfDotSceneXsd += this->mPathProvider->getSeperator_Active();
+		this->mPathOfDotSceneXsd += "dotScene.xsd";
+
+		this->mDestinationURI = this->mPathProvider->getPath_OViSE_SceneExport() + "Output.xml";
+
+		try
+		{
+			XMLPlatformUtils::Initialize();
+			std::cout << "*** Xerces initialised. ***\n";
+		}
+		catch (const XMLException& toCatch) 
+		{
+			char* message = XMLString::transcode(toCatch.getMessage());
+			std::string errmsg = "XERCES: Error during initialization! :\n" + (std::string)message + "\n";
+			Ogre::LogManager::getSingletonPtr()->logMessage(errmsg, Ogre::LML_CRITICAL);
+			XMLString::release(&message);
+		}
+	}
+}
+
+dotSceneXmlWriter::~dotSceneXmlWriter(void)
+{
+	try
+   	{
+    	XMLPlatformUtils::Terminate();  // Terminate Xerces
+   	}
+   	catch( xercesc::XMLException& e )
+   	{
+		char* message = xercesc::XMLString::transcode( e.getMessage() );
+		std::string lgMsg = "Xerces: " + (std::string)message;
+		Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg.c_str(), Ogre::LML_CRITICAL);
+		XMLString::release( &message );
+	}	   
+}
+
+
+bool dotSceneXmlWriter::IsValid()
+{
+	bool ReturnValue = true;
+
+	// Do check...
+
+	return ReturnValue;
+}
 
 void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
+	mMeshPathList.clear();
+
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
 	//this->mDocType = this->mImplementation->createDocumentType(XMLString::transcode("dotScene"), XMLString::transcode("") /* some publicID - what's this used for? */, XMLString::transcode(this->mPathOfDotSceneXsd.c_str()));
@@ -77,16 +131,36 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 			// Ignored, H.R. 18.03.09
 			match = false;		
 		}
-		if (MovObj->getMovableType() == "Entity")
+		if (MovObj->getMovableType() == "Entity") // TODO: simplify processing of relacing.
 		{
 			match = true;
 			Ogre::Entity* tempEntity = static_cast<Ogre::Entity*>(MovObj);
-			Testausgabe << "Ogre::Entity '" << tempEntity->getName() << "' with MESH-file '" << tempEntity->getMesh()->getName() << "'" << std::endl;
-			
+			std::string tempMeshPathAndName = tempEntity->getMesh()->getName(); 
+			std::string tempMeshPath;
+			std::string tempMeshName;
+			int BS_Index = tempMeshPathAndName.find_last_of("\\");
+			int S_Index = tempMeshPathAndName.find_last_of("/");
+			int Index;
+			if (BS_Index > S_Index) Index = BS_Index;
+			if (S_Index >= BS_Index) Index = S_Index;
+			if (Index != -1)
+			{
+				tempMeshName = tempMeshPathAndName.substr(Index+1);
+			}
+			else
+			{
+				tempMeshName = tempMeshPathAndName;
+			}
+
+			Testausgabe << "Ogre::Entity '" << tempEntity->getName() << "' with MESH-file '" << tempMeshName << "'" << std::endl;
+			Testausgabe << "Ogre::Entity origanal MESH-path&file '" << tempMeshPathAndName << "'" << std::endl;
 			DOMElement* New_EntityElement = this->mDocument->createElement(XMLString::transcode("entity"));
 			New_NodeElement->appendChild(New_EntityElement);
 			New_EntityElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(tempEntity->getName().c_str()));
-			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(tempEntity->getMesh()->getName().c_str()));
+			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(tempMeshName.c_str()));
+
+			this->mMeshPathList.push_back(tempMeshPathAndName);
+			//this->mMeshPathList = tempMeshPathAndName
 		}
 		if (MovObj->getMovableType() == "Light")
 		{
@@ -149,7 +223,7 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 }
 
 
-void dotSceneXmlWriter::moveDOMToXML(std::string filename)
+void dotSceneXmlWriter::moveDOMToXML(bool CopyMeshFiles, std::string filename)
 {
 	//throw std::exception("dotSceneXmlWriter::moveDOMToXML(std::string filename = \"C:\TextOutputFrom_dotSceneWriter.xml\" not implemented yet!");
 	//((DOMImplementationLS*)this->mImplementation)->createLSSerializer();
@@ -158,38 +232,48 @@ void dotSceneXmlWriter::moveDOMToXML(std::string filename)
 	DOMLSSerializer* tempLSServializer = this->mImplementation->createLSSerializer();
 	tempLSServializer->writeToURI(this->mDocument, XMLString::transcode(this->mDestinationURI.c_str()));
 	//delete tempFormatTarget;
-}
 
-dotSceneXmlWriter::dotSceneXmlWriter(void)
-{
-	this->mPathOfDotSceneXsd = "../Media/data/dotScene.xsd";
-	this->mDestinationURI = "../Media/SceneExport/Output.xml";
-
-	try
+	// Copy meshfiles
+	this->mPathProvider->getPath_OViSE_SceneExport();
+	while(!this->mMeshPathList.empty())
 	{
-		XMLPlatformUtils::Initialize();
-		std::cout << "*** Xerces initialised. ***\n";
+		std::string tempSourceFilename = this->mMeshPathList.back();
+		this->mMeshPathList.pop_back();
+		std::string tempMeshFilename;
+
+		int BS_Index = tempSourceFilename.find_last_of("\\");
+		int S_Index = tempSourceFilename.find_last_of("/");
+		int Index;
+		if (BS_Index > S_Index) Index = BS_Index;
+		if (S_Index >= BS_Index) Index = S_Index;
+		if (Index != -1)
+		{
+			tempMeshFilename = tempSourceFilename.substr(Index+1);
+		}
+		else
+		{
+			tempMeshFilename = tempSourceFilename;
+		}
+
+		std::string tempTargetFilename = this->mPathProvider->getPath_OViSE_SceneExport() + tempMeshFilename;
+
+		// Copy file // TODO: check if file exists, overwrite-options?
+		std::ifstream SourceFile;
+		SourceFile.open(tempSourceFilename.c_str(), std::ios::binary | std::ios::in);
+		std::ofstream TargetFile;
+		TargetFile.open(tempTargetFilename.c_str(), std::ios::binary | std::ios::out);
+
+		SourceFile.seekg(0, std::ios::end);
+		int BufferLength = SourceFile.tellg();
+		SourceFile.seekg(0, std::ios::beg);
+		char* ReadBuffer = new char[BufferLength];
+
+		SourceFile.read(ReadBuffer, BufferLength);
+		TargetFile.write(ReadBuffer, BufferLength);
+
+		SourceFile.close();
+		TargetFile.close();
+		delete[] ReadBuffer;
 	}
-	catch (const XMLException& toCatch) 
-	{
-        char* message = XMLString::transcode(toCatch.getMessage());
-		std::string errmsg = "XERCES: Error during initialization! :\n" + (std::string)message + "\n";
-        Ogre::LogManager::getSingletonPtr()->logMessage(errmsg, Ogre::LML_CRITICAL);
-        XMLString::release(&message);
-    }
 }
 
-dotSceneXmlWriter::~dotSceneXmlWriter(void)
-{
-	try
-   	{
-    	XMLPlatformUtils::Terminate();  // Terminate Xerces
-   	}
-   	catch( xercesc::XMLException& e )
-   	{
-		char* message = xercesc::XMLString::transcode( e.getMessage() );
-		std::string lgMsg = "Xerces: " + (std::string)message;
-		Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg.c_str(), Ogre::LML_CRITICAL);
-		XMLString::release( &message );
-	}	   
-}

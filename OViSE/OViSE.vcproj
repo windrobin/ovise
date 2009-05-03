@@ -248,6 +248,10 @@
 					RelativePath=".\OViSEInputHandler.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\OViSEPathProvider.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -320,6 +324,10 @@
 				>
 				<File
 					RelativePath=".\OViSEInputHandler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEPathProvider.h"
 					>
 				</File>
 			</Filter>
