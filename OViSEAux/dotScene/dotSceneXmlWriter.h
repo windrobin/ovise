@@ -1,6 +1,8 @@
 #ifndef DOTSCENEXMLWRITER_H_
 #define DOTSCENEXMLWRITER_H_
 
+#include "../../OViSE/OViSEPathProvider.h"
+
 // Inlcude Xerces
 #ifndef Xerxes_Used
 #define Xerxes_Used
@@ -37,19 +39,26 @@ private:
 	DOMDocumentType* mDocType;
 	::DOMDocument* mDocument;
 
+	OViSEPathProvider* mPathProvider;
+
 	std::string mPathOfDotSceneXsd;
 	std::string mDestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
+
+	std::vector<std::string> mMeshPathList;
 
 	std::fstream Testausgabe;
 
 	void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
 
 public:
-	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
-	void moveDOMToXML(std::string filename = "C:\\TextOutputFrom_dotSceneWriter.xml");
-
-	dotSceneXmlWriter(void);
+	dotSceneXmlWriter(OViSEPathProvider* PathProvider);
 	~dotSceneXmlWriter(void);
+
+	bool IsValid();
+
+	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
+	void moveDOMToXML(bool CopyMeshFiles, std::string filename = "C:\\TextOutputFrom_dotSceneWriter.xml");
+
 };
 
 #endif /*DOTSCENEXMLWRITER_H_*/

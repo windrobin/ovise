@@ -417,11 +417,13 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 
 void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::string filename)
 {
+	OViSEPathProvider* PathProvider = new OViSEPathProvider("C:/OViSE", "/");
+
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
 
-	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter();
+	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider);
 	xmlWriter->copyOgreSceneToDOM(scnMgr);
-	xmlWriter->moveDOMToXML(filename);
+	xmlWriter->moveDOMToXML(true, filename);
 
 	delete xmlWriter;
 }

@@ -18,7 +18,9 @@
 #define __HenningsActualWork__
 
 #ifdef __HenningsActualWork__
+#include "OViSEPathProvider.h"
 #include "dotSceneXmlWriter.h"
+
 #endif
 
 // Declare event for scene changes
