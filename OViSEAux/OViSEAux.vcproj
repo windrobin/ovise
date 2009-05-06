@@ -375,6 +375,10 @@
 				RelativePath="..\OViSE\OViSEException.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\OViSEPathProvider.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -615,6 +619,10 @@
 			</File>
 			<File
 				RelativePath="..\OViSE\OViSEException.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEPathProvider.h"
 				>
 			</File>
 		</Filter>
