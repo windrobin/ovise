@@ -122,7 +122,7 @@ public:
 	void loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
 
 #ifdef __HenningsActualWork__
-	void saveSceneToXML(std::string sceneManagerName, std::string filename = "C:\\TestOutputFrom_dotSceneXmlWriter.xml");
+	void saveSceneToXML(std::string sceneManagerName, std::string filename = "C:\\TestOutputFrom_dotSceneXmlWriter.xml", bool DoCopyMeshsAsWell = true);
 #endif
 
 	/** Resolves a ray scene query to select an object.

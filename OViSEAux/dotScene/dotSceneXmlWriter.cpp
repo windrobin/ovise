@@ -258,6 +258,10 @@ void dotSceneXmlWriter::moveDOMToXML(bool CopyMeshFiles, std::string filename)
 		std::string tempTargetFilename = this->mPathProvider->getPath_OViSE_SceneExport() + tempMeshFilename;
 
 		// Copy file // TODO: check if file exists, overwrite-options?
+		bool result = ::wxCopyFile(new ::wxString(tempSourceFilename), new ::wxString(tempTargetFilename), true);
+		bool irgendwas = result;
+
+		/*
 		std::ifstream SourceFile;
 		SourceFile.open(tempSourceFilename.c_str(), std::ios::binary | std::ios::in);
 		std::ofstream TargetFile;
@@ -273,7 +277,7 @@ void dotSceneXmlWriter::moveDOMToXML(bool CopyMeshFiles, std::string filename)
 
 		SourceFile.close();
 		TargetFile.close();
-		delete[] ReadBuffer;
+		delete[] ReadBuffer;*/
 	}
 }
 

@@ -415,15 +415,37 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 
 #ifdef __HenningsActualWork__
 
-void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::string filename)
+void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::string filename, bool DoCopyMeshsAsWell)
 {
 	OViSEPathProvider* PathProvider = new OViSEPathProvider("C:/OViSE", "/");
 
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
 
+	std::fstream DebugOutput;
+	DebugOutput.open("C:\\DebugOutput.txt", std::ios::out|std::ios::trunc);
+
+	std::vector<std::string> TempResourceGroups = Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups();
+	
+	for(std::vector<std::string>::iterator i = TempResourceGroups.begin(); i != TempResourceGroups.end(); i++)
+	{
+		Ogre::StringVectorPtr TempResourceNamesPtr = Ogre::ResourceGroupManager::getSingletonPtr()->findResourceNames((*i), "*.*",  true);
+		std::vector<std::string>* pTempResourceNames = TempResourceNamesPtr.get();
+		std::vector<std::string> TempResourceNames = *pTempResourceNames;
+
+		for(std::vector<std::string>::iterator j = TempResourceNames.begin(); j != TempResourceNames.end(); j++)
+		{
+			DebugOutput << "Recource: '" << (*j) << "'" << endl;
+		}
+	}
+
+
+	DebugOutput.close();
+	
+	OViSEPathProvider *PathProvider = new OViSEPathProvider();
 	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider);
 	xmlWriter->copyOgreSceneToDOM(scnMgr);
 	xmlWriter->moveDOMToXML(true, filename);
+	if (DoCopyMeshsAsWell) xmlWriter->copyMeshFilesToLocation(PathProvider);
 
 	delete xmlWriter;
 }
