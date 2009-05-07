@@ -1,7 +1,11 @@
 #ifndef DOTSCENEXMLWRITER_H_
 #define DOTSCENEXMLWRITER_H_
 
+#include <wx/filename.h>
+#include <wx/filefn.h>
+#include <wx/arrstr.h>
 #include "../../OViSE/OViSEPathProvider.h"
+
 
 // Inlcude Xerces
 #ifndef Xerxes_Used
@@ -35,16 +39,17 @@ XERCES_CPP_NAMESPACE_USE
 class dotSceneXmlWriter
 {
 private:
+	bool Valid;
+
 	DOMImplementation* mImplementation;
 	DOMDocumentType* mDocType;
 	::DOMDocument* mDocument;
 
 	OViSEPathProvider* mPathProvider;
 
-	std::string mPathOfDotSceneXsd;
-	std::string mDestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
-
-	std::vector<std::string> mMeshPathList;
+	wxFileName mDotSceneXsd;
+	wxFileName mDestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
+	wxArrayString mCopyThisMeshFiles;
 
 	std::fstream Testausgabe;
 

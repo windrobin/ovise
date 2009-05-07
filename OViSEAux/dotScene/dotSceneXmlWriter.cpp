@@ -2,17 +2,14 @@
 
 dotSceneXmlWriter::dotSceneXmlWriter(OViSEPathProvider* PathProvider)
 {
-	this->mMeshPathList.clear();
-
+	this->Valid = true;
+	this->mCopyThisMeshFiles.Clear();
 	this->mPathProvider = PathProvider;
 
 	if (this->mPathProvider != 0)
 	{
-		this->mPathOfDotSceneXsd = this->mPathProvider->getPath_OViSE_Media() + "data";
-		this->mPathOfDotSceneXsd += this->mPathProvider->getSeperator_Active();
-		this->mPathOfDotSceneXsd += "dotScene.xsd";
-
-		this->mDestinationURI = this->mPathProvider->getPath_OViSE_SceneExport() + "Output.xml";
+		this->mDotSceneXsd = wxFileName(this->mPathProvider->getPath_MediaDirectory() + wxT("/data"), wxString(wxT("dotScene.xsd")));
+		this->mDestinationURI = wxFileName(this->mPathProvider->getPath_SceneExportDirectory(), wxString(wxT("Output.xml")));
 
 		try
 		{
@@ -56,11 +53,10 @@ bool dotSceneXmlWriter::IsValid()
 
 void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
-	mMeshPathList.clear();
+	this->mCopyThisMeshFiles.Clear();
 
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
-	//this->mDocType = this->mImplementation->createDocumentType(XMLString::transcode("dotScene"), XMLString::transcode("") /* some publicID - what's this used for? */, XMLString::transcode(this->mPathOfDotSceneXsd.c_str()));
 	this->mDocument = this->mImplementation->createDocument(/*XMLString::transcode(this->mDestinationURI.c_str())*/0, XMLString::transcode("scene"), 0);
 	
 	// Get "scene"-element and add attribute "formatVersion"...
@@ -72,7 +68,6 @@ void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 	SceneElement->appendChild(NodesElement);
 
 	// Recusive: get nodes from Ogre::SceneManager, create "node"-elements and append 'em to "nodes"-element or parent "node"-elements...
-
 	// Get one (now root) node, and start recursive walkthrough...
 	Testausgabe.open("C:\\Testausgabe.txt", std::ios::out|std::ios::trunc);
 	this->recursiveNodeTreeWalkthrough(SceneMgr->getRootSceneNode(), NodesElement);
@@ -135,32 +130,20 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 		{
 			match = true;
 			Ogre::Entity* tempEntity = static_cast<Ogre::Entity*>(MovObj);
-			std::string tempMeshPathAndName = tempEntity->getMesh()->getName(); 
-			std::string tempMeshPath;
-			std::string tempMeshName;
-			int BS_Index = tempMeshPathAndName.find_last_of("\\");
-			int S_Index = tempMeshPathAndName.find_last_of("/");
-			int Index;
-			if (BS_Index > S_Index) Index = BS_Index;
-			if (S_Index >= BS_Index) Index = S_Index;
-			if (Index != -1)
-			{
-				tempMeshName = tempMeshPathAndName.substr(Index+1);
-			}
-			else
-			{
-				tempMeshName = tempMeshPathAndName;
-			}
+			wxFileName tempMeshPathAndName(wxString(tempEntity->getMesh()->getName().c_str(), wxConvUTF8));
 
-			Testausgabe << "Ogre::Entity '" << tempEntity->getName() << "' with MESH-file '" << tempMeshName << "'" << std::endl;
-			Testausgabe << "Ogre::Entity origanal MESH-path&file '" << tempMeshPathAndName << "'" << std::endl;
+			Testausgabe << "Ogre::Entity '" << tempEntity->getName() << "' with MESH-file '" << std::string(tempMeshPathAndName.GetFullName().mb_str()) << "'" << std::endl;
+			Testausgabe << "Ogre::Entity origanal MESH-path&file '" << std::string(tempMeshPathAndName.GetFullPath().mb_str()) << "'" << std::endl;
 			DOMElement* New_EntityElement = this->mDocument->createElement(XMLString::transcode("entity"));
 			New_NodeElement->appendChild(New_EntityElement);
 			New_EntityElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(tempEntity->getName().c_str()));
-			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(tempMeshName.c_str()));
+			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(std::string(tempMeshPathAndName.GetFullName().mb_str()).c_str()));
 
-			this->mMeshPathList.push_back(tempMeshPathAndName);
-			//this->mMeshPathList = tempMeshPathAndName
+			wxString DebugBuff(tempMeshPathAndName.GetFullPath()); 
+			if(wxFileExists(DebugBuff))
+			{
+				this->mCopyThisMeshFiles.Add(tempMeshPathAndName.GetFullPath());
+			}
 		}
 		if (MovObj->getMovableType() == "Light")
 		{
@@ -225,59 +208,24 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 
 void dotSceneXmlWriter::moveDOMToXML(bool CopyMeshFiles, std::string filename)
 {
-	//throw std::exception("dotSceneXmlWriter::moveDOMToXML(std::string filename = \"C:\TextOutputFrom_dotSceneWriter.xml\" not implemented yet!");
-	//((DOMImplementationLS*)this->mImplementation)->createLSSerializer();
-
-	//XMLFormatTarget* tempFormatTarget = new LocalFileFormatTarget("test.dotScene");
+	// TODO: free chooseable destination file
 	DOMLSSerializer* tempLSServializer = this->mImplementation->createLSSerializer();
-	tempLSServializer->writeToURI(this->mDocument, XMLString::transcode(this->mDestinationURI.c_str()));
-	//delete tempFormatTarget;
+	tempLSServializer->writeToURI(this->mDocument, XMLString::transcode(this->mDestinationURI.GetFullPath().mb_str()));
 
 	// Copy meshfiles
-	this->mPathProvider->getPath_OViSE_SceneExport();
-	while(!this->mMeshPathList.empty())
+	this->mPathProvider->getPath_SceneExportDirectory();
+	while(!this->mCopyThisMeshFiles.IsEmpty())
 	{
-		std::string tempSourceFilename = this->mMeshPathList.back();
-		this->mMeshPathList.pop_back();
-		std::string tempMeshFilename;
+		wxFileName Source(this->mCopyThisMeshFiles.Last());
+		this->mCopyThisMeshFiles.pop_back();
+		
+		wxFileName Target(Source);
+		Target.SetPath(this->mPathProvider->getPath_SceneExportDirectory());
 
-		int BS_Index = tempSourceFilename.find_last_of("\\");
-		int S_Index = tempSourceFilename.find_last_of("/");
-		int Index;
-		if (BS_Index > S_Index) Index = BS_Index;
-		if (S_Index >= BS_Index) Index = S_Index;
-		if (Index != -1)
-		{
-			tempMeshFilename = tempSourceFilename.substr(Index+1);
-		}
-		else
-		{
-			tempMeshFilename = tempSourceFilename;
-		}
-
-		std::string tempTargetFilename = this->mPathProvider->getPath_OViSE_SceneExport() + tempMeshFilename;
-
-		// Copy file // TODO: check if file exists, overwrite-options?
-		bool result = ::wxCopyFile(new ::wxString(tempSourceFilename), new ::wxString(tempTargetFilename), true);
+		// Copy file // TODO: overwrite-options?
+		bool DoOverwrite = true;
+		bool result = ::wxCopyFile(Source.GetFullPath(), Target.GetFullPath(), DoOverwrite);
 		bool irgendwas = result;
-
-		/*
-		std::ifstream SourceFile;
-		SourceFile.open(tempSourceFilename.c_str(), std::ios::binary | std::ios::in);
-		std::ofstream TargetFile;
-		TargetFile.open(tempTargetFilename.c_str(), std::ios::binary | std::ios::out);
-
-		SourceFile.seekg(0, std::ios::end);
-		int BufferLength = SourceFile.tellg();
-		SourceFile.seekg(0, std::ios::beg);
-		char* ReadBuffer = new char[BufferLength];
-
-		SourceFile.read(ReadBuffer, BufferLength);
-		TargetFile.write(ReadBuffer, BufferLength);
-
-		SourceFile.close();
-		TargetFile.close();
-		delete[] ReadBuffer;*/
 	}
 }
 
