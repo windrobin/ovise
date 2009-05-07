@@ -1,102 +1,164 @@
 #include "OViSEPathProvider.h"
 
+wxString OViSEPathProvider::UnifyPathSeperators_Slash(const wxString Path)
+{
+	wxString UnifiedPath(Path);
+	UnifiedPath.Replace(wxT("\\"), wxT("/"), true);
+	return UnifiedPath;
+}
+
 OViSEPathProvider::OViSEPathProvider(std::string InitialPath_OViSE_Base, std::string DefaultSeperator)
 {
-	this->Valid = true;
+	// Get WorkingDirectory...
+	wxString temp = ::wxGetCwd();
+	::wxString tempInitialWorkingDirectory = OViSEPathProvider::UnifyPathSeperators_Slash(temp);
+	this->DefaultPath_OViSE_WorkingDirectory.Open(tempInitialWorkingDirectory);
+	if (this->DefaultPath_OViSE_WorkingDirectory.IsOpened()) this->setPath_WorkingDirectory(this->DefaultPath_OViSE_WorkingDirectory.GetName());
+	else this->Path_OViSE_WorkingDirectory.Open(wxString(wxT("INVALID")));
 
-	// Clear all strings...
-	this->DefaultPath_OViSE_Base = "INVALID";
-	this->DefaultPath_OViSE_Solution = "INVALID";
-	this->DefaultPath_OViSE_Aux = "INVALID";
-	this->DefaultPath_OViSE_Media = "INVALID";
-	this->DefaultPath_OViSE_SceneExport = "INVALID";
-	this->Path_OViSE_Base = "INVALID";
-	this->Path_OViSE_Solution = "INVALID";
-	this->Path_OViSE_Aux = "INVALID";
-	this->Path_OViSE_Media = "INVALID";
-	this->Path_OViSE_SceneExport = "INVALID";
+	// Look for BaseDir... TODO: Later take configuration from XML-file!
+	if (this->DefaultPath_OViSE_WorkingDirectory.IsOpened())
+	{
+		wxString tempInitialBaseDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_WorkingDirectory.GetName()));
+		tempInitialBaseDirectory = tempInitialBaseDirectory.BeforeLast(wxT('/'));
 
-	// Initialize seperators...
-	// TODO: enum Slash, BackSlash, Auto. Auto:'ll take seperator form InitialPath_OViSE_Base
-	this->Seperator_Slash = "/";
-	this->Seperator_BackSlash = "\\";
-
-	if (DefaultSeperator.compare(this->Seperator_Slash) != 0) this->Seperator_Active = this->Seperator_Slash;
+		if (tempInitialBaseDirectory.IsEmpty() || (tempInitialBaseDirectory.Last() == wxT(':')))
+		{
+			this->DefaultPath_OViSE_BaseDirectory.Open(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_WorkingDirectory.GetName()));
+		}
+		else this->DefaultPath_OViSE_BaseDirectory.Open(tempInitialBaseDirectory);
+		if (this->DefaultPath_OViSE_BaseDirectory.IsOpened())
+		{
+			this->setPath_BaseDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_BaseDirectory.GetName()));
+		}
+		else this->Path_OViSE_BaseDirectory.Open(wxString(wxT("INVALID")));
+	}
 	else
 	{
-		if (DefaultSeperator.compare(this->Seperator_BackSlash) != 0) this->Seperator_Active = this->Seperator_BackSlash;
-		else
-		{
-			this->Seperator_Active = "INVALID";
-			this->Valid = false;
-		}
+		this->DefaultPath_OViSE_BaseDirectory.Open(wxString(wxT("INVALID")));
+		this->Path_OViSE_BaseDirectory.Open(wxString(wxT("INVALID")));
 	}
 
-	// Initialize (default-)paths... //<- TODO: BasePath has to be checked !!!
-	if (this->Valid)
+	// Look for special subdirectories... TODO: Later take configuration from XML-file!
+	if (this->DefaultPath_OViSE_BaseDirectory.IsOpened())
 	{
-		// TODO: trunc PathSeperator at end
-		// TODO DONE: use seperaors not in default but in actives? build 'em when accessed and store in some "last" paths, don't touch defaults!
-		//            So structure-logic can be used, while acessing none-default paths!
-		this->DefaultPath_OViSE_Base = InitialPath_OViSE_Base; // For example "C:/OViSE"
-		this->DefaultPath_OViSE_Solution = "OViSE";
-		this->DefaultPath_OViSE_Aux = "OViSEAux";
-		this->DefaultPath_OViSE_Media = "Media";
-		this->DefaultPath_OViSE_SceneExport = "SceneExport";
+		// Solution...
+		if (this->DefaultPath_OViSE_BaseDirectory.Exists(this->DefaultPath_OViSE_BaseDirectory.GetName() + wxT("/OViSE")))
+		{
+			this->DefaultPath_OViSE_SolutionDirectory.Open(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_BaseDirectory.GetName()) + wxT("/OViSE"));
+			if(this->DefaultPath_OViSE_SolutionDirectory.IsOpened()) this->setPath_SolutionDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_SolutionDirectory.GetName()));
+			else this->Path_OViSE_SolutionDirectory.Open(wxString(wxT("INVALID")));
+		}
+		else
+		{
+			this->DefaultPath_OViSE_SolutionDirectory.Open(wxString(wxT("INVALID")));
+			this->Path_OViSE_SolutionDirectory.Open(wxString(wxT("INVALID")));
+		}
 
-		this->Path_OViSE_Base = this->DefaultPath_OViSE_Base;
+		// Aux...
+		if (this->DefaultPath_OViSE_BaseDirectory.Exists(this->DefaultPath_OViSE_BaseDirectory.GetName() + wxT("/OViSEAux")))
+		{
+			this->DefaultPath_OViSE_AuxDirectory.Open(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_BaseDirectory.GetName()) + wxT("/OViSEAux"));
+			if(this->DefaultPath_OViSE_AuxDirectory.IsOpened()) this->setPath_AuxDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_AuxDirectory.GetName()));
+			else this->Path_OViSE_AuxDirectory.Open(wxString(wxT("INVALID")));
+		}
+		else
+		{
+			this->DefaultPath_OViSE_AuxDirectory.Open(wxString(wxT("INVALID")));
+			this->Path_OViSE_AuxDirectory.Open(wxString(wxT("INVALID")));
+		}
 
-		this->Path_OViSE_Solution = this->DefaultPath_OViSE_Base;
-		this->Path_OViSE_Solution += this->Seperator_Active;
-		this->Path_OViSE_Solution += this->DefaultPath_OViSE_Solution;
+		// Media...
+		if (this->DefaultPath_OViSE_BaseDirectory.Exists(this->DefaultPath_OViSE_BaseDirectory.GetName() + wxT("/Media")))
+		{
+			this->DefaultPath_OViSE_MediaDirectory.Open(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_BaseDirectory.GetName()) + wxT("/Media"));
+			if(this->DefaultPath_OViSE_MediaDirectory.IsOpened()) this->setPath_MediaDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_MediaDirectory.GetName()));
+			else this->Path_OViSE_MediaDirectory.Open(wxString(wxT("INVALID")));
+		}
+		else
+		{
+			this->DefaultPath_OViSE_MediaDirectory.Open(wxString(wxT("INVALID")));
+			this->Path_OViSE_MediaDirectory.Open(wxString(wxT("INVALID")));
+		}
 
-		this->Path_OViSE_Aux = this->DefaultPath_OViSE_Base;
-		this->Path_OViSE_Aux += this->Seperator_Active;
-		this->Path_OViSE_Aux += this->DefaultPath_OViSE_Aux;
-
-		this->Path_OViSE_Media = this->DefaultPath_OViSE_Base;
-		this->Path_OViSE_Media += this->Seperator_Active;
-		this->Path_OViSE_Media += this->DefaultPath_OViSE_Media;
-
-		this->Path_OViSE_SceneExport = this->DefaultPath_OViSE_Base;
-		this->Path_OViSE_SceneExport += this->Seperator_Active;
-		this->Path_OViSE_SceneExport += this->DefaultPath_OViSE_Media;
-		this->Path_OViSE_SceneExport += this->Seperator_Active;
-		this->Path_OViSE_SceneExport += this->DefaultPath_OViSE_SceneExport;
+		// SceneExport...
+		if (this->DefaultPath_OViSE_MediaDirectory.Exists(this->DefaultPath_OViSE_MediaDirectory.GetName() + wxT("/SceneExport")))
+		{
+			this->DefaultPath_OViSE_SceneExportDirectory.Open(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_MediaDirectory.GetName()) + wxT("/SceneExport"));
+			if(this->DefaultPath_OViSE_SceneExportDirectory.IsOpened()) this->setPath_SceneExportDirectory(OViSEPathProvider::UnifyPathSeperators_Slash(this->DefaultPath_OViSE_SceneExportDirectory.GetName()));
+			else this->Path_OViSE_SceneExportDirectory.Open(wxString(wxT("INVALID")));
+		}
+		else
+		{
+			this->DefaultPath_OViSE_SceneExportDirectory.Open(wxString(wxT("INVALID")));
+			this->Path_OViSE_SceneExportDirectory.Open(wxString(wxT("INVALID")));
+		}
 	}
 }
 
 OViSEPathProvider::~OViSEPathProvider(void) { }
 
-std::string OViSEPathProvider::getSeperator_Active() { return this->Seperator_Active; }
+bool OViSEPathProvider::setPath_WorkingDirectory(const wxString Path)
+{
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_WorkingDirectory.Open(Path);
+		return this->Path_OViSE_WorkingDirectory.IsOpened();	
+	}
+	else return false;
+}
 
-std::string OViSEPathProvider::getPath_OViSE_Base(bool SeperatorAtEndOfPath)
+bool OViSEPathProvider::setPath_BaseDirectory(const wxString Path)
 {
-	std::string BuildPath = this->Path_OViSE_Base;
-	if (SeperatorAtEndOfPath) BuildPath += this->Seperator_Active;
-	return BuildPath;
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_BaseDirectory.Open(Path);
+		return this->Path_OViSE_BaseDirectory.IsOpened();	
+	}
+	else return false;
 }
-std::string OViSEPathProvider::getPath_OViSE_Solution(bool SeperatorAtEndOfPath)
+
+bool OViSEPathProvider::setPath_SolutionDirectory(const wxString Path)
 {
-	std::string BuildPath = this->Path_OViSE_Solution;
-	if (SeperatorAtEndOfPath) BuildPath += this->Seperator_Active;
-	return BuildPath;
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_SolutionDirectory.Open(Path);
+		return this->Path_OViSE_SolutionDirectory.IsOpened();	
+	}
+	else return false;
 }
-std::string OViSEPathProvider::getPath_OViSE_Aux(bool SeperatorAtEndOfPath)
+
+bool OViSEPathProvider::setPath_AuxDirectory(const wxString Path)
 {
-	std::string BuildPath = this->Path_OViSE_Aux;
-	if (SeperatorAtEndOfPath) BuildPath += this->Seperator_Active;
-	return BuildPath;
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_AuxDirectory.Open(Path);
+		return this->Path_OViSE_AuxDirectory.IsOpened();	
+	}
+	else return false;
 }
-std::string OViSEPathProvider::getPath_OViSE_Media(bool SeperatorAtEndOfPath)
+
+bool OViSEPathProvider::setPath_MediaDirectory(const wxString Path)
 {
-	std::string BuildPath = this->Path_OViSE_Media;
-	if (SeperatorAtEndOfPath) BuildPath += this->Seperator_Active;
-	return BuildPath;
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_MediaDirectory.Open(Path);
+		return this->Path_OViSE_MediaDirectory.IsOpened();	
+	}
+	else return false;
 }
-std::string OViSEPathProvider::getPath_OViSE_SceneExport(bool SeperatorAtEndOfPath)
+bool OViSEPathProvider::setPath_SceneExportDirectory(const wxString Path)
 {
-	std::string BuildPath = this->Path_OViSE_SceneExport;
-	if (SeperatorAtEndOfPath) BuildPath += this->Seperator_Active;
-	return BuildPath;
+	if (wxDir::Exists(Path))
+	{
+		this->Path_OViSE_SceneExportDirectory.Open(Path);
+		return this->Path_OViSE_SceneExportDirectory.IsOpened();	
+	}
+	else return false;
 }
+wxString OViSEPathProvider::getPath_WorkingDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_WorkingDirectory.GetName()); }
+wxString OViSEPathProvider::getPath_BaseDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_BaseDirectory.GetName()); }
+wxString OViSEPathProvider::getPath_SolutionDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_SolutionDirectory.GetName()); }
+wxString OViSEPathProvider::getPath_AuxDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_AuxDirectory.GetName()); }
+wxString OViSEPathProvider::getPath_MediaDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_MediaDirectory.GetName()); }
+wxString OViSEPathProvider::getPath_SceneExportDirectory() { return OViSEPathProvider::UnifyPathSeperators_Slash(this->Path_OViSE_SceneExportDirectory.GetName()); }
