@@ -23,6 +23,7 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/stattext.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -34,10 +35,10 @@
 #define ID_ADD_MESH 1005
 #define ID_DELETE_MESHES 1006
 #define ID_LOAD_DOTSCENE 1007
-#define ID_STARTSTOP_FRAMELISTENERS 1008
-#define idMenuAbout 1009
-#define ID_TESTSTUFF 1010
-#define ID_HR_TEST 1011
+#define ID_SAVE_DOTSCENE 1008
+#define ID_STARTSTOP_FRAMELISTENERS 1009
+#define idMenuAbout 1010
+#define ID_TESTSTUFF 1011
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -66,10 +67,10 @@ class GUIFrame : public wxFrame
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnSaveDotScene( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnStartStopFrameListeners( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnHRTest( wxCommandEvent& event ){ event.Skip(); }
 		
 	
 	public:
@@ -103,6 +104,32 @@ class AddMeshDialog : public wxDialog
 	public:
 		AddMeshDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add new mesh to scene"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 916,854 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~AddMeshDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class ExportMeshesDialog
+///////////////////////////////////////////////////////////////////////////////
+class ExportMeshesDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* mLabel;
+		
+		wxButton* mCancelButton;
+		
+		wxButton* mOkButton;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCloseDialog( wxCloseEvent& event ){ event.Skip(); }
+		virtual void OnClickCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClickOk( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		ExportMeshesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Exporting meshes?"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 268,86 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~ExportMeshesDialog();
 	
 };
 

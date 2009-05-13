@@ -476,11 +476,6 @@ void OViSESceneHandling::testStuff()
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 }
 
-void OViSESceneHandling::HRTest()
-{
-	this->saveSceneToXML("BaseSceneManager"); // using default file name
-}
-
 void OViSESceneHandling::startStopFrameListeners(bool on)
 {
 	if(on)
@@ -520,12 +515,16 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 
 #ifdef __HenningsActualWork__
 
-void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::string filename, bool DoCopyMeshsAsWell)
+void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
 	OViSEPathProvider* PathProvider = new OViSEPathProvider("Z:/OViSE Checkout Base", "/");
+	wxFileName FullFileName(filename);
+	PathProvider->setPath_SceneExportDirectory(FullFileName.GetPath());
 
-	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
+	Ogre::SceneManager *scnMgr = mSceneManagers[(std::string) sceneManagerName.mb_str()];
 
+	
+	
 	std::fstream DebugOutput;
 	DebugOutput.open("C:\\DebugOutput.txt", std::ios::out|std::ios::trunc);
 
@@ -546,12 +545,9 @@ void OViSESceneHandling::saveSceneToXML(std::string sceneManagerName, std::strin
 
 	DebugOutput.close();
 
-	DoCopyMeshsAsWell = true; // DEBUG
-
-	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider);
+	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider); //TODO: PathProvider as member... or later a general wxconfig!
 	xmlWriter->copyOgreSceneToDOM(scnMgr);
-	xmlWriter->moveDOMToXML(DoCopyMeshsAsWell, filename);
-	//if (DoCopyMeshsAsWell) xmlWriter->copyMeshFilesToLocation(PathProvider);
+	xmlWriter->moveDOMToXML(FullFileName, doExportMeshFiles);
 
 	delete xmlWriter;
 }

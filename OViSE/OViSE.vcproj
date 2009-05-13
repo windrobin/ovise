@@ -217,6 +217,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSEExportMeshesDialog.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSEFrameListener.cpp"
 					>
 				</File>
@@ -292,6 +296,10 @@
 				</File>
 				<File
 					RelativePath=".\OViSECallbackTester.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEExportMeshesDialog.h"
 					>
 				</File>
 				<File

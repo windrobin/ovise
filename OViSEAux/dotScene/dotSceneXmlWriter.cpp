@@ -9,7 +9,6 @@ dotSceneXmlWriter::dotSceneXmlWriter(OViSEPathProvider* PathProvider)
 	if (this->mPathProvider != 0)
 	{
 		this->mDotSceneXsd = wxFileName(this->mPathProvider->getPath_MediaDirectory() + wxT("/data"), wxString(wxT("dotScene.xsd")));
-		this->mDestinationURI = wxFileName(this->mPathProvider->getPath_SceneExportDirectory(), wxString(wxT("Output.xml")));
 
 		try
 		{
@@ -54,6 +53,7 @@ bool dotSceneXmlWriter::IsValid()
 void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
 	this->mCopyThisMeshFiles.Clear();
+	this->mExportThisMeshsToFiles.clear();
 
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
@@ -80,12 +80,6 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 	Ogre::Vector3 tempPosition = actualSceneNode->getPosition();
 	Ogre::Quaternion tempQuaternion = actualSceneNode->getOrientation();
 	Ogre::Vector3 tempScale = actualSceneNode->getScale();
-
-	// Data for "Testausgabe"
-	Testausgabe << "-----" << actualSceneNode->getName() << "-----" << std::endl;
-	Testausgabe << "Ogre::Position (" << tempPosition.x << ", " << tempPosition.y << ", " << tempPosition.z << ")" << std::endl;
-	Testausgabe << "Ogre::Quaternion (" << tempQuaternion.w << ", " << tempQuaternion.x << ", " << tempQuaternion.y << ", " << tempQuaternion.z << ")" << std::endl;
-	Testausgabe << "Ogre::Scale (" << tempScale.x << ", " << tempScale.y << ", " << tempScale.z << ")" << std::endl;
 
 	// Data of DOM-element "node"
 	DOMElement* New_NodeElement = this->mDocument->createElement(XMLString::transcode("node"));
@@ -129,20 +123,29 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 		if (MovObj->getMovableType() == "Entity") // TODO: simplify processing of relacing.
 		{
 			match = true;
-			Ogre::Entity* tempEntity = static_cast<Ogre::Entity*>(MovObj);
-			wxFileName tempMeshPathAndName(wxString(tempEntity->getMesh()->getName().c_str(), wxConvUTF8));
 
-			Testausgabe << "Ogre::Entity '" << tempEntity->getName() << "' with MESH-file '" << std::string(tempMeshPathAndName.GetFullName().mb_str()) << "'" << std::endl;
-			Testausgabe << "Ogre::Entity origanal MESH-path&file '" << std::string(tempMeshPathAndName.GetFullPath().mb_str()) << "'" << std::endl;
+			// 1) Cast movable object to Ogre::Entity
+			Ogre::Entity* tempEntity = static_cast<Ogre::Entity*>(MovObj);
+
+			// 2) Get full path of meshfile
+			wxFileName tempMeshFullPath(wxString(tempEntity->getMesh()->getName().c_str(), wxConvUTF8));
+
+			// 3) Create appropriate DOMElement for entity
 			DOMElement* New_EntityElement = this->mDocument->createElement(XMLString::transcode("entity"));
 			New_NodeElement->appendChild(New_EntityElement);
 			New_EntityElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(tempEntity->getName().c_str()));
-			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(std::string(tempMeshPathAndName.GetFullName().mb_str()).c_str()));
+			New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(std::string(tempMeshFullPath.GetFullName().mb_str()).c_str()));
 
-			wxString DebugBuff(tempMeshPathAndName.GetFullPath()); 
-			if(wxFileExists(DebugBuff))
+			// 4) Prepare copy/export of meshfile: Can the used *.mesh be located in filesystem?
+			if(wxFileExists(tempMeshFullPath.GetFullPath()))
 			{
-				this->mCopyThisMeshFiles.Add(tempMeshPathAndName.GetFullPath());
+				// Yes: prepare to copy it, place it in the copy-list!
+				this->mCopyThisMeshFiles.Add(tempMeshFullPath.GetFullPath());
+			}
+			else
+			{
+				// No: prepare to export from memory to filesystem, place it into the export-list!
+				this->mExportThisMeshsToFiles.push_back(tempEntity->getMesh());
 			}
 		}
 		if (MovObj->getMovableType() == "Light")
@@ -205,27 +208,53 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 	while(ChildIter.hasMoreElements()) recursiveNodeTreeWalkthrough(ChildIter.getNext(), New_NodeElement);
 }
 
-
-void dotSceneXmlWriter::moveDOMToXML(bool CopyMeshFiles, std::string filename)
+void dotSceneXmlWriter::moveDOMToXML(wxFileName filename, bool doExportMeshFiles)
 {
-	// TODO: free chooseable destination file
+	// Write DOM-structure to *.xml file!
 	DOMLSSerializer* tempLSServializer = this->mImplementation->createLSSerializer();
-	tempLSServializer->writeToURI(this->mDocument, XMLString::transcode(this->mDestinationURI.GetFullPath().mb_str()));
+	tempLSServializer->writeToURI(this->mDocument, XMLString::transcode(filename.GetFullPath().mb_str()));
 
-	// Copy meshfiles
-	this->mPathProvider->getPath_SceneExportDirectory();
-	while(!this->mCopyThisMeshFiles.IsEmpty())
+	if (doExportMeshFiles)
 	{
-		wxFileName Source(this->mCopyThisMeshFiles.Last());
-		this->mCopyThisMeshFiles.pop_back();
-		
-		wxFileName Target(Source);
-		Target.SetPath(this->mPathProvider->getPath_SceneExportDirectory());
+		// Export meshfiles
+		Ogre::MeshSerializer tempSerializer;
+		while(!this->mExportThisMeshsToFiles.empty())
+		{
+			// First: Get pointer to mesh in memory!
+			Ogre::MeshPtr tempMeshPtr = this->mExportThisMeshsToFiles.back();
 
-		// Copy file // TODO: overwrite-options?
-		bool DoOverwrite = true;
-		bool result = ::wxCopyFile(Source.GetFullPath(), Target.GetFullPath(), DoOverwrite);
-		bool irgendwas = result;
+			// Use full path of *.xml (dotScene-XML) file...
+			wxFileName tempModifiedFileName(filename);
+
+			// ...to modify it with full filename of futher *.mesh file!
+			tempModifiedFileName.SetFullName(wxString(tempMeshPtr.get()->getName().c_str(), wxConvUTF8));
+
+			// Use the modified full path to export *.mesh there. 
+			tempSerializer.exportMesh(tempMeshPtr.getPointer(), (std::string)tempModifiedFileName.GetFullPath().mb_str());
+
+			// Last: Done. Remove pointer of exported mesh!
+			this->mExportThisMeshsToFiles.pop_back();
+		}
+
+		// Copy meshfiles
+		while(!this->mCopyThisMeshFiles.IsEmpty())
+		{
+			// First: Define location of source file...
+			wxFileName Source(this->mCopyThisMeshFiles.Last());	
+			
+			// ...then define location of destination file...
+			wxFileName Target(Source);
+
+			// ...by using the path of *.xml (dotScene-XML) file!
+			Target.SetPath(filename.GetPath());
+
+			// Finally copy file!
+			// TODO: overwrite-options?
+			wxCopyFile(Source.GetFullPath(), Target.GetFullPath(), doExportMeshFiles);
+
+			// Last: Done. Remove filename from list!
+			this->mCopyThisMeshFiles.pop_back();
+		}
 	}
 }
 

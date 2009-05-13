@@ -120,10 +120,13 @@ public:
 	 * @TODO Implement this.
 	 */
 	void loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
-
-#ifdef __HenningsActualWork__
-	void saveSceneToXML(std::string sceneManagerName, std::string filename = "C:\\TestOutputFrom_dotSceneXmlWriter.xml", bool DoCopyMeshsAsWell = true);
-#endif
+	
+	/** Saves a complete scene from a dotSceneXML.
+	 * This method creates (or overwrites an existing) dotScene-XML-file and, if asked, copys all necessary meshes into the same folder.
+	 * If the node is NULL, then the entire scene will be exported.
+	 * @TODO Implement this.
+	 */
+	void saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles = true);
 
 	/** Resolves a ray scene query to select an object.
 	 * Casts a ray from the screen position through the given camera into the scene and evaluates
