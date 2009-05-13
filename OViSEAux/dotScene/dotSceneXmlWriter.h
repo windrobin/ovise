@@ -30,6 +30,8 @@
 #include <iostream.h>
 #endif
 
+#include <deque>
+
 XERCES_CPP_NAMESPACE_USE
 
 /**
@@ -38,6 +40,7 @@ XERCES_CPP_NAMESPACE_USE
  */
 class dotSceneXmlWriter
 {
+	//wxFileName DestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
 private:
 	bool Valid;
 
@@ -48,8 +51,9 @@ private:
 	OViSEPathProvider* mPathProvider;
 
 	wxFileName mDotSceneXsd;
-	wxFileName mDestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
+	
 	wxArrayString mCopyThisMeshFiles;
+	std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
 
 	std::fstream Testausgabe;
 
@@ -62,7 +66,7 @@ public:
 	bool IsValid();
 
 	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
-	void moveDOMToXML(bool CopyMeshFiles, std::string filename = "C:\\TextOutputFrom_dotSceneWriter.xml");
+	void moveDOMToXML(wxFileName filename, bool doExportMeshFiles);
 
 };
 

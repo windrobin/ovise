@@ -2,6 +2,9 @@
 
 using namespace dotSceneObjects;
 
+
+// TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
+
 // Properies (outer part) of general factory-setting
 void dotSceneAdvanced::dotSceneAttachFactory::set_UniqueFactoryName(Ogre::String UniqueFactoryName)
 {
@@ -278,10 +281,19 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 
 	
     // Subsection of interpretation: Externals
+	// Step 1: Clear ResourceGroup, when it exists.
+	// TODO: Rename "get_NameOfFactoryOwnedMaterialResourceGroup" to "get_NameOfFactoryOwnedResourceGroup"
+	// Clear ResourceGroup "Material", when it exists.
+	Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedMaterialResourceGroup()));
+
+	// Step 2: Add path of dotScene-File to own recourcegroup
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(LocationsOfMeshFiles[uniqueSceneName]), Ogre::String("FileSystem"), get_NameOfFactoryOwnedMaterialResourceGroup(), false);
+
+	// Step 3: Optional add materials, if this->doAttachExternals is true...
+
     if (this->doAttachExternals)
     {   
-        // Clear ResourceGroup "Material", when it exists.
-		Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedMaterialResourceGroup()));
+        
         
         // Register new used .material-File factory-internal
 		dotSceneExternals _externals = actualScene.get_Externals();
@@ -296,16 +308,17 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 					try
 					{                                    
 						// Clear ResourceGroup, when it exists.
-						Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
+						//Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
 
 						// Add location of files to resourcegroup.
 						Ogre::ResourceGroupManager::getSingleton().addResourceLocation(actualLocationOfMaterialFile, Ogre::String("FileSystem"), get_NameOfFactoryOwnedMaterialResourceGroup(), false);
 
 						// Again, initialise ResourceGroup "Material".
-						Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());                           
+						//Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());                           
 					}
 					catch(Ogre::Exception e)
-					{					
+					{	
+						bool nix = true;
 						//if (e.number == Ogre::Exception::ExceptionCodes::ERR_DUPLICATE_ITEM)
 							//When "ERR_DUPLICATE_ITEM" occurs: ignore the exception.
 							//Dont worry, no bad entries 'll be made into RessourceGroupManager.
@@ -317,6 +330,10 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 		}
 		
     }
+
+	// Step 4: Initialize all...
+	// Again, initialise ResourceGroup "Material".
+	Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup()); 
 
 	// Subsection of interpretation: Nodes (Entities, Cams, Lights)
     if (this->doAttachNodes)
@@ -458,7 +475,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 			else Decider = dotSceneEnums::INVALID;
 
 			dotSceneEntity Test;
-
+			std::string buff = "";
 			// CONTINUE with modified premises...
 			switch (Decider) // <---- CHEATED LINE
 			{
@@ -481,7 +498,17 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
                     }
 
 					// Create new Entity
-					actualEntity = this->Mgr->createEntity(entityNameToApply, this->LocationsOfMeshFiles[uniqueSceneName] + formatedToDotSceneEntity.get_meshFile());				
+					// TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
+					
+					buff = this->LocationsOfMeshFiles[uniqueSceneName] + formatedToDotSceneEntity.get_meshFile();
+					try
+					{
+					actualEntity = this->Mgr->createEntity(entityNameToApply, buff);		
+					}
+					catch(Ogre::Exception e)
+					{
+						Ogre::String test = e.getDescription();
+					}
 					// Note: this changed in Ogre 1.6, it is now a functionality of the scene manager
                     //actualEntity->setNormaliseNormals(true);
                     actualEntity->setCastShadows(true);

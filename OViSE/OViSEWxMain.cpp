@@ -538,6 +538,7 @@ void OViSEWxFrame::deleteMeshes()
 
 void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 {
+	//TODO: Dynamische Namensvergabe für die Childnode implementieren, die erzeugt wird.
 	wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
 	int ret = fd.ShowModal();
 
@@ -559,6 +560,23 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	mSceneHdlr->loadSceneFromXML(sFullpath, sPath, "BaseSceneManager", dotSceneNode);
 }
 
+void OViSEWxFrame::OnSaveDotScene(wxCommandEvent& event)
+{
+	wxFileDialog SelectDestinationDialog(this, wxT("Create or overwrite dotScene file"), wxEmptyString, wxT("Output.xml"), wxT("*.xml"));
+	int ReturnValue = SelectDestinationDialog.ShowModal();
+	
+	if (ReturnValue == wxID_CANCEL) return;
+
+	OViSEExportMeshesDialog MeshExportDlg(this, wxID_HIGHEST + 1);
+	ReturnValue = MeshExportDlg.ShowModal();
+
+	bool doExportMeshFiles = false;
+	if (ReturnValue == wxID_OK) doExportMeshFiles = true;
+
+	Ogre::SceneNode *dotSceneNode = mSceneHdlr->getSceneManager()->getRootSceneNode(); // TODO: use selected  scenenode !!!
+	mSceneHdlr->saveSceneToXML(SelectDestinationDialog.GetPath(), wxT("BaseSceneManager"), dotSceneNode, doExportMeshFiles); // TODO: extra dialog, asking "copy meshes as well"
+}
+
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 {
 	mSceneHdlr->showSceneGraphStructure();
@@ -568,11 +586,6 @@ void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 void OViSEWxFrame::OnTestStuff( wxCommandEvent& event )
 {
 	mSceneHdlr->testStuff();
-}
-
-void OViSEWxFrame::OnHRTest( wxCommandEvent& event )
-{
-	mSceneHdlr->HRTest();
 }
 
 void OViSEWxFrame::OnStartStopFrameListeners(wxCommandEvent& event)

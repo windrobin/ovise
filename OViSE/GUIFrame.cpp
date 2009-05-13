@@ -65,6 +65,12 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	loadDotscene = new wxMenuItem( scene, ID_LOAD_DOTSCENE, wxString( wxT("Load dotScene") ) + wxT('\t') + wxT("ALT+L"), wxT("Load complete scene from a dotScene description"), wxITEM_NORMAL );
 	scene->Append( loadDotscene );
 	
+	scene->AppendSeparator();
+	
+	wxMenuItem* saveDotScene;
+	saveDotScene = new wxMenuItem( scene, ID_SAVE_DOTSCENE, wxString( wxT("Save dotScene") ) + wxT('\t') + wxT("ALT+S"), wxT("Save a complete scene to a dotScene describtion"), wxITEM_NORMAL );
+	scene->Append( saveDotScene );
+	
 	mbar->Append( scene, wxT("Scene") );
 	
 	actions = new wxMenu();
@@ -86,9 +92,6 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxMenuItem* teststuff;
 	teststuff = new wxMenuItem( debug, ID_TESTSTUFF, wxString( wxT("TestStuff") ) , wxEmptyString, wxITEM_NORMAL );
 	debug->Append( teststuff );
-	wxMenuItem* HRTest;
-	HRTest = new wxMenuItem( debug, ID_HR_TEST, wxString( wxT("Hennings Test") ) , wxEmptyString, wxITEM_NORMAL );
-	debug->Append( HRTest );
 	
 	mbar->Append( debug, wxT("Debug") );
 	
@@ -108,10 +111,10 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Connect( addMesh->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Connect( deleteMeshes->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Connect( loadDotscene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
+	this->Connect( saveDotScene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSaveDotScene ) );
 	this->Connect( startstopFramelisteners->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );
-	this->Connect( HRTest->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnHRTest ) );
 }
 
 GUIFrame::~GUIFrame()
@@ -126,10 +129,10 @@ GUIFrame::~GUIFrame()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSaveDotScene ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnHRTest ) );
 }
 
 AddMeshDialog::AddMeshDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
@@ -183,4 +186,56 @@ AddMeshDialog::~AddMeshDialog()
 	mOkButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddMeshDialog::OnOkClick ), NULL, this );
 	mApplyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddMeshDialog::OnApplyClick ), NULL, this );
 	mCancelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AddMeshDialog::OnCancelClick ), NULL, this );
+}
+
+ExportMeshesDialog::ExportMeshesDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* MainSizer;
+	MainSizer = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* LabelSizer;
+	LabelSizer = new wxBoxSizer( wxVERTICAL );
+	
+	mLabel = new wxStaticText( this, wxID_ANY, wxT("Do you want to export used meshes of scene too?"), wxDefaultPosition, wxDefaultSize, 0 );
+	mLabel->Wrap( -1 );
+	LabelSizer->Add( mLabel, 0, wxALL, 5 );
+	
+	
+	LabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	MainSizer->Add( LabelSizer, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* ButtonSizer;
+	ButtonSizer = new wxBoxSizer( wxHORIZONTAL );
+	
+	mCancelButton = new wxButton( this, wxID_ANY, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mCancelButton, 0, wxALL, 5 );
+	
+	
+	ButtonSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	mOkButton = new wxButton( this, wxID_ANY, wxT("Ok"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mOkButton, 0, wxALL, 5 );
+	
+	MainSizer->Add( ButtonSizer, 1, wxEXPAND, 5 );
+	
+	this->SetSizer( MainSizer );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( ExportMeshesDialog::OnCloseDialog ) );
+	mCancelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickCancel ), NULL, this );
+	mOkButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickOk ), NULL, this );
+}
+
+ExportMeshesDialog::~ExportMeshesDialog()
+{
+	// Disconnect Events
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( ExportMeshesDialog::OnCloseDialog ) );
+	mCancelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickCancel ), NULL, this );
+	mOkButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickOk ), NULL, this );
 }

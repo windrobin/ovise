@@ -28,6 +28,8 @@
 #include "OViSEAddMeshDialog.h"
 #include "OViSESceneTree.h"
 
+#include "OViSEExportMeshesDialog.h"
+
 enum
 {
     WINDOW_MainRender = wxID_HIGHEST + 1,
@@ -56,10 +58,10 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnPropertyChange(wxPropertyGridEvent& event);
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
 		virtual void OnLoadDotScene( wxCommandEvent& event);
+		virtual void OnSaveDotScene( wxCommandEvent& event );
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
 		virtual void OnTestStuff( wxCommandEvent& event );
-		virtual void OnHRTest( wxCommandEvent& event );
 		virtual void OnStartStopFrameListeners(wxCommandEvent& event);
 
 		void setObjectProperties(Ogre::MovableObject *object);
