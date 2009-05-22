@@ -163,6 +163,11 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 	try
 	{
 		mObjectSelectionsMap[sceneManagerName][movObj->getName()] = movObj;
+		OViSESelectionMap test;
+		//test.em
+		//Ogre::Entity ent;
+		//ent.getN
+		
 		if(showSelection)
 			movObj->getParentSceneNode()->showBoundingBox(true);
 	}
@@ -513,18 +518,39 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 	delete Reader;
 }
 
-#ifdef __HenningsActualWork__
-
 void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
+	// Pre-operations...
 	OViSEPathProvider* PathProvider = new OViSEPathProvider("Z:/OViSE Checkout Base", "/");
 	wxFileName FullFileName(filename);
 	PathProvider->setPath_SceneExportDirectory(FullFileName.GetPath());
 
+	// Create dotSceneXmlWriter...
+	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider); //TODO: PathProvider as member... or later a general wxconfig!
 	Ogre::SceneManager *scnMgr = mSceneManagers[(std::string) sceneManagerName.mb_str()];
+	
+	/* Export depending on selection */
+	if (this->hasSelectedObjects())
+	{
+		xmlWriter->copyOgreSceneToDOM(scnMgr, this->getSelectedObjects(), true);
+	}
+	else
+	{
+		 // Use RootSceneNode and export everything!
+		OViSESelectionMap tempSimpleSelection;
+		//tempSimpleSelection[scnMgr->getRootSceneNode()->getName()] = (Ogre::MovableObject*)scnMgr->getRootSceneNode();
+		xmlWriter->copyOgreSceneToDOM(scnMgr, tempSimpleSelection, true);
+	}
+
+	/* Export depending on selection */
 
 	
 	
+	xmlWriter->moveDOMToXML(FullFileName, doExportMeshFiles);
+
+	delete xmlWriter;
+
+	/*
 	std::fstream DebugOutput;
 	DebugOutput.open("C:\\DebugOutput.txt", std::ios::out|std::ios::trunc);
 
@@ -543,13 +569,5 @@ void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManager
 	}
 
 
-	DebugOutput.close();
-
-	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider); //TODO: PathProvider as member... or later a general wxconfig!
-	xmlWriter->copyOgreSceneToDOM(scnMgr);
-	xmlWriter->moveDOMToXML(FullFileName, doExportMeshFiles);
-
-	delete xmlWriter;
+	DebugOutput.close();*/	
 }
-
-#endif
