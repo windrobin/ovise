@@ -4,8 +4,8 @@
 #include <wx/filename.h>
 #include <wx/filefn.h>
 #include <wx/arrstr.h>
+#include <wx/hashmap.h>
 #include "../../OViSE/OViSEPathProvider.h"
-
 
 // Inlcude Xerces
 #ifndef Xerxes_Used
@@ -31,6 +31,10 @@
 #endif
 
 #include <deque>
+#include <typeinfo>
+
+/// Map containing selected objects.
+typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -42,6 +46,9 @@ class dotSceneXmlWriter
 {
 	//wxFileName DestinationURI; // More information: "http://de.wikipedia.org/wiki/Uniform_Resource_Identifier"
 private:
+	WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, HashMap_OgreSceneNodePointer);
+	WX_DECLARE_STRING_HASH_MAP(DOMElement*, HashMap_DOMPointer);
+
 	bool Valid;
 
 	DOMImplementation* mImplementation;
@@ -57,7 +64,8 @@ private:
 
 	std::fstream Testausgabe;
 
-	void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
+	//void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
+	void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);
 
 public:
 	dotSceneXmlWriter(OViSEPathProvider* PathProvider);
@@ -65,7 +73,8 @@ public:
 
 	bool IsValid();
 
-	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
+	//void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr);
+	void copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo);
 	void moveDOMToXML(wxFileName filename, bool doExportMeshFiles);
 
 };

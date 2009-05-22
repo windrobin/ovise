@@ -50,14 +50,346 @@ bool dotSceneXmlWriter::IsValid()
 	return ReturnValue;
 }
 
-void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
+void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo)
+{
+	// CONVENTION: all name of objects are uniqu in Ogre, Xerces and WX !
+
+	this->mCopyThisMeshFiles.Clear();
+	this->mExportThisMeshsToFiles.clear();
+
+	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
+	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
+	this->mDocument = this->mImplementation->createDocument(0, XMLString::transcode("scene"), 0); // Don't use, but remember: "(XMLString::transcode(this->mDestinationURI.c_str()), XMLString::transcode("scene"), 0)"
+	
+	// Get "scene"-element and add attribute "formatVersion"...
+	DOMElement* SceneElement = this->mDocument->getDocumentElement();
+	SceneElement->setAttribute(XMLString::transcode("formatVersion"), XMLString::transcode("1.0.0"));
+
+	// Create "nodes"-element and append to "scene"-element...
+	DOMElement* NodesElement = this->mDocument->createElement(XMLString::transcode("nodes"));
+	SceneElement->appendChild(NodesElement);
+
+	// Recusive: get nodes from Ogre::SceneManager, create "node"-elements and append 'em to "nodes"-element or parent "node"-elements...
+	// Get one (now root) node, and start recursive walkthrough...
+	Testausgabe.open("C:\\Testausgabe.txt", std::ios::out|std::ios::trunc);
+	//this->recursiveNodeTreeWalkthrough(SceneMgr->getRootSceneNode(), NodesElement);
+	//Testausgabe.close();
+
+	// SceneNode-Filtering! Status now: WhilteList_STAGE1
+	// Export only selected SceneNodes. Using DOM-API for a easy and fast handling...
+	
+	HashMap_OgreSceneNodePointer WhiteList_STAGE1; // List of Ogre::MoveableObejcts
+	HashMap_DOMPointer WhiteList_STAGE2; // List of nodes/DOMElements
+	HashMap_DOMPointer BlackList_STAGE2; // List of already created nodes/DOMElements
+	
+	if (!Selection.empty())
+	{
+		// 1) Get list of selected SceneNodes (WhilteList_STAGE1)
+		for (OViSESelectionMap::const_iterator iter = Selection.begin(); iter != Selection.end(); iter++)
+		{
+			// OViSESelectionMap uses objects of Ogre::MovableObject and not Ogre::Node oder Ogre::SceneNode.
+			// First get these nodes, then find out if a Ogre::Node ist a Ogre::SceneNode
+			// Ogre::SceneNodes will be added to WhilteList_STAGE1
+
+			Ogre::MovableObject* MovObj = iter->second; // Maybe Ogre::Light, Ogre::Cam or Ogre::Entity etc.
+
+			// Filter: Only Ogre::Light, Ogre::Cam and Ogre::Entity are handled. Ignore other classes!
+			// TODO: Improve to all ogre types (far futhur)
+			bool match = false;
+			if((!match) && (MovObj->getMovableType() == "Camera"))
+			{
+				match = false; //true;
+			}
+			if((!match) && (MovObj->getMovableType() == "Entity")) match = true;
+			if((!match) && (MovObj->getMovableType() == "Light"))
+			{
+				match = false; //true;
+			}
+
+			if (match)
+			{
+				Ogre::SceneNode* tempSceneNode = static_cast<Ogre::SceneNode*>(MovObj->getParentSceneNode());
+				WhiteList_STAGE1[wxString(tempSceneNode->getName().c_str(), wxConvUTF8)] = tempSceneNode;
+			}
+		}
+
+		// 2) Generate Stage 2 WhiteList
+		if (!WhiteList_STAGE1.empty())
+		{
+			for(HashMap_OgreSceneNodePointer::iterator iter = WhiteList_STAGE1.begin(); iter != WhiteList_STAGE1.end(); iter++)
+			{
+				this->recursiveNodeTreeWalkthrough(iter->second, WhiteList_STAGE1, WhiteList_STAGE2, BlackList_STAGE2, doExportNotSelectedChildToo);
+			}
+		}
+	}
+	else
+	{
+		// Add RootSceneNode, when there aren't any choosen SceneNodes...
+		Ogre::SceneNode* tempSceneNode = SceneMgr->getRootSceneNode();
+		WhiteList_STAGE1[wxString(tempSceneNode->getName().c_str(), wxConvUTF8)] = tempSceneNode;
+
+		// 2) Generate Stage 2 WhiteList
+		this->recursiveNodeTreeWalkthrough(WhiteList_STAGE1.begin()->second, WhiteList_STAGE1, WhiteList_STAGE2, BlackList_STAGE2, doExportNotSelectedChildToo);
+	}
+
+	if (!WhiteList_STAGE2.empty())
+	{
+		for(HashMap_DOMPointer::iterator iter = WhiteList_STAGE2.begin(); iter != WhiteList_STAGE2.end(); iter++)
+		{
+			NodesElement->appendChild(iter->second);
+		}
+	}
+	
+	Testausgabe.close();
+}
+
+
+void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList_STAGE2, bool doExportNotSelectedChildToo)
+{
+	// CONVENTION: all name of objects are uniqu in Ogre, Xerces and WX !
+
+	Ogre::SceneNode* actualSceneNode = static_cast<Ogre::SceneNode*>(actualNode);
+	wxString tempSceneNodeName(actualSceneNode->getName().c_str(), wxConvUTF8);
+
+	if (BlackList_STAGE2.count(tempSceneNodeName) == 0)
+	{
+		Ogre::Vector3 tempPosition = actualSceneNode->getPosition();
+		Ogre::Quaternion tempQuaternion = actualSceneNode->getOrientation();
+		Ogre::Vector3 tempScale = actualSceneNode->getScale();
+
+		// Data of DOM-element "node"
+		DOMElement* New_NodeElement = this->mDocument->createElement(XMLString::transcode("node"));
+		New_NodeElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(actualSceneNode->getName().c_str()));
+
+		// Create general data-elements of new node: "position", "quaternion" & "scale"
+		DOMElement* New_PositionElement = this->mDocument->createElement(XMLString::transcode("position"));
+		New_PositionElement->setAttribute(XMLString::transcode("x"), XMLString::transcode(Ogre::StringConverter::toString(tempPosition.x).c_str()));
+		New_PositionElement->setAttribute(XMLString::transcode("y"), XMLString::transcode(Ogre::StringConverter::toString(tempPosition.y).c_str()));
+		New_PositionElement->setAttribute(XMLString::transcode("z"), XMLString::transcode(Ogre::StringConverter::toString(tempPosition.z).c_str()));
+
+		DOMElement* New_QuaternionElement = this->mDocument->createElement(XMLString::transcode("quaternion"));	
+		New_QuaternionElement->setAttribute(XMLString::transcode("x"), XMLString::transcode(Ogre::StringConverter::toString(tempQuaternion.x).c_str()));
+		New_QuaternionElement->setAttribute(XMLString::transcode("y"), XMLString::transcode(Ogre::StringConverter::toString(tempQuaternion.y).c_str()));
+		New_QuaternionElement->setAttribute(XMLString::transcode("z"), XMLString::transcode(Ogre::StringConverter::toString(tempQuaternion.z).c_str()));
+		New_QuaternionElement->setAttribute(XMLString::transcode("w"), XMLString::transcode(Ogre::StringConverter::toString(tempQuaternion.w).c_str()));
+		
+		DOMElement* New_ScaleElement = this->mDocument->createElement(XMLString::transcode("scale"));
+		New_ScaleElement->setAttribute(XMLString::transcode("x"), XMLString::transcode(Ogre::StringConverter::toString(tempScale.x).c_str()));
+		New_ScaleElement->setAttribute(XMLString::transcode("y"), XMLString::transcode(Ogre::StringConverter::toString(tempScale.y).c_str()));
+		New_ScaleElement->setAttribute(XMLString::transcode("z"), XMLString::transcode(Ogre::StringConverter::toString(tempScale.z).c_str()));
+
+		// Attach "position", "quaternion" & "scale"
+		New_NodeElement->appendChild(New_PositionElement);
+		New_NodeElement->appendChild(New_QuaternionElement);
+		New_NodeElement->appendChild(New_ScaleElement);
+
+		// Create special data-elements of new node ("camera", "light" & "entity")
+		Ogre::SceneNode::ObjectIterator ObjIter = actualSceneNode->getAttachedObjectIterator();
+		Ogre::MovableObject* MovObj;
+
+		while(ObjIter.hasMoreElements())
+		{
+			MovObj = ObjIter.getNext();
+			bool match = false;
+			
+			if (MovObj->getMovableType() == "Camera")
+			{
+				// Ignored, H.R. 18.03.09
+				match = false;		
+			}
+
+			if (MovObj->getMovableType() == "Entity") // TODO: simplify processing of relacing.
+			{
+				match = true;
+
+				// 1) Cast movable object to Ogre::Entity
+				Ogre::Entity* tempEntity = static_cast<Ogre::Entity*>(MovObj);
+
+				// 2) Get full path of meshfile
+				wxFileName tempMeshFullPath(wxString(tempEntity->getMesh()->getName().c_str(), wxConvUTF8));
+
+				// 3) Create appropriate DOMElement for entity
+				DOMElement* New_EntityElement = this->mDocument->createElement(XMLString::transcode("entity"));	
+				New_EntityElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(tempEntity->getName().c_str()));
+				New_EntityElement->setAttribute(XMLString::transcode("meshFile"), XMLString::transcode(std::string(tempMeshFullPath.GetFullName().mb_str()).c_str()));
+				
+				// Attach special data-element
+				New_NodeElement->appendChild(New_EntityElement);
+
+				// 4) Prepare copy/export of meshfile: Can the used *.mesh be located in filesystem?
+				if(wxFileExists(tempMeshFullPath.GetFullPath()))
+				{
+					// Yes: prepare to copy it, place it in the copy-list!
+					this->mCopyThisMeshFiles.Add(tempMeshFullPath.GetFullPath());
+				}
+				else
+				{
+					// No: prepare to export from memory to filesystem, place it into the export-list!
+					this->mExportThisMeshsToFiles.push_back(tempEntity->getMesh());
+				}
+			}
+
+			if (MovObj->getMovableType() == "Light")
+			{
+				// Not full implemented -> not all types of light handled!!!, H.R. 18.03.09
+				match = true;
+				Ogre::Light* tempLight = static_cast<Ogre::Light*>(MovObj);
+
+				DOMElement* New_LightElement = this->mDocument->createElement(XMLString::transcode("light"));
+				New_LightElement->setAttribute(XMLString::transcode("name"), XMLString::transcode(tempLight->getName().c_str()));
+
+				if (tempLight->getType() == Ogre::Light::LT_DIRECTIONAL)
+				{
+					Testausgabe << "Ogre::Light '" << tempLight->getName() << "' of type '" << "directional" << "'" << std::endl;
+
+					New_LightElement->setAttribute(XMLString::transcode("type"), XMLString::transcode("directional"));
+					// Not full implemented -> not all types of light handled!!!, H.R. 18.03.09
+				}
+
+				if (tempLight->getType() == Ogre::Light::LT_POINT)
+				{			
+					Ogre::ColourValue tempDiffuseColour = tempLight->getDiffuseColour();
+					Ogre::ColourValue tempSpecularColour = tempLight->getSpecularColour();
+
+					Testausgabe << "Ogre::Light '" << tempLight->getName() << "' of type '" << "point" << "'" << std::endl;
+					Testausgabe << "DiffuseColour (" << tempDiffuseColour.r << ", " << tempDiffuseColour.g << ", " << tempDiffuseColour.b << ")" << std::endl;
+					Testausgabe << "SpecularColour (" << tempSpecularColour.r << ", " << tempSpecularColour.g << ", " << tempSpecularColour.b << ")" << std::endl;
+
+					DOMElement* New_DiffuseColourElement = this->mDocument->createElement(XMLString::transcode("colourDiffuse"));			
+					New_DiffuseColourElement->setAttribute(XMLString::transcode("r"), XMLString::transcode(Ogre::StringConverter::toString(tempDiffuseColour.r).c_str()));
+					New_DiffuseColourElement->setAttribute(XMLString::transcode("g"), XMLString::transcode(Ogre::StringConverter::toString(tempDiffuseColour.g).c_str()));
+					New_DiffuseColourElement->setAttribute(XMLString::transcode("b"), XMLString::transcode(Ogre::StringConverter::toString(tempDiffuseColour.b).c_str()));
+
+					DOMElement* New_SpecularColourElement = this->mDocument->createElement(XMLString::transcode("colourSpecular"));	
+					New_SpecularColourElement->setAttribute(XMLString::transcode("r"), XMLString::transcode(Ogre::StringConverter::toString(tempSpecularColour.r).c_str()));
+					New_SpecularColourElement->setAttribute(XMLString::transcode("g"), XMLString::transcode(Ogre::StringConverter::toString(tempSpecularColour.g).c_str()));
+					New_SpecularColourElement->setAttribute(XMLString::transcode("b"), XMLString::transcode(Ogre::StringConverter::toString(tempSpecularColour.b).c_str()));
+				
+					// Attach detail-elements
+					New_LightElement->setAttribute(XMLString::transcode("type"), XMLString::transcode("point"));
+					New_LightElement->appendChild(New_DiffuseColourElement);
+					New_LightElement->appendChild(New_SpecularColourElement);
+				}
+
+				if (tempLight->getType() == Ogre::Light::LT_SPOTLIGHT)
+				{
+					Testausgabe << "Ogre::Light '" << tempLight->getName() << "' of type '" << "spotLight" << "'" << std::endl;
+
+					New_LightElement->setAttribute(XMLString::transcode("type"), XMLString::transcode("spotLight"));
+					// Not full implemented -> not all types of light handled!!!, H.R. 18.03.09
+				}
+
+				// Attach special data-element
+				New_NodeElement->appendChild(New_LightElement);
+			}	
+			if (!match)
+			{
+				Testausgabe << "Not handled movable object. Name: '" << MovObj->getName() << "' Type: '" << MovObj->getMovableType() << "'" << std::endl;
+				break;
+			}
+		}
+
+		// Attach final element to BlackList_STAGE2 & WhiteList_STAGE2
+		// Add to BlackList_STAGE2
+		BlackList_STAGE2[tempSceneNodeName] = New_NodeElement;
+	}
+
+	// FILTERING: Evaluate, if emelnmt is a child, a parent and if childs or parend are already created in DOM-structure
+	DOMElement* Evaluate_NodeElement = BlackList_STAGE2[tempSceneNodeName];
+
+	// Add to WhiteList_STAGE2
+	Ogre::SceneNode* parentOfSceneNode = actualSceneNode->getParentSceneNode();
+	if (parentOfSceneNode != 0)
+	{
+		// 1) Parent in WL_S1?
+		wxString parentNameOfSceneNode(parentOfSceneNode->getName().c_str(), wxConvUTF8);
+
+		if (WhiteList_STAGE1.count(parentNameOfSceneNode) == 1)
+		{
+			// 1.1) JA -> parent könnte(!) in BL_S2 sein
+			if (BlackList_STAGE2.count(parentNameOfSceneNode) == 1)
+			{
+				// 1.1.1) JA -> parent holen, zum parent hinzufügen
+				DOMElement* tempParent = BlackList_STAGE2[parentNameOfSceneNode];
+				tempParent->appendChild(Evaluate_NodeElement);
+			}
+			else
+			{
+				// 1.1.2) NEIN -> nix machen, nur in der BL_S2 sein, denn der parent kommt später noch dazu
+			}
+		}
+		else
+		{
+			// 1.2) NEIN -> zu WL hinzufügen
+			WhiteList_STAGE2[tempSceneNodeName] = Evaluate_NodeElement;
+		}
+	}
+	else
+	{
+		WhiteList_STAGE2[tempSceneNodeName] = Evaluate_NodeElement;
+	}
+
+	// Handle all childnodes...
+	Ogre::SceneNode::ChildNodeIterator ChildIter = actualSceneNode->getChildIterator();
+	while(ChildIter.hasMoreElements())
+	{
+		Ogre::SceneNode* childNode = static_cast<Ogre::SceneNode*>(ChildIter.getNext());
+		if (doExportNotSelectedChildToo)
+		{
+			recursiveNodeTreeWalkthrough(childNode, WhiteList_STAGE1, WhiteList_STAGE2, BlackList_STAGE2, doExportNotSelectedChildToo);
+		}
+		else
+		{
+			// 2.1) JA -> wenn child in BL_S2: dort lassen - aber child auch sich selbst(dem parent) hinzufügen
+			// At least join actual SceneNode with already handled childs from BL_S2
+			wxString childNodeName(childNode->getName().c_str(), wxConvUTF8);
+
+			if (BlackList_STAGE2.count(childNodeName) == 1)
+			{
+				// Check if DOMElement alreay added...
+				bool Matching_DOMElement = false;
+
+				DOMNodeList* tempDOMChildNodes = Evaluate_NodeElement->getElementsByTagName(XMLString::transcode("node"));
+				if (tempDOMChildNodes->getLength() != 0)
+				{
+					for(XMLSize_t NodeIterator = 0; NodeIterator < tempDOMChildNodes->getLength(); ++NodeIterator)
+					{
+						DOMNode* CurrentNode = tempDOMChildNodes->item(NodeIterator);
+						if (CurrentNode->getNodeType() == DOMNode::ELEMENT_NODE)
+						{
+							DOMElement* CurrentElement = dynamic_cast<xercesc::DOMElement*>(CurrentNode);
+							if (CurrentElement->hasAttribute(XMLString::transcode("name")))
+							{
+								//std::string tempName = ;
+								wxString tempDOMChildNodeName(((std::string)XMLString::transcode(CurrentElement->getAttribute(XMLString::transcode("name")))).c_str(), wxConvUTF8);
+								if (childNodeName.IsSameAs(tempDOMChildNodeName))  // Check if DOMElement alreay exists...
+								{
+									Matching_DOMElement = true;
+								}
+							}
+						}
+					}
+				}
+
+				if (!Matching_DOMElement)
+				{
+					DOMElement* tempChild = BlackList_STAGE2[childNodeName];
+					Evaluate_NodeElement->appendChild(tempChild);
+				}
+			}
+		}
+	}
+}
+
+
+/*void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
 	this->mCopyThisMeshFiles.Clear();
 	this->mExportThisMeshsToFiles.clear();
 
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	// Kommentar von HR: Core??? Welche String gehen hin noch rein? Enum wäre besser!
-	this->mDocument = this->mImplementation->createDocument(/*XMLString::transcode(this->mDestinationURI.c_str())*/0, XMLString::transcode("scene"), 0);
+	this->mDocument = this->mImplementation->createDocument(0, XMLString::transcode("scene"), 0); // Don't use, but remember: "(XMLString::transcode(this->mDestinationURI.c_str()), XMLString::transcode("scene"), 0)"
 	
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement* SceneElement = this->mDocument->getDocumentElement();
@@ -72,8 +404,9 @@ void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 	Testausgabe.open("C:\\Testausgabe.txt", std::ios::out|std::ios::trunc);
 	this->recursiveNodeTreeWalkthrough(SceneMgr->getRootSceneNode(), NodesElement);
 	Testausgabe.close();
-}
+}*/
 
+/*
 void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent)
 {
 	Ogre::SceneNode* actualSceneNode = (Ogre::SceneNode*) actualNode;
@@ -207,7 +540,7 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 	Ogre::Node::ChildNodeIterator ChildIter = actualNode->getChildIterator();
 	while(ChildIter.hasMoreElements()) recursiveNodeTreeWalkthrough(ChildIter.getNext(), New_NodeElement);
 }
-
+*/
 void dotSceneXmlWriter::moveDOMToXML(wxFileName filename, bool doExportMeshFiles)
 {
 	// Write DOM-structure to *.xml file!
