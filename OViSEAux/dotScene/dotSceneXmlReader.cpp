@@ -10,16 +10,19 @@ dotSceneXmlReader::dotSceneXmlReader(std::string URLofDotSceneXSD, bool DbgMode)
 	this->mURLofDotSceneXSD = URLofDotSceneXSD;
 	this->mDebugMode = DbgMode;
 	
+	std::string ParsingMsg;
+
 	try
 	{
 		XMLPlatformUtils::Initialize();
-		cout << "*** Xerces initialised. ***\n";
+		ParsingMsg = "*** Xerces initialised. ***";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
 	}
 	catch (const XMLException& toCatch) 
 	{
         char* message = XMLString::transcode(toCatch.getMessage());
-        string errmsg = "XERCES: Error during initialization! :\n" + (string)message + "\n";
-        Ogre::LogManager::getSingletonPtr()->logMessage(errmsg, Ogre::LML_CRITICAL);
+        ParsingMsg = "XERCES: Exception message is: " + (string)message;
+        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         XMLString::release(&message);
     }
 }
@@ -29,36 +32,70 @@ bool dotSceneXmlReader::parseDotSceneXML(string URLofXML) // validation only
 	mParser = new XercesDOMParser();
     mParser->setValidationScheme(XercesDOMParser::Val_Always);    
     mParser->setDoNamespaces(true);    // optional
+	mParser->setDoSchema(true);
     mParser->setExternalNoNamespaceSchemaLocation(mURLofDotSceneXSD.c_str());
 
-    mErrHandler = (ErrorHandler*) new HandlerBase();
-    mParser->setErrorHandler(mErrHandler);
+    //mErrHandler = (ErrorHandler*) new HandlerBase();
+    //mParser->setErrorHandler(mErrHandler);
+
+	mErrHandler = (xercesc::ErrorHandler*) new OViSEXercesXMLErrorReporter();
+	mParser->setErrorHandler(mErrHandler);
+
+	std::string ParsingMsg;
 
     try 
     {
-		std::cout << "Parsing file " + URLofXML + " ...";
+		ParsingMsg = "XERCES: Parsing file " + URLofXML;
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
         mParser->parse(URLofXML.c_str());
-        std::cout << "success!\n";
+		ParsingMsg = "XERCES: Done!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
     }
     catch (const XMLException& toCatch) 
     {
+		ParsingMsg = "XERCES: Failed!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         char* message = XMLString::transcode(toCatch.getMessage());
-        string errmsg = "XERCES: Exception message is: \n" + (string)message + "\n";
-        Ogre::LogManager::getSingletonPtr()->logMessage(errmsg, Ogre::LML_CRITICAL);
+        ParsingMsg = "XERCES: Exception message is: " + (string)message;
+        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         XMLString::release(&message);
         return false;
     }
     catch (const DOMException& toCatch) 
     {
-        char* message = XMLString::transcode(toCatch.msg);
-        string errmsg = "XERCES: Exception message is: \n" + (string)message + "\n";
-        Ogre::LogManager::getSingletonPtr()->logMessage(errmsg, Ogre::LML_CRITICAL);
+		ParsingMsg = "XERCES: Failed!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+		char* message = XMLString::transcode(toCatch.getMessage());
+        ParsingMsg = "XERCES: Exception message is: " + (string)message;
+        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         XMLString::release(&message);
+        return false;
+    }
+	catch (const SAXException& toCatch) 
+    {
+		ParsingMsg = "XERCES: Failed!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+        char* message = XMLString::transcode(toCatch.getMessage());
+        ParsingMsg = "XERCES: Exception message is: " + (string)message;
+        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+        XMLString::release(&message);
+        return false;
+    }
+	catch (std::exception e) 
+    {
+		ParsingMsg = "XERCES: Failed!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+		const char* message = e.what();
+		ParsingMsg = "XERCES: Exception message is: " + (string)message;
+        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         return false;
     }
     catch (...) 
     {
-        std::cout << "Unexpected Exception";
+		ParsingMsg = "XERCES: Failed!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+		ParsingMsg = "XERCES: Unexpected Exception!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
         return false;
     }
     
@@ -2378,15 +2415,20 @@ dotSceneXmlReader::~dotSceneXmlReader()
 {
 	delete mParser;
     delete mErrHandler;
+
+	std::string ParsingMsg;
+
     try
    	{
     	XMLPlatformUtils::Terminate();  // Terminate Xerces
+		ParsingMsg = "*** Xerces terminated. ***";
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
    	}
    	catch( xercesc::XMLException& e )
    	{
 		char* message = xercesc::XMLString::transcode( e.getMessage() );
-		string lgMsg = "Xerces: " + (string)message;
-		Ogre::LogManager::getSingletonPtr()->logMessage(lgMsg.c_str(), Ogre::LML_CRITICAL);
+		ParsingMsg = "Xerces: " + (string)message;
+		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg.c_str(), Ogre::LML_CRITICAL);
 		XMLString::release( &message );
 	}	   
 }
