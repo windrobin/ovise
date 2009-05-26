@@ -1,6 +1,8 @@
 #ifndef DOTSCENEXMLREADER_H_
 #define DOTSCENEXMLREADER_H_
 
+#include "../../OViSE/OViSEXercesXMLErrorReporter.h"
+
 // Inlcude Xerces
 #ifndef Xerxes_Used
 #define Xerxes_Used
@@ -68,7 +70,7 @@ private:
 	bool mDebugMode;
 	/// The DOM parser
 	XercesDOMParser *mParser;
-	/// Error handler for ther parser
+	/// Error handler for the parser
 	ErrorHandler *mErrHandler;
 };
 

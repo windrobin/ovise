@@ -25,7 +25,7 @@ OViSESceneHandling::OViSESceneHandling()
 
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
-
+		
 		mStandardFactory = new dotSceneAdvanced::dotSceneAttachFactory("StandardFactory", mainSceneManager);
 	}
 }

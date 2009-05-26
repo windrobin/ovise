@@ -7,7 +7,7 @@
 #include <wx/hashmap.h>
 #include "../../OViSE/OViSEPathProvider.h"
 
-// Inlcude Xerces
+// Include Xerces
 #ifndef Xerxes_Used
 #define Xerxes_Used
 #include <xercesc/parsers/XercesDOMParser.hpp>

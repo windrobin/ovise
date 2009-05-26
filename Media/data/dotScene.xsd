@@ -1,16 +1,61 @@
 <?xml version="1.0" encoding="Windows-1252"?>
-<xs:schema xmlns="http://tempuri.org/dotScene" elementFormDefault="qualified" targetNamespace="http://tempuri.org/dotScene" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<!--INTRO to dotScene and this dotScene.xsd:-->
+<!--Greetings dear future user of dotScene-format.-->
+<!--The dotScene format is a great way to exchange scenes from Blender to Ogre and to export and import scenes within Ogre.-->
+<!--When researching existing implementations of dotScene im- and exporters, we found that they were all lacking a well thought-->
+<!--out design and most important - validation of the processed xml files as well as other convenient features of XML.-->
+<!--As a result of these findings, a new implementation was started. This XSD file is a direct result of this work and allows for-->
+<!--validation of dotScene-XML-files. It originates from the Add-ons subversion repository of the Ogre project and was edited to-->
+<!--our needs (it now conforms to the supplied Blender exporter).-->
+<!--Feel free to use it and enjoy the true power of XML.  Your OViSE-Team!-->
+
+<!--(D|#x)efect- and (S|#x)olution-list:-->
+
+<!--(D|#1) Undeclared element "indexBuffer"-->
+<!--(S|#1) Added empty element "indexBuffer"-->
+
+<!--(D|#2) Undeclared element "numericAnimationTrack"-->
+<!--(S|#2) Added empty element "numericAnimationTrack"-->
+
+<!--(D|#3) Undeclared element "octnode"-->
+<!--(S|#3) Added empty element "octnode"-->
+
+<!--(D|#4) Undeclared element "vertexBuffer"-->
+<!--(S|#4) Added empty element "vertexBuffer"-->
+
+<!--(D|#5) Many applications placing a "quaternion"-element directly into parent-elements. For example: the "dotScene"-exporter of Blender.-->
+<!--       The dotScene.dtd, which was used to create this dotScene.xsd, uses a more flexible version: an "orientation"-element. It's parent-->
+<!--       a "quaternion"-, "direction" (suitable to ogre's cams f.e.), "angle_axis"- or "axisXYZ"-element (which represents rotation-martix).-->
+<!--(S|#5) To use this flexible version of "orientation" and pay attention to older applications, using a 'pure' "quaternion"-elemet,-->
+<!--       both has to be implemented. So a additional line has been added to each occurrence of "orientation". It allows a "quaternion"-element too.-->
+
+<!--(D|#6) The automatically created dotScene.xsd used namespaces. But typical-applications don't write a header to dotScene XMLs. I hope that changes in future.-->
+<!--(S|#6) The headline has beent commented out an a new, simple one, has been added.-->
+
+<!--(D|#7) The order of elements in XML must fit to the sequence in a complex type here in the XSD. The BlenderExporter for Scene differs from orders here.-->
+<!--(S|#7) Reorder sequences in XSD. Every violation of the sequences has to be repaired for well working exports from Blender.-->
+<!--       Attention: not every wrong sequence has been found yet.-->
+
+<!--(#6)-->
+<!--ORIGINAL NAMESPACE-DEFINITIONS: <xs:schema xmlns="http://tempuri.org/dotScene" elementFormDefault="qualified" targetNamespace="http://tempuri.org/dotScene" xmlns:xs="http://www.w3.org/2001/XMLSchema">-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!--(#6)-->
   <xs:element name="scene">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="sceneManagerOption" />
         <xs:element minOccurs="0" maxOccurs="1" ref="shadowSettings" />
         <xs:element minOccurs="0" maxOccurs="1" ref="resourceGroup" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="externals" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="environment" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="light" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="camera" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="nodes" />
+        
+        <!--(#7)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="nodes" /> 
+        <xs:element minOccurs="0" maxOccurs="1" ref="externals" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="environment" />
+        <!--(#7)-->
+        
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="animations" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="animationStates" />
         <xs:element minOccurs="0" maxOccurs="1" ref="terrain" />
@@ -33,7 +78,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="sceneManagerOption"><!--IGNORED-->
+  <xs:element name="sceneManagerOption">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="type" use="required">
@@ -63,7 +108,7 @@
       <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="shadowSettings"><!--DONE-->
+  <xs:element name="shadowSettings">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="colourDiffuse" />
@@ -178,7 +223,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="shadowTextureConfig"><!--DONE-->
+  <xs:element name="shadowTextureConfig">
     <xs:complexType>
       <xs:attribute name="shadowIndex" type="xs:string" use="required" />
       <xs:attribute name="width" type="xs:string" use="required" />
@@ -237,7 +282,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="resourceGroup"><!--IGNORED-->
+  <xs:element name="resourceGroup">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="resourceLocation" />
@@ -246,7 +291,7 @@
       <xs:attribute name="name" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="resourceLocation"><!--IGNORED-->
+  <xs:element name="resourceLocation">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="type" type="xs:string" use="required" />
@@ -270,7 +315,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="resourceDeclaration"><!--IGNORED-->
+  <xs:element name="resourceDeclaration">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="NameValuePairList" />
@@ -279,25 +324,25 @@
       <xs:attribute name="resourceType" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="NameValuePairList"><!--IGNORED-->
+  <xs:element name="NameValuePairList">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="NameValuePair" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="NameValuePair"><!--IGNORED-->
+  <xs:element name="NameValuePair">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="terrain"><!--IGNORED-->
+  <xs:element name="terrain">
     <xs:complexType>
       <xs:attribute name="dataFile" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="nodes"><!--DONE-->
+  <xs:element name="nodes">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="node" />
@@ -305,6 +350,8 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="camera" />
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" /> 
         <xs:element minOccurs="0" maxOccurs="1" ref="scale" />
       </xs:sequence>
       <xs:attribute default="true" name="visible">
@@ -325,11 +372,13 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="node"><!--DONE-->
+  <xs:element name="node">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
         <xs:element minOccurs="0" maxOccurs="1" ref="scale" />
         <xs:element minOccurs="0" maxOccurs="1" ref="lookTarget" />
         <xs:element minOccurs="0" maxOccurs="1" ref="trackTarget" />
@@ -370,7 +419,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="particleSystem"><!--DONE-->
+  <xs:element name="particleSystem">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
@@ -382,7 +431,7 @@
       <xs:attribute name="materialName" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="light"><!--DONE-->
+  <xs:element name="light">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
@@ -409,13 +458,15 @@
       <xs:attribute default="1.0" name="powerScale" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="camera"><!--OLD VERSION-->
+  <xs:element name="camera">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
         <xs:element minOccurs="0" maxOccurs="1" ref="clipping" />
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
         <xs:element minOccurs="0" maxOccurs="1" ref="lookTarget" />
         <xs:element minOccurs="0" maxOccurs="1" ref="trackTarget" />
         <xs:element minOccurs="0" maxOccurs="1" ref="userDataReference" />
@@ -452,7 +503,7 @@
       <xs:attribute default="1.0" name="lodBiasFactor" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="trackTarget"><!--DONE-->
+  <xs:element name="trackTarget">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="localDirectionVector" />
@@ -461,7 +512,7 @@
       <xs:attribute name="nodeName" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="lookTarget"><!--DONE-->
+  <xs:element name="lookTarget">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
@@ -479,7 +530,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="lightAttenuation"><!--DONE-->
+  <xs:element name="lightAttenuation">
     <xs:complexType>
       <xs:attribute name="range" type="xs:string" use="required" />
       <xs:attribute name="constant" type="xs:string" use="required" />
@@ -487,14 +538,14 @@
       <xs:attribute name="quadratic" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="spotLightRange"><!--DONE-->
+  <xs:element name="spotLightRange">
     <xs:complexType>
       <xs:attribute name="inner" type="xs:string" use="required" />
       <xs:attribute name="outer" type="xs:string" use="required" />
       <xs:attribute name="falloff" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="entity"><!--DONE SEMI WITHOUT ANIMATION-ELEMENTS | Ansatzpunkt für Animationen!!!-->
+  <xs:element name="entity">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
@@ -570,21 +621,21 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="meshLODBias"><!--DONE-->
+  <xs:element name="meshLODBias">
     <xs:complexType>
       <xs:attribute name="factor" type="xs:string" use="required" />
       <xs:attribute default="0" name="maxDetailIndex" type="xs:string" />
       <xs:attribute default="99" name="minDetailIndex" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="materialLODBias"><!--DONE-->
+  <xs:element name="materialLODBias">
     <xs:complexType>
       <xs:attribute name="factor" type="xs:string" use="required" />
       <xs:attribute default="0" name="maxDetailIndex" type="xs:string" />
       <xs:attribute default="99" name="minDetailIndex" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="commonMovableObjectParams"><!--DONE-->
+  <xs:element name="commonMovableObjectParams">
     <xs:complexType>
       <xs:attribute default="false" name="static">
         <xs:simpleType>
@@ -615,7 +666,7 @@
       <xs:attribute name="visibilityFlags" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="environment"><!--OLD VERSION-->
+  <xs:element name="environment">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="fog" />
@@ -629,13 +680,13 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="clipping"><!--DONE-->
+  <xs:element name="clipping">
     <xs:complexType>
       <xs:attribute name="nearPlaneDist" type="xs:string" use="required" />
       <xs:attribute name="farPlaneDist" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="fog"><!--OLD VERSION-->
+  <xs:element name="fog">
     <xs:complexType>
       <xs:attribute default="none" name="mode">
         <xs:simpleType>
@@ -655,10 +706,12 @@
       <xs:attribute default="1.0" name="linearEnd" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="skyBox"><!--OLD VERSION-->
+  <xs:element name="skyBox">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute default="true" name="enabled">
@@ -681,10 +734,12 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="skyDome"><!--OLD VERSION-->
+  <xs:element name="skyDome">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute default="true" name="enabled">
@@ -712,7 +767,7 @@
       <xs:attribute default="-1" name="ysegments_keep" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="skyPlane"><!--OLD VERSION-->
+  <xs:element name="skyPlane">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute default="true" name="enabled">
@@ -743,7 +798,7 @@
       <xs:attribute default="1" name="ysegments" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="billboardSet"><!--DONE-->
+  <xs:element name="billboardSet">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
@@ -845,7 +900,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="billboard"><!--DONE-->
+  <xs:element name="billboard">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
@@ -859,28 +914,28 @@
       <xs:attribute name="texcoordIndex" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="commonDirection"><!--DONE-->
+  <xs:element name="commonDirection">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="commonUpVector"><!--DONE-->
+  <xs:element name="commonUpVector">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="textureCoords"><!--DONE-->
+  <xs:element name="textureCoords">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="floatRect" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="floatRect"><!--DONE-->
+  <xs:element name="floatRect">
     <xs:complexType>
       <xs:attribute name="left" type="xs:string" use="required" />
       <xs:attribute name="top" type="xs:string" use="required" />
@@ -888,20 +943,20 @@
       <xs:attribute name="bottom" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="textureStacksAndSlices"><!--DONE-->
+  <xs:element name="textureStacksAndSlices">
     <xs:complexType>
       <xs:attribute name="stacks" type="xs:string" use="required" />
       <xs:attribute name="slices" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="animationStates"><!--IGNORED-->
+  <xs:element name="animationStates">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="animationState" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="animationState"><!--IGNORED-->
+  <xs:element name="animationState">
     <xs:complexType>
       <xs:attribute default="false" name="enabled">
         <xs:simpleType>
@@ -925,14 +980,14 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="animations"><!--IGNORED-->
+  <xs:element name="animations">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="animation" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="animation"><!--IGNORED-->
+  <xs:element name="animation">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="nodeAnimationTrack" />
@@ -968,7 +1023,7 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="nodeAnimationTrack"><!--IGNORED-->
+  <xs:element name="nodeAnimationTrack">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="transformKeyFrame" />
@@ -985,24 +1040,26 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="transformKeyFrame"><!--IGNORED-->
+  <xs:element name="transformKeyFrame">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="translation" />
         <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <!--(#5)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
         <xs:element minOccurs="0" maxOccurs="1" ref="scale" />
       </xs:sequence>
       <xs:attribute name="timePosition" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="translation"><!--IGNORED-->
+  <xs:element name="translation">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="vertexAnimationTrack"><!--IGNORED-->
+  <xs:element name="vertexAnimationTrack">
     <xs:complexType>
       <xs:choice>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="vertexMorphKeyFrame" />
@@ -1027,12 +1084,12 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="vertexMorphKeyFrame"><!--IGNORED-->
+  <xs:element name="vertexMorphKeyFrame">
     <xs:complexType>
       <xs:attribute name="timePosition" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="vertexPoseKeyFrame"><!--IGNORED-->
+  <xs:element name="vertexPoseKeyFrame">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="poseReference" />
@@ -1040,13 +1097,13 @@
       <xs:attribute name="timePosition" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="poseReference"><!--IGNORED-->
+  <xs:element name="poseReference">
     <xs:complexType>
       <xs:attribute name="poseIndex" type="xs:string" use="required" />
       <xs:attribute name="influence" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="plane"><!--DONE BUT DEFINITION INCONSISTENT-->
+  <xs:element name="plane">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="upVector" />
@@ -1076,14 +1133,14 @@
       <xs:attribute default="1" name="vTile" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="externals"><!--DONE-->
+  <xs:element name="externals">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="item" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="item"><!--DONE-->
+  <xs:element name="item">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="file" />
@@ -1091,19 +1148,19 @@
       <xs:attribute name="type" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="file"><!--DONE-->
+  <xs:element name="file">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="position"><!--DONE-->
+  <xs:element name="position">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="orientation"><!--DONE SEMI SEMI SEMI SEMISEMI SEMISEMI SEMI SEMI-->
+  <xs:element name="orientation">
     <xs:complexType>
       <xs:choice>
         <xs:element ref="quaternion" />
@@ -1113,7 +1170,7 @@
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  <xs:element name="quaternion"><!--DONE-->
+  <xs:element name="quaternion">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
@@ -1121,7 +1178,7 @@
       <xs:attribute name="w" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="axisXYZ"><!--DONE-->
+  <xs:element name="axisXYZ">
     <xs:complexType>
       <xs:attribute name="xAxisX" type="xs:string" use="required" />
       <xs:attribute name="xAxisY" type="xs:string" use="required" />
@@ -1134,7 +1191,7 @@
       <xs:attribute name="zAxisZ" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="angle_axis"><!--DONE-->
+  <xs:element name="angle_axis">
     <xs:complexType>
       <xs:attribute name="angle" type="xs:string" use="required" />
       <xs:attribute default="degree" name="angleUnit">
@@ -1150,7 +1207,7 @@
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="direction"><!--DONE-->
+  <xs:element name="direction">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
@@ -1169,42 +1226,42 @@
       <xs:attribute default="-1" name="localDirZ" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="normal"><!--DONE-->
+  <xs:element name="normal">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="upVector"><!--DONE-->
+  <xs:element name="upVector">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="offset"><!--DONE-->
+  <xs:element name="offset">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="localDirectionVector"><!--DONE-->
+  <xs:element name="localDirectionVector">
     <xs:complexType>
       <xs:attribute name="x" type="xs:string" use="required" />
       <xs:attribute name="y" type="xs:string" use="required" />
       <xs:attribute name="z" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="scale"><!--DONE-->
+  <xs:element name="scale">
     <xs:complexType>
       <xs:attribute name="x" type="xs:double" use="required" />
       <xs:attribute name="y" type="xs:double" use="required" />
       <xs:attribute name="z" type="xs:double" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="colourDiffuse"><!--DONE-->
+  <xs:element name="colourDiffuse">
     <xs:complexType>
       <xs:attribute name="r" type="xs:string" use="required" />
       <xs:attribute name="g" type="xs:string" use="required" />
@@ -1212,33 +1269,33 @@
       <xs:attribute name="a" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="colourSpecular"><!--DONE-->
+  <xs:element name="colourSpecular">
     <xs:complexType>
       <xs:attribute name="r" type="xs:string" use="required" />
       <xs:attribute name="g" type="xs:string" use="required" />
       <xs:attribute name="b" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="colourAmbient"><!--DONE-->
+  <xs:element name="colourAmbient">
     <xs:complexType>
       <xs:attribute name="r" type="xs:string" use="required" />
       <xs:attribute name="g" type="xs:string" use="required" />
       <xs:attribute name="b" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="colourBackground"><!--DONE-->
+  <xs:element name="colourBackground">
     <xs:complexType>
       <xs:attribute name="r" type="xs:string" use="required" />
       <xs:attribute name="g" type="xs:string" use="required" />
       <xs:attribute name="b" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="userDataReference"><!--DONE-->
+  <xs:element name="userDataReference">
     <xs:complexType>
       <xs:attribute name="id" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="octree"><!--IGNORED-->
+  <xs:element name="octree">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="octnode" />
@@ -1246,7 +1303,7 @@
       <xs:attribute name="binFile" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="octNode"><!--IGNORED-->
+  <xs:element name="octNode">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="octNode" />
@@ -1260,7 +1317,7 @@
       <xs:attribute name="depth" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="octMesh"><!--IGNORED-->
+  <xs:element name="octMesh">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="octGeometry" />
@@ -1268,7 +1325,7 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="octGeometry"><!--IGNORED-->
+  <xs:element name="octGeometry">
     <xs:complexType>
       <xs:attribute name="binaryDataOffset" type="xs:string" use="required" />
       <xs:attribute name="vertTotal" type="xs:string" use="required" />
@@ -1279,10 +1336,32 @@
       <xs:attribute name="texTotal" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="octMaterial"><!--IGNORED-->
+  <xs:element name="octMaterial">
     <xs:complexType>
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="texture" type="xs:string" />
     </xs:complexType>
   </xs:element>
+  
+  <!--Manually added elements. Original dotScene.dtd/.xsd hasn't these elements but uses 'rm as in references. Added 'em for correct validations!-->
+  <!--(#1)-->
+  <xs:element name="indexBuffer">
+  </xs:element>
+  <!--(#1)-->
+
+  <!--(#2)-->
+  <xs:element name="numericAnimationTrack">
+  </xs:element>
+  <!--(#2)-->
+
+  <!--(#3)-->
+  <xs:element name="octnode">
+  </xs:element>
+  <!--(#3)-->
+
+  <!--(#4)-->
+  <xs:element name="vertexBuffer">
+  </xs:element>
+  <!--(#4)-->
+  
 </xs:schema>

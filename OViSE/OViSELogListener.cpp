@@ -42,6 +42,11 @@ void OViSELogListener::messageLogged(const Ogre::String& message, Ogre::LogMessa
 	
 	wxString tmp = timestr + logLevel + logMessage;
 	
-	mLogBox->InsertItems(1, &tmp, 0);
+	// Used, when new messages added at first position
+	// mLogBox->InsertItems(1, &tmp, 0);
+
+	// Used, when new messages added at los position
+	mLogBox->Append(tmp);
+	mLogBox->ScrollLines(1); // Scroll (down) to new line, after it is written.
 }
 
