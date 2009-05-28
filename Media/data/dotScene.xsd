@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 
+<!--Version 1.0.0 modified/reparied. Named: 1.0.0 (OViSE 2009)-->
+
+
 <!--INTRO to dotScene and this dotScene.xsd:-->
 <!--Greetings dear future user of dotScene-format.-->
 <!--The dotScene format is a great way to exchange scenes from Blender to Ogre and to export and import scenes within Ogre.-->
