@@ -498,12 +498,25 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
 	// Use "dotSceneXmlReader" to create dotScene...
 	dotSceneXmlReader *Reader = new dotSceneXmlReader("../Media/data/dotScene.xsd", true);
-	Reader->parseDotSceneXML(filename);
-	dotSceneObjects::dotScene* currScene = Reader->loadDotScene();
+	//Reader->parseDotSceneXML(filename);
+	//dotSceneObjects::dotScene* currScene = Reader->loadDotScene();
+
+	xercesc::DOMDocument *DOMDocument_dotScene = Reader->parseDotSceneXML(filename);
+
+	if (DOMDocument_dotScene != 0)
+	{
 
 	std::string sceneName = filename.substr(filename.find_last_of("\\")+1);
 	sceneName = sceneName.substr(0, sceneName.find_last_of("."));
+	
+	this->mStandardFactory->addSceneBluePrint(sceneName, DOMDocument_dotScene, meshDirectory);
 
+	if(node)
+		mStandardFactory->attachSingleDOMSceneTo(sceneName, node->getName());
+	else
+		mStandardFactory->attachSingleDOMSceneTo(sceneName, scnMgr->getRootSceneNode()->getName());
+
+	/*
 	// Basic setup of Factory
 	mStandardFactory->addSceneBluePrint(sceneName, *currScene, meshDirectory);
 	
@@ -514,7 +527,8 @@ void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string mesh
 		mStandardFactory->attachSingleSceneTo(sceneName, node->getName());
 	else
 		mStandardFactory->attachSingleSceneTo(sceneName, scnMgr->getRootSceneNode()->getName());
-
+	*/
+	}
 	delete Reader;
 }
 

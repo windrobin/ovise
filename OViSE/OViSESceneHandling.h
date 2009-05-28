@@ -14,6 +14,16 @@
 
 #include "dotSceneAttachFactory.h"
 
+// Inlcude Xerces
+#ifndef Xerxes_Used
+#define Xerxes_Used
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <string>
+#endif
 
 #define __HenningsActualWork__
 

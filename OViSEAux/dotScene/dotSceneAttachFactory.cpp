@@ -1,8 +1,5 @@
 #include "dotSceneAttachFactory.h"
 
-using namespace dotSceneObjects;
-
-
 // TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
 
 // Properies (outer part) of general factory-setting
@@ -16,14 +13,14 @@ Ogre::String dotSceneAdvanced::dotSceneAttachFactory::get_UniqueFactoryName() co
 	return _UniqueFactoryName;
 }
 
-void dotSceneAdvanced::dotSceneAttachFactory::set_NameOfFactoryOwnedMaterialResourceGroup(Ogre::String NameOfFactoryOwnedMaterialResourceGroup)
+void dotSceneAdvanced::dotSceneAttachFactory::set_NameOfFactoryOwnedResourceGroup(Ogre::String NameOfFactoryOwnedResourceGroup)
 {
-	_NameOfFactoryOwnedMaterialResourceGroup = NameOfFactoryOwnedMaterialResourceGroup; 
+	this->_NameOfFactoryOwnedResourceGroup = NameOfFactoryOwnedResourceGroup; 
 }	
 
-Ogre::String dotSceneAdvanced::dotSceneAttachFactory::get_NameOfFactoryOwnedMaterialResourceGroup() const
+Ogre::String dotSceneAdvanced::dotSceneAttachFactory::get_NameOfFactoryOwnedResourceGroup() const
 { 
-	return _NameOfFactoryOwnedMaterialResourceGroup; 
+	return this->_NameOfFactoryOwnedResourceGroup; 
 }
 
 // Properties of general scene-output configuration
@@ -96,7 +93,7 @@ dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(Ogre::String Uniq
 {
 	// Store factory's configuration...
 	this->set_UniqueFactoryName(UniqueFactoryName);
-	this->set_NameOfFactoryOwnedMaterialResourceGroup(UniqueFactoryName);
+	this->set_NameOfFactoryOwnedResourceGroup(UniqueFactoryName);
 
 	this->set_ScaleOffset(1.0);
 	this->set_PositionOffset(Ogre::Vector3(0.0, 0.0, 0.0));
@@ -105,7 +102,7 @@ dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(Ogre::String Uniq
     this->set_YawOfEntireScene(Ogre::Degree(0.0));
 
 	// Create data-structures in ogre's engine for this factory...
-	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
+	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(this->get_NameOfFactoryOwnedResourceGroup());
 	
 	// Store reference to Ogre::SceneManager
 	this->Mgr = sceneMgr;
@@ -113,92 +110,19 @@ dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(Ogre::String Uniq
 	// Platform dependent containers.
 	// Linix-library contains map, instant of hash_map...
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-	this->Scenes = stdext::hash_map<std::string, dotScene>();
+	this->DOMScenes = stdext::hash_map<std::string, xercesc::DOMDocument*>();
     LocationsOfMeshFiles = stdext::hash_map<std::string, std::string>();
     LocationsOfMaterialFiles = stdext::hash_map<std::string, std::string>();
 #else // Linux Libs
-	this->Scenes = std::map<std::string, dotScene>();
+	this->DOMScenes = std::map<std::string, xercesc::DOMDocument*>();
 	this->LocationsOfMeshFiles = std::map<std::string, std::string>();
 	this->LocationsOfMaterialFiles = std::map<std::string, std::string>();
 #endif
 }
 dotSceneAdvanced::dotSceneAttachFactory::~dotSceneAttachFactory() { }
 
-/*
-void dotSceneAdvanced::dotSceneAttachFactory::convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode)
-{
-	switch(xmlNode->mType)
-	{
-	case XMLSceneNode::ENTITY:
-		{			
-			// Generate needed parameters from dotSceneObjects, with are relative to "attachRootNode"
-
-			//Remember: "RelativeToRoot" means the TS_PARENT -transformingspace!
-			Ogre::Vector3 nodeScaleRalativeToRoot(		(float)xmlNode->mScale[0], 
-														(float)xmlNode->mScale[1], 
-														(float)xmlNode->mScale[2]);
-			Ogre::Vector3 nodeTranslationRelativeToRoot((float)xmlNode->mPosition[0], 
-														(float)xmlNode->mPosition[1], 
-														(float)xmlNode->mPosition[2]);
-			Ogre::Quaternion nodeRotationRelativeToRoot((float)xmlNode->mQuaternion[3], 
-														(float)xmlNode->mQuaternion[0], 
-														(float)xmlNode->mQuaternion[1], 
-														(float)xmlNode->mQuaternion[2]);
-
-			// Generate unique new SceneNode and apply relative parameters
-
-			//Find a unique name
-			int nodeNameModificationCounter = 0;
-			char valueAsString[20];
-			Ogre::String nodeNameToApply = xmlNode->mName;
-			while(this->Mgr->hasSceneNode(nodeNameToApply))
-			{
-				nodeNameToApply = xmlNode->mName;
-				nodeNameToApply = nodeNameToApply + "_";
-				//itoa(nodeNameModificationCounter, valueAsString, 10);
-				sprintf(valueAsString, "%i", nodeNameModificationCounter);
-				nodeNameToApply = nodeNameToApply + valueAsString;
-				nodeNameModificationCounter++;
-			}
-
-			//Create new SceneNode
-			Ogre::SceneNode* actualSceneNode = parentNode->createChildSceneNode(nodeNameToApply);
-            
-			//Apply relative parameters
-			actualSceneNode->scale(nodeScaleRalativeToRoot);
-			actualSceneNode->rotate(nodeRotationRelativeToRoot, Ogre::Node::TS_PARENT);                    
-			actualSceneNode->translate(nodeTranslationRelativeToRoot, Ogre::Node::TS_PARENT);
-
-            int entityNameModificationCounter = 0;
-            string entityNameToApply = xmlNode->mEntityName;
-            while (this->Mgr->hasEntity(entityNameToApply))
-            {
-                entityNameModificationCounter++;
-            }
-            char hlp[10];
-            sprintf(hlp, "%i", entityNameModificationCounter);
-            entityNameToApply += "_" + (string)hlp;
-
-            Ogre::Entity *actualEntity = this->Mgr->createEntity(entityNameToApply, xmlNode->mEntityMeshFile);
-
-            actualEntity->setNormaliseNormals(true);
-            //actualEntity->setCastShadows(true);
-            actualSceneNode->attachObject(actualEntity);
-            Ogre::LogManager::getSingletonPtr()->logMessage("Attached Entity.");
-            if(xmlNode->children.size() > 0)
-            {
-            	for(int i=0; i<(int)xmlNode->children.size(); i++)
-            	{
-            		convertXMLNode(xmlNode->children.at(i), actualSceneNode);
-            	}
-            }
-		} break;
-		default: break;
-	}
-}
-*/
-// methods to add new "dotScene"-Objects
-bool dotSceneAdvanced::dotSceneAttachFactory::addSceneBluePrint(std::string uniqueSceneName, dotScene newScene, 
+bool dotSceneAdvanced::dotSceneAttachFactory::addSceneBluePrint(std::string uniqueSceneName,
+																xercesc::DOMDocument* newDOMdotSceneBlueprint, 
 																std::string locationOfMeshFiles)
 {
 	// <------ If you want to implement a validity check of "locationOfMeshFiles",
@@ -206,10 +130,10 @@ bool dotSceneAdvanced::dotSceneAttachFactory::addSceneBluePrint(std::string uniq
 
     // Check, if the key is already used.
 	// Remember it's name: it has to be unique! If it's not there, return false.			
-	if (Scenes.find(uniqueSceneName) != Scenes.end()) return false;
+	if (DOMScenes.find(uniqueSceneName) != DOMScenes.end()) return false;
 	
 	// Add new objects to all hashtables with same key
-	Scenes[uniqueSceneName] = newScene;
+	DOMScenes[uniqueSceneName] = newDOMdotSceneBlueprint;
     LocationsOfMeshFiles[uniqueSceneName] = locationOfMeshFiles;
 
     // IMPLICIT: Expexting ".material"-files always (!)
@@ -234,9 +158,10 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
     this->doAttachExternals = doAttachExternals;
     this->doAttachEnvironment = doAttachEnvironment;
 
-    return attachSingleSceneTo(uniqueSceneName, attachToNodeWithThisName);
+    return true;//attachSingleSceneTo(uniqueSceneName, attachToNodeWithThisName);
 }
 
+/*
 bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string uniqueSceneName,
 																	std::string attachToNodeWithThisName)
 {
@@ -244,7 +169,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 	if (Scenes.empty()) return false;
 	
 	// Store external anchor node...
-	this->deliverdExternalRootNode = this->Mgr->getSceneNode(Ogre::String(attachToNodeWithThisName)); 
+	this->ExternalAnchorNode = this->Mgr->getSceneNode(Ogre::String(attachToNodeWithThisName)); 
 
 	// Generate unique new root SceneNode - Part 1
     // Find a unique name...
@@ -262,7 +187,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 	
 	// Generate unique new root SceneNode - Part 2
 	// It is used for light- and camera-setup, because lights and cams working with world-coordinates
-	this->_AttachRootNode = this->deliverdExternalRootNode->createChildSceneNode(Ogre::String(rootNodeNameToApply));
+	this->_AttachRootNode = this->ExternalAnchorNode->createChildSceneNode(Ogre::String(rootNodeNameToApply));
 
 	// Modify scene's rootnode
     // Rotate entire scene with factory-settings for ROLL, PITCH, YAW
@@ -284,10 +209,10 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 	// Step 1: Clear ResourceGroup, when it exists.
 	// TODO: Rename "get_NameOfFactoryOwnedMaterialResourceGroup" to "get_NameOfFactoryOwnedResourceGroup"
 	// Clear ResourceGroup "Material", when it exists.
-	Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedMaterialResourceGroup()));
+	Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedResourceGroup()));
 
 	// Step 2: Add path of dotScene-File to own recourcegroup
-	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(LocationsOfMeshFiles[uniqueSceneName]), Ogre::String("FileSystem"), get_NameOfFactoryOwnedMaterialResourceGroup(), false);
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(LocationsOfMeshFiles[uniqueSceneName]), Ogre::String("FileSystem"), this->get_NameOfFactoryOwnedResourceGroup(), false);
 
 	// Step 3: Optional add materials, if this->doAttachExternals is true...
 
@@ -311,7 +236,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 						//Ogre::ResourceGroupManager::getSingleton().clearResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());
 
 						// Add location of files to resourcegroup.
-						Ogre::ResourceGroupManager::getSingleton().addResourceLocation(actualLocationOfMaterialFile, Ogre::String("FileSystem"), get_NameOfFactoryOwnedMaterialResourceGroup(), false);
+						Ogre::ResourceGroupManager::getSingleton().addResourceLocation(actualLocationOfMaterialFile, Ogre::String("FileSystem"), this->get_NameOfFactoryOwnedResourceGroup(), false);
 
 						// Again, initialise ResourceGroup "Material".
 						//Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup());                           
@@ -333,7 +258,7 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 
 	// Step 4: Initialize all...
 	// Again, initialise ResourceGroup "Material".
-	Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(get_NameOfFactoryOwnedMaterialResourceGroup()); 
+	Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(this->get_NameOfFactoryOwnedResourceGroup()); 
 
 	// Subsection of interpretation: Nodes (Entities, Cams, Lights)
     if (this->doAttachNodes)
@@ -386,10 +311,231 @@ bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleSceneTo(	std::string u
 			;// Just catch any exceptions like null reference exceptions
 		}
     }
+*//*
+    return true;
+}
 */
+
+bool dotSceneAdvanced::dotSceneAttachFactory::attachSingleDOMSceneTo(	std::string uniqueSceneName,
+																		std::string attachToNodeWithThisName)
+{
+	std::string LogMsg;
+	std::string dotSceneVersionString;
+
+	LogMsg = "SCENE FACTORY: Attaching scene \"" + uniqueSceneName + "\"";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+
+	// If list ist empty...
+	if (this->DOMScenes.empty())
+	{
+		LogMsg = "SCENE FACTORY: No scenes are registed. Aborted!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_CRITICAL);
+		return false;
+	}
+
+	// If list doesn't contain "uniqueSceneName"...
+	if (this->DOMScenes.count(uniqueSceneName) == 0)
+	{
+		// If DOMScenes is a "map", count equals 0 or greather.
+		// If DOMScenes is a "hash_map", count equals 0 or 1.
+		// So criteria is valid in both cases.
+		LogMsg = "SCENE FACTORY: Scene \"" + uniqueSceneName + "\" is not registed. Aborted!";
+		Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_CRITICAL);
+		return false;
+	}
+	
+	// Store external anchor node...
+	this->ExternalAnchorNode = this->Mgr->getSceneNode(Ogre::String(attachToNodeWithThisName));
+
+	// Create Ogre::String, describing the actual location of file
+	Ogre::String actualLocationOfMaterialFiles = Ogre::String(this->LocationsOfMaterialFiles[uniqueSceneName]);
+
+	// Generate unique new root SceneNode - Part 1
+    // Find a unique name...
+    int rootNodeNameModificationCounter = 0;
+	char valueAsString[20];
+	Ogre::String rootNodeNameToApply = attachToNodeWithThisName + "_SceneRoot";		
+	while (this->Mgr->hasSceneNode(rootNodeNameToApply))
+    {
+        rootNodeNameToApply = attachToNodeWithThisName + "_SceneRoot_";
+		sprintf(valueAsString, "%i", rootNodeNameModificationCounter);  // TODO: use wx command here
+		rootNodeNameToApply = rootNodeNameToApply + valueAsString;
+        rootNodeNameModificationCounter++;
+    }
+	
+	// Generate unique new root SceneNode - Part 2
+	// It is used for light- and camera-setup, because lights and cams working with world-coordinates
+	this->_AttachRootNode = this->ExternalAnchorNode->createChildSceneNode(Ogre::String(rootNodeNameToApply));
+	LogMsg = "SCENE FACTORY: Created scene's rootNode: \"" + rootNodeNameToApply + "\"";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+
+	// * * * * * * * * Setup Interpretation (STEP 0) * * * * * * * * *                 
+	xercesc::DOMDocument *DOMDocument_dotScene = this->DOMScenes.find(uniqueSceneName)->second;
+	xercesc::DOMElement *DOMElement_scene = DOMDocument_dotScene->getDocumentElement();
+
+	xercesc::DOMNodeList *ChildElements;
+
+	xercesc::DOMElement *DOMElement_nodes = 0;
+	xercesc::DOMElement *DOMElement_externals = 0;
+	xercesc::DOMElement *DOMElement_environment = 0;
+
+	// Check format version (!)
+	if (DOMElement_scene->hasAttribute(XMLString::transcode("formatVersion")))
+	{
+		dotSceneVersionString = XMLString::transcode(DOMElement_scene->getAttribute(XMLString::transcode("formatVersion")));
+		LogMsg = "SCENE FACTORY: Identified version of dotScene-format as \"" + dotSceneVersionString + "\"";
+		Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+	}
+	else
+	{
+		LogMsg = "SCENE FACTORY: Couldn't identify version of dotScene-format! Using default version: 1.0.0 (OViSE)";
+		dotSceneVersionString = "1.0.0";
+		Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_CRITICAL);
+	}
+
+	// Get elements "nodes", "externals" and "environment"
+	ChildElements = DOMElement_scene->getElementsByTagName(XMLString::transcode("nodes"));
+	if (ChildElements->getLength() > 0)
+	{
+		DOMElement_nodes = (xercesc::DOMElement*) ChildElements->item(0);
+	}
+
+	ChildElements = DOMElement_scene->getElementsByTagName(XMLString::transcode("externals"));
+	if (ChildElements->getLength() > 0)
+	{
+		DOMElement_externals = (xercesc::DOMElement*) ChildElements->item(0);
+	}
+
+	ChildElements = DOMElement_scene->getElementsByTagName(XMLString::transcode("environment"));
+	if (ChildElements->getLength() > 0)
+	{
+		DOMElement_environment = (xercesc::DOMElement*) ChildElements->item(0);
+	}
+
+
+
+
+	// * * * * * * * * Interpretation (STEP 1): Externals * * * * * * * * *
+	// COMMENT: It's important, that externals are done before proceeding with nodes and environment.
+	//          Necessary materials must be loaded before nodes need 'em.
+
+	// STEP 1: Optional add materials, if "this->doAttachExternals" is true...
+    if (this->doAttachExternals && (DOMElement_externals != 0))
+    {
+		// STEP 1.1: Factory owned ResourceGroup, when it exists.
+		Ogre::ResourceGroupManager::getSingleton().unloadResourceGroup(Ogre::String(this->get_NameOfFactoryOwnedResourceGroup()));
+
+		// STEP 1.2: Add path of dotScene-File to own recourcegroup
+		Ogre::ResourceGroupManager::getSingleton().addResourceLocation(Ogre::String(this->LocationsOfMeshFiles[uniqueSceneName]), Ogre::String("FileSystem"), this->get_NameOfFactoryOwnedResourceGroup(), false); 
+
+		// STEP 1.3: Identify format version of dotScene:
+		bool match = false;
+		if ((!match) && (dotSceneVersionString == "1.0.0"))
+		{
+			// STEP 1.4: Handle externals...
+			this->v1_0_0_Interpretation_Externals(DOMElement_externals, uniqueSceneName);
+			match = true;
+		}
+
+		// IMPORTANT: Other interpretation-methods can be added here for different dotScene-versions
+		// if (!match) && (dotSceneVersionString == " ... ")) { ... }
+
+		// STEP 1.5: Again, initialise ResourceGroup "Material".
+		Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(this->get_NameOfFactoryOwnedResourceGroup());
+	}
+	
+
+	// * * * * * * * * Interpretation (STEP 2): Nodes (Entities, Cams, Lights) * * * * * * * * *
+	// STEP 2: Optional add nodes, if "this->doAttachNodes" is true...
+	if (this->doAttachNodes && (DOMElement_nodes != 0))
+    {
+		// STEP 2.1: Identify format version of dotScene:
+		bool match = false;
+		if ((!match) && (dotSceneVersionString == "1.0.0"))
+		{
+			// STEP 2.2: Handle nodes...
+			this->v1_0_0_Interpretation_Nodes(DOMElement_nodes);
+			match = true;
+		}
+
+		// IMPORTANT: Other interpretation-methods can be added here for different dotScene-versions
+		// if (!match) && (dotSceneVersionString == " ... ")) { ... }
+    }
+
+/*
+	// * * * * * * * * Interpretation (STEP 2): Nodes (Entities, Cams, Lights) * * * * * * * * *
+    if (this->doAttachNodes)
+    {
+    	Ogre::LogManager::getSingletonPtr()->logMessage("Attaching nodes...");
+		recursiveNodeCreator(actualScene.get_Nodes()._ListOfNodes, this->_AttachRootNode, uniqueSceneName);
+    }
+/*
+	// Subsection of interpretation: Environment <-- ATTENTION, malfunction source...because dotScene-format and blenderexporter aren't fully compatible to ogre (?) 
+    if (this->doAttachEnvironment)
+    {
+        // Set up background-colour
+        try // if (actualScene.get_environment().get_colourBackground() != null)
+        {
+			this->Mgr->setAmbientLight(Ogre::ColourValue(
+                actualScene.get_environment().get_colourBackground().get_r(),
+                actualScene.get_environment().get_colourBackground().get_g(),
+                actualScene.get_environment().get_colourBackground().get_b()));
+        }
+		catch(std::exception e)
+		{
+			;// Just catch any exceptions like null reference exceptions
+		}
+
+        // Set up ambient-colour
+            // until now, nothing happens!
+            // no corrspondig value in SceneMgr for background-colour?!
+
+        // Set up fog
+		try // if (actualScene.get_environment().get_fog() != null)
+		{
+            // Select fog-mode
+			Ogre::FogMode mode;
+			
+			if(actualScene.get_environment().get_fog().get_mode() == "linear")		mode = Ogre::FOG_LINEAR;//maybe the only exported value from blender. not sure what other exporters produce!!!
+            else if(actualScene.get_environment().get_fog().get_mode() == "exp")	mode = Ogre::FOG_EXP;	//it seems, that the blender exports not this value, so this string "exp" is safe!!!
+            else if(actualScene.get_environment().get_fog().get_mode() == "exp2")	mode = Ogre::FOG_EXP2;	//it seems, that the blender exports not this value, so this string "exp2" is safe!!!
+			else if(actualScene.get_environment().get_fog().get_mode() == "none")	mode = Ogre::FOG_NONE;	//it seems, that the blender exports not this value, so this string "none" is safe!!!
+
+			this->Mgr->setFog(mode, Ogre::ColourValue(
+				actualScene.get_environment().get_fog().get_colourDiffuse().get_r(), 
+				actualScene.get_environment().get_fog().get_colourDiffuse().get_g(),
+				actualScene.get_environment().get_fog().get_colourDiffuse().get_b()),
+                1.0f, //maybe 1.0 is the neutal value? This value is not delivered by blender-exporter or dotScene-format!!!
+                actualScene.get_environment().get_fog().get_linearStart(),
+                actualScene.get_environment().get_fog().get_linearEnd());
+        }
+		catch(std::exception e)
+		{
+			;// Just catch any exceptions like null reference exceptions
+		}
+    }
+*/
+
+
+	// * * * * * * * * Interpretation (STEP X): Apply factory's Offset-settings to scene's rootnode * * * * * * * * *
+    // Rotate entire scene with factory-settings for ROLL, PITCH, YAW
+	this->_AttachRootNode->pitch(Ogre::Radian(this->get_PitchOfEntireScene()), Ogre::Node::TS_WORLD);
+    this->_AttachRootNode->yaw(Ogre::Radian(this->get_YawOfEntireScene()), Ogre::Node::TS_WORLD);
+	this->_AttachRootNode->roll(Ogre::Radian(this->get_RollOfEntireScene()), Ogre::Node::TS_WORLD);
+	LogMsg = "SCENE FACTORY: Rotated rootNode with factory-settings.";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_TRIVIAL);
+
+    // Scale rootnode
+	this->_AttachRootNode->scale((float)this->get_ScaleOffset(), (float)this->get_ScaleOffset(), (float)this->get_ScaleOffset());
+	LogMsg = "SCENE FACTORY: Scaled rootNode with factory-settings.";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_TRIVIAL);
+
     return true;
 }
 
+/* IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
+   IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
+   IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
 void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<dotSceneNode> actualNodeList,
 																	Ogre::SceneNode* attachParentNode,
 																	std::string uniqueSceneName)
@@ -701,7 +847,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 						// it's possible that clipping doesn't exists in formatedToDotSceneCamera -> do nothing						
 					}
                     break;
-				*/
+				
                 default: // If node has no specifics (for example a invisible anchor-node)
 					break;
 			}
@@ -713,6 +859,7 @@ void dotSceneAdvanced::dotSceneAttachFactory::recursiveNodeCreator(	std::list<do
 		}while(actualNodeListIterator != (actualNodeList.end()));
 	}
 }
+*/
 
 
 /*
@@ -738,8 +885,6 @@ public bool attachAllScenesTo(  string attachToNodeWithThisName,
 
     return this.attachAllScenesTo(attachToNodeWithThisName);
 }*/
-
-void deletethisstub(){}
 
 /*
 /// <summary>
@@ -1229,3 +1374,433 @@ void main(void)
 	int dummy;
 	std::cin >> dummy;
 }*/
+
+
+void dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, std::string UniqueNameOfScene)
+{
+	xercesc::DOMNodeList *ItemElements = 0, *FileElements = 0;
+	xercesc::DOMElement *DOMElement_item = 0;
+
+	ItemElements = DOMElement_externals->getElementsByTagName(XMLString::transcode("item"));
+	if (ItemElements->getLength() > 0)
+	{
+		for(XMLSize_t ItemNodeIterator = 0; ItemNodeIterator < ItemElements->getLength(); ItemNodeIterator++)
+		{
+			DOMElement_item = (xercesc::DOMElement*) ItemElements->item(ItemNodeIterator);
+
+			FileElements = DOMElement_item->getElementsByTagName(XMLString::transcode("file"));
+			if (FileElements->getLength() > 0)
+			{
+				xercesc::DOMElement* DOMElement_file = (xercesc::DOMElement*) FileElements->item(0);
+
+				if (	DOMElement_item->hasAttribute(XMLString::transcode("type"))
+					&&	DOMElement_file->hasAttribute(XMLString::transcode("name")))
+				{
+					std::string tempName = XMLString::transcode(DOMElement_file->getAttribute(XMLString::transcode("name")));
+					std::string tempType = XMLString::transcode(DOMElement_item->getAttribute(XMLString::transcode("type")));
+
+					std::string tempPath = Ogre::String(this->LocationsOfMeshFiles[UniqueNameOfScene]);
+					std::string tempFullPath = tempPath + tempName;
+
+					Ogre::ResourceGroupManager::getSingleton().declareResource(tempFullPath, tempType, this->get_NameOfFactoryOwnedResourceGroup());
+
+					std::string LogMsg = "SCENE FACTORY: Added " + tempType + " \"" + tempFullPath + "\" to ResourceGroup \"" + this->get_NameOfFactoryOwnedResourceGroup() + "\"";
+					Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+				}
+			}
+		}
+	}
+}
+
+void dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
+{
+	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
+	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
+
+	// In nodes is abstract. So elements beyond "node"-elements must be "global" transitions and rotations for scene's root node. Attribute too.
+	
+	// Handle cams...
+
+
+	// Handle lights...
+
+	/// STEP 4.1: Handle childnodes...
+	NodeElements = DOMElement_nodes->getElementsByTagName(XMLString::transcode("node"));
+	if (NodeElements->getLength() > 0)
+	{
+		for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
+		{
+			this->v1_0_0_Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), this->_AttachRootNode);
+		}
+	}
+
+
+	// Handle attributes...
+	bool Visible = true;
+	bool CascadeVisibility = true;
+
+	if (DOMElement_nodes->hasAttribute(XMLString::transcode("visible")))
+	{
+		std::string buff = XMLString::transcode(DOMElement_nodes->getAttribute(XMLString::transcode("visible")));
+		if (buff == "true") Visible = true;
+		if (buff == "false") Visible = false;
+		else
+		{
+			; // Attention: DEBUG-Trap. When this line is reached, something goes wrong. More testing is needed!!!
+		}
+	}
+
+	if (DOMElement_nodes->hasAttribute(XMLString::transcode("cascadeVisibility")))
+	{
+		std::string buff = XMLString::transcode(DOMElement_nodes->getAttribute(XMLString::transcode("cascadeVisibility")));
+		if (buff == "true") Visible = true;
+		if (buff == "false") Visible = false;
+		else
+		{
+			; // Attention: DEBUG-Trap. When this line is reached, something goes wrong. More testing is needed!!!
+		}
+	}
+
+	this->_AttachRootNode->setVisible(Visible, CascadeVisibility);
+}
+
+void dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
+{
+	/*
+	Ogre::Camera test;
+
+      //<xs:attribute name="name" type="xs:string" />
+	test = new Ogre::Camera( name , scenemgr );
+      //<xs:attribute name="id" type="xs:ID" />
+	//test. ?? ID ??
+      //<xs:attribute default="45" name="FOVy" type="xs:string" />
+	test.setFOVy( );
+      //<xs:attribute default="1.3333333" name="aspectRatio" type="xs:string" />
+	test.setAspectRatio ( );
+      //<xs:attribute default="perspective" name="projectionType"><xs:enumeration value="perspective" /><xs:enumeration value="orthographic" />
+	test.setProjectionType( );
+      //<xs:attribute default="solid" name="polygonMode"><xs:enumeration value="points" /><xs:enumeration value="wireframe" /><xs:enumeration value="solid" />
+	test.setPolygonMode( );
+      //<xs:attribute default="yes" name="useRenderingDistance"><xs:enumeration value="yes" /><xs:enumeration value="no" />
+	test.setUseRenderingDistance( );
+      //<xs:attribute default="1.0" name="lodBiasFactor" type="xs:string" />
+	test.setLodBias( );
+
+		
+	<xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="clipping" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="position" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="lookTarget" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="trackTarget" />
+        <xs:element minOccurs="0" maxOccurs="1" ref="userDataReference" />
+	</xs:sequence>
+	
+	//test.?? commonMovableObjectParams // ?? Hidden?
+
+	//test.?? clipping // ?? Hidden?
+
+	test.setPosition( );
+
+	test.setOrientation( );
+
+	test.setQuaternion( ); // OLD // orientation benutzen
+
+	test.lookAt( );
+
+	test.setAutoTracking( ); // ??
+
+	// userDataRefernce // ?? Undefined
+	*/
+}
+
+void dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode)
+{
+	std::string LogMsg;
+
+	// * * * * * * * * Interpretation of element "node" * * * * * * * * *
+	// STEP 1: Declare all possible elements...
+	xercesc::DOMNodeList *NodeElements = 0, *EntityElements = 0;
+	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
+	// ++ looktarget ++ tracktarget ++ userdatareference
+
+	// STEP 2: Create all possible attributes... 
+	std::string NewNode_name = "", NewNode_id = "";
+	bool NewNode_visible = true, NewNode_cascadeVisibility = true, NewNode_isTarget = false;
+
+	// STEP 2.1: Get attribute data. If attribute is not used in XML, use default value from XSD...
+	if (DOMElement_node->hasAttribute(XMLString::transcode("name")))
+	{
+		NewNode_name = XMLString::transcode(DOMElement_node->getAttribute(XMLString::transcode("name")));
+	}
+	if (DOMElement_node->hasAttribute(XMLString::transcode("id")))
+	{
+		NewNode_id = XMLString::transcode(DOMElement_node->getAttribute(XMLString::transcode("id")));
+	}
+	if (DOMElement_node->hasAttribute(XMLString::transcode("visible")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_node->getAttribute(XMLString::transcode("visible")));
+		if (temp == "true") NewNode_visible = true;
+		if (temp == "false") NewNode_visible = false;
+	}
+	if (DOMElement_node->hasAttribute(XMLString::transcode("cascadeVisibility")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_node->getAttribute(XMLString::transcode("cascadeVisibility")));
+		if (temp == "true") NewNode_cascadeVisibility = true;
+		if (temp == "false") NewNode_cascadeVisibility = false;
+	}
+	if (DOMElement_node->hasAttribute(XMLString::transcode("isTarget")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_node->getAttribute(XMLString::transcode("isTarget")));
+		if (temp == "true") NewNode_isTarget = true;
+		if (temp == "false") NewNode_isTarget = false;
+	}
+	
+	// STEP 2.2: Processing of attribute "name"...
+	// Generate unique name for new SceneNode.
+    int NodeNameModificationCounter = 0;
+	char valueAsString[20];
+	Ogre::String NewNode_unique_name = NewNode_name;		
+	while (this->Mgr->hasSceneNode(NewNode_unique_name))
+    {
+		sprintf(valueAsString, "%i", NodeNameModificationCounter); // TODO: use wx command here
+		NewNode_unique_name = NewNode_name + "_" + valueAsString;
+        NodeNameModificationCounter++;
+    }
+	
+	// Handle "id": There is no information about how "id" has to be used.
+	// "visible", "cascadeVisibility" and "isTarget" are handled below.
+
+	// STEP 3: Create unique new SceneNode
+	Ogre::SceneNode* NewNode = ParentNode->createChildSceneNode(Ogre::String(NewNode_unique_name));
+	LogMsg = "SCENE FACTORY: Created and added new Ogre::SceneNode \"" + NewNode_unique_name + "\"";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+
+	// STEP 3.1: Set rest of attributes...
+	NewNode->setVisible(NewNode_visible, NewNode_cascadeVisibility);
+#ifdef ATTACH_FACTORY__ALLOW_INTERPRETATION_ASSUMPTIONS
+	NewNode->setAutoTracking(NewNode_isTarget); // <- ATTENTION: There is no information about how "isTarget" has to be used. This is an assumption.
+#endif
+
+	// STEP 4: Look for existing elements. First handle complex elements. "position", "scale", ... at last.
+	// STEP 4.1: Handle childnodes...
+	NodeElements = DOMElement_node->getElementsByTagName(XMLString::transcode("node"));
+	if (NodeElements->getLength() > 0)
+	{
+		for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
+		{
+			this->v1_0_0_Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), NewNode);
+		}
+	}
+
+	// STEP 4.2: Handle entities...
+	EntityElements = DOMElement_node->getElementsByTagName(XMLString::transcode("entity"));
+	if (EntityElements->getLength() > 0)
+	{
+		for(XMLSize_t EntityIterator = 0; EntityIterator < EntityElements->getLength(); EntityIterator++)
+		{
+			this->v1_0_0_Interpretation_Entity((xercesc::DOMElement*) EntityElements->item(EntityIterator), NewNode);
+		}
+	}
+
+	// STEP 4.3: Handle lights...
+	// TODO
+	// STEP 4.4: Handle cameras...
+	// TODO
+	// STEP 4.5: Handle particleSystems...
+	// TODO
+	// STEP 4.6: Handle billboardSets...
+	// TODO
+	// STEP 4.7: Handle planes...
+	// TODO
+
+	
+	xercesc::DOMNodeList *tempList;
+
+	// STEP 4.8: Handle position...
+	tempList = DOMElement_node->getElementsByTagName(XMLString::transcode("position"));
+	if (tempList->getLength() > 0)
+	{
+		Ogre::Vector3 tempV3 = this->v1_0_0_Interpretation_Vector3((xercesc::DOMElement*) tempList->item(0));
+		NewNode->setPosition(tempV3);
+	}
+
+	// STEP 4.9: Handle orientation/quaternion... // Prefering "quaternion" instead of orientation at moment. Exactly mathematical conversions not available now.
+	tempList = DOMElement_node->getElementsByTagName(XMLString::transcode("quaternion"));
+	if (tempList->getLength() > 0)
+	{
+		Ogre::Vector4 tempV4 = this->v1_0_0_Interpretation_Vector4((xercesc::DOMElement*) tempList->item(0));
+		NewNode->setOrientation(tempV4.w, tempV4.x, tempV4.y, tempV4.z);
+	}
+	else
+	{
+		tempList = DOMElement_node->getElementsByTagName(XMLString::transcode("orientation"));
+		if (tempList->getLength() > 0)
+		{
+			// Do nothing. Complex analysis skipped.
+		}
+	}
+
+	// STEP 4.10: Handle scale...
+	tempList = DOMElement_node->getElementsByTagName(XMLString::transcode("scale"));
+	if (tempList->getLength() > 0)
+	{
+		Ogre::Vector3 tempV3 = this->v1_0_0_Interpretation_Vector3((xercesc::DOMElement*) tempList->item(0));
+		NewNode->setScale(tempV3);
+	}
+
+	// STEP 4.11: Handle lookTarget...
+	// TODO
+	// STEP 4.12: Handle trackTarget...
+	// TODO
+	// STEP 4.13: Handle userDataReference...
+	// TODO
+}
+
+void dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode)
+{
+	std::string LogMsg;
+
+	// * * * * * * * * Interpretation of element "entity" * * * * * * * * *
+	// STEP 1: Declare all possible elements...
+	xercesc::DOMNodeList *AnimationsElements = 0, *animationStatesElements = 0;
+	xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_meshLODBias = 0, *DOMElement_materialLODBias = 0, *DOMElement_userDataReference = 0;
+
+	// STEP 2: Create all possible attributes... 
+	std::string NewEntity_name, NewEntity_id, NewEntity_meshFile = "robot.mesh" /* for debugging */, NewEntity_materialName, NewEntity_softwareAnimationRequests, NewEntity_softwareAnimationRequestsNormalsAlso;
+	bool NewEntity_displaySkeleton = false, NewEntity_polygonModeOverrideable = false, NewEntity_vertexBufferUseShadow = false, NewEntity_indexBufferUseShadow = false;
+	std::string NewEntity_vertexBufferUsage = "staticWriteOnly", NewEntity_indexBufferUsage = "staticWriteOnly"; // <- enum
+
+	// STEP 2.1: Get attribute data. If attribute is not used in XML, use default value from XSD...
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("name")))
+	{
+		NewEntity_name = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("name")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("id")))
+	{
+		NewEntity_id = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("id")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("meshFile")))
+	{
+		NewEntity_meshFile = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("meshFile")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("materialName")))
+	{
+		NewEntity_materialName = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("materialName")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("softwareAnimationRequests")))
+	{
+		NewEntity_softwareAnimationRequests = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("softwareAnimationRequests")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("softwareAnimationRequestsNormalsAlso")))
+	{
+		NewEntity_softwareAnimationRequestsNormalsAlso = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("softwareAnimationRequestsNormalsAlso")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("displaySkeleton")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("displaySkeleton")));
+		if (temp == "true") NewEntity_displaySkeleton = true;
+		if (temp == "false") NewEntity_displaySkeleton = false;
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("polygonModeOverrideable")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("polygonModeOverrideable")));
+		if (temp == "true") NewEntity_polygonModeOverrideable = true;
+		if (temp == "false") NewEntity_polygonModeOverrideable = false;
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("vertexBufferUseShadow")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("vertexBufferUseShadow")));
+		if (temp == "true") NewEntity_vertexBufferUseShadow = true;
+		if (temp == "false") NewEntity_vertexBufferUseShadow = false;
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("indexBufferUseShadow")))
+	{
+		std::string temp = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("indexBufferUseShadow")));
+		if (temp == "true") NewEntity_indexBufferUseShadow = true;
+		if (temp == "false") NewEntity_indexBufferUseShadow = false;
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("vertexBufferUsage")))
+	{
+		NewEntity_vertexBufferUsage = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("vertexBufferUsage")));
+	}
+	if (DOMElement_entity->hasAttribute(XMLString::transcode("indexBufferUsage")))
+	{
+		NewEntity_indexBufferUsage = XMLString::transcode(DOMElement_entity->getAttribute(XMLString::transcode("indexBufferUsage")));
+	}
+
+	// STEP 2.2: Processing of attribute "name"...
+	// Generate unique name for new SceneNode.
+    int EntityNameModificationCounter = 0;
+	char valueAsString[20];
+	Ogre::String NewEntity_unique_name = NewEntity_name;		
+	while (this->Mgr->hasSceneNode(NewEntity_unique_name))
+    {
+		sprintf(valueAsString, "%i", EntityNameModificationCounter); // TODO: use wx command here
+		NewEntity_unique_name = NewEntity_name + "_" + valueAsString;
+        EntityNameModificationCounter++;
+    }
+	
+	// Handle "id": There is no information about how "id" has to be used.
+	// Other attributes are handled below...
+
+	// STEP 3: Create unique new Ogre::Entity
+	Ogre::Entity* NewEntity = this->Mgr->createEntity(NewEntity_unique_name, NewEntity_meshFile);
+	LogMsg = "SCENE FACTORY: Created new Ogre::Entity \"" + NewEntity_unique_name + "\" using .mesh \"" + NewEntity_meshFile + "\"";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+	AssociateNode->attachObject(NewEntity);
+	LogMsg = "SCENE FACTORY: Attached new Ogre::Entity \"" + NewEntity_unique_name + "\" to Ogre::SceneNode \"" + AssociateNode->getName() + "\"";
+	Ogre::LogManager::getSingletonPtr()->logMessage(LogMsg, Ogre::LML_NORMAL);
+}
+
+
+Ogre::Vector3 dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
+{
+	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector3 * * * * * * * * *
+	// STEP 1: Create all possible attributes...
+	Ogre::Real fX = 0.0f, fY  = 0.0f, fZ = 0.0f;
+
+	//XMLFloat test = 
+	if (DOMElement_Vector3->hasAttribute(XMLString::transcode("x")))
+	{
+		fX = (float)xercesc::XMLFloat(DOMElement_Vector3->getAttribute(XMLString::transcode("x"))).getValue();
+	}
+	if (DOMElement_Vector3->hasAttribute(XMLString::transcode("y")))
+	{
+		fY = (float)xercesc::XMLFloat(DOMElement_Vector3->getAttribute(XMLString::transcode("y"))).getValue();
+	}
+	if (DOMElement_Vector3->hasAttribute(XMLString::transcode("z")))
+	{
+		fZ = (float)xercesc::XMLFloat(DOMElement_Vector3->getAttribute(XMLString::transcode("z"))).getValue();
+	}
+
+	return Ogre::Vector3(fX, fY, fZ);
+}
+
+Ogre::Vector4 dotSceneAdvanced::dotSceneAttachFactory::v1_0_0_Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4)
+{
+	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector4 * * * * * * * * *
+	// STEP 1: Create all possible attributes...
+	Ogre::Real fX = 0.0f, fY  = 0.0f, fZ = 0.0f, fW = 0.0f;
+
+	if (DOMElement_Vector4->hasAttribute(XMLString::transcode("x")))
+	{
+		fX = (float)xercesc::XMLFloat(DOMElement_Vector4->getAttribute(XMLString::transcode("x"))).getValue();
+	}
+	if (DOMElement_Vector4->hasAttribute(XMLString::transcode("y")))
+	{
+		fY = (float)xercesc::XMLFloat(DOMElement_Vector4->getAttribute(XMLString::transcode("y"))).getValue();
+	}
+	if (DOMElement_Vector4->hasAttribute(XMLString::transcode("z")))
+	{
+		fZ = (float)xercesc::XMLFloat(DOMElement_Vector4->getAttribute(XMLString::transcode("z"))).getValue();
+	}
+	if (DOMElement_Vector4->hasAttribute(XMLString::transcode("w")))
+	{
+		fW = (float)xercesc::XMLFloat(DOMElement_Vector4->getAttribute(XMLString::transcode("w"))).getValue();
+	}
+
+	return Ogre::Vector4(fX, fY, fZ, fW);
+}

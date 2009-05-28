@@ -181,10 +181,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath=".\XML_to_STD.cpp"
-				>
-			</File>
 			<Filter
 				Name="wx"
 				>
@@ -264,10 +260,6 @@
 					RelativePath=".\OViSEXercesXMLErrorReporter.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\WX_to_XML.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -275,10 +267,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\XML_to_STD.h"
-				>
-			</File>
 			<Filter
 				Name="wx"
 				>
@@ -356,10 +344,6 @@
 				</File>
 				<File
 					RelativePath=".\OViSEXercesXMLErrorReporter.h"
-					>
-				</File>
-				<File
-					RelativePath=".\WX_to_XML.h"
 					>
 				</File>
 			</Filter>

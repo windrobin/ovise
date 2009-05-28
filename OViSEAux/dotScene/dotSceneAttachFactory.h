@@ -1,8 +1,16 @@
+#ifndef DOTSCENEATTACHFACTORY_H_
+#define DOTSCENEATTACHFACTORY_H_
+
+// Inlcude Xerces
+#ifndef Xerxes_Used
+#define Xerxes_Used
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLFloat.hpp>
 #include <string>
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#include <hash_map>
-#else
-#include <map>
 #endif
 
 // Include Ogre
@@ -12,30 +20,38 @@
 #endif
 
 // Include dotSceneObjects
+#define dotScene_h_
+
 #ifndef dotScene_h_
 #define dotScene_h_
 #include "dotScene.h"
 #endif
 
-// Include dotSceneObjects
+// Include dotSceneReader
 #ifndef dotSceneXmlReader_h_
 #define dotSceneXmlReader_h_
 #include "dotSceneXmlReader.h"
 #endif
 
+// Include containers
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#include <hash_map>
+#else
+#include <map>
+#endif
+
+#define ATTACH_FACTORY__ALLOW_INTERPRETATION_ASSUMPTIONS
 
 namespace dotSceneAdvanced
 {
-	using namespace dotSceneObjects;
-
 	/**
-	 * Finally, this class implements a factory, which interpretes data of a dotSceneObject-structure.
-	 * Manipulators an intern management allow users to work efficently in their projects.
+	 * Finally, this class implements a factory, which interpretes data from a DOM-structure.
+	 * Manipulators and internal management allow to work flexible and efficently in any project.
 	 * FEATURES:
 	 * - complete interpretation of any scene, discribed by a dotScene-XML-document and compatible mesh- and material-files
 	 * - any scene can be placed multible time in any project - like a complex object
 	 * - names of the components are modified comprehensible
-	 * - every single node can be adressed and modified by the usual Mogre.SceneManager methods
+	 * - every single node can be adressed and modified by the usual methods of Ogre::SceneManager
 	 * Enjoy it ;-)
 	 * Written by H.R., ITEC TH Karlsruhe, Germany, 2008-2009
 	 */ 
@@ -49,7 +65,7 @@ namespace dotSceneAdvanced
 		 */
 		Ogre::String _UniqueFactoryName;
 		/// Unique name of the dotSceneAttachFactory's resource-group in the ogre-engine.
-		Ogre::String _NameOfFactoryOwnedMaterialResourceGroup;
+		Ogre::String _NameOfFactoryOwnedResourceGroup;
 
 		// Properties of general scene-output configuration
 		/**
@@ -90,11 +106,11 @@ namespace dotSceneAdvanced
 
 		// HashMaps manage to blueprints and their locations
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-		stdext::hash_map<std::string, dotScene> Scenes;
+		stdext::hash_map<std::string, xercesc::DOMDocument*> DOMScenes;
 		stdext::hash_map<std::string, std::string> LocationsOfMeshFiles;
 		stdext::hash_map<std::string, std::string> LocationsOfMaterialFiles;
 #else // Unix Libs
-		std::map<std::string, dotScene> Scenes;
+		std::map<std::string, xercesc::DOMDocument*> DOMScenes;
 		std::map<std::string, std::string> LocationsOfMeshFiles;
 		std::map<std::string, std::string> LocationsOfMaterialFiles;
 #endif
@@ -102,9 +118,17 @@ namespace dotSceneAdvanced
 		// Attributes for interpretation
 		Ogre::String _UniqueManagerName;
 		Ogre::SceneManager *Mgr;
-		Ogre::SceneNode *deliverdExternalRootNode; //<- Green List: rename to "ExternalAnchorNode"
+		Ogre::SceneNode *ExternalAnchorNode;
 
-		void recursiveNodeCreator(std::list<dotSceneNode> actualNodeList, Ogre::SceneNode* attachParentNode, std::string uniqueSceneName);
+		void v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, std::string UniqueNameOfScene);
+		void v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes);
+		void v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode);
+		void v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode);
+		void v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera);
+
+		Ogre::Vector3 v1_0_0_Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3);
+		Ogre::Vector4 v1_0_0_Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4);
+
 	public:
 		//@{
 		/**
@@ -112,8 +136,8 @@ namespace dotSceneAdvanced
 		 */
 		void set_UniqueFactoryName(Ogre::String);
 		Ogre::String get_UniqueFactoryName() const;
-		void set_NameOfFactoryOwnedMaterialResourceGroup(Ogre::String);
-		Ogre::String get_NameOfFactoryOwnedMaterialResourceGroup() const;
+		void set_NameOfFactoryOwnedResourceGroup(Ogre::String);
+		Ogre::String get_NameOfFactoryOwnedResourceGroup() const;
 		//@}
 		
 		//@{
@@ -150,7 +174,7 @@ namespace dotSceneAdvanced
 		dotSceneAttachFactory(Ogre::String UniqueFactoryName, Ogre::SceneManager* sceneMgr);
         ~dotSceneAttachFactory();
 
-        ///@name Methods to add new "dotScene"-Objects
+		///@name Methods to add new blueprint in DOM-form
         //@{
         /**
          * Use this method, to add a new scene blue print to factory, which is contained in a dotScene-object.
@@ -160,7 +184,7 @@ namespace dotSceneAdvanced
          * @param locationOfMeshFiles Location of .mesh and .material files, used in the scene.
          * @return "true", when adding the blue print was successful. Returns false, if not. For example, when uniqueSceneName is not unique.
          */
-		bool addSceneBluePrint(std::string uniqueSceneName, dotScene newScene, std::string locationOfMeshFiles); 
+		bool addSceneBluePrint(std::string uniqueSceneName, xercesc::DOMDocument* newDOMdotSceneBlueprint, std::string locationOfMeshFiles); 
 
 		//@{
 		/// region methods to attach "dotScene"-Objects
@@ -184,8 +208,10 @@ namespace dotSceneAdvanced
 		 * @param attachToNodeWithThisName Mogre.SceneNode, which should be used as zero point of origin of scene.
 		 * @return "true", when process was successful. If not, it returns "false". For example, when "uniqueSceneName" is unknown.
 		 */
-		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName); 
+		bool attachSingleDOMSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName);
 		//@}
-		//@}
+		//@}		
 	};
 }
+
+#endif /*DOTSCENEATTACHFACTORY_H_*/
