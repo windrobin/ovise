@@ -577,6 +577,46 @@ void OViSEWxFrame::OnSaveDotScene(wxCommandEvent& event)
 	mSceneHdlr->saveSceneToXML(SelectDestinationDialog.GetPath(), wxT("BaseSceneManager"), dotSceneNode, doExportMeshFiles); // TODO: extra dialog, asking "copy meshes as well"
 }
 
+void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)
+{
+	wxFileDialog pcFileDialog(this, wxT("Select pointcloud file"), wxEmptyString, wxEmptyString, wxT("*.txt"));
+	if(pcFileDialog.ShowModal() == wxID_OK)
+	{
+		wxString pcName = pcFileDialog.GetFilename();
+		pcName.Truncate(pcName.Length() - 4);
+		wxString pcEntName = pcName + wxT("Entity");
+		wxFileInputStream input(pcFileDialog.GetDirectory() + wxT("\\") + pcFileDialog.GetFilename());
+		wxTextInputStream text(input);
+		wxString line;
+		float t;
+
+		std::vector<float> pointvector;
+		int counter = 0;
+		while(!input.Eof())
+		{
+			text >> t;
+			pointvector.push_back(t);
+			counter++;
+		}
+		
+		float *pointlist = new float[counter-1];
+		for(int i = 0; i<counter-1; i++)
+		{
+			pointlist[i] = pointvector.at(i);
+		}
+
+		int numPoints = counter/3;
+
+		OViSEPointcloud *pc = new OViSEPointcloud(std::string(pcName.mb_str()), "General", numPoints, pointlist, NULL);
+
+		Ogre::SceneManager *scnMgr = OViSESceneHandling::getSingletonPtr()->getSceneManager();
+
+		Ogre::Entity *pcEnt = scnMgr->createEntity(std::string(pcEntName.mb_str()), std::string(pcName.mb_str()));
+		pcEnt->setMaterialName("Pointcloud");
+		scnMgr->getRootSceneNode()->attachObject(pcEnt);
+	}
+}
+
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 {
 	mSceneHdlr->showSceneGraphStructure();
