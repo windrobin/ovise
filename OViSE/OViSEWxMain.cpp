@@ -591,23 +591,26 @@ void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)
 		float t;
 
 		std::vector<float> pointvector;
-		int counter = 0;
+		int counter = 0, cc = 0;
 		while(!input.Eof())
 		{
 			text >> t;
 			pointvector.push_back(t);
-			counter++;
+			cc++;
+			if(cc == 3)
+			{
+				counter++;
+				cc = 0;
+			}
 		}
 		
-		float *pointlist = new float[counter-1];
-		for(int i = 0; i<counter-1; i++)
+		float *pointlist = new float[counter*3-1];
+		for(int i = 0; i<counter*3-1; i++)
 		{
 			pointlist[i] = pointvector.at(i);
 		}
 
-		int numPoints = counter/3;
-
-		OViSEPointcloud *pc = new OViSEPointcloud(std::string(pcName.mb_str()), "General", numPoints, pointlist, NULL);
+		OViSEPointcloud *pc = new OViSEPointcloud(std::string(pcName.mb_str()), "General", counter, pointlist, NULL);
 
 		Ogre::SceneManager *scnMgr = OViSESceneHandling::getSingletonPtr()->getSceneManager();
 
