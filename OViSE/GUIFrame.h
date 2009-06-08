@@ -36,9 +36,10 @@
 #define ID_DELETE_MESHES 1006
 #define ID_LOAD_DOTSCENE 1007
 #define ID_SAVE_DOTSCENE 1008
-#define ID_STARTSTOP_FRAMELISTENERS 1009
-#define idMenuAbout 1010
-#define ID_TESTSTUFF 1011
+#define ID_LOAD_POINTCLOUD 1009
+#define ID_STARTSTOP_FRAMELISTENERS 1010
+#define idMenuAbout 1011
+#define ID_TESTSTUFF 1012
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -68,6 +69,7 @@ class GUIFrame : public wxFrame
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSaveDotScene( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnLoadPointCloud( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnStartStopFrameListeners( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ){ event.Skip(); }

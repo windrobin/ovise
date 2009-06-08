@@ -65,11 +65,15 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	loadDotscene = new wxMenuItem( scene, ID_LOAD_DOTSCENE, wxString( wxT("Load dotScene") ) + wxT('\t') + wxT("ALT+L"), wxT("Load complete scene from a dotScene description"), wxITEM_NORMAL );
 	scene->Append( loadDotscene );
 	
-	scene->AppendSeparator();
-	
 	wxMenuItem* saveDotScene;
 	saveDotScene = new wxMenuItem( scene, ID_SAVE_DOTSCENE, wxString( wxT("Save dotScene") ) + wxT('\t') + wxT("ALT+S"), wxT("Save a complete scene to a dotScene describtion"), wxITEM_NORMAL );
 	scene->Append( saveDotScene );
+	
+	scene->AppendSeparator();
+	
+	wxMenuItem* loadPointcloud;
+	loadPointcloud = new wxMenuItem( scene, ID_LOAD_POINTCLOUD, wxString( wxT("Load Pointcloud") ) , wxEmptyString, wxITEM_NORMAL );
+	scene->Append( loadPointcloud );
 	
 	mbar->Append( scene, wxT("Scene") );
 	
@@ -112,6 +116,7 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Connect( deleteMeshes->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Connect( loadDotscene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
 	this->Connect( saveDotScene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSaveDotScene ) );
+	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadPointCloud ) );
 	this->Connect( startstopFramelisteners->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );
@@ -130,6 +135,7 @@ GUIFrame::~GUIFrame()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadDotScene ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSaveDotScene ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadPointCloud ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnTestStuff ) );

@@ -15,11 +15,12 @@
 #include "OViSEWxApp.h"
 
 #include <wx/aui/aui.h>
-//#include <wx/splitter.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/tokenzr.h>
 #include <wx/aboutdlg.h>
 #include <wx/treectrl.h>
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"
@@ -59,6 +60,7 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
 		virtual void OnLoadDotScene( wxCommandEvent& event);
 		virtual void OnSaveDotScene( wxCommandEvent& event );
+		virtual void OnLoadPointCloud( wxCommandEvent& event );
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
 		virtual void OnTestStuff( wxCommandEvent& event );

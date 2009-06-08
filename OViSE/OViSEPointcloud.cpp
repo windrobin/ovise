@@ -21,28 +21,34 @@ OViSEPointcloud::OViSEPointcloud(const std::string& name, const std::string& res
 	/// Upload the vertex data to the card
 	vbuf->writeData(0, vbuf->getSizeInBytes(), parray, true);
 
-	// Create 2nd buffer for colors
-	decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-	cbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
-		msh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-
-	Ogre::RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-	Ogre::RGBA *colours = new Ogre::RGBA[numpoints];
-	for(int i=0, k=0; i<numpoints*3, k<numpoints; i+=3, k++)
+	if(carray != NULL)
 	{
-		// Use render system to convert colour value since colour packing varies
-		rs->convertColourValue(Ogre::ColourValue(carray[i],carray[i+1],carray[i+2]), &colours[k]);
+		// Create 2nd buffer for colors
+		decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
+		cbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
+			msh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+
+		Ogre::RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
+		Ogre::RGBA *colours = new Ogre::RGBA[numpoints];
+		for(int i=0, k=0; i<numpoints*3, k<numpoints; i+=3, k++)
+		{
+			// Use render system to convert colour value since colour packing varies
+			rs->convertColourValue(Ogre::ColourValue(carray[i],carray[i+1],carray[i+2]), &colours[k]);
+		}
+		// Upload colour data
+		cbuf->writeData(0, cbuf->getSizeInBytes(), colours, true);
+		delete[] colours;
 	}
-	// Upload colour data
-	cbuf->writeData(0, cbuf->getSizeInBytes(), colours, true);
-	delete[] colours;
 
 	/// Set vertex buffer binding so buffer 0 is bound to our vertex buffer
 	Ogre::VertexBufferBinding* bind = msh->sharedVertexData->vertexBufferBinding; 
 	bind->setBinding(0, vbuf);
 
-	// Set colour binding so buffer 1 is bound to colour buffer
-	bind->setBinding(1, cbuf);
+	if(carray != NULL)
+	{
+		// Set colour binding so buffer 1 is bound to colour buffer
+		bind->setBinding(1, cbuf);
+	}
 
 	sub->useSharedVertices = true;
 	sub->operationType = Ogre::RenderOperation::OT_POINT_LIST;
