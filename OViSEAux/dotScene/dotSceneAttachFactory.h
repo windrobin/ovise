@@ -33,6 +33,14 @@
 #include "dotSceneXmlReader.h"
 #endif
 
+#include <wx/string.h>
+#include <wx/filename.h>
+#include <wx/hashmap.h>
+#include <wx/arrstr.h>
+
+#include "../../OViSE/OViSEUniqueNameGenerator.h"
+#include "../../OViSE/OViSEStringConverter.h"
+
 // Include containers
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #include <hash_map>
@@ -55,6 +63,7 @@ namespace dotSceneAdvanced
 	 * Enjoy it ;-)
 	 * Written by H.R., ITEC TH Karlsruhe, Germany, 2008-2009
 	 */ 
+
     class dotSceneAttachFactory
     {
 	private:
@@ -63,9 +72,9 @@ namespace dotSceneAdvanced
 		 * Unique name of a dotSceneAttachFactory. 
 		 * That's IMPORTANT, because every dotSceneAttachFactory has it's own resource-group in the ogre-engine (!).
 		 */
-		Ogre::String _UniqueFactoryName;
+		wxString mUniqueFactoryName;
 		/// Unique name of the dotSceneAttachFactory's resource-group in the ogre-engine.
-		Ogre::String _NameOfFactoryOwnedResourceGroup;
+		wxString mNameOfFactoryOwnedResourceGroup;
 
 		// Properties of general scene-output configuration
 		/**
@@ -74,14 +83,14 @@ namespace dotSceneAdvanced
 		 * The factor works as a multiplication.
 		 * Neutral value: 1.0
 		 */
-		double _ScaleOffset;
+		double mScaleOffset;
 		/**
 		 * property PositionOffset.
 		 * Factory configuration: this offset value translates the entire scene.
 		 * The factor works as a addition.
 		 * Neutral value: 0.0
 		 * */
-		Ogre::Vector3 _PositionOffset;
+		Ogre::Vector3 mPositionOffset;
 
 		/**
 		 * properties RollOfEntireScene PitchOfEntireScene and YawOfEntireScene.
@@ -91,7 +100,7 @@ namespace dotSceneAdvanced
 		 * Factory configuration: pitch-angle-offset turns the complete scene arround the y-axis.
 		 * Factory configuration: yaw-angle-offset turns the complete scene arround the z-axis.
 		 */
-		Ogre::Degree _RollOfEntireScene , _PitchOfEntireScene, _YawOfEntireScene;
+		Ogre::Degree mRollOfEntireScene , mPitchOfEntireScene, mYawOfEntireScene;
 
 		/**
 		 * property ChildOfAttachRootNode.
@@ -99,28 +108,37 @@ namespace dotSceneAdvanced
 		 * is delivered, the factory creates a child-node , which is used as scene's own
 		 * zero point of origin. So there is no change applyed to delivered Ogre::SceneNode.
 		 */
-		Ogre::SceneNode *_AttachRootNode; //<- Green List: rename to "SceneRootNode"
+		Ogre::SceneNode *mSceneRootNode; //<- Green List: rename to "SceneRootNode"
 		
 		/// Converts a node from XML to Ogre, works recursively to catch all children
 		//void convertXMLNode(XMLSceneNode *xmlNode, Ogre::SceneNode *parentNode);
 
 		// HashMaps manage to blueprints and their locations
+
+		WX_DECLARE_STRING_HASH_MAP(xercesc::DOMDocument*, HashMap_DOMDocuments);
+		WX_DECLARE_STRING_HASH_MAP(wxFileName, HashMap_FileNames);
+	
+		HashMap_DOMDocuments DOMScenes;
+		HashMap_FileNames LocationsOfMaterialFiles;
+		HashMap_FileNames LocationsOfMeshFiles;
+		/*
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-		stdext::hash_map<std::string, xercesc::DOMDocument*> DOMScenes;
-		stdext::hash_map<std::string, std::string> LocationsOfMeshFiles;
-		stdext::hash_map<std::string, std::string> LocationsOfMaterialFiles;
+		//stdext::hash_map<std::string, xercesc::DOMDocument*> DOMScenes;
+		//stdext::hash_map<std::string, std::string> LocationsOfMeshFiles;
+		//stdext::hash_map<std::string, std::string> LocationsOfMaterialFiles;
+
 #else // Unix Libs
 		std::map<std::string, xercesc::DOMDocument*> DOMScenes;
 		std::map<std::string, std::string> LocationsOfMeshFiles;
 		std::map<std::string, std::string> LocationsOfMaterialFiles;
 #endif
-
+*/
 		// Attributes for interpretation
 		Ogre::String _UniqueManagerName;
 		Ogre::SceneManager *Mgr;
-		Ogre::SceneNode *ExternalAnchorNode;
+		Ogre::SceneNode *mAnchorNode;
 
-		void v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, std::string UniqueNameOfScene);
+		void v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene);
 		void v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes);
 		void v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode);
 		void v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode);
@@ -129,15 +147,25 @@ namespace dotSceneAdvanced
 		Ogre::Vector3 v1_0_0_Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3);
 		Ogre::Vector4 v1_0_0_Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4);
 
+		// Newest implementations...
+		OViSEUniqueNameGenerator *SceneNameMgr;
+		OViSEUniqueNameGenerator *SceneNodeNameMgr, *EntityNameMgr;
+
+		dotSceneXmlReader *mReader;
+
+		wxArrayString mAvailableScenes;
+
 	public:
 		//@{
 		/**
 		 * Properties (outer part) of general factory-setting.
 		 */
-		void set_UniqueFactoryName(Ogre::String);
-		Ogre::String get_UniqueFactoryName() const;
-		void set_NameOfFactoryOwnedResourceGroup(Ogre::String);
-		Ogre::String get_NameOfFactoryOwnedResourceGroup() const;
+		void set_UniqueFactoryName(Ogre::String UniqueFactoryName);
+		void set_UniqueFactoryName(wxString UniqueFactoryName);
+		wxString get_UniqueFactoryName() const;
+		void set_UniqueNameOfFactoryOwnedResourceGroup(Ogre::String UniqueNameOfFactoryOwnedResourceGroup);
+		void set_UniqueNameOfFactoryOwnedResourceGroup(wxString UniqueNameOfFactoryOwnedResourceGroup);
+		wxString get_UniqueNameOfFactoryOwnedResourceGroup() const;
 		//@}
 		
 		//@{
@@ -158,7 +186,7 @@ namespace dotSceneAdvanced
 		//@}
 
 		/// property ChildOfAttachRootNode
-		Ogre::SceneNode* get_LastAttachRootNode() const;
+		Ogre::SceneNode* get_LastSceneRootNode() const;
 
 		///@name Factory configuration:
 		//@{ 
@@ -171,20 +199,17 @@ namespace dotSceneAdvanced
 		//@}
 
 		// Con- & Destructors
-		dotSceneAttachFactory(Ogre::String UniqueFactoryName, Ogre::SceneManager* sceneMgr);
+		dotSceneAttachFactory(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD);
         ~dotSceneAttachFactory();
 
 		///@name Methods to add new blueprint in DOM-form
         //@{
         /**
          * Use this method, to add a new scene blue print to factory, which is contained in a dotScene-object.
-         * dotScene-Objects are created in a dotSceneXmlReader-object.
-         * @param uniqueSceneName Unique name for new scene blue print. Factory uses this string as hash-key
-         * @param newScene A dotScene-object.
-         * @param locationOfMeshFiles Location of .mesh and .material files, used in the scene.
-         * @return "true", when adding the blue print was successful. Returns false, if not. For example, when uniqueSceneName is not unique.
+         * Parsed instances of these scenes are managed by an unique name, returned by this method.
+		 * @return Internal unique name of scene. If the scene can not be added, method returns an empty string.
          */
-		bool addSceneBluePrint(std::string uniqueSceneName, xercesc::DOMDocument* newDOMdotSceneBlueprint, std::string locationOfMeshFiles); 
+		wxString addSceneBluePrint(wxFileName URLofXML); 
 
 		//@{
 		/// region methods to attach "dotScene"-Objects
@@ -199,8 +224,7 @@ namespace dotSceneAdvanced
 		 * @param isBlenderImport Sets explicitly the "BlenderImport" factory configuration parameter.
 		 * @return "true", when process was successful. If not, it returns "false". For example, when "uniqueSceneName" is unknown.
 		 */
-		bool attachSingleSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName, 
-								bool doAttachNodes, bool doAttachExternals, bool doAttachEnvironment);
+		bool attachScene(wxString UniqueSceneName, wxString AttachToNodeWithThisName, bool doAttachNodes, bool doAttachExternals, bool doAttachEnvironment);
 		/**
 		 * Use this method, to deploy a scene into your ogre-world.
 		 * The scene 'll be generated form the blue print, specified by "uniqueSceneName".
@@ -208,9 +232,21 @@ namespace dotSceneAdvanced
 		 * @param attachToNodeWithThisName Mogre.SceneNode, which should be used as zero point of origin of scene.
 		 * @return "true", when process was successful. If not, it returns "false". For example, when "uniqueSceneName" is unknown.
 		 */
-		bool attachSingleDOMSceneTo(std::string uniqueSceneName, std::string attachToNodeWithThisName);
+		bool attachScene(wxString UniqueSceneName, wxString AttachToNodeWithThisName);
 		//@}
 		//@}		
+
+		wxArrayString GetAvailableScenes();
+
+		Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative); // Implicit: attach to root node
+		Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString ParentNode);
+		Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* ParentNode);
+		
+		Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, wxString AttachToThisNode);
+		Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode);
+		Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative);
+		Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString AttachToThisNode);
+		Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* AttachToThisNode);	
 	};
 }
 
