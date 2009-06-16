@@ -2,6 +2,7 @@
 
 #include <wx/image.h>
 #include <wx/bitmap.h>
+#include <wx/filename.h>
 
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
@@ -26,18 +27,20 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
-		mStandardFactory = new dotSceneAdvanced::dotSceneAttachFactory("StandardFactory", mainSceneManager);
+		wxFileName URLofDotSceneXSD = wxFileName(ToWxString("../Media/data/dotScene.xsd"));
+		URLofDotSceneXSD.MakeAbsolute(wxFileName::GetCwd());
+		mStandardFactory = new dotSceneAdvanced::dotSceneAttachFactory(ToWxString("StandardFactory"), mainSceneManager, URLofDotSceneXSD);
 	}
 }
 
-void OViSESceneHandling::createDefaultScene(std::string sceneManagerName)
+void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
-	Ogre::Entity *gridEnt = mSceneManagers["BaseSceneManager"]->createEntity("BasePlane", "Plane.mesh");
-	mSceneManagers["BaseSceneManager"]->getRootSceneNode()->attachObject(gridEnt);
+	this->mStandardFactory->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
+
 	addCOS(0.1, true, sceneManagerName);
 
-	Ogre::SceneManager *tmp = mSceneManagers[sceneManagerName];
+	Ogre::SceneManager *tmp = mSceneManagers[ToStdString(sceneManagerName)];
 	
 	// Create light
 	Ogre::Light *globalLight = tmp->createLight("GlobalLight");
@@ -283,43 +286,20 @@ void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vecto
 	}
 }
 
-void OViSESceneHandling::addCOS(float scale, bool castShadows, std::string sceneManagerName, Ogre::SceneNode *node)
+void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
 	try
 	{
-		Ogre::SceneManager* tmp = getSceneManager(sceneManagerName);
-		Ogre::Entity *xAxisEnt = tmp->createEntity("xAxis", "xAxis.mesh");
-		xAxisEnt->setCastShadows(castShadows);
-		Ogre::Entity *yAxisEnt = tmp->createEntity("yAxis", "yAxis.mesh");
-		yAxisEnt->setCastShadows(castShadows);
-		Ogre::Entity *zAxisEnt = tmp->createEntity("zAxis", "zAxis.mesh");
-		zAxisEnt->setCastShadows(castShadows);
-		int i=0;
-		std::string nodeName;
-		std::stringstream nodeStream;
-		nodeStream << "KOSNode_" << i;
-		nodeStream >> nodeName;
-		while(tmp->hasSceneNode(nodeName))
-		{
-			i += 1;
-			nodeStream.flush();
-			nodeStream << "KOSNode_" << i;
-			nodeStream >> nodeName;
-		}
-		Ogre::SceneNode *n = tmp->createSceneNode(nodeName);
-		n->setScale(scale, scale, scale);
-		n->attachObject(xAxisEnt);
-		n->attachObject(yAxisEnt);
-		n->attachObject(zAxisEnt);
-		
-		if(node == NULL)
-		{
-			tmp->getRootSceneNode()->addChild(n);
-		}
-		else
-		{
-			node->addChild(n);
-		}
+		if(node == NULL) node = this->getSceneManager(ToOgreString(sceneManagerName))->getRootSceneNode();
+
+		Ogre::SceneNode *NewSceneNode = this->mStandardFactory->attachSceneNode(ToWxString("KOSNode"), Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(scale, scale, scale), Ogre::Quaternion::IDENTITY);
+		Ogre::Entity *AxisEnt;
+		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("xAxis"), ToWxString("xAxis.mesh"), NewSceneNode);
+		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
+		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("yAxis"), ToWxString("yAxis.mesh"), NewSceneNode);
+		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
+		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("zAxis"), ToWxString("zAxis.mesh"), NewSceneNode);
+		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
 	}
 	catch (OViSEException e)
 	{
@@ -491,45 +471,17 @@ void OViSESceneHandling::startStopFrameListeners(bool on)
 
 OViSESceneHandling::~OViSESceneHandling()
 {
+	delete this->mStandardFactory;
 }
 
-void OViSESceneHandling::loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName, Ogre::SceneNode *node)
+void OViSESceneHandling::loadSceneFromXML(wxFileName FullPathOfDotScene, Ogre::SceneNode *AnchorNode)
 {
-	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
-	// Use "dotSceneXmlReader" to create dotScene...
-	dotSceneXmlReader *Reader = new dotSceneXmlReader("../Media/data/dotScene.xsd", true);
-	//Reader->parseDotSceneXML(filename);
-	//dotSceneObjects::dotScene* currScene = Reader->loadDotScene();
-
-	xercesc::DOMDocument *DOMDocument_dotScene = Reader->parseDotSceneXML(filename);
-
-	if (DOMDocument_dotScene != 0)
+	wxString UniqueNameOfNewScene = this->mStandardFactory->addSceneBluePrint(FullPathOfDotScene);
+	if (!UniqueNameOfNewScene.IsEmpty())
 	{
-
-	std::string sceneName = filename.substr(filename.find_last_of("\\")+1);
-	sceneName = sceneName.substr(0, sceneName.find_last_of("."));
-	
-	this->mStandardFactory->addSceneBluePrint(sceneName, DOMDocument_dotScene, meshDirectory);
-
-	if(node)
-		mStandardFactory->attachSingleDOMSceneTo(sceneName, node->getName());
-	else
-		mStandardFactory->attachSingleDOMSceneTo(sceneName, scnMgr->getRootSceneNode()->getName());
-
-	/*
-	// Basic setup of Factory
-	mStandardFactory->addSceneBluePrint(sceneName, *currScene, meshDirectory);
-	
-	// "attachSingleSceneTo" creates node automatically !
-	// Additional, "attachSingleSceneTo" ensures a unique name,
-	// while the name is used multible times by automatic generated variations.
-	if(node)
-		mStandardFactory->attachSingleSceneTo(sceneName, node->getName());
-	else
-		mStandardFactory->attachSingleSceneTo(sceneName, scnMgr->getRootSceneNode()->getName());
-	*/
+		if(AnchorNode) this->mStandardFactory->attachScene(UniqueNameOfNewScene, ToWxString(AnchorNode->getName())); // Use described AnchorNode
+		else this->mStandardFactory->attachScene(UniqueNameOfNewScene, ToWxString("")); // Use RootSceneNode as AnchorNode
 	}
-	delete Reader;
 }
 
 void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
@@ -584,4 +536,9 @@ void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManager
 
 
 	DebugOutput.close();*/	
+}
+
+void OViSESceneHandling::release()
+{
+	delete OViSESceneHandling::getSingletonPtr();
 }

@@ -67,7 +67,7 @@ public:
 	/** Creates a default scene consisting of a light and a grid.
 	 * @param sceneManagerName Name of the scenemanager where the default scene contents should be added
 	 */
-	void createDefaultScene(std::string sceneManagerName = "BaseSceneManager");
+	void createDefaultScene(wxString sceneManagerName = wxT("BaseSceneManager"));
 
 	/** Adds a new scenemanager to the list.
 	 * Creates a new scenemanager with the given name and adds it to the accessible list of scenemanagers.
@@ -129,7 +129,7 @@ public:
 	 * If the node is NULL, then a new scene node will be created as a child of the root scene node.
 	 * @TODO Implement this.
 	 */
-	void loadSceneFromXML(std::string filename, std::string meshDirectory, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node = NULL);
+	void loadSceneFromXML(wxFileName FileName, Ogre::SceneNode *AnchorNode = NULL);
 	
 	/** Saves a complete scene from a dotSceneXML.
 	 * This method creates (or overwrites an existing) dotScene-XML-file and, if asked, copys all necessary meshes into the same folder.
@@ -172,7 +172,7 @@ public:
 	 * @param sceneManagerName scenemanager the coordinate system will be added to.
 	 * @param node Defines the SceneNode the coordinate system shall be attached to. Defaults to the root node.
 	 */
-	void addCOS(float scale = 1.0, bool castShadows=false, std::string sceneManagerName = "BaseSceneManager", Ogre::SceneNode *node=NULL);
+	void addCOS(float scale = 1.0, bool castShadows=false, wxString sceneManagerName = wxT("BaseSceneManager"), Ogre::SceneNode *node=NULL);
 
 	/** Updates the object titles in the internal map.
 	 */
@@ -189,6 +189,9 @@ public:
 
 	/// test function of H.R.
 	void HRTest();
+
+	/// Destruktor-call...
+	static void release();
 
 protected:
 	OViSESceneHandling();

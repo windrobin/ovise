@@ -193,6 +193,8 @@ void OViSEWxFrame::OnClose(wxCloseEvent &event)
 		(*i).second->Close();
 	}
     Destroy();
+
+	OViSESceneHandling::release();
 }
 
 void OViSEWxFrame::OnQuit(wxCommandEvent &event)
@@ -202,6 +204,8 @@ void OViSEWxFrame::OnQuit(wxCommandEvent &event)
 		(*i).second->Close();
 	}
     Destroy();
+
+	OViSESceneHandling::release();
 }
 
 void OViSEWxFrame::OnAbout(wxCommandEvent &event)
@@ -545,19 +549,10 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	if(ret == wxID_CANCEL)
 		return;
 
-	std::string sFullpath(fd.GetPath().ToAscii());
-	std::string::size_type a, b;
-	a = sFullpath.find_last_of("\\")+1;
-	b = sFullpath.find_last_of(".");
-	std::string sName(sFullpath.substr(a, b-a));
-
-#ifdef _WIN32
-	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("\\")+1);
-#else
-	std::string sPath = sFullpath.substr(0, sFullpath.find_last_of("/"));
-#endif
-	Ogre::SceneNode *dotSceneNode = mSceneHdlr->getSceneManager()->getRootSceneNode()->createChildSceneNode(sName);
-	mSceneHdlr->loadSceneFromXML(sFullpath, sPath, "BaseSceneManager", dotSceneNode);
+	// TODO: Later use a selected node. Acually the sceneroot is used.
+	// If that SceneNode-param is not used, it's NULL. That 'll be interpreted as srootscenenode of default-scenemanager.
+	/// mSceneHdlr->loadSceneFromXML(fd.GetPath()), *** SOME ANCHOR NODE ***;
+	mSceneHdlr->loadSceneFromXML(wxFileName(fd.GetPath()));
 }
 
 void OViSEWxFrame::OnSaveDotScene(wxCommandEvent& event)
