@@ -257,6 +257,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSEStringConverter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEUniqueNameGenerator.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSEXercesXMLErrorReporter.cpp"
 					>
 				</File>
@@ -340,6 +348,14 @@
 				</File>
 				<File
 					RelativePath=".\OViSEPathProvider.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEStringConverter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEUniqueNameGenerator.h"
 					>
 				</File>
 				<File
