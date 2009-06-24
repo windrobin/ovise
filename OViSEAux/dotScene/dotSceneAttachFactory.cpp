@@ -127,7 +127,7 @@ dotSceneAdvanced::dotSceneAttachFactory::dotSceneAttachFactory(wxString UniqueFa
 	this->EntityNameMgr = new OViSEUniqueNameGenerator(ToWxString("Entity"));
 
 	// TODO: DbgMode == true ?!?!?! check that!
-	this->mReader = new dotSceneXmlReader(ToStdString(URLofDotSceneXSD.GetFullPath()), true);
+	this->mReader = new dotSceneXmlReader(URLofDotSceneXSD.GetFullPath());
 }
 dotSceneAdvanced::dotSceneAttachFactory::~dotSceneAttachFactory()
 {
@@ -156,7 +156,7 @@ wxString dotSceneAdvanced::dotSceneAttachFactory::addSceneBluePrint(wxFileName U
 	else
 	{
 		wxString UniqueSceneName = this->SceneNameMgr->AllocateUniqueName(URLofXML.GetName());
-		xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mReader->parseDotSceneXML(ToStdString(URLofXML.GetFullPath()));
+		xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mReader->ParseDotSceneXML(URLofXML.GetFullPath());
 
 		// Add new objects to all hashtables with same key
 		// IMPLICIT: Expexting ".material"-files always (!) at location of ".mesh"-files.

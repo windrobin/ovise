@@ -5,25 +5,24 @@
  * *********** Implementierung dotSceneXMLReader ********************
  */
 
-dotSceneXmlReader::dotSceneXmlReader(std::string URLofDotSceneXSD, bool DbgMode)
+dotSceneXmlReader::dotSceneXmlReader(wxString URLofDotSceneXSD)
 {
 	this->mURLofDotSceneXSD = URLofDotSceneXSD;
-	this->mDebugMode = DbgMode;
 	
-	std::string ParsingMsg;
+	wxString ParsingMsg;
 
 	try
 	{
 		XMLPlatformUtils::Initialize();
-		ParsingMsg = "XERCES: *** Initialised ***";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: *** Initialised ***");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
 	}
-	catch (const XMLException& toCatch) 
+	catch (const XMLException& e) 
 	{
-        char* message = XMLString::transcode(toCatch.getMessage());
-        ParsingMsg = "XERCES: Exception message is: " + (string)message;
-        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        XMLString::release(&message);
+		ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
     }
 }
 
@@ -32,92 +31,110 @@ dotSceneXmlReader::~dotSceneXmlReader()
 	delete mParser;
     delete mErrHandler;
 
-	std::string ParsingMsg;
+	wxString ParsingMsg;
 
     try
    	{
-    	XMLPlatformUtils::Terminate();  // Terminate Xerces
-		ParsingMsg = "XERCES: *** Terminated ***";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
+		// Terminate Xerces
+    	XMLPlatformUtils::Terminate();  
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: *** Terminated ***");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
    	}
    	catch( xercesc::XMLException& e )
    	{
-		char* message = xercesc::XMLString::transcode( e.getMessage() );
-		ParsingMsg = "Xerces: " + (string)message;
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg.c_str(), Ogre::LML_CRITICAL);
-		XMLString::release( &message );
-	}	   
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.getMessage());
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+	}
 }
 
-xercesc::DOMDocument* dotSceneXmlReader::parseDotSceneXML(string URLofXML)
+xercesc::DOMDocument* dotSceneXmlReader::ParseDotSceneXML(wxString URLofXML)
 {
 	// Setup XML-parser
 	mParser = new XercesDOMParser();
     mParser->setValidationScheme(XercesDOMParser::Val_Always);    
     mParser->setDoNamespaces(true); 
 	mParser->setDoSchema(true); // <- important, when a .XSD is used!!!
-    mParser->setExternalNoNamespaceSchemaLocation(mURLofDotSceneXSD.c_str());
+    mParser->setExternalNoNamespaceSchemaLocation(ToXMLString(mURLofDotSceneXSD));
 
 	// OViSEXercesXMLErrorReporter inherits from "xercesc::ErrorHandler"
 	// and redirects parsing-errors into Ogre::LogManager
 	mErrHandler = (xercesc::ErrorHandler*) new OViSEXercesXMLErrorReporter();
 	mParser->setErrorHandler(mErrHandler);
 
-	std::string ParsingMsg;
+	wxString ParsingMsg;
 
     try 
     {
-		ParsingMsg = "XERCES: Parsing file \"" + URLofXML + "\"";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
-        mParser->parse(URLofXML.c_str());
-		ParsingMsg = "XERCES: Done!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_NORMAL);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Parsing file \"") << URLofXML + ToWxString("\"");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
+
+        mParser->parse(ToXMLString(URLofXML));
+
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Done!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
     }
-    catch (const XMLException& toCatch) 
+    catch (const XMLException& e) 
     {
-		ParsingMsg = "XERCES: Failed!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        char* message = XMLString::transcode(toCatch.getMessage());
-        ParsingMsg = "XERCES: Exception message is: " + (string)message;
-        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        XMLString::release(&message);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+		ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
         return false;
     }
-    catch (const DOMException& toCatch) 
+    catch (const DOMException& e) 
     {
-		ParsingMsg = "XERCES: Failed!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-		char* message = XMLString::transcode(toCatch.getMessage());
-        ParsingMsg = "XERCES: Exception message is: " + (string)message;
-        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        XMLString::release(&message);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
         return false;
     }
-	catch (const SAXException& toCatch) 
+	catch (const SAXException& e) 
     {
-		ParsingMsg = "XERCES: Failed!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        char* message = XMLString::transcode(toCatch.getMessage());
-        ParsingMsg = "XERCES: Exception message is: " + (string)message;
-        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-        XMLString::release(&message);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
         return false;
     }
 	catch (std::exception e) 
     {
-		ParsingMsg = "XERCES: Failed!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-		const char* message = e.what();
-		ParsingMsg = "XERCES: Exception message is: " + (string)message;
-        Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Exception message is: ") << ToWxString(e.what());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
         return false;
     }
     catch (...) 
     {
-		ParsingMsg = "XERCES: Failed!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
-		ParsingMsg = "XERCES: Unexpected Exception!";
-		Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("XERCES: Failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("XERCES: Unexpected Exception!");
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
         return false;
     }
     

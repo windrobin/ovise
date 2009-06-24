@@ -1,11 +1,12 @@
 #ifndef DOTSCENEXMLWRITER_H_
 #define DOTSCENEXMLWRITER_H_
 
+#include <wx/string.h>
 #include <wx/filename.h>
 #include <wx/filefn.h>
 #include <wx/arrstr.h>
 #include <wx/hashmap.h>
-#include "../../OViSE/OViSEPathProvider.h"
+#include "../../OViSE/OViSEStringConverter.h"
 
 // Include Xerces
 #ifndef Xerxes_Used
@@ -55,20 +56,17 @@ private:
 	DOMDocumentType* mDocType;
 	::DOMDocument* mDocument;
 
-	OViSEPathProvider* mPathProvider;
-
-	wxFileName mDotSceneXsd;
+	wxFileName mURLofExportPath;
+	wxFileName mURLofXSD;
 	
 	wxArrayString mCopyThisMeshFiles;
 	std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
-
-	std::fstream Testausgabe;
 
 	//void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
 	void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);
 
 public:
-	dotSceneXmlWriter(OViSEPathProvider* PathProvider);
+	dotSceneXmlWriter(wxString URLofDotSceneXSD, wxString URLofExportPath);
 	~dotSceneXmlWriter(void);
 
 	bool IsValid();
