@@ -487,12 +487,13 @@ void OViSESceneHandling::loadSceneFromXML(wxFileName FullPathOfDotScene, Ogre::S
 void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
 	// Pre-operations...
-	OViSEPathProvider* PathProvider = new OViSEPathProvider("Z:/OViSE Checkout Base", "/");
 	wxFileName FullFileName(filename);
-	PathProvider->setPath_SceneExportDirectory(FullFileName.GetPath());
 
 	// Create dotSceneXmlWriter...
-	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(PathProvider); //TODO: PathProvider as member... or later a general wxconfig!
+	wxFileName URLofDotSceneXSD = wxFileName(ToWxString("../Media/data/dotScene.xsd"));
+	URLofDotSceneXSD.MakeAbsolute(wxFileName::GetCwd());
+
+	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(URLofDotSceneXSD.GetFullPath(), FullFileName.GetPath()); 
 	Ogre::SceneManager *scnMgr = mSceneManagers[(std::string) sceneManagerName.mb_str()];
 	
 	/* Export depending on selection */

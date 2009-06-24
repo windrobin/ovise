@@ -172,6 +172,10 @@
 				RelativePath="..\OViSE\OViSEException.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\OViSEXmlManager.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -192,6 +196,10 @@
 			</File>
 			<File
 				RelativePath="..\OViSE\OViSEException.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEXmlManager.h"
 				>
 			</File>
 		</Filter>
