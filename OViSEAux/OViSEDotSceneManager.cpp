@@ -1,95 +1,4 @@
-#include "dotSceneAttachFactory.h"
-
-// TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
-
-// Properies (outer part) of general factory-setting
-void dotSceneAttachFactory::set_UniqueFactoryName(Ogre::String UniqueFactoryName)
-{
-	this->mUniqueFactoryName = ToWxString(UniqueFactoryName);
-}
-
-void dotSceneAttachFactory::set_UniqueFactoryName(wxString UniqueFactoryName)
-{
-	this->mUniqueFactoryName = UniqueFactoryName;
-}
-
-wxString dotSceneAttachFactory::get_UniqueFactoryName() const
-{
-	return this->mUniqueFactoryName;
-}
-
-void dotSceneAttachFactory::set_UniqueNameOfFactoryOwnedResourceGroup(Ogre::String UniqueNameOfFactoryOwnedResourceGroup)
-{
-	this->mNameOfFactoryOwnedResourceGroup = ToWxString(UniqueNameOfFactoryOwnedResourceGroup); 
-}	
-
-void dotSceneAttachFactory::set_UniqueNameOfFactoryOwnedResourceGroup(wxString UniqueNameOfFactoryOwnedResourceGroup)
-{
-	this->mNameOfFactoryOwnedResourceGroup = UniqueNameOfFactoryOwnedResourceGroup; 
-}
-
-wxString dotSceneAttachFactory::get_UniqueNameOfFactoryOwnedResourceGroup() const
-{ 
-	return this->mNameOfFactoryOwnedResourceGroup; 
-}
-
-// Properties of general scene-output configuration
-double dotSceneAttachFactory::get_ScaleOffset() const 
-{ 
-	return this->mScaleOffset; 
-}
-
-void dotSceneAttachFactory::set_ScaleOffset(double ScaleOffset) 
-{
-	this->mScaleOffset = ScaleOffset;
-} 
-
-Ogre::Vector3 dotSceneAttachFactory::get_PositionOffset() const 
-{
-	return this->mPositionOffset; 
-}
-
-void dotSceneAttachFactory::set_PositionOffset(Ogre::Vector3 PositionOffset)
-{
-	this->mPositionOffset = PositionOffset;
-}
-
-// properties RollOfEntireScene, PitchOfEntireScene and YawOfEntireScene
-void dotSceneAttachFactory::set_RollOfEntireScene(Ogre::Degree value) 
-{
-	this->mRollOfEntireScene = value; 
-}
-
-Ogre::Degree dotSceneAttachFactory::get_RollOfEntireScene() const
-{
-	return this->mRollOfEntireScene; 
-}
-
-void dotSceneAttachFactory::set_PitchOfEntireScene(Ogre::Degree value) 
-{ 
-	this->mPitchOfEntireScene = value; 
-}
-
-Ogre::Degree dotSceneAttachFactory::get_PitchOfEntireScene() const
-{
-	return this->mPitchOfEntireScene; 
-}
-
-void dotSceneAttachFactory::set_YawOfEntireScene(Ogre::Degree value) 
-{
-	this->mYawOfEntireScene = value; 
-}
-
-Ogre::Degree dotSceneAttachFactory::get_YawOfEntireScene() const
-{
-	return this->mYawOfEntireScene; 
-}
-
-// property ChildOfAttachRootNode
-Ogre::SceneNode* dotSceneAttachFactory::get_LastSceneRootNode() const  
-{
-	return this->mSceneRootNode; 
-}
+#include "OViSEDotSceneManager.h"
 
 // Con- & Destructors
 // Constructor for dotSceneAttachFactory.
@@ -99,7 +8,7 @@ Ogre::SceneNode* dotSceneAttachFactory::get_LastSceneRootNode() const
 // RollOfEntireScene = PitchOfEntireScene = YawOfEntireScene = 0.0
 // <param name="uniqueFactoryName">Unique name of the factoy-instance. That's essencial, because a resource-group in ogre engine 'll be allocaeted with this name.</param>
 // <param name="attachToThisManager">Mogre.SceneManager, which this factroy should belong to.</param>
-dotSceneAttachFactory::dotSceneAttachFactory(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD, wxFileName ExportPath)
+OViSEDotSceneManager::OViSEDotSceneManager(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD, wxFileName ExportPath)
 {
 	// Newest (not ready) implementations...
 	this->mExportPath = wxFileName(ExportPath.GetPath());
@@ -133,7 +42,7 @@ dotSceneAttachFactory::dotSceneAttachFactory(wxString UniqueFactoryName, Ogre::S
 
 	this->mXmlMgr = new OViSEXmlManager(URLofDotSceneXSD.GetFullPath(), this->mExportPath.GetPath());
 }
-dotSceneAttachFactory::~dotSceneAttachFactory()
+OViSEDotSceneManager::~OViSEDotSceneManager()
 {
 	delete this->EntityNameMgr;
 	delete this->SceneNodeNameMgr;
@@ -154,7 +63,100 @@ dotSceneAttachFactory::~dotSceneAttachFactory()
 	delete this->mXmlMgr;
 }
 
-wxString dotSceneAttachFactory::addSceneBluePrint(wxFileName URLofXML)
+// TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
+
+// Properies (outer part) of general factory-setting
+void OViSEDotSceneManager::set_UniqueFactoryName(Ogre::String UniqueFactoryName)
+{
+	this->mUniqueFactoryName = ToWxString(UniqueFactoryName);
+}
+
+void OViSEDotSceneManager::set_UniqueFactoryName(wxString UniqueFactoryName)
+{
+	this->mUniqueFactoryName = UniqueFactoryName;
+}
+
+wxString OViSEDotSceneManager::get_UniqueFactoryName() const
+{
+	return this->mUniqueFactoryName;
+}
+
+void OViSEDotSceneManager::set_UniqueNameOfFactoryOwnedResourceGroup(Ogre::String UniqueNameOfFactoryOwnedResourceGroup)
+{
+	this->mNameOfFactoryOwnedResourceGroup = ToWxString(UniqueNameOfFactoryOwnedResourceGroup); 
+}	
+
+void OViSEDotSceneManager::set_UniqueNameOfFactoryOwnedResourceGroup(wxString UniqueNameOfFactoryOwnedResourceGroup)
+{
+	this->mNameOfFactoryOwnedResourceGroup = UniqueNameOfFactoryOwnedResourceGroup; 
+}
+
+wxString OViSEDotSceneManager::get_UniqueNameOfFactoryOwnedResourceGroup() const
+{ 
+	return this->mNameOfFactoryOwnedResourceGroup; 
+}
+
+// Properties of general scene-output configuration
+double OViSEDotSceneManager::get_ScaleOffset() const 
+{ 
+	return this->mScaleOffset; 
+}
+
+void OViSEDotSceneManager::set_ScaleOffset(double ScaleOffset) 
+{
+	this->mScaleOffset = ScaleOffset;
+} 
+
+Ogre::Vector3 OViSEDotSceneManager::get_PositionOffset() const 
+{
+	return this->mPositionOffset; 
+}
+
+void OViSEDotSceneManager::set_PositionOffset(Ogre::Vector3 PositionOffset)
+{
+	this->mPositionOffset = PositionOffset;
+}
+
+// properties RollOfEntireScene, PitchOfEntireScene and YawOfEntireScene
+void OViSEDotSceneManager::set_RollOfEntireScene(Ogre::Degree value) 
+{
+	this->mRollOfEntireScene = value; 
+}
+
+Ogre::Degree OViSEDotSceneManager::get_RollOfEntireScene() const
+{
+	return this->mRollOfEntireScene; 
+}
+
+void OViSEDotSceneManager::set_PitchOfEntireScene(Ogre::Degree value) 
+{ 
+	this->mPitchOfEntireScene = value; 
+}
+
+Ogre::Degree OViSEDotSceneManager::get_PitchOfEntireScene() const
+{
+	return this->mPitchOfEntireScene; 
+}
+
+void OViSEDotSceneManager::set_YawOfEntireScene(Ogre::Degree value) 
+{
+	this->mYawOfEntireScene = value; 
+}
+
+Ogre::Degree OViSEDotSceneManager::get_YawOfEntireScene() const
+{
+	return this->mYawOfEntireScene; 
+}
+
+// property ChildOfAttachRootNode
+Ogre::SceneNode* OViSEDotSceneManager::get_LastSceneRootNode() const  
+{
+	return this->mSceneRootNode; 
+}
+
+
+
+wxString OViSEDotSceneManager::addSceneBluePrint(wxFileName URLofXML)
 {
 	if (!URLofXML.FileExists()) return wxString();
 	else
@@ -176,7 +178,7 @@ wxString dotSceneAttachFactory::addSceneBluePrint(wxFileName URLofXML)
 
 /// * * * * * * * * * When XML-interpreter was changed, you have to adapt this method. * * * * * * * * * 
 // region methods to attach "dotScene"-Objects
-bool dotSceneAttachFactory::attachScene(	wxString UniqueSceneName,
+bool OViSEDotSceneManager::attachScene(	wxString UniqueSceneName,
 															wxString AttachToNodeWithThisName,
 															bool doAttachNodes,
 															bool doAttachExternals,
@@ -190,7 +192,7 @@ bool dotSceneAttachFactory::attachScene(	wxString UniqueSceneName,
 }
 
 /*
-bool dotSceneAttachFactory::attachSingleSceneTo(	std::string uniqueSceneName,
+bool OViSEDotSceneManager::attachSingleSceneTo(	std::string uniqueSceneName,
 																	std::string attachToNodeWithThisName)
 {
 	// Save time, if list ist empty...
@@ -344,7 +346,7 @@ bool dotSceneAttachFactory::attachSingleSceneTo(	std::string uniqueSceneName,
 }
 */
 
-bool dotSceneAttachFactory::attachScene(	wxString UniqueSceneName,
+bool OViSEDotSceneManager::attachScene(	wxString UniqueSceneName,
 															wxString AnchorNodeName)
 {
 	wxString LogMsg, dotSceneVersionString;
@@ -561,7 +563,7 @@ bool dotSceneAttachFactory::attachScene(	wxString UniqueSceneName,
 /* IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
    IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
    IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE! IMPORTANT! DO NOT DELETE! KNOWHOW INSIDE!
-void dotSceneAttachFactory::recursiveNodeCreator(	std::list<dotSceneNode> actualNodeList,
+void OViSEDotSceneManager::recursiveNodeCreator(	std::list<dotSceneNode> actualNodeList,
 																	Ogre::SceneNode* attachParentNode,
 																	std::string uniqueSceneName)
 {	
@@ -1401,7 +1403,7 @@ void main(void)
 }*/
 
 
-void dotSceneAttachFactory::v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene)
+void OViSEDotSceneManager::v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene)
 {
 	xercesc::DOMNodeList *ItemElements = 0, *FileElements = 0;
 	xercesc::DOMElement *DOMElement_item = 0;
@@ -1438,7 +1440,7 @@ void dotSceneAttachFactory::v1_0_0_Interpretation_Externals(xercesc::DOMElement*
 	}
 }
 
-void dotSceneAttachFactory::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
+void OViSEDotSceneManager::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
 {
 	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
 	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
@@ -1489,7 +1491,7 @@ void dotSceneAttachFactory::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOM
 	this->mSceneRootNode->setVisible(Visible, CascadeVisibility);
 }
 
-void dotSceneAttachFactory::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
+void OViSEDotSceneManager::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
 {
 	/*
 	Ogre::Camera test;
@@ -1541,7 +1543,7 @@ void dotSceneAttachFactory::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DO
 	*/
 }
 
-void dotSceneAttachFactory::v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode)
+void OViSEDotSceneManager::v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode)
 {
 	wxString LogMsg;
 
@@ -1670,7 +1672,7 @@ void dotSceneAttachFactory::v1_0_0_Interpretation_Node(xercesc::DOMElement* DOME
 	// TODO
 }
 
-void dotSceneAttachFactory::v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode)
+void OViSEDotSceneManager::v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode)
 {
 	wxString LogMsg;
 
@@ -1757,7 +1759,7 @@ void dotSceneAttachFactory::v1_0_0_Interpretation_Entity(xercesc::DOMElement* DO
 }
 
 
-Ogre::Vector3 dotSceneAttachFactory::v1_0_0_Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
+Ogre::Vector3 OViSEDotSceneManager::v1_0_0_Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector3 * * * * * * * * *
 	// STEP 1: Create all possible attributes...
@@ -1780,7 +1782,7 @@ Ogre::Vector3 dotSceneAttachFactory::v1_0_0_Interpretation_Vector3(xercesc::DOME
 	return Ogre::Vector3(fX, fY, fZ);
 }
 
-Ogre::Vector4 dotSceneAttachFactory::v1_0_0_Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4)
+Ogre::Vector4 OViSEDotSceneManager::v1_0_0_Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector4 * * * * * * * * *
 	// STEP 1: Create all possible attributes...
@@ -1806,14 +1808,14 @@ Ogre::Vector4 dotSceneAttachFactory::v1_0_0_Interpretation_Vector4(xercesc::DOME
 	return Ogre::Vector4(fX, fY, fZ, fW);
 }
 
-wxArrayString dotSceneAttachFactory::GetAvailableScenes() { return this->mAvailableScenes; }
-Ogre::SceneNode* dotSceneAttachFactory::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative)
+wxArrayString OViSEDotSceneManager::GetAvailableScenes() { return this->mAvailableScenes; }
+Ogre::SceneNode* OViSEDotSceneManager::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative)
 {
 	if (NotUniqueName.IsEmpty()) return 0;
 
 	return this->attachSceneNode(NotUniqueName, Translation_Relative, Scale_Relative, Rotation_Relative, this->Mgr->getRootSceneNode());
 }
-Ogre::SceneNode* dotSceneAttachFactory::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString ParentNode)
+Ogre::SceneNode* OViSEDotSceneManager::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString ParentNode)
 {
 	if (NotUniqueName.IsEmpty()) return 0;
 	if (ParentNode.IsEmpty())
@@ -1822,7 +1824,7 @@ Ogre::SceneNode* dotSceneAttachFactory::attachSceneNode(wxString NotUniqueName, 
 		return this->attachSceneNode(NotUniqueName, Translation_Relative, Scale_Relative, Rotation_Relative, this->Mgr->getSceneNode(ToOgreString(ParentNode)));
 }
 
-Ogre::SceneNode* dotSceneAttachFactory::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* ParentNode)
+Ogre::SceneNode* OViSEDotSceneManager::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* ParentNode)
 {
 	if (NotUniqueName.IsEmpty()) return 0;
 	if (ParentNode == 0) return 0;
@@ -1838,7 +1840,7 @@ Ogre::SceneNode* dotSceneAttachFactory::attachSceneNode(wxString NotUniqueName, 
 	return NewSceneNode;
 }
 
-Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
 {
 	if (NotUniqueEntityName.IsEmpty()) return 0;
 
@@ -1855,14 +1857,14 @@ Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, 
 	return NewEntity;
 }
 
-Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, wxString AttachToThisNode)
+Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, wxString AttachToThisNode)
 {
 	if (NotUniqueEntityName.IsEmpty()) return 0;
 
 	return this->attachEntity(NotUniqueEntityName, MeshFile, this->Mgr->getSceneNode(ToOgreString(AttachToThisNode)));
 }
 
-Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative)
+Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative)
 {
 	if (NotUniqueEntityName.IsEmpty()) return 0;
 
@@ -1870,7 +1872,7 @@ Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, 
 	return this->attachEntity(NotUniqueEntityName, MeshFile, this->attachSceneNode(NotUniqueEntityName, Translation_Relative, Scale_Relative, Rotation_Relative));
 }
 
-Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString AttachToThisNode)
+Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString AttachToThisNode)
 {
 	if (NotUniqueEntityName.IsEmpty()) return 0;
 
@@ -1878,7 +1880,7 @@ Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, 
 	return this->attachEntity(NotUniqueEntityName, MeshFile, this->attachSceneNode(NotUniqueEntityName, Translation_Relative, Scale_Relative, Rotation_Relative, AttachToThisNode));
 }
 
-Ogre::Entity* dotSceneAttachFactory::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* AttachToThisNode)
+Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* AttachToThisNode)
 {
 	if (NotUniqueEntityName.IsEmpty()) return 0;
 

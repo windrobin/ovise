@@ -1,34 +1,28 @@
 #ifndef OVISE_XERCES_XML_ERRORREPORTER_H_
 #define OVISE_XERCES_XML_ERRORREPORTER_H_
 
-// Include Xerces
-#ifndef Xerxes_Used
-#define Xerxes_Used
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/sax/HandlerBase.hpp>
-#include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <string>
-
-XERCES_CPP_NAMESPACE_USE
-
-#endif
-
-// Include Ogre (for logging)
+// Include Ogre
 #ifndef Ogre_h_
 #define Ogre_h_
 #include "Ogre.h"
 #endif
 
-
-#ifdef XERCES_NEW_IOSTREAMS
-#include <iostream>
-#else
-#include <iostream.h>
+// Include Xerces
+#ifndef XERCESC_UTIL_XMLSTRING_USED
+#define XERCESC_UTIL_XMLSTRING_USED
+#include <xercesc/util/XMLString.hpp>
 #endif
 
+#ifndef XERCESC_SAX_HANDLERBASE_USED
+#define XERCESC_SAX_HANDLERBASE_USED
+#include <xercesc/sax/HandlerBase.hpp>
+#endif
 
+// Include STD
+#ifndef STD_STING_USED
+#define STD_STING_USED
+#include <string>
+#endif
 
 class OViSEXercesXMLErrorReporter : xercesc::ErrorHandler
 {

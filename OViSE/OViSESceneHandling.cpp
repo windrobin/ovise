@@ -1,9 +1,5 @@
 #include "OViSESceneHandling.h"
 
-#include <wx/image.h>
-#include <wx/bitmap.h>
-#include <wx/filename.h>
-
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
 OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
@@ -29,14 +25,17 @@ OViSESceneHandling::OViSESceneHandling()
 		
 		wxFileName URLofDotSceneXSD = wxFileName(ToWxString("../Media/data/dotScene.xsd"));
 		URLofDotSceneXSD.MakeAbsolute(wxFileName::GetCwd());
-		mStandardFactory = new dotSceneAdvanced::dotSceneAttachFactory(ToWxString("StandardFactory"), mainSceneManager, URLofDotSceneXSD);
+		wxFileName URLofExportPath = wxFileName(ToWxString("../Media/SceneExport/"));
+		URLofExportPath.MakeAbsolute(wxFileName::GetCwd());
+
+		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager, URLofDotSceneXSD, URLofExportPath);
 	}
 }
 
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
-	this->mStandardFactory->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
+	this->mDotSceneMgr->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
 
 	addCOS(0.1, true, sceneManagerName);
 
@@ -292,13 +291,13 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneMan
 	{
 		if(node == NULL) node = this->getSceneManager(ToOgreString(sceneManagerName))->getRootSceneNode();
 
-		Ogre::SceneNode *NewSceneNode = this->mStandardFactory->attachSceneNode(ToWxString("KOSNode"), Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(scale, scale, scale), Ogre::Quaternion::IDENTITY);
+		Ogre::SceneNode *NewSceneNode = this->mDotSceneMgr->attachSceneNode(ToWxString("KOSNode"), Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(scale, scale, scale), Ogre::Quaternion::IDENTITY);
 		Ogre::Entity *AxisEnt;
-		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("xAxis"), ToWxString("xAxis.mesh"), NewSceneNode);
+		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("xAxis"), ToWxString("xAxis.mesh"), NewSceneNode);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
-		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("yAxis"), ToWxString("yAxis.mesh"), NewSceneNode);
+		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("yAxis"), ToWxString("yAxis.mesh"), NewSceneNode);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
-		AxisEnt = this->mStandardFactory->attachEntity(ToWxString("zAxis"), ToWxString("zAxis.mesh"), NewSceneNode);
+		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("zAxis"), ToWxString("zAxis.mesh"), NewSceneNode);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
 	}
 	catch (OViSEException e)
@@ -471,16 +470,16 @@ void OViSESceneHandling::startStopFrameListeners(bool on)
 
 OViSESceneHandling::~OViSESceneHandling()
 {
-	delete this->mStandardFactory;
+	delete this->mDotSceneMgr;
 }
 
 void OViSESceneHandling::loadSceneFromXML(wxFileName FullPathOfDotScene, Ogre::SceneNode *AnchorNode)
 {
-	wxString UniqueNameOfNewScene = this->mStandardFactory->addSceneBluePrint(FullPathOfDotScene);
+	wxString UniqueNameOfNewScene = this->mDotSceneMgr->addSceneBluePrint(FullPathOfDotScene);
 	if (!UniqueNameOfNewScene.IsEmpty())
 	{
-		if(AnchorNode) this->mStandardFactory->attachScene(UniqueNameOfNewScene, ToWxString(AnchorNode->getName())); // Use described AnchorNode
-		else this->mStandardFactory->attachScene(UniqueNameOfNewScene, ToWxString("")); // Use RootSceneNode as AnchorNode
+		if(AnchorNode) this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString(AnchorNode->getName())); // Use described AnchorNode
+		else this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString("")); // Use RootSceneNode as AnchorNode
 	}
 }
 
@@ -499,6 +498,7 @@ void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManager
 	/* Export depending on selection */
 	if (this->hasSelectedObjects())
 	{
+		//this->mDotSceneMgr->
 		xmlWriter->copyOgreSceneToDOM(scnMgr, this->getSelectedObjects(), true);
 	}
 	else

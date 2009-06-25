@@ -63,7 +63,7 @@ private:
 	std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
 
 	//void recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOMElement* ActualDOMParent);
-	void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);
+	void recursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);
 
 public:
 	dotSceneXmlWriter(wxString URLofDotSceneXSD, wxString URLofExportPath);

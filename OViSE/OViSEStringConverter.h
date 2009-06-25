@@ -1,9 +1,23 @@
 #ifndef OVISE_STRING_CONVERTER_H_
 #define OVISE_STRING_CONVERTER_H_
 
-#include <wx/string.h>
+// Include Xerces
+#ifndef XERCESC_UTIL_XMLSTRING_USED
+#define XERCESC_UTIL_XMLSTRING_USED
 #include <xercesc/util/XMLString.hpp>
+#endif
+
+// Include WX
+#ifndef WX_STRING_USED
+#define WX_STRING_USED
+#include <wx/string.h>
+#endif
+
+// Include STD
+#ifndef STD_STING_USED
+#define STD_STING_USED
 #include <string>
+#endif
 
 class OViSEStringConverter
 {

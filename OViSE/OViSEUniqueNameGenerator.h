@@ -1,10 +1,16 @@
 #ifndef OVISE_UNIQUE_NAME_GENERATOR_H_
 #define OVISE_UNIQUE_NAME_GENERATOR_H_
 
-#include <wx/filename.h>
-#include <wx/filefn.h>
-#include <wx/arrstr.h>
+// Include WX
+#ifndef WX_STRING_USED
+#define WX_STRING_USED
+#include <wx/string.h>
+#endif
+
+#ifndef WX_HASHMAP_USED
+#define WX_HASHMAP_USED
 #include <wx/hashmap.h>
+#endif
 
 class OViSEUniqueNameGenerator
 {
