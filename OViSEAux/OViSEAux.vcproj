@@ -169,6 +169,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEDotSceneManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\OViSE\OViSEException.cpp"
 				>
 			</File>
@@ -192,6 +196,10 @@
 			</File>
 			<File
 				RelativePath=".\dotScene\dotSceneXmlWriter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEDotSceneManager.h"
 				>
 			</File>
 			<File

@@ -1,15 +1,15 @@
-#ifndef DOTSCENEATTACHFACTORY_H_
-#define DOTSCENEATTACHFACTORY_H_
+#ifndef OVISE_DOTSCENE_MANAGER_H_
+#define OVISE_DOTSCENE_MANAGER_H_
 
 // Solution's includes
 #ifndef OVISE_XML_MANAGER_USED
 #define OVISE_XML_MANAGER_USED
-#include "../OViSEXmlManager.h"
+#include "./OViSEXmlManager.h"
 #endif
 
 #ifndef OVISE_UNIQUENAME_GENERATOR_USED
 #define OVISE_UNIQUENAME_GENERATOR_USED
-#include "../../OViSE/OViSEUniqueNameGenerator.h"
+#include "../OViSE/OViSEUniqueNameGenerator.h"
 #endif
 
 #ifndef OVISE_STRINGCONVERTER_USED
@@ -84,7 +84,7 @@ XERCES_CPP_NAMESPACE_USE
 // Special defines for debugging or mode-activations
 #define ATTACH_FACTORY__ALLOW_INTERPRETATION_ASSUMPTIONS
 
-class dotSceneAttachFactory
+class OViSEDotSceneManager
 {
 private:
 	wxString mUniqueFactoryName;
@@ -126,8 +126,8 @@ private:
 	wxArrayString mAvailableScenes;
 
 public:
-	dotSceneAttachFactory(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD, wxFileName ExportPath);
-    ~dotSceneAttachFactory();
+	OViSEDotSceneManager(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD, wxFileName ExportPath);
+    ~OViSEDotSceneManager();
 
 	wxFileName mExportPath;
 
@@ -174,7 +174,11 @@ public:
 	Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative);
 	Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString AttachToThisNode);
 	Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* AttachToThisNode);	
+
+
+	// New Exportstuff
+
 };
 
 
-#endif /*DOTSCENEATTACHFACTORY_H_*/
+#endif /*OVISE_DOTSCENE_MANAGER_H_*/

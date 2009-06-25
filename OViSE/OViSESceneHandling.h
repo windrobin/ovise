@@ -1,6 +1,11 @@
 #ifndef OVISESCENEHANDLING_H_
 #define OVISESCENEHANDLING_H_
 
+#ifndef OVISE_DOTSCENE_MANAGER_USED
+#define OVISE_DOTSCENE_MANAGER_USED
+#include "../OViSEAux/OViSEDotSceneManager.h"
+#endif
+
 #ifdef __APPLE__
 #include "Ogre/Ogre.h"
 #else
@@ -12,19 +17,6 @@
 #include "OViSECallbackTester.h"
 #include "OViSEFrameListener.h"
 
-#include "dotSceneAttachFactory.h"
-
-// Inlcude Xerces
-#ifndef Xerxes_Used
-#define Xerxes_Used
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/sax/HandlerBase.hpp>
-#include <xercesc/util/XMLString.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
-#include <string>
-#endif
-
 #define __HenningsActualWork__
 
 #ifdef __HenningsActualWork__
@@ -32,6 +24,10 @@
 #include "dotSceneXmlWriter.h"
 
 #endif
+
+#include <wx/image.h>
+#include <wx/bitmap.h>
+#include <wx/filename.h>
 
 // Declare event for scene changes
 //DECLARE_EVENT_TYPE(wxEVT_OGRE_SCENE_CHANGED, -1)
@@ -220,7 +216,7 @@ private:
 	OViSEFrameListener *mFrameListener;
 
 	/// Standard factory for dotScene loading
-	dotSceneAdvanced::dotSceneAttachFactory *mStandardFactory;
+	OViSEDotSceneManager *mDotSceneMgr;
 };
 
 #endif /*OVISESCENEHANDLING_H_*/
