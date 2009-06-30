@@ -160,7 +160,7 @@ wxString dotSceneAttachFactory::addSceneBluePrint(wxFileName URLofXML)
 	else
 	{
 		wxString UniqueSceneName = this->SceneNameMgr->AllocateUniqueName(URLofXML.GetName());
-		xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mXmlMgr->ImportScene(URLofXML.GetFullPath());
+		xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mXmlMgr->ImportDotScene(URLofXML.GetFullPath());
 
 		// Add new objects to all hashtables with same key
 		// IMPLICIT: Expexting ".material"-files always (!) at location of ".mesh"-files.

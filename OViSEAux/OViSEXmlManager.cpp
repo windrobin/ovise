@@ -704,7 +704,7 @@ bool OViSEXmlManager::ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSES
 	else
 	{
 		wxString debugstop = TempDestination.GetPath();
-		bool wxFileName::DirExists(debugstop);
+		//bool wxFileName::DirExists(debugstop);
 	}
 	if (!wxFileName::IsDirWritable(TempDestination.GetPath()))
 	{
@@ -713,7 +713,7 @@ bool OViSEXmlManager::ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSES
 	else
 	{
 		wxString debugstop = TempDestination.GetPath();
-		bool wxFileName::IsDirWritable(debugstop);
+		//bool wxFileName::IsDirWritable(debugstop);
 	}
 	if (!TempDestination.GetExt().IsSameAs(ToWxString("xml")))
 	{

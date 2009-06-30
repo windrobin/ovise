@@ -109,7 +109,7 @@ private:
 
 	DOMImplementation* mImplementation;
 	DOMDocumentType* mDocType;
-	DOMDocument* mDocument;
+	::DOMDocument* mDocument;
 
 	void CopyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo);
 	void RecursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);

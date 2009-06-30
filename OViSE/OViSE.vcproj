@@ -189,6 +189,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSEMessenger.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSESceneTree.cpp"
 					>
 				</File>
@@ -280,6 +284,10 @@
 				>
 				<File
 					RelativePath=".\GUIFrame.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEMessenger.h"
 					>
 				</File>
 				<File
