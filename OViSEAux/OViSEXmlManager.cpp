@@ -1,27 +1,24 @@
 #include "OViSEXmlManager.h"
 
-OViSEXmlManager::OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath) : mValid(true)
+OViSEXmlManager::OViSEXmlManager() : mInitialized(true)
 {
+	this->SetURLofXSD(ToWxString("../Media/data/dotScene.xsd"));
+	this->SetURLofExportPath(ToWxString("../Media/SceneExport/"));
 	this->mCopyThisMeshFiles.Clear();
+	this->mInitialized = this->InitXML();
+}
 
-	this->mURLofExportPath = wxFileName(URLofExportPath);
-	this->mURLofExportPath.SetName(ToWxString(""));
-	this->mURLofExportPath.SetEmptyExt();
-
-	this->mURLofXSD = wxFileName(URLofXSD);
-
-	if (!wxFileName::FileExists(this->mURLofXSD.GetFullPath())) this->mValid = false;
-	if (!wxFileName::DirExists(this->mURLofXSD.GetPath())) this->mValid = false;
-
-	if (this->mValid)
-	{
-		this->mValid = this->InitXML();
-	}
+OViSEXmlManager::OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath) : mInitialized(true)
+{
+	this->SetURLofXSD(URLofXSD);
+	this->SetURLofExportPath(URLofExportPath);
+	this->mCopyThisMeshFiles.Clear();
+	this->mInitialized = this->InitXML();
 }
 
 OViSEXmlManager::~OViSEXmlManager(void)
 {
-	this->mValid = this->TerminateXML();
+	this->mInitialized = this->TerminateXML();
 
 	if (this->mImplementation != 0) delete this->mImplementation;
 	if (this->mDocType != 0)
@@ -39,14 +36,19 @@ OViSEXmlManager::~OViSEXmlManager(void)
 	if (this->mErrHandler != 0) delete this->mErrHandler;
 }
 
-bool OViSEXmlManager::IsValid()
+bool OViSEXmlManager::IsInitialized() { return this->mInitialized; }
+bool OViSEXmlManager::IsReadyToExport()
 {
-	bool ReturnValue = true;
+	// Do checks...
+	if (!this->IsInitialized()) return false;
+	return this->mReadyToExport;
+}
 
-	// Do check...
-	ReturnValue = this->mValid; // TODO
-
-	return ReturnValue;
+bool OViSEXmlManager::IsReadyToImport()
+{
+	// Do checks...
+	if (!this->IsInitialized()) return false;
+	return this->mReadyToImport;
 }
 
 bool OViSEXmlManager::InitXML()
@@ -95,96 +97,73 @@ bool OViSEXmlManager::TerminateXML()
 	return true;
 }
 
-xercesc::DOMDocument* OViSEXmlManager::ImportScene(wxString URLofXML)
+bool OViSEXmlManager::SetURLofXSD(wxString URLofXSD)
 {
-	if (!this->IsValid()) return 0;
-	if (!wxFileName::FileExists(URLofXML)) return 0;
+	this->mURLofXSD = wxFileName(URLofXSD);
+	if (this->mURLofXSD.IsRelative()) this->mURLofXSD.MakeAbsolute(wxFileName::GetCwd());
 
-	// Setup XML-parser
-	this->mParser = new XercesDOMParser();
-    this->mParser->setValidationScheme(XercesDOMParser::Val_Always);    
-    this->mParser->setDoNamespaces(true); 
-	this->mParser->setDoSchema(true); // <- important, when a .XSD is used!!!
-	this->mParser->setExternalNoNamespaceSchemaLocation(ToXMLString(this->mURLofXSD.GetFullPath()));
+	wxString LogMessage;
 
-	// OViSEXercesXMLErrorReporter inherits from "xercesc::ErrorHandler" and redirects parsing-errors into Ogre::LogManager
-	this->mErrHandler = (xercesc::ErrorHandler*) new OViSEXercesXMLErrorReporter();
-	this->mParser->setErrorHandler(this->mErrHandler);
-
-	wxString ParsingMsg;
-	bool ErrorsOccured = false;
-
-	ParsingMsg.Clear();
-	ParsingMsg << ToWxString("OViSE XML Manager: Parsing file \"") << URLofXML + ToWxString("\"... ");
-
-    try 
-    {
-        mParser->parse(ToXMLString(URLofXML));
-
-		ParsingMsg << ToWxString("done!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
-    }
-    catch (const XMLException& e) 
-    {
-		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-		ParsingMsg.Clear();
-		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-    }
-    catch (const DOMException& e) 
-    {
-		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-        ParsingMsg.Clear();
-        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-    }
-	catch (const SAXException& e) 
-    {
-		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-        ParsingMsg.Clear();
-        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-    }
-	catch (std::exception e) 
-    {
-		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-        ParsingMsg.Clear();
-		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-		ErrorsOccured = true;
-    }
-    catch (...) 
-    {
-		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-        ParsingMsg.Clear();
-        ParsingMsg << ToWxString("OViSE XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
-
-		ErrorsOccured = true;
-    }
-    
-	// Returns pointer to DOMDocument, if no errors occured while validation.
-	// REMEMBER: These errors are no exceptions like in those cases below.
-    if (!((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
-	
-	delete mParser;
-    delete mErrHandler;
-
-	if (ErrorsOccured) return 0;
-	else return this->mParser->getDocument();
+	try
+	{
+		if (!wxFileName::FileExists(this->mURLofXSD.GetFullPath()))
+		{
+			LogMessage.Clear();
+			LogMessage << ToWxString("OViSE XML Manager: Given *.xsd \"") << this->mURLofXSD.GetFullPath() << ToWxString("\" does not exist!");
+			throw new OViSEException(ToCString(LogMessage));
+		}
+		if (!wxFileName::IsFileReadable(this->mURLofXSD.GetFullPath()))
+		{
+			LogMessage.Clear();
+			LogMessage << ToWxString("OViSE XML Manager: Given *.xsd \"") << this->mURLofXSD.GetFullPath() << ToWxString("\" is not readable!");
+			throw new OViSEException(ToCString(LogMessage));
+		}
+		this->mReadyToImport = true;
+	}
+	catch(OViSEException e)
+	{
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_CRITICAL);
+		this->mReadyToImport = false;
+	}
+	return this->mReadyToImport;
 }
 
+bool OViSEXmlManager::SetURLofExportPath(wxString URLofExportPath)
+{
+	this->mURLofExportPath = wxFileName(URLofExportPath);
+	if (this->mURLofExportPath.IsRelative()) this->mURLofExportPath.MakeAbsolute(wxFileName::GetCwd());
+	
+	this->mURLofExportPath.SetName(ToWxString(""));
+	this->mURLofExportPath.SetEmptyExt();
+
+	wxString LogMessage;
+
+	try
+	{
+		if (!wxFileName::DirExists(this->mURLofExportPath.GetPath()))
+		{
+			LogMessage.Clear();
+			LogMessage << ToWxString("OViSE XML Manager: Default export-path \"") << this->mURLofExportPath.GetPath() << ToWxString("\" does not exist!");
+			throw new OViSEException(ToCString(LogMessage));
+		}
+		if (!wxFileName::IsDirWritable(this->mURLofExportPath.GetPath()))
+		{
+			LogMessage.Clear();
+			LogMessage << ToWxString("OViSE XML Manager: Default export-path \"") << this->mURLofExportPath.GetPath() << ToWxString("\" is not writeable!");
+			throw new OViSEException(ToCString(LogMessage));
+		}
+		this->mReadyToExport = true;
+	}
+	catch(OViSEException e)
+	{
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_CRITICAL);
+		this->mReadyToExport = false;
+	}
+	return this->mReadyToExport;
+}
+
+wxString OViSEXmlManager::GetURLofXSD() { return this->mURLofXSD.GetFullPath(); }
+wxString OViSEXmlManager::GetURLofExportPath() { return this->mURLofExportPath.GetPath(); }
 void OViSEXmlManager::CopyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo)
 {
 	// CONVENTION: all names of objects are unique in Ogre, Xerces and WX !
@@ -710,11 +689,32 @@ void OViSEXmlManager::MoveDOMToXML(wxFileName filename, bool doExportMeshFiles)
 	}
 }
 
-bool OViSEXmlManager::ExportScene(Ogre::SceneManager* HostingSceneMgr, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo = true,  bool doExportMeshFiles = true)
+bool OViSEXmlManager::ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo = true,  bool doExportMeshFiles = true)
 {
+	if (!this->IsInitialized()) return 0;
+	if (!this->IsReadyToExport()) return 0;
+
 	// Check, if FullPathOfExportedDotSceneXML is possible...
 	wxFileName TempDestination(DestinationOfSceneXML);
-	if (!wxFileName::DirExists(TempDestination.GetPath())) return false;
+	
+	if (!wxFileName::DirExists(TempDestination.GetPath()))
+	{
+		return false;
+	}
+	else
+	{
+		wxString debugstop = TempDestination.GetPath();
+		bool wxFileName::DirExists(debugstop);
+	}
+	if (!wxFileName::IsDirWritable(TempDestination.GetPath()))
+	{
+		return false;
+	}
+	else
+	{
+		wxString debugstop = TempDestination.GetPath();
+		bool wxFileName::IsDirWritable(debugstop);
+	}
 	if (!TempDestination.GetExt().IsSameAs(ToWxString("xml")))
 	{
 		wxString debug_test = TempDestination.GetExt(); // DEBUG LINE
@@ -725,4 +725,100 @@ bool OViSEXmlManager::ExportScene(Ogre::SceneManager* HostingSceneMgr, OViSESele
 	this->MoveDOMToXML(DestinationOfSceneXML, doExportMeshFiles);
 
 	return true;
+}
+xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
+{
+	if (!this->IsInitialized()) return 0;
+	if (!this->IsReadyToImport()) return 0;
+
+	wxFileName TempURLofXML(URLofXML);
+
+	if (TempURLofXML.IsRelative()) TempURLofXML.MakeAbsolute(wxFileName::GetCwd());
+
+	if (!wxFileName::FileExists(TempURLofXML.GetFullPath())) return 0;
+	if (!wxFileName::IsFileReadable(TempURLofXML.GetFullPath())) return 0;
+
+	// Setup XML-parser
+	this->mParser = new XercesDOMParser();
+    this->mParser->setValidationScheme(XercesDOMParser::Val_Always);    
+    this->mParser->setDoNamespaces(true); 
+	this->mParser->setDoSchema(true); // <- important, when a .XSD is used!!!
+	this->mParser->setExternalNoNamespaceSchemaLocation(ToXMLString(this->mURLofXSD.GetFullPath()));
+
+	// OViSEXercesXMLErrorReporter inherits from "xercesc::ErrorHandler" and redirects parsing-errors into Ogre::LogManager
+	this->mErrHandler = (xercesc::ErrorHandler*) new OViSEXercesXMLErrorReporter();
+	this->mParser->setErrorHandler(this->mErrHandler);
+
+	wxString ParsingMsg;
+	bool ErrorsOccured = false;
+
+	ParsingMsg.Clear();
+	ParsingMsg << ToWxString("OViSE XML Manager: Parsing file \"") << TempURLofXML.GetFullPath() + ToWxString("\"... ");
+
+    try 
+    {
+        mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
+
+		ParsingMsg << ToWxString("done!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
+    }
+    catch (const XMLException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+    }
+    catch (const DOMException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+    }
+	catch (const SAXException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+    }
+	catch (std::exception e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+		ErrorsOccured = true;
+    }
+    catch (...) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
+        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+
+		ErrorsOccured = true;
+    }
+    
+	// Returns pointer to DOMDocument, if no errors occured while validation.
+	// REMEMBER: These errors are no exceptions like in those cases below.
+    if (!((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
+	
+	delete mParser;
+    delete mErrHandler;
+
+	if (ErrorsOccured) return 0;
+	else return this->mParser->getDocument();
 }

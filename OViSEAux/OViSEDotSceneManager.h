@@ -105,7 +105,7 @@ private:
 
 	// Attributes for interpretation
 	Ogre::String _UniqueManagerName;
-	Ogre::SceneManager *Mgr;
+	Ogre::SceneManager *OgreSceneMgr;
 	Ogre::SceneNode *mAnchorNode;
 
 	void v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene);
@@ -123,13 +123,13 @@ private:
 
 	OViSEXmlManager *mXmlMgr;
 
-	wxArrayString mAvailableScenes;
+	wxArrayString mImportedScenePrototypes;
+
+	bool mValid;
 
 public:
-	OViSEDotSceneManager(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr, wxFileName URLofDotSceneXSD, wxFileName ExportPath);
+	OViSEDotSceneManager(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr);
     ~OViSEDotSceneManager();
-
-	wxFileName mExportPath;
 
 	void set_UniqueFactoryName(Ogre::String UniqueFactoryName);
 	void set_UniqueFactoryName(wxString UniqueFactoryName);
@@ -156,15 +156,6 @@ public:
 	bool doAttachExternals;
 	bool doAttachEnvironment;
 
-	
-
-	wxString addSceneBluePrint(wxFileName URLofXML); 
-
-	bool attachScene(wxString UniqueSceneName, wxString AttachToNodeWithThisName, bool doAttachNodes, bool doAttachExternals, bool doAttachEnvironment);
-	bool attachScene(wxString UniqueSceneName, wxString AttachToNodeWithThisName);
-
-	wxArrayString GetAvailableScenes();
-
 	Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative); // Implicit: attach to root node
 	Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString ParentNode);
 	Ogre::SceneNode* attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* ParentNode);
@@ -175,10 +166,21 @@ public:
 	Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, wxString AttachToThisNode);
 	Ogre::Entity* attachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* AttachToThisNode);	
 
+	// New Im-/Exportstuff
+	bool SetURLofDotSceneXSD(wxString URLofDotSceneXSD);
+	bool SetURLofExportPath(wxString URLofExportPath);
+	wxString GetURLofDotSceneXSD();
+	wxString GetURLofExportPath();
 
-	// New Exportstuff
+	bool IsReadyToExport();
+	bool IsReadyToImport();
 
+	wxArrayString GetImportedScenePrototypes();
+
+	bool		ExportPrototype(OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles);
+	wxString	ImportPrototype(wxString URLofXML); // Returns unique name of prototype	
+	bool		AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AttachToNodeWithThisName, bool doAttachNodes, bool doAttachExternals, bool doAttachEnvironment);
+	bool		AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AttachToNodeWithThisName);
 };
-
 
 #endif /*OVISE_DOTSCENE_MANAGER_H_*/
