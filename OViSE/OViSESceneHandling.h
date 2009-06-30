@@ -1,9 +1,15 @@
 #ifndef OVISESCENEHANDLING_H_
 #define OVISESCENEHANDLING_H_
 
+// Solution's includes
 #ifndef OVISE_DOTSCENE_MANAGER_USED
 #define OVISE_DOTSCENE_MANAGER_USED
 #include "../OViSEAux/OViSEDotSceneManager.h"
+#endif
+
+#ifndef OVISE_ATTACH_SCENE_DIALOG_USED
+#define OVISE_ATTACH_SCENE_DIALOG_USED
+#include "OViSEAttachSceneDialog.h"
 #endif
 
 #ifdef __APPLE__
@@ -125,14 +131,16 @@ public:
 	 * If the node is NULL, then a new scene node will be created as a child of the root scene node.
 	 * @TODO Implement this.
 	 */
-	void loadSceneFromXML(wxFileName FileName, Ogre::SceneNode *AnchorNode = NULL);
+	void ImportPrototypeFromXML(wxString URLofXML);
 	
 	/** Saves a complete scene from a dotSceneXML.
 	 * This method creates (or overwrites an existing) dotScene-XML-file and, if asked, copys all necessary meshes into the same folder.
 	 * If the node is NULL, then the entire scene will be exported.
 	 * @TODO Implement this.
 	 */
-	void saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles = true);
+	void ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles = true);
+
+	void AttachNewScene(wxString UniqueNameOfPrototype);
 
 	/** Resolves a ray scene query to select an object.
 	 * Casts a ray from the screen position through the given camera into the scene and evaluates

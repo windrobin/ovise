@@ -535,7 +535,7 @@ void OViSEWxFrame::deleteMeshes()
 	}
 }
 
-void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
+void OViSEWxFrame::OnImportScenePrototype( wxCommandEvent& event )
 {
 	//TODO: Dynamische Namensvergabe für die Childnode implementieren, die erzeugt wird.
 	wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
@@ -547,10 +547,10 @@ void OViSEWxFrame::OnLoadDotScene(wxCommandEvent& event)
 	// TODO: Later use a selected node. Acually the sceneroot is used.
 	// If that SceneNode-param is not used, it's NULL. That 'll be interpreted as srootscenenode of default-scenemanager.
 	/// mSceneHdlr->loadSceneFromXML(fd.GetPath()), *** SOME ANCHOR NODE ***;
-	mSceneHdlr->loadSceneFromXML(wxFileName(fd.GetPath()));
+	mSceneHdlr->ImportPrototypeFromXML(fd.GetPath());
 }
 
-void OViSEWxFrame::OnSaveDotScene(wxCommandEvent& event)
+void OViSEWxFrame::OnExportScenePrototype( wxCommandEvent& event )
 {
 	wxFileDialog SelectDestinationDialog(this, wxT("Create or overwrite dotScene file"), wxEmptyString, wxT("Output.xml"), wxT("*.xml"));
 	int ReturnValue = SelectDestinationDialog.ShowModal();
@@ -563,8 +563,13 @@ void OViSEWxFrame::OnSaveDotScene(wxCommandEvent& event)
 	bool doExportMeshFiles = false;
 	if (ReturnValue == wxID_OK) doExportMeshFiles = true;
 
-	Ogre::SceneNode *dotSceneNode = mSceneHdlr->getSceneManager()->getRootSceneNode(); // TODO: use selected  scenenode !!!
-	mSceneHdlr->saveSceneToXML(SelectDestinationDialog.GetPath(), wxT("BaseSceneManager"), dotSceneNode, doExportMeshFiles); // TODO: extra dialog, asking "copy meshes as well"
+	Ogre::SceneNode *dotSceneNode = this->mSceneHdlr->getSceneManager()->getRootSceneNode(); // TODO: use selected  scenenode !!!
+	mSceneHdlr->ExportPrototypeToXML(SelectDestinationDialog.GetPath(), wxT("BaseSceneManager"), dotSceneNode, doExportMeshFiles); // TODO: extra dialog, asking "copy meshes as well"
+}
+
+void OViSEWxFrame::OnAttachNewScene( wxCommandEvent& event )
+{
+	this->mSceneHdlr->AttachNewScene(ToWxString("")); // TODO: H.R. proceeds here tomorrow... *zzz*
 }
 
 void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)

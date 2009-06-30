@@ -468,70 +468,26 @@ OViSESceneHandling::~OViSESceneHandling()
 	delete this->mDotSceneMgr;
 }
 
-void OViSESceneHandling::loadSceneFromXML(wxFileName FullPathOfDotScene, Ogre::SceneNode *AnchorNode)
+void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML) { this->mDotSceneMgr->ImportPrototype(URLofXML); }
+void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
-	/*wxString UniqueNameOfNewScene = this->mDotSceneMgr->addSceneBluePrint(FullPathOfDotScene);
-	if (!UniqueNameOfNewScene.IsEmpty())
-	{
-		if(AnchorNode) this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString(AnchorNode->getName())); // Use described AnchorNode
-		else this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString("")); // Use RootSceneNode as AnchorNode
-	}*/
-}
-
-void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
-{
-	// Pre-operations...
-	wxFileName FullFileName(filename);
-
-	// Create dotSceneXmlWriter...
-	wxFileName URLofDotSceneXSD = wxFileName(ToWxString("../Media/data/dotScene.xsd"));
-	URLofDotSceneXSD.MakeAbsolute(wxFileName::GetCwd());
-
-	dotSceneXmlWriter *xmlWriter = new dotSceneXmlWriter(URLofDotSceneXSD.GetFullPath(), FullFileName.GetPath()); 
-	Ogre::SceneManager *scnMgr = mSceneManagers[(std::string) sceneManagerName.mb_str()];
-	
 	/* Export depending on selection */
 	if (this->hasSelectedObjects())
 	{
-		//this->mDotSceneMgr->
-		xmlWriter->copyOgreSceneToDOM(scnMgr, this->getSelectedObjects(), true);
+		this->mDotSceneMgr->ExportPrototype(this->getSelectedObjects(), DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true
 	}
 	else
 	{
-		 // Use RootSceneNode and export everything!
+		// Use RootSceneNode and export everything!
 		OViSESelectionMap tempSimpleSelection;
-		//tempSimpleSelection[scnMgr->getRootSceneNode()->getName()] = (Ogre::MovableObject*)scnMgr->getRootSceneNode();
-		xmlWriter->copyOgreSceneToDOM(scnMgr, tempSimpleSelection, true);
+		tempSimpleSelection[this->getSceneManager()->getRootSceneNode()->getName()] = (Ogre::MovableObject*)this->getSceneManager()->getRootSceneNode();
+		this->mDotSceneMgr->ExportPrototype(tempSimpleSelection, DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true
 	}
+}
 
-	/* Export depending on selection */
-
-	
-	
-	xmlWriter->moveDOMToXML(FullFileName, doExportMeshFiles);
-
-	delete xmlWriter;
-
-	/*
-	std::fstream DebugOutput;
-	DebugOutput.open("C:\\DebugOutput.txt", std::ios::out|std::ios::trunc);
-
-	std::vector<std::string> TempResourceGroups = Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups();
-	
-	for(std::vector<std::string>::iterator i = TempResourceGroups.begin(); i != TempResourceGroups.end(); i++)
-	{
-		Ogre::StringVectorPtr TempResourceNamesPtr = Ogre::ResourceGroupManager::getSingletonPtr()->findResourceNames((*i), "*.*",  true);
-		std::vector<std::string>* pTempResourceNames = TempResourceNamesPtr.get();
-		std::vector<std::string> TempResourceNames = *pTempResourceNames;
-
-		for(std::vector<std::string>::iterator j = TempResourceNames.begin(); j != TempResourceNames.end(); j++)
-		{
-			DebugOutput << "Recource: '" << (*j) << "'" << endl;
-		}
-	}
-
-
-	DebugOutput.close();*/	
+void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
+{
+	 // TODO: H.R. proceeds here tomorrow... *zzz*
 }
 
 void OViSESceneHandling::release()

@@ -34,12 +34,13 @@
 #define ID_DYNAMIC_SHADOWS 1004
 #define ID_ADD_MESH 1005
 #define ID_DELETE_MESHES 1006
-#define ID_LOAD_DOTSCENE 1007
-#define ID_SAVE_DOTSCENE 1008
-#define ID_LOAD_POINTCLOUD 1009
-#define ID_STARTSTOP_FRAMELISTENERS 1010
-#define idMenuAbout 1011
-#define ID_TESTSTUFF 1012
+#define ID_IMPORT_SCENEPROTOTYPE 1007
+#define ID_EXPORT_SCENEPROTOTYPE 1008
+#define ID_ATTACH_NEW_SCENE 1009
+#define ID_LOAD_POINTCLOUD 1010
+#define ID_STARTSTOP_FRAMELISTENERS 1011
+#define idMenuAbout 1012
+#define ID_TESTSTUFF 1013
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class GUIFrame
@@ -67,8 +68,9 @@ class GUIFrame : public wxFrame
 		virtual void OnDynamicShadowsChange( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnLoadDotScene( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnSaveDotScene( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnImportScenePrototype( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnExportScenePrototype( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnAttachNewScene( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnLoadPointCloud( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnStartStopFrameListeners( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ){ event.Skip(); }
@@ -132,6 +134,31 @@ class ExportMeshesDialog : public wxDialog
 	public:
 		ExportMeshesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Exporting meshes?"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 268,86 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~ExportMeshesDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class AttachSceneDialog
+///////////////////////////////////////////////////////////////////////////////
+class AttachSceneDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxListBox* mPrototypeList;
+		wxButton* mCancelButton;
+		wxButton* mOkButton;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCloseDialog( wxCloseEvent& event ){ event.Skip(); }
+		virtual void OnProtoTypeListSelect( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClickCancel( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnClickOk( wxCommandEvent& event ){ event.Skip(); }
+		
+	
+	public:
+		AttachSceneDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Which prototype do you want to use for new scene?"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 396,194 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~AttachSceneDialog();
 	
 };
 
