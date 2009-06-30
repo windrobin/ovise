@@ -23,12 +23,7 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
-		wxFileName URLofDotSceneXSD = wxFileName(ToWxString("../Media/data/dotScene.xsd"));
-		URLofDotSceneXSD.MakeAbsolute(wxFileName::GetCwd());
-		wxFileName URLofExportPath = wxFileName(ToWxString("../Media/SceneExport/"));
-		URLofExportPath.MakeAbsolute(wxFileName::GetCwd());
-
-		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager, URLofDotSceneXSD, URLofExportPath);
+		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager));
 	}
 }
 
