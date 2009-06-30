@@ -46,10 +46,6 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	statusBar->SetStatusText(wxT("FPS:"), 1);
 #endif
 
-	//mSplitter = new wxSplitterWindow(this, wxID_ANY);
-	//mSecondSplitter = new wxSplitterWindow(mSplitter, wxID_ANY);
-	//mThirdSplitter = new wxSplitterWindow(mSecondSplitter, wxID_ANY);
-
 	mWindowManager = new wxAuiManager(this);
 
 	wxOgreRenderWindow::SetOgreRoot(ogreRoot);
@@ -74,9 +70,6 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	logBox = new wxListBox(this, wxID_ANY);
 	mWindowManager->AddPane(logBox, wxBOTTOM, wxT("Log"));
-	//mSplitter->SplitHorizontally(mSecondSplitter, logBox, this->GetSize().GetHeight()*0.85);
-	//mSecondSplitter->SplitVertically(mMainRenderWin, mThirdSplitter, this->GetSize().GetWidth()*0.85);
-	//mThirdSplitter->SplitHorizontally(mObjectProperties, mSceneTree);
 	mLogBoxListener = new OViSELogListener(logBox);
 
 	mAddMeshDialog = NULL;
@@ -222,7 +215,7 @@ void OViSEWxFrame::OnAbout(wxCommandEvent &event)
 	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
 	info.SetDescription(description);
 
-    info.SetCopyright(wxT("(C) 2008 "));
+    info.SetCopyright(wxT("(C) 2008-2009 "));
 
 	info.AddDeveloper(wxT("Programming - Alexander Kasper <akasper@ira.uka.de>"));
 	info.AddDeveloper(wxT("Programming - Henning Renartz <hrenart@gmx.de>"));

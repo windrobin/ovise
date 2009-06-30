@@ -5,8 +5,8 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = OViSE
-PROJECT_NUMBER         = 0.2
-OUTPUT_DIRECTORY       = "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/doc"
+PROJECT_NUMBER         = 0.3
+OUTPUT_DIRECTORY       = "./doc"
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -94,8 +94,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/OViSE" \
-                         "C:/Dokumente und Einstellungen/akasper/Eigene Dateien/Coding/OViSE/OViSEAux/dotScene"
+INPUT                  = "./OViSE" \
+                         "./OViSEAux"
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
