@@ -189,6 +189,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSEAddMeshDialog.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEAttachSceneDialog.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSEMessenger.cpp"
 					>
 				</File>
@@ -208,10 +216,6 @@
 			<Filter
 				Name="Ogre"
 				>
-				<File
-					RelativePath=".\OViSEAddMeshDialog.cpp"
-					>
-				</File>
 				<File
 					RelativePath=".\OViSECallbackObject.cpp"
 					>
@@ -287,6 +291,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSEAddMeshDialog.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSEAttachSceneDialog.h"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSEMessenger.h"
 					>
 				</File>
@@ -306,10 +318,6 @@
 			<Filter
 				Name="Ogre"
 				>
-				<File
-					RelativePath=".\OViSEAddMeshDialog.h"
-					>
-				</File>
 				<File
 					RelativePath=".\OViSECallbackObject.h"
 					>

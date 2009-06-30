@@ -58,8 +58,9 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnViewClick(wxMouseEvent& event);
 		virtual void OnPropertyChange(wxPropertyGridEvent& event);
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
-		virtual void OnLoadDotScene( wxCommandEvent& event);
-		virtual void OnSaveDotScene( wxCommandEvent& event );
+		virtual void OnImportScenePrototype( wxCommandEvent& event);
+		virtual void OnExportScenePrototype( wxCommandEvent& event );
+		virtual void OnAttachNewScene( wxCommandEvent& event );
 		virtual void OnLoadPointCloud( wxCommandEvent& event );
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
