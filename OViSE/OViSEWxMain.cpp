@@ -76,6 +76,8 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener(mLogBoxListener);
 
+	this->Maximize(true);
+
 	mWindowManager->Update();
 }
 

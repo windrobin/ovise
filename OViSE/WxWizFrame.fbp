@@ -32,7 +32,7 @@
             <property name="minimum_size"></property>
             <property name="name">GUIFrame</property>
             <property name="pos"></property>
-            <property name="size">1280,1024</property>
+            <property name="size">800,600</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
             <property name="title">OViSE - powered by wxWidgets!</property>

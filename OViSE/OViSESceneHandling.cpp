@@ -23,7 +23,7 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
-		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager));
+		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager);
 	}
 }
 
@@ -470,12 +470,12 @@ OViSESceneHandling::~OViSESceneHandling()
 
 void OViSESceneHandling::loadSceneFromXML(wxFileName FullPathOfDotScene, Ogre::SceneNode *AnchorNode)
 {
-	wxString UniqueNameOfNewScene = this->mDotSceneMgr->addSceneBluePrint(FullPathOfDotScene);
+	/*wxString UniqueNameOfNewScene = this->mDotSceneMgr->addSceneBluePrint(FullPathOfDotScene);
 	if (!UniqueNameOfNewScene.IsEmpty())
 	{
 		if(AnchorNode) this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString(AnchorNode->getName())); // Use described AnchorNode
 		else this->mDotSceneMgr->attachScene(UniqueNameOfNewScene, ToWxString("")); // Use RootSceneNode as AnchorNode
-	}
+	}*/
 }
 
 void OViSESceneHandling::saveSceneToXML(wxString filename, wxString sceneManagerName, Ogre::SceneNode *node, bool doExportMeshFiles)
