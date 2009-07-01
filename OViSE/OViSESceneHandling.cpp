@@ -24,6 +24,8 @@ OViSESceneHandling::OViSESceneHandling()
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
 		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager);
+
+
 	}
 }
 
