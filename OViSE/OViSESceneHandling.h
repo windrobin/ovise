@@ -22,6 +22,7 @@
 #include "OViSEPointcloud.h"
 #include "OViSECallbackTester.h"
 #include "OViSEFrameListener.h"
+#include "OViSEMessenger.h"
 
 #define __HenningsActualWork__
 
@@ -225,6 +226,9 @@ private:
 
 	/// Standard factory for dotScene loading
 	OViSEDotSceneManager *mDotSceneMgr;
+
+	/// Messenger for signaling to wx
+	OViSEMessenger *mMessenger;
 };
 
 #endif /*OVISESCENEHANDLING_H_*/
