@@ -162,10 +162,6 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 	try
 	{
 		mObjectSelectionsMap[sceneManagerName][movObj->getName()] = movObj;
-		OViSESelectionMap test;
-		//test.em
-		//Ogre::Entity ent;
-		//ent.getN
 		
 		if(showSelection)
 			movObj->getParentSceneNode()->showBoundingBox(true);
@@ -489,7 +485,6 @@ void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxSt
 
 void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 {
-	 // TODO: H.R. proceeds here tomorrow... *zzz*
 	if (!UniqueNameOfPrototype.IsEmpty())
 	{
 		this->mDotSceneMgr->AttachSceneFromPrototype(UniqueNameOfPrototype, wxString());
@@ -499,4 +494,9 @@ void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 void OViSESceneHandling::release()
 {
 	delete OViSESceneHandling::getSingletonPtr();
+}
+
+wxArrayString OViSESceneHandling::GetAvailablePrototypesOfDotSceneManager()
+{
+	return this->mDotSceneMgr->GetImportedScenePrototypes();
 }

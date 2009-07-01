@@ -194,6 +194,8 @@ public:
 	/// Destruktor-call...
 	static void release();
 
+	wxArrayString GetAvailablePrototypesOfDotSceneManager();
+
 protected:
 	OViSESceneHandling();
 

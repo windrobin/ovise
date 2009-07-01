@@ -18,22 +18,27 @@ OViSEXmlManager::OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath) : 
 
 OViSEXmlManager::~OViSEXmlManager(void)
 {
-	this->mInitialized = this->TerminateXML();
-
-	if (this->mImplementation != 0) delete this->mImplementation;
+	/*
+	if (this->mImplementation != 0)
+	{
+		delete this->mImplementation;
+	}
+	*/
+	/*
 	if (this->mDocType != 0)
 	{
 		this->mDocType->release();
 		if (this->mDocType != 0) delete this->mDocType;
-	}
+	}*/
+	/*
 	if (this->mDocument != 0)
 	{
 		this->mDocument->release();
 		if (this->mDocument != 0) delete this->mDocument;
 	}
+	*/
 
-	if (this->mParser != 0) delete this->mParser;
-	if (this->mErrHandler != 0) delete this->mErrHandler;
+	this->mInitialized = this->TerminateXML();
 }
 
 bool OViSEXmlManager::IsInitialized() { return this->mInitialized; }
@@ -814,11 +819,14 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
     
 	// Returns pointer to DOMDocument, if no errors occured while validation.
 	// REMEMBER: These errors are no exceptions like in those cases below.
-    if (!((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
+    if (((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
 	
+	::xercesc_3_0::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
+	::xercesc_3_0::DOMDocument* tempDOMDoc = dynamic_cast<::xercesc_3_0::DOMDocument*>(tempDOMWrapperNode);
+
 	delete mParser;
     delete mErrHandler;
 
 	if (ErrorsOccured) return 0;
-	else return this->mParser->getDocument();
+	else return tempDOMDoc;
 }
