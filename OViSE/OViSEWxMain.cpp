@@ -569,7 +569,9 @@ void OViSEWxFrame::OnExportScenePrototype( wxCommandEvent& event )
 
 void OViSEWxFrame::OnAttachNewScene( wxCommandEvent& event )
 {
-	this->mSceneHdlr->AttachNewScene(ToWxString("")); // TODO: H.R. proceeds here tomorrow... *zzz*
+	OViSEAttachSceneDialog *AttachSceneDlg = new OViSEAttachSceneDialog(this);
+	AttachSceneDlg->ShowModal();
+	this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype()); 
 }
 
 void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)
