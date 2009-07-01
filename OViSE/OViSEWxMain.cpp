@@ -570,6 +570,7 @@ void OViSEWxFrame::OnExportScenePrototype( wxCommandEvent& event )
 void OViSEWxFrame::OnAttachNewScene( wxCommandEvent& event )
 {
 	OViSEAttachSceneDialog *AttachSceneDlg = new OViSEAttachSceneDialog(this);
+	AttachSceneDlg->SetAvailablePrototypes(this->mSceneHdlr->GetAvailablePrototypesOfDotSceneManager());
 	AttachSceneDlg->ShowModal();
 	this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype()); 
 }
