@@ -29,7 +29,15 @@
 #include "OViSEAddMeshDialog.h"
 #include "OViSESceneTree.h"
 
+#ifndef OVISE_EXPORT_MESHES_DIALOG_USED
+#define OVISE_EXPORT_MESHES_DIALOG_USED
 #include "OViSEExportMeshesDialog.h"
+#endif
+
+#ifndef OVISE_ATTACH_SCENE_DIALOG_USED
+#define OVISE_ATTACH_SCENE_DIALOG_USED
+#include "OViSEAttachSceneDialog.h"
+#endif
 
 enum
 {

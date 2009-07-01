@@ -488,6 +488,10 @@ void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxSt
 void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 {
 	 // TODO: H.R. proceeds here tomorrow... *zzz*
+	if (!UniqueNameOfPrototype.IsEmpty())
+	{
+		this->mDotSceneMgr->AttachSceneFromPrototype(UniqueNameOfPrototype, wxString());
+	}
 }
 
 void OViSESceneHandling::release()
