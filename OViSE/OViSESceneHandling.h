@@ -199,7 +199,7 @@ public:
 protected:
 	OViSESceneHandling();
 
-	void OViSESceneHandling::SendEvent();
+	//void OViSESceneHandling::SendEvent();
 
 	virtual ~OViSESceneHandling();
 
