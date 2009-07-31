@@ -14,14 +14,6 @@ def printDbg(e):
     print e['LIBS']
 
 
-## Project
-if(myplatform == 'Linux'):
-	linux_project_include_path = {'CPPPATH':['./dotScene']}
-	oviseAuxEnv.MergeFlags(linux_project_include_path)
-else:
-	print 'Platform not yet supported.'
-	Exit(1)
-
 ## System
 if(myplatform == 'Linux'):
     linux_project_cc_flags = {'CCFLAGS':Split('''-c
@@ -56,10 +48,8 @@ else:
 ## Input files
 if(myplatform == 'Linux'):
     input_files = Glob('*.cpp')
-    input_files += Glob('dotScene/*.cpp')
 elif(myplatform == 'Darwin'):
     input_files = Glob('*.cpp')
-    input_files += Glob('dotScene/*.cpp')
 else:
     print 'Platform not yet supported.'
     Exit(1)

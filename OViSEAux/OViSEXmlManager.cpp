@@ -822,7 +822,7 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
     if (((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
 	
 	::xercesc_3_0::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
-	::xercesc_3_0::DOMDocument* tempDOMDoc = dynamic_cast<::xercesc_3_0::DOMDocument*>(tempDOMWrapperNode);
+	::xercesc_3_0::DOMDocument* tempDOMDoc = dynamic_cast<xercesc_3_0::DOMDocument*>(tempDOMWrapperNode);
 
 	delete mParser;
     delete mErrHandler;

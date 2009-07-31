@@ -21,6 +21,7 @@
 #include <wx/treectrl.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <wx/imaglist.h>
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"

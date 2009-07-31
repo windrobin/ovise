@@ -17,8 +17,8 @@ def printDbg(e):
 ## OViSEAux
 if(myplatform == 'Linux'):
 	linux_aux_include_paths = {'CPPPATH':Split('''../OViSEAux
-								../OViSEAux/dotScene
-								''')}
+						      ../OViSEAux/dotScene
+						   ''')}
 	oviseEnv.MergeFlags(linux_aux_include_paths)
 	
 	linux_aux_lib_paths = { 'LIBPATH':['../OViSEAux']}
