@@ -1,87 +1,116 @@
 #include "OViSEXercesXMLErrorReporter.h"
 
-OViSEXercesXMLErrorReporter::OViSEXercesXMLErrorReporter() : mFoundErrors(false) { }
-OViSEXercesXMLErrorReporter::~OViSEXercesXMLErrorReporter() { }
-
-void OViSEXercesXMLErrorReporter::fatalError(const xercesc_3_0::SAXParseException& fatalE)
+OViSEXercesXMLErrorReporter::OViSEXercesXMLErrorReporter() : mFoundErrors(false) { this->mLog = new OViSELogging(); }
+OViSEXercesXMLErrorReporter::~OViSEXercesXMLErrorReporter() { delete this->mLog; }
+void OViSEXercesXMLErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 {
 	this->mFoundErrors = true;
 
-	char* buffText;
+	char* buffText = 0;
 
-	buffText = xercesc_3_0::XMLString::transcode(fatalE.getSystemId());
-	std::string tSystemId = (std::string)buffText;
+	wxString tSystemId = ToWxString(fatalE.getSystemId());
 	
 	xercesc_3_0::XMLString::binToText(fatalE.getLineNumber(), buffText, 19, 10);
-	std::string tLineNumber = (std::string)buffText;
+	wxString tLineNumber = ToWxString(buffText);
+	delete buffText;
 
 	xercesc_3_0::XMLString::binToText(fatalE.getColumnNumber(), buffText, 19, 10);
-	std::string tColumnNumber = (std::string)buffText;
+	wxString tColumnNumber = ToWxString(buffText);
+	delete buffText;
 	
-	buffText =  xercesc::XMLString::transcode(fatalE.getMessage());
-	std::string tMessage = (std::string)buffText;
+	wxString tMessage = ToWxString(fatalE.getMessage());
 
-	std::string ParsingMsg;
-	
-	ParsingMsg = "Xerces3.0 XML-Parser: Fatal Error at file \"" + tSystemId + "\", line " + tLineNumber + ", column " + tColumnNumber + "!";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+	wxString ParsingMsg;
 
-	ParsingMsg = "Xerces3.0 Message: \"" + tMessage + "\"";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 XML-Parser: Fatal error at file \"")
+				<< tSystemId
+				<< ToWxString("\", line ")
+				<< tLineNumber
+				<< ToWxString(", column ")
+				<< tColumnNumber
+				<< ToWxString("!");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
+				<< tMessage
+				<< ToWxString("\"");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 }
 
 void OViSEXercesXMLErrorReporter::error(const xercesc::SAXParseException& defaultE)
 {
 	this->mFoundErrors = true;
 
-	char* buffText;
+	char* buffText = 0;
 
-	buffText = xercesc_3_0::XMLString::transcode(defaultE.getSystemId());
-	std::string tSystemId = (std::string)buffText;
+	wxString tSystemId = ToWxString(defaultE.getSystemId());
 	
 	xercesc_3_0::XMLString::binToText(defaultE.getLineNumber(), buffText, 19, 10);
-	std::string tLineNumber = (std::string)buffText;
+	wxString tLineNumber = ToWxString(buffText);
+	delete buffText;
 
 	xercesc_3_0::XMLString::binToText(defaultE.getColumnNumber(), buffText, 19, 10);
-	std::string tColumnNumber = (std::string)buffText;
+	wxString tColumnNumber = ToWxString(buffText);
+	delete buffText;
 	
-	buffText =  xercesc::XMLString::transcode(defaultE.getMessage());
-	std::string tMessage = (std::string)buffText;
-	
-	std::string ParsingMsg;
+	wxString tMessage = ToWxString(defaultE.getMessage());
 
-	ParsingMsg = "Xerces3.0 XML-Parser: Fatal Error at file \"" + tSystemId + "\", line " + tLineNumber + ", column " + tColumnNumber + "!";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+	wxString ParsingMsg;
 
-	ParsingMsg = "Xerces3.0 Message: \"" + tMessage + "\"";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_CRITICAL);
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 XML-Parser: Default error at file \"")
+				<< tSystemId
+				<< ToWxString("\", line ")
+				<< tLineNumber
+				<< ToWxString(", column ")
+				<< tColumnNumber
+				<< ToWxString("!");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
+				<< tMessage
+				<< ToWxString("\"");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
 }
 
 void OViSEXercesXMLErrorReporter::warning(const xercesc::SAXParseException& warningE)
 {
 	this->mFoundErrors = true;
 
-	char* buffText;
+	char* buffText = 0;
 
-	buffText = xercesc_3_0::XMLString::transcode(warningE.getSystemId());
-	std::string tSystemId = (std::string)buffText;
+	wxString tSystemId = ToWxString(warningE.getSystemId());
 	
 	xercesc_3_0::XMLString::binToText(warningE.getLineNumber(), buffText, 19, 10);
-	std::string tLineNumber = (std::string)buffText;
+	wxString tLineNumber = ToWxString(buffText);
+	delete buffText;
 
 	xercesc_3_0::XMLString::binToText(warningE.getColumnNumber(), buffText, 19, 10);
-	std::string tColumnNumber = (std::string)buffText;
+	wxString tColumnNumber = ToWxString(buffText);
+	delete buffText;
 	
-	buffText =  xercesc::XMLString::transcode(warningE.getMessage());
-	std::string tMessage = (std::string)buffText;
-	
-	std::string ParsingMsg;
+	wxString tMessage = ToWxString(warningE.getMessage());
 
-	ParsingMsg = "Xerces3.0 XML-Parser: Fatal Error at file \"" + tSystemId + "\", line " + tLineNumber + ", column " + tColumnNumber + "!";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_TRIVIAL);
+	wxString ParsingMsg;
 
-	ParsingMsg = "Xerces3.0 Message: \"" + tMessage + "\"";
-	Ogre::LogManager::getSingletonPtr()->logMessage(ParsingMsg, Ogre::LML_TRIVIAL);
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 XML-Parser: Warning at file \"")
+				<< tSystemId
+				<< ToWxString("\", line ")
+				<< tLineNumber
+				<< ToWxString(", column ")
+				<< tColumnNumber
+				<< ToWxString("!");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Trivial);
+
+	ParsingMsg.Clear();
+	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
+				<< tMessage
+				<< ToWxString("\"");
+	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Trivial);
 }
 
 void OViSEXercesXMLErrorReporter::resetErrors()
