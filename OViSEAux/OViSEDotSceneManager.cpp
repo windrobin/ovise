@@ -1,156 +1,223 @@
 #include "OViSEDotSceneManager.h"
+/*
+bool OViSEDotSceneManager::CallSuitableInterpreter_DOMToOgre(xercesc::DOMDocument *SceneInDOMFormat, wxString AnchorNodeName)
+{
+	bool Match = false;
+	bool ReturnValue = false;
+	Match = OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::IsValidFormatVersion(SceneInDOMFormat);
+	if (Match)
+	{
+		this->mDOMInterpreter = new OViSEInterpreter_DOMToOgre_DotSceneV1_0_0();
+		bool ReturnValue = this->mDOMInterpreter->Interpretation(SceneInDOMFormat, AnchorNodeName, this->GetConfiguration());
+		delete this->mDOMInterpreter;
+	}
+	
+	// <---- TODO: Implement priority-list-selcetion!
+	// while(!Match) { Nimm nächsten interpreter von liste; Match = prüfe version interpreter; wenn Match -> interpreter erzeugen + interpretation starten; }
 
-// Con- & Destructors
-// Constructor for dotSceneAttachFactory.
-// The following standard-valus will be set:
-// ScaleOffset = 1.0
-// PositionOffset = (0.0, 0.0, 0.0)
-// RollOfEntireScene = PitchOfEntireScene = YawOfEntireScene = 0.0
-// <param name="uniqueFactoryName">Unique name of the factoy-instance. That's essencial, because a resource-group in ogre engine 'll be allocaeted with this name.</param>
-// <param name="attachToThisManager">Mogre.SceneManager, which this factroy should belong to.</param>
-OViSEDotSceneManager::OViSEDotSceneManager(wxString UniqueFactoryName, Ogre::SceneManager* sceneMgr)
+	if (ReturnValue) return true;
+	else return false;
+}
+*/
+// De- & Constructors
+OViSEDotSceneManager::OViSEDotSceneManager(OViSEDotSceneManagerConfiguration *Configuration)
 {
 	this->mValid = true;
 
 	// Store factory's configuration...
-	this->set_UniqueFactoryName(UniqueFactoryName);
-	this->set_UniqueNameOfFactoryOwnedResourceGroup(UniqueFactoryName);
-
-	this->set_ScaleOffset(1.0);
-	this->set_PositionOffset(Ogre::Vector3(0.0, 0.0, 0.0));
-	this->set_RollOfEntireScene(Ogre::Degree(0.0));
-    this->set_PitchOfEntireScene(Ogre::Degree(0.0));
-    this->set_YawOfEntireScene(Ogre::Degree(0.0));
-
-	// Create data-structures in ogre's engine for this factory...
-	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(ToOgreString(this->get_UniqueNameOfFactoryOwnedResourceGroup()));
+	this->SetConfiguration(Configuration);
 	
-	// Store reference to Ogre::SceneManager
-	this->OgreSceneMgr = sceneMgr;
-
-	this->DOMScenes.clear();
-	this->LocationsOfMaterialFiles.clear();
-	this->LocationsOfMeshFiles.clear();
-
+	// Create data-structures in ogre's engine for this factory... // TODO: check, if already exists!!!
+	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(ToOgreString(this->GetUniqueNameOfAssociatedResourceGroup()));
+	
 	// Setup managers for delegated functions...
-	this->SceneNameMgr = new OViSEUniqueNameGenerator(ToWxString("Scene"));
-	this->SceneNodeNameMgr = new OViSEUniqueNameGenerator(ToWxString("SceneNode"));
-	this->EntityNameMgr = new OViSEUniqueNameGenerator(ToWxString("Entity"));
-	this->mXmlMgr = new OViSEXmlManager();
+	this->Log = this->GetConfiguration()->Log;
+	this->mXmlMgr = new OViSEXmlManager(this->GetConfiguration());
 }
 OViSEDotSceneManager::~OViSEDotSceneManager()
 {
-	delete this->EntityNameMgr;
-	delete this->SceneNodeNameMgr;
-
-	delete this->SceneNameMgr;
-
-	this->LocationsOfMaterialFiles.clear();
-	this->LocationsOfMeshFiles.clear();
-
-	for (HashMap_DOMDocuments::iterator iter = this->DOMScenes.begin(); iter != this->DOMScenes.end(); ++iter)
-	{
-		xercesc::DOMDocument* tempDOMDocument = iter->second;
-		tempDOMDocument->release();
-	}
-	
-	this->DOMScenes.clear();
-
+	// TODO: Scenes löschen?
 	delete this->mXmlMgr;
 }
 
-// TODO: ".get_meshFile()" can grab into the "void" -> throws an Exception!!!!!!!!
-
-// Properies (outer part) of general factory-setting
-void OViSEDotSceneManager::set_UniqueFactoryName(Ogre::String UniqueFactoryName)
+// Accessors of general properies
+void OViSEDotSceneManager::SetConfiguration(OViSEDotSceneManagerConfiguration* Configuration) { if (Configuration != 0) this->mConfiguration = Configuration; }
+OViSEDotSceneManagerConfiguration* OViSEDotSceneManager::GetConfiguration() { return this->mConfiguration; }
+wxString OViSEDotSceneManager::GetUniqueName() { return this->GetConfiguration()->UniqueNameOfDotSceneManager; }
+wxString OViSEDotSceneManager::GetUniqueNameOfAssociatedResourceGroup() { return this->GetConfiguration()->UniqueNameOfAssociatedResourceGroup; }
+// Static methods
+OViSEDotSceneManagerConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration(wxString UniqueDotSceneManagerName, wxString SceneManagerName)
 {
-	this->mUniqueFactoryName = ToWxString(UniqueFactoryName);
+	OViSEDotSceneManagerConfiguration *DefaultConfiguration = new OViSEDotSceneManagerConfiguration(
+			new OViSELogging(),
+			new OViSEUniqueNameGenerator(ToWxString("Scene")),
+			new OViSEUniqueNameGenerator(ToWxString("SceneNode")),
+			new OViSEUniqueNameGenerator(ToWxString("Entity")),
+			SceneManagerName,
+			UniqueDotSceneManagerName,
+			UniqueDotSceneManagerName); // Name of DotSceneManager == name of ogre-resourcegroup
+
+	DefaultConfiguration->doAttachEnvironment = false;
+	DefaultConfiguration->doAttachExternals = false;
+	DefaultConfiguration->doAttachNodes = true;
+
+	return DefaultConfiguration;
 }
 
-void OViSEDotSceneManager::set_UniqueFactoryName(wxString UniqueFactoryName)
+bool OViSEDotSceneManager::SetURLofDotSceneXSD(wxString URLofDotSceneXSD) { return this->mXmlMgr->SetURLofXSD(URLofDotSceneXSD); }
+bool OViSEDotSceneManager::SetURLofExportPath(wxString URLofExportPath) { return this->mXmlMgr->SetURLofExportPath(URLofExportPath); }
+wxString OViSEDotSceneManager::GetURLofDotSceneXSD() { return this->mXmlMgr->GetURLofXSD(); }
+wxString OViSEDotSceneManager::GetURLofExportPath() { return this->mXmlMgr->GetURLofExportPath(); }
+bool OViSEDotSceneManager::IsReadyToExport() { return this->mXmlMgr->IsReadyToExport(); }
+bool OViSEDotSceneManager::IsReadyToImport() { return this->mXmlMgr->IsReadyToImport(); }
+
+wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes() { return this->mImportedScenePrototypes; }
+/*
+bool		OViSEDotSceneManager::ExportPrototype(OViSESelectionMap Selection, wxString DestinationOfSceneXML)
 {
-	this->mUniqueFactoryName = UniqueFactoryName;
+	return this->mXmlMgr->ExportDotScene(this->GetConfiguration()->SceneManagerName, Selection, DestinationOfSceneXML, doExportNotSelectedChildsToo, doExportMeshFiles);
 }
-
-wxString OViSEDotSceneManager::get_UniqueFactoryName() const
+*/
+/*
+wxString	OViSEDotSceneManager::ImportPrototype(wxString URLofXML)
 {
-	return this->mUniqueFactoryName;
-}
+	wxFileName TempURLofXML(URLofXML);
 
-void OViSEDotSceneManager::set_UniqueNameOfFactoryOwnedResourceGroup(Ogre::String UniqueNameOfFactoryOwnedResourceGroup)
+	xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mXmlMgr->ImportDotScene(TempURLofXML.GetFullPath());
+
+	if (DOMRepresentationOfDotScene == 0)
+	{
+		return wxString(); // returning empty string -> error while import
+	}
+	else
+	{
+		wxString UniqueNameOfScenePrototype = this->GetConfiguration()->SceneNameMgr->AllocateUniqueName(TempURLofXML.GetName());
+
+		// Add new objects to all hashtables with same key
+		// IMPLICIT: Expexting ".material"-files always (!) at location of ".mesh"-files.
+		this->DOMScenes[UniqueNameOfScenePrototype] = DOMRepresentationOfDotScene;
+		this->LocationsOfMeshFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
+		this->LocationsOfMaterialFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
+		this->mImportedScenePrototypes.Add(UniqueNameOfScenePrototype);
+		return UniqueNameOfScenePrototype;
+	}
+}
+bool		OViSEDotSceneManager::AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AnchorNodeName)
 {
-	this->mNameOfFactoryOwnedResourceGroup = ToWxString(UniqueNameOfFactoryOwnedResourceGroup); 
-}	
+	wxString LogMsg, dotSceneVersionString;
 
-void OViSEDotSceneManager::set_UniqueNameOfFactoryOwnedResourceGroup(wxString UniqueNameOfFactoryOwnedResourceGroup)
+	LogMsg.Clear();
+	LogMsg << ToWxString("OViSE dotScene Manager: Attaching instance of prototype \"") << UniqueNameOfPrototype << ToWxString("\"");
+	this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+
+	// STEP 1: Check, if prototype-list is empty...
+	if (this->DOMScenes.empty())
+	{
+		LogMsg.Clear();
+		LogMsg << ToWxString("OViSE dotScene Manager: No prototypes are available. Aborted!");
+		this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Critical);
+		return false;
+	}
+
+	// STEP 2: Check, if prototype-list doesn't contain "UniqueNameOfPrototype"...
+	if (this->DOMScenes.find(UniqueNameOfPrototype) == this->DOMScenes.end())
+	{
+		LogMsg.Clear();
+		LogMsg << ToWxString("OViSE dotScene Manager: Prototype \"") << UniqueNameOfPrototype << ToWxString("\" is not registed. Aborted!");
+		this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Critical);
+		return false;
+	}
+	
+	// STEP 3: Get DOM-representation of scene by unique name
+	xercesc::DOMDocument* SceneInDOMFormat = this->DOMScenes[UniqueNameOfPrototype];
+
+	
+	// STEP 4: Select suitable DOMInterpreter an process interpretation
+	return this->CallSuitableInterpreter_DOMToOgre(SceneInDOMFormat, AnchorNodeName);
+}
+*/
+bool OViSEDotSceneManager::SetPrototypeData(wxString UniquePrototypeName, OViSEScenePrototypeData NewData)
 {
-	this->mNameOfFactoryOwnedResourceGroup = UniqueNameOfFactoryOwnedResourceGroup; 
+	OViSEScenePrototype* ScenePrototype = this->ScenePrototypes[UniquePrototypeName];
+	if (ScenePrototype == 0) return false;
+	else
+	{
+		ScenePrototype->Data = NewData;
+		return true;
+	}
 }
 
-wxString OViSEDotSceneManager::get_UniqueNameOfFactoryOwnedResourceGroup() const
-{ 
-	return this->mNameOfFactoryOwnedResourceGroup; 
-}
-
-// Properties of general scene-output configuration
-double OViSEDotSceneManager::get_ScaleOffset() const 
-{ 
-	return this->mScaleOffset; 
-}
-
-void OViSEDotSceneManager::set_ScaleOffset(double ScaleOffset) 
+OViSEScenePrototypeData OViSEDotSceneManager::GetPrototypeData(wxString UniquePrototypeName)
 {
-	this->mScaleOffset = ScaleOffset;
-} 
+	OViSEScenePrototype* ScenePrototype = this->ScenePrototypes[UniquePrototypeName];
+	if (ScenePrototype == 0) return OViSEScenePrototypeData();
+	else return ScenePrototype->Data;
+}
 
-Ogre::Vector3 OViSEDotSceneManager::get_PositionOffset() const 
+
+bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(wxString UniquePrototypeName, wxString AnchorNodeName)
 {
-	return this->mPositionOffset; 
+	bool Match = false;
+	bool ReturnValue = false;
+
+	OViSEScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
+	if (Prototype == 0) return false;
+
+	if ((!Match) && OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::IsValidFormatVersion(Prototype->GetDOMRepresentation()))
+	{
+		OViSEInterpreter_DOMToOgre_DotSceneV1_0_0 Interpreter;
+		ReturnValue = Interpreter.Interpretation(Prototype->GetDOMRepresentation(), AnchorNodeName, this->GetConfiguration());
+	}
+	
+	// <---- TODO: Implement priority-list-selcetion!
+	// while(!Match) { Nimm nächsten interpreter von liste; Match = prüfe version interpreter; wenn Match -> interpreter erzeugen + interpretation starten; }
+
+	if (ReturnValue) return true;
+	else return false;
 }
 
-void OViSEDotSceneManager::set_PositionOffset(Ogre::Vector3 PositionOffset)
+wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, OViSESelectionMap Selection, wxString VersionStringForExport)
 {
-	this->mPositionOffset = PositionOffset;
+	bool Match = false;
+	OViSEScenePrototype* NewPrototype = 0;
+	
+	// Hier weiter. TODO: Erzeugen eines unique-name, Auswahl des richtigen Interpreters. Steht schon alles zur Verfügung.
+	
+	if ((!Match) && OViSEInterpreter_OgreToDOM_DotSceneV1_0_0::IsValidFormatVersion(VersionStringForExport))
+	{
+		OViSEInterpreter_OgreToDOM_DotSceneV1_0_0 Interpreter;
+		NewPrototype = Interpreter.Interpretation(NotUniquePrototypeName, Selection, this->GetConfiguration());
+		if (NewPrototype != 0)
+		{
+			this->ScenePrototypes[NewPrototype->GetUniqueName()] = NewPrototype;
+			Match = true;
+		}
+	}
+
+	// <---- TODO: Implement priority-list-seleection!
+	// while (!Match);
+
+	if (Match) return NewPrototype->GetUniqueName();
+	else return wxString();
 }
 
-// properties RollOfEntireScene, PitchOfEntireScene and YawOfEntireScene
-void OViSEDotSceneManager::set_RollOfEntireScene(Ogre::Degree value) 
+bool OViSEDotSceneManager::ExportScenePrototype(wxString UniquePrototypeName, wxFileName DestinationURL)
 {
-	this->mRollOfEntireScene = value; 
+	OViSEScenePrototype* TempPrototype = this->ScenePrototypes[UniquePrototypeName];
+	if (TempPrototype == 0) return false;
+	else return this->mXmlMgr->ExportScenePrototype(TempPrototype, DestinationURL);
 }
 
-Ogre::Degree OViSEDotSceneManager::get_RollOfEntireScene() const
+wxString OViSEDotSceneManager::ImportScenePrototype(wxFileName URLofXML)
 {
-	return this->mRollOfEntireScene; 
+	OViSEScenePrototype* TempPrototype = this->mXmlMgr->ImportScenePrototype(URLofXML);
+	if (TempPrototype == 0) return wxString();
+	else
+	{
+		this->ScenePrototypes[TempPrototype->GetUniqueName()] = TempPrototype;
+		return TempPrototype->GetUniqueName();
+	}
 }
-
-void OViSEDotSceneManager::set_PitchOfEntireScene(Ogre::Degree value) 
-{ 
-	this->mPitchOfEntireScene = value; 
-}
-
-Ogre::Degree OViSEDotSceneManager::get_PitchOfEntireScene() const
-{
-	return this->mPitchOfEntireScene; 
-}
-
-void OViSEDotSceneManager::set_YawOfEntireScene(Ogre::Degree value) 
-{
-	this->mYawOfEntireScene = value; 
-}
-
-Ogre::Degree OViSEDotSceneManager::get_YawOfEntireScene() const
-{
-	return this->mYawOfEntireScene; 
-}
-
-// property ChildOfAttachRootNode
-Ogre::SceneNode* OViSEDotSceneManager::get_LastSceneRootNode() const  
-{
-	return this->mSceneRootNode; 
-}
-
-
 /// * * * * * * * * * When XML-interpreter was changed, you have to adapt this method. * * * * * * * * * 
 
 /*
@@ -1153,6 +1220,7 @@ void main(void)
 }*/
 
 
+/*
 void OViSEDotSceneManager::v1_0_0_Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene)
 {
 	xercesc::DOMNodeList *ItemElements = 0, *FileElements = 0;
@@ -1179,10 +1247,10 @@ void OViSEDotSceneManager::v1_0_0_Interpretation_Externals(xercesc::DOMElement* 
 					wxString tempFullPath;
 					tempFullPath << tempPath << tempName;
 
-					Ogre::ResourceGroupManager::getSingleton().declareResource(ToOgreString(tempFullPath), ToOgreString(tempType), ToOgreString(this->get_UniqueNameOfFactoryOwnedResourceGroup()));
+					Ogre::ResourceGroupManager::getSingleton().declareResource(ToOgreString(tempFullPath), ToOgreString(tempType), ToOgreString(this->GetUniqueNameOfOwnedResourceGroup()));
 
 					wxString LogMsg;
-					LogMsg << wxT("OViSE dotScene Manager: Added ") << tempType << wxT(" \"") << tempFullPath << wxT("\" to ResourceGroup \"") << this->get_UniqueNameOfFactoryOwnedResourceGroup() << wxT("\"");
+					LogMsg << wxT("OViSE dotScene Manager: Added ") << tempType << wxT(" \"") << tempFullPath << wxT("\" to ResourceGroup \"") << this->GetUniqueNameOfOwnedResourceGroup() << wxT("\"");
 					Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
 				}
 			}
@@ -1192,53 +1260,7 @@ void OViSEDotSceneManager::v1_0_0_Interpretation_Externals(xercesc::DOMElement* 
 
 void OViSEDotSceneManager::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
 {
-	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
-	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
-
-	// In nodes is abstract. So elements beyond "node"-elements must be "global" transitions and rotations for scene's root node. Attribute too.
 	
-	// Handle cams...
-
-
-	// Handle lights...
-
-	/// STEP 4.1: Handle childnodes...
-	NodeElements = DOMElement_nodes->getElementsByTagName(ToXMLString("node"));
-	if (NodeElements->getLength() > 0)
-	{
-		for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
-		{
-			this->v1_0_0_Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), this->mSceneRootNode);
-		}
-	}
-
-	// Handle attributes...
-	bool Visible = true;
-	bool CascadeVisibility = true;
-
-	if (DOMElement_nodes->hasAttribute(ToXMLString("visible")))
-	{
-		std::string buff = ToStdString(DOMElement_nodes->getAttribute(ToXMLString("visible")));
-		if (buff == "true") Visible = true;
-		if (buff == "false") Visible = false;
-		else
-		{
-			; // Attention: DEBUG-Trap. When this line is reached, something goes wrong. More testing is needed!!!
-		}
-	}
-
-	if (DOMElement_nodes->hasAttribute(ToXMLString("cascadeVisibility")))
-	{
-		std::string buff = ToStdString(DOMElement_nodes->getAttribute(ToXMLString("cascadeVisibility")));
-		if (buff == "true") Visible = true;
-		if (buff == "false") Visible = false;
-		else
-		{
-			; // Attention: DEBUG-Trap. When this line is reached, something goes wrong. More testing is needed!!!
-		}
-	}
-
-	this->mSceneRootNode->setVisible(Visible, CascadeVisibility);
 }
 
 void OViSEDotSceneManager::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
@@ -1291,221 +1313,16 @@ void OViSEDotSceneManager::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOM
 
 	// userDataRefernce // ?? Undefined
 	*/
-}
+/*}
 
 void OViSEDotSceneManager::v1_0_0_Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode)
 {
 	wxString LogMsg;
-
-	// * * * * * * * * Interpretation of element "node" * * * * * * * * *
-	// STEP 1: Declare all possible elements...
-	xercesc::DOMNodeList *NodeElements = 0, *EntityElements = 0;
-	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
-	// ++ looktarget ++ tracktarget ++ userdatareference
-
-	// STEP 2: Create all possible attributes... 
-	wxString NewNode_name, NewNode_id;
-	bool NewNode_visible = true, NewNode_cascadeVisibility = true, NewNode_isTarget = false;
-
-	// STEP 2: Get attribute data. If attribute is not used in XML, use default value from XSD...
-	if (DOMElement_node->hasAttribute(ToXMLString("name")))
-	{
-		NewNode_name = ToWxString(DOMElement_node->getAttribute(ToXMLString("name")));
-	}
-	if (DOMElement_node->hasAttribute(ToXMLString("id")))
-	{
-		NewNode_id = ToWxString(DOMElement_node->getAttribute(ToXMLString("id")));
-	}
-	if (DOMElement_node->hasAttribute(ToXMLString("visible")))
-	{
-		wxString temp = ToWxString(DOMElement_node->getAttribute(ToXMLString("visible")));
-		if (temp.IsSameAs(wxT("true"))) NewNode_visible = true;
-		else NewNode_visible = false;
-	}
-	if (DOMElement_node->hasAttribute(ToXMLString("cascadeVisibility")))
-	{
-		wxString temp = ToWxString(DOMElement_node->getAttribute(ToXMLString("cascadeVisibility")));
-		if (temp.IsSameAs(wxT("true"))) NewNode_cascadeVisibility = true;
-		else NewNode_cascadeVisibility = false;
-	}
-	if (DOMElement_node->hasAttribute(ToXMLString("isTarget")))
-	{
-		wxString temp = ToWxString(DOMElement_node->getAttribute(ToXMLString("isTarget")));
-		if (temp.IsSameAs(wxT("true"))) NewNode_isTarget = true;
-		else NewNode_isTarget = false;
-	}
-	
-	// STEP 3: Create unique new SceneNode
-	Ogre::SceneNode* NewNode = this->attachSceneNode(NewNode_name, Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(1.0f, 1.0f, 1.0f), Ogre::Quaternion::IDENTITY, ParentNode);
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Created and added new Ogre::SceneNode \"") << ToWxString(NewNode->getName()) << ToWxString("\"");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-
-	// STEP 3.1: Set rest of attributes...
-	NewNode->setVisible(NewNode_visible, NewNode_cascadeVisibility);
-#ifdef ATTACH_FACTORY__ALLOW_INTERPRETATION_ASSUMPTIONS
-	NewNode->setAutoTracking(NewNode_isTarget); // <- ATTENTION: There is no information about how "isTarget" has to be used. This is an assumption.
-#endif
-
-	// STEP 4: Look for existing elements. First handle complex elements. "position", "scale", ... at last.
-	// STEP 4.1: Handle childnodes...
-	NodeElements = DOMElement_node->getElementsByTagName(ToXMLString("node"));
-	if (NodeElements->getLength() > 0)
-	{
-		for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
-		{
-			this->v1_0_0_Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), NewNode);
-		}
-	}
-
-	// STEP 4.2: Handle entities...
-	EntityElements = DOMElement_node->getElementsByTagName(ToXMLString("entity"));
-	if (EntityElements->getLength() > 0)
-	{
-		for(XMLSize_t EntityIterator = 0; EntityIterator < EntityElements->getLength(); EntityIterator++)
-		{
-			this->v1_0_0_Interpretation_Entity((xercesc::DOMElement*) EntityElements->item(EntityIterator), NewNode);
-		}
-	}
-
-	// STEP 4.3: Handle lights...
-	// TODO
-	// STEP 4.4: Handle cameras...
-	// TODO
-	// STEP 4.5: Handle particleSystems...
-	// TODO
-	// STEP 4.6: Handle billboardSets...
-	// TODO
-	// STEP 4.7: Handle planes...
-	// TODO
-
-	
-	xercesc::DOMNodeList *tempList;
-
-	// STEP 4.8: Handle position...
-	tempList = DOMElement_node->getElementsByTagName(ToXMLString("position"));
-	if (tempList->getLength() > 0)
-	{
-		Ogre::Vector3 tempV3 = this->v1_0_0_Interpretation_Vector3((xercesc::DOMElement*) tempList->item(0));
-		NewNode->setPosition(tempV3);
-	}
-
-	// STEP 4.9: Handle orientation/quaternion... // Prefering "quaternion" instead of orientation at moment. Exactly mathematical conversions not available now.
-	tempList = DOMElement_node->getElementsByTagName(ToXMLString("quaternion"));
-	if (tempList->getLength() > 0)
-	{
-		Ogre::Vector4 tempV4 = this->v1_0_0_Interpretation_Vector4((xercesc::DOMElement*) tempList->item(0));
-		NewNode->setOrientation(tempV4.w, tempV4.x, tempV4.y, tempV4.z);
-	}
-	else
-	{
-		tempList = DOMElement_node->getElementsByTagName(ToXMLString("orientation"));
-		if (tempList->getLength() > 0)
-		{
-			// Do nothing. Complex analysis skipped.
-		}
-	}
-
-	// STEP 4.10: Handle scale...
-	tempList = DOMElement_node->getElementsByTagName(ToXMLString("scale"));
-	if (tempList->getLength() > 0)
-	{
-		Ogre::Vector3 tempV3 = this->v1_0_0_Interpretation_Vector3((xercesc::DOMElement*) tempList->item(0));
-		NewNode->setScale(tempV3);
-	}
-
-	// STEP 4.11: Handle lookTarget...
-	// TODO
-	// STEP 4.12: Handle trackTarget...
-	// TODO
-	// STEP 4.13: Handle userDataReference...
-	// TODO
 }
 
 void OViSEDotSceneManager::v1_0_0_Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode)
 {
-	wxString LogMsg;
 
-	// * * * * * * * * Interpretation of element "entity" * * * * * * * * *
-	// STEP 1: Declare all possible elements...
-	xercesc::DOMNodeList *AnimationsElements = 0, *animationStatesElements = 0;
-	xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_meshLODBias = 0, *DOMElement_materialLODBias = 0, *DOMElement_userDataReference = 0;
-
-	// STEP 2: Create all possible attributes... 
-	wxString NewEntity_name, NewEntity_id, NewEntity_meshFile = ToWxString("robot.mesh") /* for debugging */, NewEntity_materialName, NewEntity_softwareAnimationRequests, NewEntity_softwareAnimationRequestsNormalsAlso;
-	bool NewEntity_displaySkeleton = false, NewEntity_polygonModeOverrideable = false, NewEntity_vertexBufferUseShadow = false, NewEntity_indexBufferUseShadow = false;
-	wxString NewEntity_vertexBufferUsage = ToWxString("staticWriteOnly"), NewEntity_indexBufferUsage = ToWxString("staticWriteOnly"); // <- enum
-
-	// STEP 2: Get attribute data. If attribute is not used in XML, use default value from XSD...
-	if (DOMElement_entity->hasAttribute(ToXMLString("name")))
-	{
-		NewEntity_name = ToWxString(DOMElement_entity->getAttribute(ToXMLString("name")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("id")))
-	{
-		NewEntity_id = ToWxString(DOMElement_entity->getAttribute(ToXMLString("id")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("meshFile")))
-	{
-		NewEntity_meshFile = ToWxString(DOMElement_entity->getAttribute(ToXMLString("meshFile")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("materialName")))
-	{
-		NewEntity_materialName = ToWxString(DOMElement_entity->getAttribute(ToXMLString("materialName")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("softwareAnimationRequests")))
-	{
-		NewEntity_softwareAnimationRequests = ToWxString(DOMElement_entity->getAttribute(ToXMLString("softwareAnimationRequests")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("softwareAnimationRequestsNormalsAlso")))
-	{
-		NewEntity_softwareAnimationRequestsNormalsAlso = ToWxString(DOMElement_entity->getAttribute(ToXMLString("softwareAnimationRequestsNormalsAlso")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("displaySkeleton")))
-	{
-		wxString temp = ToWxString(DOMElement_entity->getAttribute(ToXMLString("displaySkeleton")));
-		if (temp.IsSameAs(wxT("true"))) NewEntity_displaySkeleton = true;
-		else NewEntity_displaySkeleton = false;
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("polygonModeOverrideable")))
-	{
-		wxString temp = ToWxString(DOMElement_entity->getAttribute(ToXMLString("polygonModeOverrideable")));
-		if (temp.IsSameAs(wxT("true"))) NewEntity_polygonModeOverrideable = true;
-		else NewEntity_polygonModeOverrideable = false;
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("vertexBufferUseShadow")))
-	{
-		wxString temp = ToWxString(DOMElement_entity->getAttribute(ToXMLString("vertexBufferUseShadow")));
-		if (temp.IsSameAs(wxT("true"))) NewEntity_vertexBufferUseShadow = true;
-		else NewEntity_vertexBufferUseShadow = false;
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("indexBufferUseShadow")))
-	{
-		wxString temp = ToWxString(DOMElement_entity->getAttribute(ToXMLString("indexBufferUseShadow")));
-		if (temp.IsSameAs(wxT("true"))) NewEntity_indexBufferUseShadow = true;
-		else NewEntity_indexBufferUseShadow = false;
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("vertexBufferUsage")))
-	{
-		NewEntity_vertexBufferUsage = ToWxString(DOMElement_entity->getAttribute(ToXMLString("vertexBufferUsage")));
-	}
-	if (DOMElement_entity->hasAttribute(ToXMLString("indexBufferUsage")))
-	{
-		NewEntity_indexBufferUsage = ToWxString(DOMElement_entity->getAttribute(ToXMLString("indexBufferUsage")));
-	}
-
-	// STEP 2.2: Processing of attribute "name"...
-	// Generate unique name for new SceneNode.
-	// STEP 3: Create unique new Ogre::Entity
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-
-	Ogre::Entity* NewEntity = this->attachEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Done. Attached new Ogre::Entity \"") << ToWxString(NewEntity->getName()) << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
 }
 
 
@@ -1557,6 +1374,7 @@ Ogre::Vector4 OViSEDotSceneManager::v1_0_0_Interpretation_Vector4(xercesc::DOMEl
 
 	return Ogre::Vector4(fX, fY, fZ, fW);
 }
+
 
 Ogre::SceneNode* OViSEDotSceneManager::attachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative)
 {
@@ -1639,285 +1457,4 @@ Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, w
 
 
 
-bool OViSEDotSceneManager::SetURLofDotSceneXSD(wxString URLofDotSceneXSD) { return this->mXmlMgr->SetURLofXSD(URLofDotSceneXSD); }
-bool OViSEDotSceneManager::SetURLofExportPath(wxString URLofExportPath) { return this->mXmlMgr->SetURLofExportPath(URLofExportPath); }
-wxString OViSEDotSceneManager::GetURLofDotSceneXSD() { return this->mXmlMgr->GetURLofXSD(); }
-wxString OViSEDotSceneManager::GetURLofExportPath() { return this->mXmlMgr->GetURLofExportPath(); }
-bool OViSEDotSceneManager::IsReadyToExport() { return this->mXmlMgr->IsReadyToExport(); }
-bool OViSEDotSceneManager::IsReadyToImport() { return this->mXmlMgr->IsReadyToImport(); }
-wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes() { return this->mImportedScenePrototypes; }
-bool		OViSEDotSceneManager::ExportPrototype(OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles)
-{
-	return this->mXmlMgr->ExportDotScene(this->OgreSceneMgr, Selection, DestinationOfSceneXML, doExportNotSelectedChildsToo, doExportMeshFiles);
-}
-
-wxString	OViSEDotSceneManager::ImportPrototype(wxString URLofXML)
-{
-	wxFileName TempURLofXML(URLofXML);
-
-	xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mXmlMgr->ImportDotScene(TempURLofXML.GetFullPath());
-
-	if (DOMRepresentationOfDotScene == 0)
-	{
-		return wxString(); // returning empty string -> error while import
-	}
-	else
-	{
-		wxString UniqueNameOfScenePrototype = this->SceneNameMgr->AllocateUniqueName(TempURLofXML.GetName());
-
-		// Add new objects to all hashtables with same key
-		// IMPLICIT: Expexting ".material"-files always (!) at location of ".mesh"-files.
-		this->DOMScenes[UniqueNameOfScenePrototype] = DOMRepresentationOfDotScene;
-		this->LocationsOfMeshFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
-		this->LocationsOfMaterialFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
-		this->mImportedScenePrototypes.Add(UniqueNameOfScenePrototype);
-		return UniqueNameOfScenePrototype;
-	}
-}
-
-bool		OViSEDotSceneManager::AttachSceneFromPrototype(	wxString UniqueNameOfPrototype,
-															wxString AttachToNodeWithThisName,
-															bool doAttachNodes,
-															bool doAttachExternals,
-															bool doAttachEnvironment)
-{
-    this->doAttachNodes = doAttachNodes;
-    this->doAttachExternals = doAttachExternals;
-    this->doAttachEnvironment = doAttachEnvironment;
-
-    return this->AttachSceneFromPrototype(UniqueNameOfPrototype, AttachToNodeWithThisName);
-}
-
-bool		OViSEDotSceneManager::AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AttachToNodeWithThisName)
-{
-	wxString LogMsg, dotSceneVersionString;
-
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Attaching instance of prototype \"") << UniqueNameOfPrototype << ToWxString("\"");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-
-	// If list is empty...
-	if (this->DOMScenes.empty())
-	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE dotScene Manager: No prototypes are available. Aborted!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_CRITICAL);
-		return false;
-	}
-
-	// If list doesn't contain "UniqueNameOfPrototype"...
-	if (this->DOMScenes.find(UniqueNameOfPrototype) == this->DOMScenes.end())
-	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE dotScene Manager: Prototype \"") << UniqueNameOfPrototype << ToWxString("\" is not registed. Aborted!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_CRITICAL);
-		return false;
-	}
-	
-	// Store external anchor node...
-	if (AttachToNodeWithThisName.IsEmpty())
-	{
-		this->mAnchorNode = this->OgreSceneMgr->getRootSceneNode();
-
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE dotScene Manager: Name of anchor-SceneNode is empty. Using RootSceneNode!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-	}
-	else
-	{
-		if (this->OgreSceneMgr->hasSceneNode(ToOgreString(AttachToNodeWithThisName)))
-		{
-			this->mAnchorNode = this->OgreSceneMgr->getSceneNode(ToOgreString(AttachToNodeWithThisName));
-
-			LogMsg.Clear();
-			LogMsg << ToWxString("OViSE dotScene Manager: Using given anchor-SceneNode \"") << AttachToNodeWithThisName << ToWxString("\".");
-			Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-		}
-		else
-		{
-			this->mAnchorNode = this->OgreSceneMgr->getRootSceneNode();
-
-			LogMsg.Clear();
-			LogMsg << ToWxString("OViSE dotScene Manager: Given anchor-SceneNode \"") << AttachToNodeWithThisName << ToWxString("\" does not exist. Using RootSceneNode instead!");
-			Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_CRITICAL);
-		}
-	}
-
-	// Generate unique new root SceneNode - It is used for light- and camera-setup, because lights and cams working with world-coordinates
-	this->mSceneRootNode = this->attachSceneNode(UniqueNameOfPrototype, Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(1.0f, 1.0f, 1.0f), Ogre::Quaternion::IDENTITY, this->mAnchorNode);
-
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Created scene's rootNode: \"") << ToWxString(this->mSceneRootNode->getName()) << ToWxString("\"");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-
-	// * * * * * * * * Setup Interpretation (STEP 0) * * * * * * * * *                 
-	xercesc::DOMDocument *DOMDocument_dotScene = this->DOMScenes[UniqueNameOfPrototype];
-	xercesc::DOMElement *DOMElement_scene = DOMDocument_dotScene->getDocumentElement();
-
-	xercesc::DOMNodeList *ChildElements;
-
-	xercesc::DOMElement *DOMElement_nodes = 0;
-	xercesc::DOMElement *DOMElement_externals = 0;
-	xercesc::DOMElement *DOMElement_environment = 0;
-
-	// Check format version (!)
-	if (DOMElement_scene->hasAttribute(ToXMLString("formatVersion")))
-	{
-		dotSceneVersionString.Clear();
-		dotSceneVersionString = ToWxString(DOMElement_scene->getAttribute(ToXMLString("formatVersion")));
-
-		LogMsg.Clear();
-		LogMsg << wxT("OViSE dotScene Manager: Identified version of dotScene-format as \"") << ToWxString(dotSceneVersionString) << wxT("\"");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-	}
-	else
-	{
-		dotSceneVersionString.Clear();
-		dotSceneVersionString = wxT("1.0.0");
-
-		LogMsg.Clear();
-		LogMsg << wxT("OViSE dotScene Manager: Couldn't identify version of dotScene-format! Using default version: 1.0.0 (OViSE)");
-		
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_CRITICAL);
-	}
-
-	// Get elements "nodes", "externals" and "environment"
-	ChildElements = DOMElement_scene->getElementsByTagName(ToXMLString("nodes"));
-	if (ChildElements->getLength() > 0)
-	{
-		DOMElement_nodes = (xercesc::DOMElement*) ChildElements->item(0);
-	}
-
-	ChildElements = DOMElement_scene->getElementsByTagName(ToXMLString("externals"));
-	if (ChildElements->getLength() > 0)
-	{
-		DOMElement_externals = (xercesc::DOMElement*) ChildElements->item(0);
-	}
-
-	ChildElements = DOMElement_scene->getElementsByTagName(ToXMLString("environment"));
-	if (ChildElements->getLength() > 0)
-	{
-		DOMElement_environment = (xercesc::DOMElement*) ChildElements->item(0);
-	}
-
-	// * * * * * * * * Interpretation (STEP 1): Externals * * * * * * * * *
-	// COMMENT: It's important, that externals are done before proceeding with nodes and environment.
-	//          Necessary materials must be loaded before nodes need 'em.
-
-	// STEP 1: Optional add materials, if "this->doAttachExternals" is true...
-    if (this->doAttachExternals && (DOMElement_externals != 0))
-    {
-		// STEP 1.1: Factory owned ResourceGroup, when it exists.
-		Ogre::ResourceGroupManager::getSingleton().unloadResourceGroup(ToOgreString(this->get_UniqueNameOfFactoryOwnedResourceGroup()));
-
-		// STEP 1.2: Add path of dotScene-File to own recourcegroup
-		Ogre::ResourceGroupManager::getSingleton().addResourceLocation(ToOgreString(this->LocationsOfMeshFiles[UniqueNameOfPrototype].GetPath()), Ogre::String("FileSystem"), ToOgreString(this->get_UniqueNameOfFactoryOwnedResourceGroup()), false); 
-
-		// STEP 1.3: Identify format version of dotScene:
-		bool match = false;
-		if ((!match) && (dotSceneVersionString.IsSameAs(wxT("1.0.0"))))
-		{
-			// STEP 1.4: Handle externals...
-			this->v1_0_0_Interpretation_Externals(DOMElement_externals, UniqueNameOfPrototype);
-			match = true;
-		}
-
-		// IMPORTANT: Other interpretation-methods can be added here for different dotScene-versions
-		// if (!match) && (dotSceneVersionString == " ... ")) { ... }
-
-		// STEP 1.5: Again, initialise ResourceGroup "Material".
-		Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(ToOgreString(this->get_UniqueNameOfFactoryOwnedResourceGroup()));
-	}
-	
-
-	// * * * * * * * * Interpretation (STEP 2): Nodes (Entities, Cams, Lights) * * * * * * * * *
-	// STEP 2: Optional add nodes, if "this->doAttachNodes" is true...
-	if (this->doAttachNodes && (DOMElement_nodes != 0))
-    {
-		// STEP 2.1: Identify format version of dotScene:
-		bool match = false;
-		if ((!match) && (dotSceneVersionString.IsSameAs(wxT("1.0.0"))))
-		{
-			// STEP 2.2: Handle nodes...
-			this->v1_0_0_Interpretation_Nodes(DOMElement_nodes);
-			match = true;
-		}
-
-		// IMPORTANT: Other interpretation-methods can be added here for different dotScene-versions
-		// if (!match) && (dotSceneVersionString == " ... ")) { ... }
-    }
-
-/*
-	// * * * * * * * * Interpretation (STEP 2): Nodes (Entities, Cams, Lights) * * * * * * * * *
-    if (this->doAttachNodes)
-    {
-    	Ogre::LogManager::getSingletonPtr()->logMessage("Attaching nodes...");
-		recursiveNodeCreator(actualScene.get_Nodes()._ListOfNodes, this->_AttachRootNode, UniqueNameOfPrototype);
-    }
-/*
-	// Subsection of interpretation: Environment <-- ATTENTION, malfunction source...because dotScene-format and blenderexporter aren't fully compatible to ogre (?) 
-    if (this->doAttachEnvironment)
-    {
-        // Set up background-colour
-        try // if (actualScene.get_environment().get_colourBackground() != null)
-        {
-			this->OgreSceneMgr->setAmbientLight(Ogre::ColourValue(
-                actualScene.get_environment().get_colourBackground().get_r(),
-                actualScene.get_environment().get_colourBackground().get_g(),
-                actualScene.get_environment().get_colourBackground().get_b()));
-        }
-		catch(std::exception e)
-		{
-			;// Just catch any exceptions like null reference exceptions
-		}
-
-        // Set up ambient-colour
-            // until now, nothing happens!
-            // no corrspondig value in SceneMgr for background-colour?!
-
-        // Set up fog
-		try // if (actualScene.get_environment().get_fog() != null)
-		{
-            // Select fog-mode
-			Ogre::FogMode mode;
-			
-			if(actualScene.get_environment().get_fog().get_mode() == "linear")		mode = Ogre::FOG_LINEAR;//maybe the only exported value from blender. not sure what other exporters produce!!!
-            else if(actualScene.get_environment().get_fog().get_mode() == "exp")	mode = Ogre::FOG_EXP;	//it seems, that the blender exports not this value, so this string "exp" is safe!!!
-            else if(actualScene.get_environment().get_fog().get_mode() == "exp2")	mode = Ogre::FOG_EXP2;	//it seems, that the blender exports not this value, so this string "exp2" is safe!!!
-			else if(actualScene.get_environment().get_fog().get_mode() == "none")	mode = Ogre::FOG_NONE;	//it seems, that the blender exports not this value, so this string "none" is safe!!!
-
-			this->OgreSceneMgr->setFog(mode, Ogre::ColourValue(
-				actualScene.get_environment().get_fog().get_colourDiffuse().get_r(), 
-				actualScene.get_environment().get_fog().get_colourDiffuse().get_g(),
-				actualScene.get_environment().get_fog().get_colourDiffuse().get_b()),
-                1.0f, //maybe 1.0 is the neutal value? This value is not delivered by blender-exporter or dotScene-format!!!
-                actualScene.get_environment().get_fog().get_linearStart(),
-                actualScene.get_environment().get_fog().get_linearEnd());
-        }
-		catch(std::exception e)
-		{
-			;// Just catch any exceptions like null reference exceptions
-		}
-    }
 */
-
-
-	// * * * * * * * * Interpretation (STEP X): Apply factory's Offset-settings to scene's rootnode * * * * * * * * *
-    // Rotate entire scene with factory-settings for ROLL, PITCH, YAW
-	this->mSceneRootNode->pitch(Ogre::Radian(this->get_PitchOfEntireScene()), Ogre::Node::TS_WORLD);
-    this->mSceneRootNode->yaw(Ogre::Radian(this->get_YawOfEntireScene()), Ogre::Node::TS_WORLD);
-	this->mSceneRootNode->roll(Ogre::Radian(this->get_RollOfEntireScene()), Ogre::Node::TS_WORLD);
-	
-	LogMsg.Clear();
-	LogMsg = wxT("OViSE dotScene Manager: Rotated rootNode with factory-settings.");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_TRIVIAL);
-
-    // Scale rootnode
-	this->mSceneRootNode->scale((float)this->get_ScaleOffset(), (float)this->get_ScaleOffset(), (float)this->get_ScaleOffset());
-	
-	LogMsg.Clear();
-	LogMsg = wxT("OViSE dotScene Manager: Scaled rootNode with factory-settings.");
-	Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_TRIVIAL);
-
-    return true;
-}
