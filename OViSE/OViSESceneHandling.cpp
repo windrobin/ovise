@@ -23,15 +23,14 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
-		this->mDotSceneMgr = new OViSEDotSceneManager(ToWxString("StandardFactory"), mainSceneManager);
-
-
+		this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName())));
 	}
 }
 
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
+	/*
 	this->mDotSceneMgr->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
 
 	addCOS(0.1, true, sceneManagerName);
@@ -47,6 +46,8 @@ void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
 	tmp->getRootSceneNode()->attachObject(globalLight);
+	*/
+	;
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -280,6 +281,7 @@ void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vecto
 
 void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
+	/*
 	try
 	{
 		if(node == NULL) node = this->getSceneManager(ToOgreString(sceneManagerName))->getRootSceneNode();
@@ -298,6 +300,8 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneMan
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.what());
 	}
 	catch (...) {}
+	*/
+	;
 }
 
 std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string group)
@@ -466,20 +470,20 @@ OViSESceneHandling::~OViSESceneHandling()
 	delete this->mDotSceneMgr;
 }
 
-void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML) { this->mDotSceneMgr->ImportPrototype(URLofXML); }
+void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML) { /*this->mDotSceneMgr->ImportPrototype(URLofXML);*/ }
 void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
 	/* Export depending on selection */
 	if (this->hasSelectedObjects())
 	{
-		this->mDotSceneMgr->ExportPrototype(this->getSelectedObjects(), DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true
+		;/*this->mDotSceneMgr->ExportPrototype(this->getSelectedObjects(), DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true*/
 	}
 	else
 	{
 		// Use RootSceneNode and export everything!
 		OViSESelectionMap tempSimpleSelection;
 		tempSimpleSelection[this->getSceneManager()->getRootSceneNode()->getName()] = (Ogre::MovableObject*)this->getSceneManager()->getRootSceneNode();
-		this->mDotSceneMgr->ExportPrototype(tempSimpleSelection, DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true
+		/*this->mDotSceneMgr->ExportPrototype(tempSimpleSelection, DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true*/
 	}
 }
 
@@ -487,7 +491,7 @@ void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 {
 	if (!UniqueNameOfPrototype.IsEmpty())
 	{
-		this->mDotSceneMgr->AttachSceneFromPrototype(UniqueNameOfPrototype, wxString());
+		;/*this->mDotSceneMgr->AttachSceneFromPrototype(UniqueNameOfPrototype, wxString());*/
 	}
 }
 
