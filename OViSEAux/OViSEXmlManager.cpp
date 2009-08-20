@@ -1,10 +1,12 @@
 #include "OViSEXmlManager.h"
 
-OViSEXmlManager::OViSEXmlManager() : mInitialized(true)
+OViSEXmlManager::OViSEXmlManager(OViSEDotSceneManagerConfiguration* Configuration) : mInitialized(true)
 {
+	this->mConfiguration = Configuration;
+
 	this->SetURLofXSD(ToWxString("../Media/data/dotScene.xsd"));
 	this->SetURLofExportPath(ToWxString("../Media/SceneExport/"));
-	this->mCopyThisMeshFiles.Clear();
+	//this->mCopyThisMeshFiles.Clear();
 	this->mInitialized = this->InitXML();
 }
 
@@ -12,7 +14,7 @@ OViSEXmlManager::OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath) : 
 {
 	this->SetURLofXSD(URLofXSD);
 	this->SetURLofExportPath(URLofExportPath);
-	this->mCopyThisMeshFiles.Clear();
+	//this->mCopyThisMeshFiles.Clear();
 	this->mInitialized = this->InitXML();
 }
 
@@ -39,21 +41,6 @@ OViSEXmlManager::~OViSEXmlManager(void)
 	*/
 
 	this->mInitialized = this->TerminateXML();
-}
-
-bool OViSEXmlManager::IsInitialized() { return this->mInitialized; }
-bool OViSEXmlManager::IsReadyToExport()
-{
-	// Do checks...
-	if (!this->IsInitialized()) return false;
-	return this->mReadyToExport;
-}
-
-bool OViSEXmlManager::IsReadyToImport()
-{
-	// Do checks...
-	if (!this->IsInitialized()) return false;
-	return this->mReadyToImport;
 }
 
 bool OViSEXmlManager::InitXML()
@@ -101,6 +88,22 @@ bool OViSEXmlManager::TerminateXML()
 
 	return true;
 }
+
+bool OViSEXmlManager::IsInitialized() { return this->mInitialized; }
+bool OViSEXmlManager::IsReadyToExport()
+{
+	// Do checks...
+	if (!this->IsInitialized()) return false;
+	return this->mReadyToExport;
+}
+
+bool OViSEXmlManager::IsReadyToImport()
+{
+	// Do checks...
+	if (!this->IsInitialized()) return false;
+	return this->mReadyToImport;
+}
+
 
 bool OViSEXmlManager::SetURLofXSD(wxString URLofXSD)
 {
@@ -167,8 +170,227 @@ bool OViSEXmlManager::SetURLofExportPath(wxString URLofExportPath)
 	return this->mReadyToExport;
 }
 
+
 wxString OViSEXmlManager::GetURLofXSD() { return this->mURLofXSD.GetFullPath(); }
 wxString OViSEXmlManager::GetURLofExportPath() { return this->mURLofExportPath.GetPath(); }
+OViSEDotSceneManagerConfiguration* OViSEXmlManager::GetConfiguration() { return this->mConfiguration; }
+
+bool OViSEXmlManager::ExportScenePrototype(OViSEScenePrototype* ScenePrototype, wxFileName DestinationURL)
+{
+	// STEP 1: Check, if XmlManager is ready...
+	if (!this->IsInitialized()) return false;
+	if (!this->IsReadyToExport()) return false;
+
+	// STEP 2: Check, if DestinationURL is valid...
+	wxFileName Destination(DestinationURL);
+	
+	if (!wxFileName::DirExists(Destination.GetPath()))
+	{
+		return false;
+	}
+	else
+	{
+		wxString debugstop = Destination.GetPath(); // DEBUG LINE
+		bool debugbool = wxFileName::DirExists(debugstop); // DEBUG LINE
+	}
+	if (!wxFileName::IsDirWritable(Destination.GetPath()))
+	{
+		return false;
+	}
+	else
+	{
+		wxString debugstop = Destination.GetPath(); // DEBUG LINE
+		bool debugbool = wxFileName::IsDirWritable(debugstop); // DEBUG LINE
+	}
+	if (!Destination.GetExt().IsSameAs(ToWxString("xml")))
+	{
+		wxString debug_test = Destination.GetExt(); // DEBUG LINE
+		return false;
+	}
+
+	// STEP 3: Check ScenePrototype...
+	if (ScenePrototype == 0) return false; // Return false, when UniqueName doesn't exist!
+	wxString UniquePrototypeName = ScenePrototype->GetUniqueName();
+
+	// STEP 4: Write DOM-structure to *.xml file!
+	DOMLSSerializer* tempLSServializer = this->mImplementation->createLSSerializer();
+	tempLSServializer->writeToURI(ScenePrototype->GetDOMRepresentation(), ToXMLString(Destination.GetFullPath()));
+
+	if (this->GetConfiguration()->doExportMeshFiles)
+	{
+		// Export meshfiles
+		Ogre::MeshSerializer tempSerializer;
+
+		if (!ScenePrototype->Data.MeshDatastructures.IsEmpty())
+		{
+			for (unsigned int iter = 0; iter < ScenePrototype->Data.MeshDatastructures.GetCount(); iter++)
+			{
+				// First: Get pointer to mesh in memory!
+				Ogre::MeshPtr tempMeshPtr = ScenePrototype->Data.MeshDatastructures[iter];
+
+				// Use full path of *.xml (dotScene-XML) file...
+				wxFileName tempModifiedFileName(Destination);
+
+				// ...to modify it with full filename of futher *.mesh file!
+				tempModifiedFileName.SetFullName(ToWxString(tempMeshPtr.get()->getName()));
+
+				// Use the modified full path to export *.mesh there. 
+				tempSerializer.exportMesh(tempMeshPtr.getPointer(), ToOgreString(tempModifiedFileName.GetFullPath()));
+			}
+		}
+		// Copy meshfiles
+		if (!ScenePrototype->Data.MeshFiles.IsEmpty())
+		{
+			for(unsigned int iter = 0; iter < ScenePrototype->Data.MeshFiles.GetCount(); iter++)
+			{
+				// First: Define location of source file...
+				wxFileName Source(ScenePrototype->Data.MeshFiles[iter]);	
+				
+				// ...then define location of destination file...
+				wxFileName Target(Source);
+
+				// ...by using the path of *.xml (dotScene-XML) file!
+				Target.SetPath(Destination.GetPath());
+
+				// Finally copy file!
+				// TODO: overwrite-options?
+				wxCopyFile(Source.GetFullPath(), Target.GetFullPath(), this->GetConfiguration()->doOverwriteWhileExport);
+			}
+		}
+	}
+
+	return true;
+}
+OViSEScenePrototype* OViSEXmlManager::ImportScenePrototype(wxFileName URLofXML)
+{
+	// STEP 1: Check, if XmlManager is ready...
+	if (!this->IsInitialized()) return 0;
+	if (!this->IsReadyToExport()) return 0;
+
+	// STEP 2: Move URLofXML to well defined conditions...
+	wxFileName TempURLofXML(URLofXML);
+
+	if (TempURLofXML.IsRelative()) TempURLofXML.MakeAbsolute(wxFileName::GetCwd());
+
+	if (!wxFileName::FileExists(TempURLofXML.GetFullPath())) return 0;
+	if (!wxFileName::IsFileReadable(TempURLofXML.GetFullPath())) return 0;
+
+	// STEP 3: Setup XML-parser
+	this->mParser = new XercesDOMParser();
+    this->mParser->setValidationScheme(XercesDOMParser::Val_Always);    
+    this->mParser->setDoNamespaces(true); 
+	this->mParser->setDoSchema(true); // <- KNOWHOW: Important, when a .XSD is used!!!
+	this->mParser->setExternalNoNamespaceSchemaLocation(ToXMLString(this->mURLofXSD.GetFullPath()));
+
+	// STEP 4: Setup error-reporter. OViSEXercesXMLErrorReporter inherits from "xercesc::ErrorHandler" and redirects parsing-errors into Ogre::LogManager
+	this->mErrHandler = (xercesc::ErrorHandler*) new OViSEXercesXMLErrorReporter();
+	this->mParser->setErrorHandler(this->mErrHandler);
+
+	bool ErrorsOccured = false;
+
+	wxString ParsingMsg;
+	ParsingMsg.Clear();
+	ParsingMsg << ToWxString("OViSE XML Manager: Parsing file \"") << TempURLofXML.GetFullPath() + ToWxString("\"... ");
+
+    try 
+    {
+        this->mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
+
+		ParsingMsg << ToWxString("done!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+    }
+    catch (const XMLException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+		ParsingMsg.Clear();
+		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+    }
+    catch (const DOMException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+    }
+	catch (const SAXException& e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+    }
+	catch (std::exception e) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+        ParsingMsg.Clear();
+		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+		ErrorsOccured = true;
+    }
+    catch (...) 
+    {
+		ParsingMsg << ToWxString("failed!");
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+        ParsingMsg.Clear();
+        ParsingMsg << ToWxString("OViSE XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+
+		ErrorsOccured = true;
+    }
+    
+	// Returns pointer to DOMDocument, if no errors occured while validation.
+	// REMEMBER: These errors are no exceptions like in those cases below.
+    if (((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
+	
+	delete mParser;
+    delete mErrHandler;
+
+	if (ErrorsOccured) return 0;
+	else
+	{
+		xercesc::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
+		xercesc::DOMDocument* tempDOMRepesentation = dynamic_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
+
+		wxString UniquePrototypeName = this->GetConfiguration()->ScenePrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
+
+		OViSEScenePrototype* NewPrototype = new OViSEScenePrototype(UniquePrototypeName,
+																	tempDOMRepesentation);
+		
+		OViSEScenePrototypeData PrototypeData;
+		PrototypeData.ResourceBaseDir = URLofXML.GetPath();
+		wxDir::GetAllFiles(PrototypeData.ResourceBaseDir, &(PrototypeData.Files));
+		PrototypeData.MaterialFiles.Clear();
+		PrototypeData.MeshFiles.Clear();
+		PrototypeData.XMLFiles.Clear();
+
+		for (unsigned int iter = 0; iter < PrototypeData.Files.GetCount(); iter++)
+		{
+			wxFileName TempFileName(PrototypeData.Files[iter]);
+			if (TempFileName.HasExt())
+			{
+				if (TempFileName.GetExt().IsSameAs(ToWxString("material"))) PrototypeData.MaterialFiles.Add(PrototypeData.Files[iter]);
+				if (TempFileName.GetExt().IsSameAs(ToWxString("mesh"))) PrototypeData.MeshFiles.Add(PrototypeData.Files[iter]);
+				if (TempFileName.GetExt().IsSameAs(ToWxString("xml"))) PrototypeData.XMLFiles.Add(PrototypeData.Files[iter]);
+			}
+		}
+
+		NewPrototype->Data = PrototypeData;
+		return NewPrototype;
+	} 
+}
+
+/*
 void OViSEXmlManager::CopyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo)
 {
 	// CONVENTION: all names of objects are unique in Ogre, Xerces and WX !
@@ -254,8 +476,8 @@ void OViSEXmlManager::CopyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESele
 		}
 	}
 }
-
-
+*/
+/*
 void OViSEXmlManager::RecursiveNodeTreeWalkthrough(Ogre::Node* actualNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList_STAGE2, bool doExportNotSelectedChildToo)
 {
 	// CONVENTION: all name of objects are uniqu in Ogre, Xerces and WX !
@@ -483,7 +705,7 @@ void OViSEXmlManager::RecursiveNodeTreeWalkthrough(Ogre::Node* actualNode, HashM
 		}
 	}
 }
-
+*/
 
 /*void dotSceneXmlWriter::copyOgreSceneToDOM(Ogre::SceneManager* SceneMgr)
 {
@@ -644,6 +866,7 @@ void dotSceneXmlWriter::recursiveNodeTreeWalkthrough(Ogre::Node* actualNode, DOM
 	while(ChildIter.hasMoreElements()) recursiveNodeTreeWalkthrough(ChildIter.getNext(), New_NodeElement);
 }
 */
+/*
 void OViSEXmlManager::MoveDOMToXML(wxFileName filename, bool doExportMeshFiles)
 {
 	// Write DOM-structure to *.xml file!
@@ -694,7 +917,7 @@ void OViSEXmlManager::MoveDOMToXML(wxFileName filename, bool doExportMeshFiles)
 	}
 }
 
-bool OViSEXmlManager::ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo = true,  bool doExportMeshFiles = true)
+bool OViSEXmlManager::ExportDotScene(wxString HostingSceneManagerName, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo = true,  bool doExportMeshFiles = true)
 {
 	if (!this->IsInitialized()) return 0;
 	if (!this->IsReadyToExport()) return 0;
@@ -726,11 +949,15 @@ bool OViSEXmlManager::ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSES
 		return false;
 	}
 
-	this->CopyOgreSceneToDOM(HostingSceneMgr, Selection, doExportNotSelectedChildsToo);
-	this->MoveDOMToXML(DestinationOfSceneXML, doExportMeshFiles);
+	Ogre::SceneManager* HostingSceneMgr = Ogre::Root::getSingleton().getSceneManager(ToOgreString(HostingSceneManagerName));
+
+	//this->CopyOgreSceneToDOM(HostingSceneMgr, Selection, doExportNotSelectedChildsToo);
+	//this->MoveDOMToXML(DestinationOfSceneXML, doExportMeshFiles);
 
 	return true;
 }
+*/
+/*
 xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
 {
 	if (!this->IsInitialized()) return 0;
@@ -763,56 +990,55 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
     try 
     {
         mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
-
 		ParsingMsg << ToWxString("done!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
     }
     catch (const XMLException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
     }
     catch (const DOMException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
     }
 	catch (const SAXException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
     }
 	catch (std::exception e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
         ParsingMsg.Clear();
 		ParsingMsg << ToWxString("OViSE XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
 		ErrorsOccured = true;
     }
     catch (...) 
     {
 		ParsingMsg << ToWxString("failed!");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("OViSE XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
-        Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
 
 		ErrorsOccured = true;
     }
@@ -821,8 +1047,8 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
 	// REMEMBER: These errors are no exceptions like in those cases below.
     if (((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
 	
-	::xercesc_3_0::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
-	::xercesc_3_0::DOMDocument* tempDOMDoc = dynamic_cast<xercesc_3_0::DOMDocument*>(tempDOMWrapperNode);
+	xercesc::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
+	xercesc::DOMDocument* tempDOMDoc = dynamic_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
 
 	delete mParser;
     delete mErrHandler;
@@ -830,3 +1056,4 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
 	if (ErrorsOccured) return 0;
 	else return tempDOMDoc;
 }
+*/

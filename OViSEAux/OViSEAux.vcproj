@@ -173,7 +173,39 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEDotSceneManagerConfiguration.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\OViSE\OViSEException.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneAbstract.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneV1_0_0.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneAbstract.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneV1_0_0.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSESceneNodeOffset.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEScenePrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEScenePrototypeData.cpp"
 				>
 			</File>
 			<File
@@ -203,7 +235,39 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSEDotSceneManagerConfiguration.h"
+				>
+			</File>
+			<File
 				RelativePath="..\OViSE\OViSEException.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneAbstract.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneV1_0_0.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneAbstract.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneV1_0_0.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSESceneNodeOffset.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEScenePrototype.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSEScenePrototypeData.h"
 				>
 			</File>
 			<File

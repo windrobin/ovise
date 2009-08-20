@@ -17,6 +17,16 @@
 #include "../OViSE/OViSEStringConverter.h"
 #endif
 
+#ifndef OVISE_SCENE_PROTOTYPE_USED
+#define OVISE_SCENE_PROTOTYPE_USED
+#include "./OViSEScenePrototype.h"
+#endif
+
+#ifndef OVISE_DOTSCENE_MANAGER_CONFIGURATION_USED
+#define OVISE_DOTSCENE_MANAGER_CONFIGURATION_USED
+#include "./OViSEDotSceneManagerConfiguration.h"
+#endif
+
 // Include Ogre
 #ifndef Ogre_h_
 #define Ogre_h_
@@ -60,6 +70,11 @@ XERCES_CPP_NAMESPACE_USE
 #include <wx/filename.h>
 #endif
 
+#ifndef WX_DIR_USED
+#define WX_DIR_USED
+#include <wx/dir.h>
+#endif
+
 #ifndef WX_ARRAYSTRING_USED
 #define WX_ARRAYSTRING_USED
 #include <wx/arrstr.h>
@@ -92,6 +107,8 @@ private:
 	bool mReadyToExport;
 	bool mReadyToImport;
 
+	OViSEDotSceneManagerConfiguration* mConfiguration;
+
 	// Both
 	wxFileName mURLofExportPath;
 	wxFileName mURLofXSD;
@@ -101,18 +118,16 @@ private:
 	bool TerminateXML();
 
 	// Writing XML
-	WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, HashMap_OgreSceneNodePointer);
-	WX_DECLARE_STRING_HASH_MAP(DOMElement*, HashMap_DOMPointer);
+	//WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, HashMap_OgreSceneNodePointer);
+	//WX_DECLARE_STRING_HASH_MAP(DOMElement*, HashMap_DOMPointer);
 
-	wxArrayString mCopyThisMeshFiles;
-	std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
+	//wxArrayString mCopyThisMeshFiles;
+	//std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
 
 	DOMImplementation* mImplementation;
 	DOMDocumentType* mDocType;
 	::DOMDocument* mDocument;
-
-	void CopyOgreSceneToDOM(Ogre::SceneManager* SceneMgr, OViSESelectionMap Selection, bool doExportNotSelectedChildToo);
-	void RecursiveNodeTreeWalkthrough(Ogre::Node* actualSceneNode, HashMap_OgreSceneNodePointer& WhiteList_STAGE1, HashMap_DOMPointer& WhiteList_STAGE2, HashMap_DOMPointer& BlackList, bool doExportNotSelectedChildTo);
+	
 	void MoveDOMToXML(wxFileName filename, bool doExportMeshFiles);
 
 	// Reading XML
@@ -121,21 +136,30 @@ private:
 
 public:
 	// General
-	OViSEXmlManager();
+	OViSEXmlManager(OViSEDotSceneManagerConfiguration* Configuration);
 	OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath);
 	~OViSEXmlManager(void);
 
+	// Get info
 	bool IsInitialized();
 	bool IsReadyToExport();
 	bool IsReadyToImport();
 
-	bool SetURLofXSD(wxString URLofXSD);
-	bool SetURLofExportPath(wxString URLofExportPath);
-	wxString GetURLofXSD();
-	wxString GetURLofExportPath();
+	// Set data
+	bool		SetURLofXSD(wxString URLofXSD);
+	bool		SetURLofExportPath(wxString URLofExportPath);
+
+	// Get data
+	wxString	GetURLofXSD();
+	wxString	GetURLofExportPath();
+	OViSEDotSceneManagerConfiguration* GetConfiguration();
+
+	// Management of DOMDocuments
+	bool ExportScenePrototype(OViSEScenePrototype* ScenePrototype, wxFileName DestinationURL);
+	OViSEScenePrototype* ImportScenePrototype(wxFileName URLofXML);  // Returns UniquePrototypeName
 
 	// Writing XML
-	bool ExportDotScene(Ogre::SceneManager* HostingSceneMgr, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles);
+	bool ExportDotScene(wxString HostingSceneManagerName, OViSESelectionMap Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles);
 	
 	// Reading XML
 	xercesc::DOMDocument* ImportDotScene(wxString URLofXML);
