@@ -91,9 +91,6 @@ XERCES_CPP_NAMESPACE_USE
 #include <string>
 #endif
 
-#include <deque>
-#include <typeinfo>
-
 /// Map containing selected objects.
 typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
 
@@ -118,12 +115,6 @@ private:
 	bool TerminateXML();
 
 	// Writing XML
-	//WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, HashMap_OgreSceneNodePointer);
-	//WX_DECLARE_STRING_HASH_MAP(DOMElement*, HashMap_DOMPointer);
-
-	//wxArrayString mCopyThisMeshFiles;
-	//std::deque<Ogre::MeshPtr> mExportThisMeshsToFiles;
-
 	DOMImplementation* mImplementation;
 	DOMDocumentType* mDocType;
 	::DOMDocument* mDocument;

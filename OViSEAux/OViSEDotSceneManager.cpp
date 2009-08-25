@@ -1,24 +1,5 @@
 #include "OViSEDotSceneManager.h"
-/*
-bool OViSEDotSceneManager::CallSuitableInterpreter_DOMToOgre(xercesc::DOMDocument *SceneInDOMFormat, wxString AnchorNodeName)
-{
-	bool Match = false;
-	bool ReturnValue = false;
-	Match = OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::IsValidFormatVersion(SceneInDOMFormat);
-	if (Match)
-	{
-		this->mDOMInterpreter = new OViSEInterpreter_DOMToOgre_DotSceneV1_0_0();
-		bool ReturnValue = this->mDOMInterpreter->Interpretation(SceneInDOMFormat, AnchorNodeName, this->GetConfiguration());
-		delete this->mDOMInterpreter;
-	}
-	
-	// <---- TODO: Implement priority-list-selcetion!
-	// while(!Match) { Nimm nächsten interpreter von liste; Match = prüfe version interpreter; wenn Match -> interpreter erzeugen + interpretation starten; }
 
-	if (ReturnValue) return true;
-	else return false;
-}
-*/
 // De- & Constructors
 OViSEDotSceneManager::OViSEDotSceneManager(OViSEDotSceneManagerConfiguration *Configuration)
 {
@@ -72,70 +53,7 @@ bool OViSEDotSceneManager::IsReadyToExport() { return this->mXmlMgr->IsReadyToEx
 bool OViSEDotSceneManager::IsReadyToImport() { return this->mXmlMgr->IsReadyToImport(); }
 
 wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes() { return this->mImportedScenePrototypes; }
-/*
-bool		OViSEDotSceneManager::ExportPrototype(OViSESelectionMap Selection, wxString DestinationOfSceneXML)
-{
-	return this->mXmlMgr->ExportDotScene(this->GetConfiguration()->SceneManagerName, Selection, DestinationOfSceneXML, doExportNotSelectedChildsToo, doExportMeshFiles);
-}
-*/
-/*
-wxString	OViSEDotSceneManager::ImportPrototype(wxString URLofXML)
-{
-	wxFileName TempURLofXML(URLofXML);
 
-	xercesc::DOMDocument* DOMRepresentationOfDotScene = this->mXmlMgr->ImportDotScene(TempURLofXML.GetFullPath());
-
-	if (DOMRepresentationOfDotScene == 0)
-	{
-		return wxString(); // returning empty string -> error while import
-	}
-	else
-	{
-		wxString UniqueNameOfScenePrototype = this->GetConfiguration()->SceneNameMgr->AllocateUniqueName(TempURLofXML.GetName());
-
-		// Add new objects to all hashtables with same key
-		// IMPLICIT: Expexting ".material"-files always (!) at location of ".mesh"-files.
-		this->DOMScenes[UniqueNameOfScenePrototype] = DOMRepresentationOfDotScene;
-		this->LocationsOfMeshFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
-		this->LocationsOfMaterialFiles[UniqueNameOfScenePrototype] = wxFileName(TempURLofXML.GetPath());
-		this->mImportedScenePrototypes.Add(UniqueNameOfScenePrototype);
-		return UniqueNameOfScenePrototype;
-	}
-}
-bool		OViSEDotSceneManager::AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AnchorNodeName)
-{
-	wxString LogMsg, dotSceneVersionString;
-
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE dotScene Manager: Attaching instance of prototype \"") << UniqueNameOfPrototype << ToWxString("\"");
-	this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
-
-	// STEP 1: Check, if prototype-list is empty...
-	if (this->DOMScenes.empty())
-	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE dotScene Manager: No prototypes are available. Aborted!");
-		this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Critical);
-		return false;
-	}
-
-	// STEP 2: Check, if prototype-list doesn't contain "UniqueNameOfPrototype"...
-	if (this->DOMScenes.find(UniqueNameOfPrototype) == this->DOMScenes.end())
-	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE dotScene Manager: Prototype \"") << UniqueNameOfPrototype << ToWxString("\" is not registed. Aborted!");
-		this->GetConfiguration()->Log->WriteToOgreLog(LogMsg, OViSELogging::Critical);
-		return false;
-	}
-	
-	// STEP 3: Get DOM-representation of scene by unique name
-	xercesc::DOMDocument* SceneInDOMFormat = this->DOMScenes[UniqueNameOfPrototype];
-
-	
-	// STEP 4: Select suitable DOMInterpreter an process interpretation
-	return this->CallSuitableInterpreter_DOMToOgre(SceneInDOMFormat, AnchorNodeName);
-}
-*/
 bool OViSEDotSceneManager::SetPrototypeData(wxString UniquePrototypeName, OViSEScenePrototypeData NewData)
 {
 	OViSEScenePrototype* ScenePrototype = this->ScenePrototypes[UniquePrototypeName];
@@ -218,6 +136,7 @@ wxString OViSEDotSceneManager::ImportScenePrototype(wxFileName URLofXML)
 		return TempPrototype->GetUniqueName();
 	}
 }
+
 /// * * * * * * * * * When XML-interpreter was changed, you have to adapt this method. * * * * * * * * * 
 
 /*

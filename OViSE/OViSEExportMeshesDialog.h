@@ -1,7 +1,11 @@
 #ifndef __OViSEExportMeshesDialog__
 #define __OViSEExportMeshesDialog__
 
+// Solution's includes
+#ifndef GUIFRAME_USED
+#define GUIFRAME_USED
 #include "GUIFrame.h"
+#endif
 
 class OViSEExportMeshesDialog : public ExportMeshesDialog
 {

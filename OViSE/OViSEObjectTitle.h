@@ -1,7 +1,15 @@
 #pragma once
 
-#include <Ogre.h>
+// Include Ogre
+#ifndef Ogre_h_
+#define Ogre_h_
+#include "Ogre.h"
+#endif
+
+#ifndef OGRE_FONTMANAGER_USED
+#define OGRE_FONTMANAGER_USED
 #include <OgreFontManager.h>
+#endif
 
 /** Class for displaying object titles as 2D text in 3D.
  * @remark This class is taken out of the OgreWiki at http://www.ogre3d.org/wiki/index.php/ObjectTitle

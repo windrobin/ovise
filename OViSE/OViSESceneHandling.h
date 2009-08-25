@@ -7,34 +7,72 @@
 #include "../OViSEAux/OViSEDotSceneManager.h"
 #endif
 
+#ifndef OVISE_FRAMELISTENER_USED
+#define OVISE_FRAMELISTENER_USED
+#include "OViSEFrameListener.h"
+#endif
+
+/*
 #ifndef OVISE_ATTACH_SCENE_DIALOG_USED
 #define OVISE_ATTACH_SCENE_DIALOG_USED
-#include "OViSEAttachSceneDialog.h"
+//#include "OViSEAttachSceneDialog.h"
+#endif
+*/
+#ifndef OVISE_EXCEPTION_USED
+#define OVISE_EXCEPTION_USED
+#include "OViSEException.h"
 #endif
 
-#ifdef __APPLE__
-#include "Ogre/Ogre.h"
-#else
-#include "Ogre.h"
-#endif
-#include "OViSEException.h"
+#ifndef OVISE_OBJECTTITLE_USED
+#define OVISE_OBJECTTITLE_USED
 #include "OViSEObjectTitle.h"
+#endif
+
+#ifndef OVISE_POINTCLOUD_USED
+#define OVISE_POINTCLOUD_USED
 #include "OViSEPointcloud.h"
+#endif
+
+#ifndef OVISE_CALLBACKTESTER_USED
+#define OVISE_CALLBACKTESTER_USED
 #include "OViSECallbackTester.h"
-#include "OViSEFrameListener.h"
+#endif
+
+#ifndef OVISE_MESSENGER_USED
+#define OVISE_MESSENGER_USED
 #include "OViSEMessenger.h"
+#endif
+
+// Include Ogre
+#ifdef __APPLE__
+#ifndef Ogre_h_
+#define Ogre_h_
+#include <Ogre/Ogre.h>
+#endif
+#else
+#ifndef Ogre_h_
+#define Ogre_h_
+#include <Ogre.h>
+#endif
+#endif
+
+// Include WX
+#ifndef WX_FILENAME_USED
+#define WX_FILENAME_USED
+#include <wx/filename.h>
+#endif
+
+#ifndef WX_IMAGE_USED
+#define WX_IMAGE_USED
+#include <wx/image.h>
+#endif
+
+#ifndef WX_BITMAP_USED
+#define WX_BITMAP_USED
+#include <wx/bitmap.h>
+#endif
 
 #define __HenningsActualWork__
-
-#ifdef __HenningsActualWork__
-#include "OViSEPathProvider.h"
-#include "dotSceneXmlWriter.h"
-
-#endif
-
-#include <wx/image.h>
-#include <wx/bitmap.h>
-#include <wx/filename.h>
 
 /// Map containing all scene managers.
 typedef std::map<std::string, Ogre::SceneManager*> OViSEScnMgrMap;

@@ -1,12 +1,18 @@
 #ifndef OVISEEXCEPTION_H_
 #define OVISEEXCEPTION_H_
 
-#include <exception>
+// Include STD
+#ifndef STD_STING_USED
+#define STD_STING_USED
 #include <string>
+#endif
 
-using namespace std;
+#ifndef STD_EXCEPTION_USED
+#define STD_EXCEPTION_USED
+#include <exception>
+#endif
 
-class OViSEException : exception
+class OViSEException : std::exception
 {
 public:
 	OViSEException(const char* msg);
@@ -16,7 +22,7 @@ public:
 	virtual ~OViSEException() throw();
 	
 private:
-	string mMsg;	
+	std::string mMsg;	
 };
 
 #endif /*OVISEEXCEPTION_H_*/

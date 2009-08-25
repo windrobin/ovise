@@ -20,25 +20,20 @@ OViSEXmlManager::OViSEXmlManager(wxString URLofXSD, wxString URLofExportPath) : 
 
 OViSEXmlManager::~OViSEXmlManager(void)
 {
-	/*
 	if (this->mImplementation != 0)
 	{
 		delete this->mImplementation;
 	}
-	*/
-	/*
 	if (this->mDocType != 0)
 	{
 		this->mDocType->release();
 		if (this->mDocType != 0) delete this->mDocType;
-	}*/
-	/*
+	}
 	if (this->mDocument != 0)
 	{
 		this->mDocument->release();
 		if (this->mDocument != 0) delete this->mDocument;
 	}
-	*/
 
 	this->mInitialized = this->TerminateXML();
 }
@@ -353,20 +348,27 @@ OViSEScenePrototype* OViSEXmlManager::ImportScenePrototype(wxFileName URLofXML)
 	// REMEMBER: These errors are no exceptions like in those cases below.
     if (((OViSEXercesXMLErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
 	
-	delete mParser;
-    delete mErrHandler;
-
-	if (ErrorsOccured) return 0;
+	if (ErrorsOccured)
+	{
+		delete mParser;
+		delete mErrHandler;
+		return 0;
+	}
 	else
 	{
 		xercesc::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
-		xercesc::DOMDocument* tempDOMRepesentation = dynamic_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
+		xercesc::DOMDocument* tempDOMRepesentation = static_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
 
 		wxString UniquePrototypeName = this->GetConfiguration()->ScenePrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
 
-		OViSEScenePrototype* NewPrototype = new OViSEScenePrototype(UniquePrototypeName,
-																	tempDOMRepesentation);
+		OViSEScenePrototype* NewPrototype = new OViSEScenePrototype(UniquePrototypeName, tempDOMRepesentation);
+		//xercesc::DOMNode* tempDOMWrapperNode = ->cloneNode(true);
+		//xercesc::DOMDocument* tempDOMRepesentation = dynamic_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
 		
+		//wxString UniquePrototypeName = this->GetConfiguration()->ScenePrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
+		
+		//OViSEScenePrototype* NewPrototype = new OViSEScenePrototype(UniquePrototypeName, this->mParser->getDocument());
+
 		OViSEScenePrototypeData PrototypeData;
 		PrototypeData.ResourceBaseDir = URLofXML.GetPath();
 		wxDir::GetAllFiles(PrototypeData.ResourceBaseDir, &(PrototypeData.Files));
@@ -386,6 +388,10 @@ OViSEScenePrototype* OViSEXmlManager::ImportScenePrototype(wxFileName URLofXML)
 		}
 
 		NewPrototype->Data = PrototypeData;
+
+		delete mParser;
+		delete mErrHandler;
+
 		return NewPrototype;
 	} 
 }

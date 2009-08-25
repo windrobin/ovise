@@ -1,6 +1,10 @@
 #pragma once
 
+// Include STD
+#ifndef STD_STING_USED
+#define STD_STING_USED
 #include <string>
+#endif
 
 /** Abstract base class for frame-based callbacks.
  * This class needs to be subclassed and the executeCommands() method implemented. It

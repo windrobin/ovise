@@ -96,8 +96,6 @@ protected:
 	OViSEDotSceneManagerConfiguration* Configuration;
 	wxString VersionString;
 
-	virtual void SetVersionString(wxString VersionString);
-
 	// Methods
 	Ogre::SceneNode* AttachSceneNode(	wxString NotUniqueName,
 										Ogre::Vector3 Translation_Relative,

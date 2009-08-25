@@ -30,7 +30,7 @@ bool OViSEWxApp::OnInit()
 		splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
 			wxDefaultSize, wxBORDER_NONE | wxSTAY_ON_TOP);
 	}
-	Yield(true);
+	//Yield(true);
 
 	Ogre::LogManager *logMgr = new Ogre::LogManager;
 	Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("OViSE.log", true, true, false);

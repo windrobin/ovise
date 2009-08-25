@@ -2,6 +2,7 @@
 #define OVISE_XERCES_XML_ERRORREPORTER_H_
 
 // Solution's includes
+
 #ifndef OVISE_STRINGCONVERTER_USED
 #define OVISE_STRINGCONVERTER_USED
 #include "../OViSE/OViSEStringConverter.h"
