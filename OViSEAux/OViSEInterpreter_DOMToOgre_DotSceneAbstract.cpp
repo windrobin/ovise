@@ -1,9 +1,12 @@
 #include "OViSEInterpreter_DOMToOgre_DotSceneAbstract.h"
 
+OViSEInterpreter_DOMToOgre_DotSceneAbstract::~OViSEInterpreter_DOMToOgre_DotSceneAbstract(void) { }
+
 wxString OViSEInterpreter_DOMToOgre_DotSceneAbstract::GetVersionString( xercesc::DOMDocument* DOMRepresentationOfScene )
 {
 	// Get root element...
-	xercesc::DOMElement *DOMElement_scene = DOMRepresentationOfScene->getDocumentElement();
+	xercesc::DOMElement *DOMElement_scene = 0;
+	DOMElement_scene = DOMRepresentationOfScene->getDocumentElement();
 
 	// Get version-string...
 	if (DOMElement_scene->hasAttribute(ToXMLString("formatVersion"))) return ToWxString(DOMElement_scene->getAttribute(ToXMLString("formatVersion")));

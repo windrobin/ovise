@@ -10,6 +10,11 @@
 #ifndef OVISEWXAPP_H
 #define OVISEWXAPP_H
 
+#ifndef OVISE_FRAMELISTENER_USED
+#define OVISE_FRAMELISTENER_USED
+#include "OViSEFrameListener.h"
+#endif
+
 #include <wx/app.h>
 #include <wx/splash.h>
 #ifdef __APPLE__
@@ -17,7 +22,8 @@
 #else
 #include <Ogre.h>
 #endif
-#include "OViSEFrameListener.h"
+
+
 
 class OViSEWxApp : public wxApp
 {

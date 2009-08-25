@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef OVISE_STRING_CONVERTER_H_
 #define OVISE_STRING_CONVERTER_H_
 

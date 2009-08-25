@@ -1,6 +1,9 @@
 #include "OViSEFrameListener.h"
 
+#ifndef OVISE_SCENEHANDLING_USED
+#define OVISE_SCENEHANDLING_USED
 #include "OViSESceneHandling.h"
+#endif
 
 OViSEFrameListener::OViSEFrameListener(void)
 {

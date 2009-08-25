@@ -1,5 +1,5 @@
 #include "OViSESceneHandling.h"
-
+#include <wx/dir.h>
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
 OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
@@ -30,12 +30,18 @@ OViSESceneHandling::OViSESceneHandling()
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
-	/*
-	this->mDotSceneMgr->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
-
-	addCOS(0.1, true, sceneManagerName);
+	// this->mDotSceneMgr->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
+	// Create entity...
 
 	Ogre::SceneManager *tmp = mSceneManagers[ToStdString(sceneManagerName)];
+
+	Ogre::Entity* NewEntity = tmp->createEntity(ToOgreString("BasePlane"), ToOgreString("Plane.mesh"));
+	tmp->getRootSceneNode()->attachObject(NewEntity);
+
+	//addCOS(0.1, true, sceneManagerName);
+	wxString UniqueNameoOfKOS = this->mDotSceneMgr->ImportScenePrototype(wxFileName(ToWxString("C:/Dokumente und Einstellungen/renartz.ITEC/Eigene Dateien/OViSE Checkout/KOS/KOS.xml")));
+	this->mDotSceneMgr->MakeOgreSceneFromPrototype(UniqueNameoOfKOS, ToWxString(tmp->getRootSceneNode()->getName()));
+	
 	
 	// Create light
 	Ogre::Light *globalLight = tmp->createLight("GlobalLight");
@@ -46,8 +52,6 @@ void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
 	tmp->getRootSceneNode()->attachObject(globalLight);
-	*/
-	;
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -281,18 +285,27 @@ void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vecto
 
 void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
-	/*
 	try
 	{
-		if(node == NULL) node = this->getSceneManager(ToOgreString(sceneManagerName))->getRootSceneNode();
+		Ogre::SceneManager* tmp = this->getSceneManager(ToOgreString(sceneManagerName));
+		if(node == NULL) node = tmp->getRootSceneNode();
 
-		Ogre::SceneNode *NewSceneNode = this->mDotSceneMgr->attachSceneNode(ToWxString("KOSNode"), Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(scale, scale, scale), Ogre::Quaternion::IDENTITY);
+		//Ogre::SceneNode *NewSceneNode = this->mDotSceneMgr->attachSceneNode(ToWxString("KOSNode"), Ogre::Vector3(0.0f, 0.0f, 0.0f), Ogre::Vector3(scale, scale, scale), Ogre::Quaternion::IDENTITY);
+		Ogre::SceneNode *NewSceneNode = tmp->getRootSceneNode()->createChildSceneNode(ToOgreString("KOSNode"));
+		NewSceneNode->scale(scale, scale, scale);
+
 		Ogre::Entity *AxisEnt;
-		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("xAxis"), ToWxString("xAxis.mesh"), NewSceneNode);
+		//AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("xAxis"), ToWxString("xAxis.mesh"), NewSceneNode);
+		AxisEnt = tmp->createEntity(ToOgreString("xAxis"), ToOgreString("xAxis.mesh"));
+		NewSceneNode->attachObject(AxisEnt);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
-		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("yAxis"), ToWxString("yAxis.mesh"), NewSceneNode);
+		//AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("yAxis"), ToWxString("yAxis.mesh"), NewSceneNode);
+		AxisEnt = tmp->createEntity(ToOgreString("zAxis"), ToOgreString("yAxis.mesh"));
+		NewSceneNode->attachObject(AxisEnt);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
-		AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("zAxis"), ToWxString("zAxis.mesh"), NewSceneNode);
+		//AxisEnt = this->mDotSceneMgr->attachEntity(ToWxString("zAxis"), ToWxString("zAxis.mesh"), NewSceneNode);
+		AxisEnt = tmp->createEntity(ToOgreString("yAxis"), ToOgreString("zAxis.mesh"));
+		NewSceneNode->attachObject(AxisEnt);
 		if (AxisEnt != NULL) AxisEnt->setCastShadows(castShadows);
 	}
 	catch (OViSEException e)
@@ -300,8 +313,6 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneMan
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.what());
 	}
 	catch (...) {}
-	*/
-	;
 }
 
 std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string group)
@@ -467,10 +478,13 @@ void OViSESceneHandling::startStopFrameListeners(bool on)
 
 OViSESceneHandling::~OViSESceneHandling()
 {
-	delete this->mDotSceneMgr;
+	//delete this->mDotSceneMgr;
 }
 
-void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML) { /*this->mDotSceneMgr->ImportPrototype(URLofXML);*/ }
+void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML)
+{
+	/*this->mDotSceneMgr->ImportPrototype(URLofXML);*/
+}
 void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
 	/* Export depending on selection */
@@ -500,7 +514,8 @@ void OViSESceneHandling::release()
 	delete OViSESceneHandling::getSingletonPtr();
 }
 
+
 wxArrayString OViSESceneHandling::GetAvailablePrototypesOfDotSceneManager()
 {
-	return this->mDotSceneMgr->GetImportedScenePrototypes();
+	return wxArrayString(); //this->mDotSceneMgr->GetImportedScenePrototypes();
 }

@@ -189,10 +189,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEAddMeshDialog.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\OViSEAttachSceneDialog.cpp"
 					>
 				</File>
@@ -261,6 +257,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSELogging.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\OViSEPathProvider.cpp"
 					>
 				</File>
@@ -288,10 +288,6 @@
 				>
 				<File
 					RelativePath=".\GUIFrame.h"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEAddMeshDialog.h"
 					>
 				</File>
 				<File
@@ -360,6 +356,10 @@
 				>
 				<File
 					RelativePath=".\OViSEInputHandler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSELogging.h"
 					>
 				</File>
 				<File

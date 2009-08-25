@@ -1,13 +1,29 @@
 #pragma once
 
-#include <wx/wx.h>
-#ifdef __APPLE__
-#include <Ogre/Ogre.h>
-#else
-#include <Ogre.h>
+// Solution's includes
+#ifndef OVISE_SCENEHANDLING_USED
+#define OVISE_SCENEHANDLING_USED
+#include "OViSESceneHandling.h"
 #endif
 
-#include "OViSESceneHandling.h"
+// Include Ogre
+#ifdef __APPLE__
+#ifndef Ogre_h_
+#define Ogre_h_
+#include <Ogre/Ogre.h>
+#endif
+#else
+#ifndef Ogre_h_
+#define Ogre_h_
+#include <Ogre.h>
+#endif
+#endif
+
+// Include WX
+#ifndef WX_USED
+#define WX_USED
+#include <wx/wx.h>
+#endif
 
 /** Class to handle input from the user for a render widget.
  * This calls handles all the keyboard and mouse input for a render widget. It is

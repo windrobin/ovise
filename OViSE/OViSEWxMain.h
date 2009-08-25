@@ -27,8 +27,12 @@
 #include "wxOgreRenderWindow.h"
 #include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
-#include "OViSEAddMeshDialog.h"
 #include "OViSESceneTree.h"
+
+#ifndef OVISE_ADD_MESH_DIALOG_USED
+#define OVISE_ADD_MESH_DIALOG_USED
+//#include "OViSEAddMeshDialog.h"
+#endif
 
 #ifndef OVISE_EXPORT_MESHES_DIALOG_USED
 #define OVISE_EXPORT_MESHES_DIALOG_USED
@@ -111,7 +115,7 @@ class OViSEWxFrame: public GUIFrame
 
 		OViSELogListener *mLogBoxListener;
 
-		OViSEAddMeshDialog *mAddMeshDialog;
+		//OViSEAddMeshDialog *mAddMeshDialog;
 };
 
 #endif // OVISEWXMAIN_H

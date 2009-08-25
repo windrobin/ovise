@@ -2,7 +2,7 @@
 
 OViSEException::OViSEException(const char* msg)
 {
-	mMsg = string(msg);
+	mMsg = std::string(msg);
 }
 
 const char* OViSEException::what() const throw()

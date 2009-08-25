@@ -157,18 +157,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\dotScene\dotSceneAttachFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\dotScene\dotSceneXmlReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\dotScene\dotSceneXmlWriter.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\OViSEDotSceneManager.cpp"
 				>
 			</File>
@@ -218,18 +206,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\dotScene\dotSceneAttachFactory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\dotScene\dotSceneXmlReader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\dotScene\dotSceneXmlWriter.h"
-				>
-			</File>
 			<File
 				RelativePath=".\OViSEDotSceneManager.h"
 				>

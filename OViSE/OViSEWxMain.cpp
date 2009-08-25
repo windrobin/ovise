@@ -72,7 +72,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	mWindowManager->AddPane(logBox, wxBOTTOM, wxT("Log"));
 	mLogBoxListener = new OViSELogListener(logBox);
 
-	mAddMeshDialog = NULL;
+	//mAddMeshDialog = NULL;
 
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener(mLogBoxListener);
 
@@ -113,7 +113,7 @@ void OViSEWxFrame::finishOgreInitialization()
 
     Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
 
-	mSceneHdlr->createDefaultScene();
+	//mSceneHdlr->createDefaultScene();
 
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
@@ -297,18 +297,20 @@ void OViSEWxFrame::OnSaveScreenToFile(wxCommandEvent &event)
 
 void OViSEWxFrame::OnSceneAddMesh(wxCommandEvent &event)
 {
+	/*
 	if(mAddMeshDialog == NULL)
 	{
 		mAddMeshDialog = new OViSEAddMeshDialog(this, wxID_HIGHEST + 1);
 		mAddMeshDialog->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( OViSEWxFrame::OnAddMeshDialogClose ), NULL, this);
 	}
 	mAddMeshDialog->Show();
+	*/
 }
 
 void OViSEWxFrame::OnAddMeshDialogClose(wxCloseEvent& event)
 {
 	event.Skip();
-	mAddMeshDialog = NULL;
+	//mAddMeshDialog = NULL;
 }
 
 void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
@@ -538,16 +540,17 @@ void OViSEWxFrame::deleteMeshes()
 void OViSEWxFrame::OnImportScenePrototype( wxCommandEvent& event )
 {
 	//TODO: Dynamische Namensvergabe für die Childnode implementieren, die erzeugt wird.
-	wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
+	/*wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
 	int ret = fd.ShowModal();
 
 	if(ret == wxID_CANCEL)
-		return;
+		return;*/
 
 	// TODO: Later use a selected node. Acually the sceneroot is used.
 	// If that SceneNode-param is not used, it's NULL. That 'll be interpreted as srootscenenode of default-scenemanager.
 	/// mSceneHdlr->loadSceneFromXML(fd.GetPath()), *** SOME ANCHOR NODE ***;
-	mSceneHdlr->ImportPrototypeFromXML(fd.GetPath());
+	//mSceneHdlr->ImportPrototypeFromXML(fd.GetPath());
+	this->mSceneHdlr->createDefaultScene();
 }
 
 void OViSEWxFrame::OnExportScenePrototype( wxCommandEvent& event )

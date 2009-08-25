@@ -1,8 +1,22 @@
 #pragma once
-#include <OgreFrameListener.h>
-#include <map>
-#include "OViSECallbackObject.h"
 
+// Solution's includes
+#ifndef OVISE_CALLBACK_OBJECT_USED
+#define OVISE_CALLBACK_OBJECT_USED
+#include "OViSECallbackObject.h"
+#endif
+
+// Include Ogre
+#ifndef OGRE_FRAMELISTENER_USED
+#define OGRE_FRAMELISTENER_USED
+#include <OgreFrameListener.h>
+#endif
+
+// Include STD
+#ifndef STD_MAP_USED
+#define STD_MAP_USED
+#include <map>
+#endif
 
 /** This class is a callback for the render routine.
  * The frame listeners methods get called before and after every frame rendering.

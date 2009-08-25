@@ -1,6 +1,7 @@
+#pragma once
+
 #ifndef OVISE_DOTSCENE_MANAGER_CONFIGURATION_H_
 #define OVISE_DOTSCENE_MANAGER_CONFIGURATION_H_
-
 
 // Solution's includes
 #ifndef OVISE_UNIQUENAME_GENERATOR_USED
@@ -17,6 +18,7 @@
 #define OVISE_SCENENODE_OFFSET_USED
 #include "./OViSESceneNodeOffset.h"
 #endif
+
 
 // Include Ogre
 #ifndef Ogre_h_

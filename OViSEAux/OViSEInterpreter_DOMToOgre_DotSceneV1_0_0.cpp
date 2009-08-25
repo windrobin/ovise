@@ -1,5 +1,13 @@
 #include "OViSEInterpreter_DOMToOgre_DotSceneV1_0_0.h"
 
+OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::OViSEInterpreter_DOMToOgre_DotSceneV1_0_0() { }
+OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::~OViSEInterpreter_DOMToOgre_DotSceneV1_0_0() { }
+
+void OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene)
+{
+
+}
+
 void OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
 {
 	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
@@ -273,6 +281,15 @@ void OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Entity(	xercesc::
 }
 
 
+void OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
+{
+
+}
+
+void OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Environment(xercesc::DOMElement* DOMElement_environment)
+{
+
+}
 Ogre::Vector3 OViSEInterpreter_DOMToOgre_DotSceneV1_0_0::Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector3 * * * * * * * * *
