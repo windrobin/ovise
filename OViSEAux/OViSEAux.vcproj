@@ -157,47 +157,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\OViSEDotSceneManager.cpp"
+				RelativePath=".\OViSEException.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEDotSceneManagerConfiguration.cpp"
+				RelativePath=".\OViSELogging.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\OViSE\OViSEException.cpp"
+				RelativePath=".\SceneNodeOffset.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneAbstract.cpp"
+				RelativePath=".\StringConverter.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneV1_0_0.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneAbstract.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneV1_0_0.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSESceneNodeOffset.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEScenePrototype.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEScenePrototypeData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEXmlManager.cpp"
+				RelativePath=".\UniqueNameManager.cpp"
 				>
 			</File>
 		</Filter>
@@ -207,47 +183,23 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\OViSEDotSceneManager.h"
+				RelativePath=".\OViSEException.h"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEDotSceneManagerConfiguration.h"
+				RelativePath=".\OViSELogging.h"
 				>
 			</File>
 			<File
-				RelativePath="..\OViSE\OViSEException.h"
+				RelativePath=".\SceneNodeOffset.h"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneAbstract.h"
+				RelativePath=".\StringConverter.h"
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEInterpreter_DOMToOgre_DotSceneV1_0_0.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneAbstract.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEInterpreter_OgreToDOM_DotSceneV1_0_0.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSESceneNodeOffset.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEScenePrototype.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEScenePrototypeData.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEXmlManager.h"
+				RelativePath=".\UniqueNameManager.h"
 				>
 			</File>
 		</Filter>
