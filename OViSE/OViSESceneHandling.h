@@ -4,7 +4,7 @@
 // Solution's includes
 #ifndef OVISE_DOTSCENE_MANAGER_USED
 #define OVISE_DOTSCENE_MANAGER_USED
-#include "../OViSEAux/OViSEDotSceneManager.h"
+#include "./OViSEDotSceneManager.h"
 #endif
 
 #ifndef OVISE_FRAMELISTENER_USED
@@ -20,7 +20,7 @@
 */
 #ifndef OVISE_EXCEPTION_USED
 #define OVISE_EXCEPTION_USED
-#include "OViSEException.h"
+#include "../OViSEAux/OViSEException.h"
 #endif
 
 #ifndef OVISE_OBJECTTITLE_USED
