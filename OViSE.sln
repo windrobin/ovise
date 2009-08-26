@@ -5,6 +5,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OViSE", "OViSE\OViSE.vcproj
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OViSEAux", "OViSEAux\OViSEAux.vcproj", "{253BC70A-6F3F-413A-9590-BE90CF8C167B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OViSEdotSceneBase", "OViSEdotSceneBase\OViSEdotSceneBase.vcproj", "{5E86EB80-C67B-42DF-9FE2-3E1074220D53}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OViSEdotSceneInterpreter", "OViSEdotSceneInterpreter\OViSEdotSceneInterpreter.vcproj", "{EA82355B-C0DB-4EB7-A036-160B2B8E6027}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -19,6 +23,14 @@ Global
 		{253BC70A-6F3F-413A-9590-BE90CF8C167B}.Debug|Win32.Build.0 = Debug|Win32
 		{253BC70A-6F3F-413A-9590-BE90CF8C167B}.Release|Win32.ActiveCfg = Release|Win32
 		{253BC70A-6F3F-413A-9590-BE90CF8C167B}.Release|Win32.Build.0 = Release|Win32
+		{5E86EB80-C67B-42DF-9FE2-3E1074220D53}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E86EB80-C67B-42DF-9FE2-3E1074220D53}.Debug|Win32.Build.0 = Debug|Win32
+		{5E86EB80-C67B-42DF-9FE2-3E1074220D53}.Release|Win32.ActiveCfg = Release|Win32
+		{5E86EB80-C67B-42DF-9FE2-3E1074220D53}.Release|Win32.Build.0 = Release|Win32
+		{EA82355B-C0DB-4EB7-A036-160B2B8E6027}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA82355B-C0DB-4EB7-A036-160B2B8E6027}.Debug|Win32.Build.0 = Debug|Win32
+		{EA82355B-C0DB-4EB7-A036-160B2B8E6027}.Release|Win32.ActiveCfg = Release|Win32
+		{EA82355B-C0DB-4EB7-A036-160B2B8E6027}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
