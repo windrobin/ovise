@@ -43,6 +43,9 @@
 #include "OViSEMessenger.h"
 #endif
 
+#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/OgreAPIMediator.h"
+
 // Include Ogre
 #ifdef __APPLE__
 #ifndef Ogre_h_
@@ -187,6 +190,10 @@ public:
 	 */
 	Ogre::MovableObject* getSelectedObject(float screenx, float screeny, float& dist, Ogre::Camera *cam, std::string sceneManagerName = "BaseSceneManager");
 
+
+	Ogre::MovableObject* getSelectedObject(wxString ObjectName, Ogre::SceneManager* ScnMgr);
+	
+
 	/// Removes all selected objects from the selection list and hides bounding boxes
 	void clearObjectSelection(std::string sceneManagerName = "BaseSceneManager");
 
@@ -234,6 +241,9 @@ public:
 
 	wxArrayString GetAvailablePrototypesOfDotSceneManager();
 
+	/// Standard factory for dotScene loading // TODO -> move back to private
+	OViSEDotSceneManager *mDotSceneMgr;
+
 protected:
 	OViSESceneHandling();
 
@@ -260,8 +270,7 @@ private:
 	/// FrameListener
 	OViSEFrameListener *mFrameListener;
 
-	/// Standard factory for dotScene loading
-	OViSEDotSceneManager *mDotSceneMgr;
+	
 
 	/// Messenger for signaling to wx
 	OViSEMessenger *mMessenger;

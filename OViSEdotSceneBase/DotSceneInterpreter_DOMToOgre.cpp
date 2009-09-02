@@ -120,39 +120,3 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 
 	return true;
 }
-
-Ogre::SceneNode* DotSceneInterpreter_DOMToOgre::AttachSceneNode(wxString NotUniqueName, Ogre::Vector3 Translation_Relative, Ogre::Vector3 Scale_Relative, Ogre::Quaternion Rotation_Relative, Ogre::SceneNode* ParentNode)
-{
-	if (NotUniqueName.IsEmpty()) return 0;
-	if (ParentNode == 0) return 0;
-
-	wxString NewUniqueName = this->Configuration->SceneNodeNameMgr->AllocateUniqueName(NotUniqueName);
-	
-	Ogre::SceneNode* NewSceneNode = ParentNode->createChildSceneNode(ToOgreString(NewUniqueName));
-
-	NewSceneNode->translate(Translation_Relative, Ogre::Node::TS_PARENT);
-	NewSceneNode->scale(Scale_Relative);
-	NewSceneNode->rotate(Rotation_Relative, Ogre::Node::TS_PARENT);
-	
-	return NewSceneNode;
-}
-
-Ogre::Entity* DotSceneInterpreter_DOMToOgre::AttachEntity(wxString NotUniqueEntityName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
-{
-	if (NotUniqueEntityName.IsEmpty()) return 0;
-
-	wxFileName TempFileName = wxFileName(MeshFile);
-	TempFileName.SetExt(ToWxString("mesh")); // To garant a filename with a extension...
-	
-	// Get unique entity name...
-	wxString UniqueEntityName = this->Configuration->EntityNameMgr->AllocateUniqueName(NotUniqueEntityName);
-
-	// Create entity...
-	Ogre::Entity* NewEntity = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(this->Configuration->SceneManagerName))->createEntity(ToOgreString(UniqueEntityName), ToOgreString(TempFileName.GetFullName()));
-	AttachToThisNode->attachObject(NewEntity);
-
-	return NewEntity;
-}
-
-
-

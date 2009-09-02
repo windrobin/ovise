@@ -1,9 +1,7 @@
 #include "DotSceneBaseConfiguration.h"
 
 DotSceneBaseConfiguration::DotSceneBaseConfiguration(	OViSELogging *Log,
-														UniqueNameManager *ScenePrototypeNameMgr,
-														UniqueNameManager *SceneNodeNameMgr,
-														UniqueNameManager *EntityNameMgr,
+														UniqueNameManager *PrototypeNameMgr,
 														wxString SceneManagerName,
 														wxString UniqueNameOfDotSceneManager,
 														wxString UniqueNameOfAssociatedResourceGroup )
@@ -26,9 +24,7 @@ DotSceneBaseConfiguration::DotSceneBaseConfiguration(	OViSELogging *Log,
 	// Explicit initialisation // TODO: integrity-check, range-check
 	this->Log = Log;
 	
-	this->ScenePrototypeNameMgr = ScenePrototypeNameMgr;
-	this->SceneNodeNameMgr = SceneNodeNameMgr;
-	this->EntityNameMgr = EntityNameMgr;
+	this->PrototypeNameMgr = PrototypeNameMgr;
 
 	this->SceneManagerName = SceneManagerName;
 	this->UniqueNameOfDotSceneManager = UniqueNameOfDotSceneManager,

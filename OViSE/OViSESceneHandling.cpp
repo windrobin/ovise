@@ -23,6 +23,7 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
+		OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager);
 		this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName())));
 	}
 }
@@ -30,28 +31,22 @@ OViSESceneHandling::OViSESceneHandling()
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
-	// this->mDotSceneMgr->attachEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"), this->getSceneManager(ToStdString(sceneManagerName))->getRootSceneNode());
-	// Create entity...
+	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->AddEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
 
-	Ogre::SceneManager *tmp = mSceneManagers[ToStdString(sceneManagerName)];
-
-	Ogre::Entity* NewEntity = tmp->createEntity(ToOgreString("BasePlane"), ToOgreString("Plane.mesh"));
-	tmp->getRootSceneNode()->attachObject(NewEntity);
-
-	//addCOS(0.1, true, sceneManagerName);
+	// Create KOS-scene
 	wxString UniqueNameoOfKOS = this->mDotSceneMgr->ImportScenePrototype(wxFileName(ToWxString("C:/Dokumente und Einstellungen/renartz.ITEC/Eigene Dateien/OViSE Checkout/KOS/KOS.xml")));
-	this->mDotSceneMgr->MakeOgreSceneFromPrototype(UniqueNameoOfKOS, ToWxString(tmp->getRootSceneNode()->getName()));
-	
+	this->mDotSceneMgr->MakeOgreSceneFromPrototype(UniqueNameoOfKOS, ToWxString(this->mSceneManagers[ToStdString(sceneManagerName)]->getRootSceneNode()->getName()));
 	
 	// Create light
-	Ogre::Light *globalLight = tmp->createLight("GlobalLight");
+	Ogre::Light *globalLight = OgreAPIMediator::GetSingletonPtr()->AddLight(ToWxString("GlobalLight"));
 	globalLight->setType(Ogre::Light::LT_DIRECTIONAL);
 	globalLight->setCastShadows(true);
 	globalLight->setDiffuseColour(0.8, 0.8, 0.8);
 	globalLight->setSpecularColour(1, 1, 1);
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
-	tmp->getRootSceneNode()->attachObject(globalLight);
+
+	OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
 }
 
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
@@ -145,6 +140,49 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float 
 	}
 }
 
+Ogre::MovableObject* OViSESceneHandling::getSelectedObject(wxString ObjectName, Ogre::SceneManager* ScnMgr)
+{
+	try
+	{
+		Ogre::SceneManager *scnMgr = ScnMgr;
+
+		bool Match = false;
+
+		if ((!Match) && (scnMgr->hasCamera(ToOgreString(ObjectName))))
+		{
+			return scnMgr->getCamera(ToOgreString(ObjectName));
+		}
+
+		if ((!Match) && (scnMgr->hasEntity(ToOgreString(ObjectName))))
+		{
+			return scnMgr->getEntity(ToOgreString(ObjectName));
+		}
+
+		if ((!Match) && (scnMgr->hasLight(ToOgreString(ObjectName))))
+		{
+			return scnMgr->getLight(ToOgreString(ObjectName));
+		}
+
+		if ((!Match) && (scnMgr->hasSceneNode(ToOgreString(ObjectName))))
+		{
+			return NULL;// TODO: Incompatible. Find a better way soon. // scnMgr->getSceneNode(ToOgreString(ObjectName());
+		}
+
+		return NULL;
+	}
+	catch (Ogre::Exception e)
+	{
+		Ogre::String logMsg = "[SceneHandling] Couldn't get object of TreeView in scene (" + e.getFullDescription() + ")";
+		Ogre::LogManager::getSingletonPtr()->logMessage(logMsg);
+		return NULL;
+	}
+	catch (OViSEException e)
+	{
+		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
+		return NULL;
+	}
+}
+
 void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 {
 	try
@@ -170,6 +208,16 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 		
 		if(showSelection)
 			movObj->getParentSceneNode()->showBoundingBox(true);
+
+		OViSELogging* TempLog = new OViSELogging();
+		wxString LogMsg;
+		LogMsg << ToWxString("USER selected MovableObject: '");
+		LogMsg << ToWxString(movObj->getName());
+		LogMsg << ToWxString("'. It belongs to SceneNode: '");
+		LogMsg << ToWxString(movObj->getParentSceneNode()->getName());
+		LogMsg << ToWxString("'.");
+		TempLog->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+		delete TempLog;
 	}
 	catch (...)
 	{

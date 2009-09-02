@@ -79,6 +79,10 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	this->Maximize(true);
 
 	mWindowManager->Update();
+
+	// When selection in OViSESceneTree changed, call OViSEWxFrame::OnSelectionChanged(...) !
+	this->mSceneTree->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( OViSEWxFrame::OnTreeSelectionChanged ), NULL, this);
+	// OViSEWxFrame::OnViewClick handles the other direction
 }
 
 OViSEWxFrame::~OViSEWxFrame()
@@ -330,9 +334,12 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	if(selectedObject != NULL)
 	{
 		if(!event.ControlDown())
+		{
 			mSceneHdlr->clearObjectSelection(cam->getSceneManager()->getName());
-		mSceneHdlr->addObjectToSelection(selectedObject, true, cam->getSceneManager()->getName());
-		setObjectProperties(selectedObject);
+		}
+		//mSceneHdlr->addObjectToSelection(selectedObject, true, cam->getSceneManager()->getName());
+		//setObjectProperties(selectedObject);
+		this->AddSelectedObject(selectedObject, ToWxString(cam->getSceneManager()->getName()));
 	}
 	else
 	{
@@ -537,45 +544,35 @@ void OViSEWxFrame::deleteMeshes()
 	}
 }
 
-void OViSEWxFrame::OnImportScenePrototype( wxCommandEvent& event )
+
+void OViSEWxFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 {
-	//TODO: Dynamische Namensvergabe für die Childnode implementieren, die erzeugt wird.
-	/*wxFileDialog fd(this, wxT("Choose dotScene file"), wxEmptyString, wxEmptyString, wxT("*.xml"));
-	int ret = fd.ShowModal();
+	wxString TreeItemLabel = this->mSceneTree->GetItemText(event.GetItem());
 
-	if(ret == wxID_CANCEL)
-		return;*/
+	Ogre::MovableObject* selectedObject = this->mSceneHdlr->getSelectedObject(TreeItemLabel, this->mSceneMgr);
+	// TODO: this way, it's not possible to select view multible windows!!!
 
-	// TODO: Later use a selected node. Acually the sceneroot is used.
-	// If that SceneNode-param is not used, it's NULL. That 'll be interpreted as srootscenenode of default-scenemanager.
-	/// mSceneHdlr->loadSceneFromXML(fd.GetPath()), *** SOME ANCHOR NODE ***;
-	//mSceneHdlr->ImportPrototypeFromXML(fd.GetPath());
-	this->mSceneHdlr->createDefaultScene();
+	if (selectedObject != 0)
+	{
+		Ogre::SceneManager* scnMgr = this->mMainRenderWin->GetCamera()->getSceneManager();
+		mSceneHdlr->clearObjectSelection(scnMgr->getName());
+		this->AddSelectedObject(selectedObject, ToWxString(scnMgr->getName()));
+	}
 }
 
-void OViSEWxFrame::OnExportScenePrototype( wxCommandEvent& event )
+void OViSEWxFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName)
 {
-	wxFileDialog SelectDestinationDialog(this, wxT("Create or overwrite dotScene file"), wxEmptyString, wxT("Output.xml"), wxT("*.xml"));
-	int ReturnValue = SelectDestinationDialog.ShowModal();
-	
-	if (ReturnValue == wxID_CANCEL) return;
-
-	OViSEExportMeshesDialog MeshExportDlg(this, wxID_HIGHEST + 1);
-	ReturnValue = MeshExportDlg.ShowModal();
-
-	bool doExportMeshFiles = false;
-	if (ReturnValue == wxID_OK) doExportMeshFiles = true;
-
-	Ogre::SceneNode *dotSceneNode = this->mSceneHdlr->getSceneManager()->getRootSceneNode(); // TODO: use selected  scenenode !!!
-	mSceneHdlr->ExportPrototypeToXML(SelectDestinationDialog.GetPath(), wxT("BaseSceneManager"), dotSceneNode, doExportMeshFiles); // TODO: extra dialog, asking "copy meshes as well"
+	mSceneHdlr->addObjectToSelection(selectedObject, true, ToStdString(SceneManagerName));
+	setObjectProperties(selectedObject);
 }
 
-void OViSEWxFrame::OnAttachNewScene( wxCommandEvent& event )
+void OViSEWxFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {
-	OViSEAttachSceneDialog *AttachSceneDlg = new OViSEAttachSceneDialog(this);
-	AttachSceneDlg->SetAvailablePrototypes(this->mSceneHdlr->GetAvailablePrototypesOfDotSceneManager());
-	AttachSceneDlg->ShowModal();
-	this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype()); 
+	OViSEPrototypeManagementDialog *PrototypeManagementDlg = new OViSEPrototypeManagementDialog(this, this->mSceneHdlr);
+	//PrototypeManagementDlg->SetAvailablePrototypes(this->mSceneHdlr->GetAvailablePrototypesOfDotSceneManager());
+	PrototypeManagementDlg->ShowModal();
+	//this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype());
+	delete PrototypeManagementDlg;
 }
 
 void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)

@@ -2,6 +2,12 @@
 #ifndef DOTSCENE_MANAGER_H_
 #define DOTSCENE_MANAGER_H_
 
+// Include WX
+#include <wx/string.h>
+#include <wx/filename.h>
+#include <wx/arrstr.h>
+#include <wx/hashmap.h>
+
 // Solution's includes
 #include "../OViSEAux/UniqueNameManager.h"
 #include "../OViSEAux/StringConverter.h"
@@ -20,12 +26,6 @@
 #include <xercesc/util/XMLFloat.hpp>
 
 XERCES_CPP_NAMESPACE_USE
-
-// Include WX
-#include <wx/string.h>
-#include <wx/filename.h>
-#include <wx/arrstr.h>
-#include <wx/hashmap.h>
 
 // Include STD
 #include <string>
@@ -48,7 +48,7 @@ private:
 
 	// Access to XML
 	XmlManager *mXmlMgr;
-	wxArrayString mImportedScenePrototypes;
+	//wxArrayString mImportedScenePrototypes;
 
 	// Sub-managers for logging and unique names
 	OViSELogging *Log;
@@ -66,6 +66,7 @@ public:
 
 	bool		SetPrototypeData(wxString UniquePrototypeName, ScenePrototypeData DataSet); // Return false, if there is no prototyp with that name.
 	ScenePrototypeData GetPrototypeData(wxString UniquePrototypeName); // Empty (IsEmpty() == true), if there is no prototype with that unique name. Data can be modified externally.
+	wxString GetPrototypeOriginalName(wxString UniquePrototypeName);
 
 	// Accessors of general properies
 	void SetConfiguration(DotSceneBaseConfiguration* Configuration);
@@ -92,6 +93,9 @@ public:
 	
 	bool		ExportScenePrototype(wxString UniquePrototypeName, wxFileName DestinationURL);
 	wxString	ImportScenePrototype(wxFileName URLofXML);  // Returns UniquePrototypeName
+
+	bool		RemoveScenePrototype(wxString UniquePrototypeName);
+	wxString	RenameScenePrototype(wxString OldUniquePrototypeName, wxString NewNotUniquePrototypeName); // Returns the new UniquePrototypeName. If "OldUniquePrototypeName" is unknown, an empty wxString is returned.
 
 
 	// Top-Layer handling-methods

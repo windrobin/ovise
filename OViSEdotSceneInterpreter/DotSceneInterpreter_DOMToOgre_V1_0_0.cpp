@@ -143,10 +143,14 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	Ogre::SceneNode* NewNode = this->AttachSceneNode(NewNode_name, TempPositionOffset, TempScaleOffset, TempRotationOffset, ParentNode);
+	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->AddSceneNode(NewNode_name, ParentNode);
 
 	if (NewNode != 0)
 	{
+		NewNode->translate(TempPositionOffset, Ogre::Node::TS_PARENT);
+		NewNode->scale(TempScaleOffset);
+		NewNode->rotate(TempRotationOffset, Ogre::Node::TS_LOCAL);
+
 		// LogMsg.Clear();
 		// LogMsg << ToWxString("OViSE dotScene Manager: Created and added new Ogre::SceneNode \"") << ToWxString(NewNode->getName()) << ToWxString("\"");
 		// Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
@@ -196,7 +200,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 }
 
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMElement* DOMElement_entity,
-																Ogre::SceneNode* AssociateNode)
+																	Ogre::SceneNode* AssociateNode)
 {
 	wxString LogMsg;
 
@@ -206,7 +210,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_meshLODBias = 0, *DOMElement_materialLODBias = 0, *DOMElement_userDataReference = 0;
 
 	// STEP 2: Create all possible attributes... 
-	wxString NewEntity_name, NewEntity_id, NewEntity_meshFile = ToWxString("robot.mesh") /* for debugging */, NewEntity_materialName, NewEntity_softwareAnimationRequests, NewEntity_softwareAnimationRequestsNormalsAlso;
+	wxString NewEntity_name, NewEntity_id, NewEntity_meshFile = ToWxString("robot.mesh") , NewEntity_materialName, NewEntity_softwareAnimationRequests, NewEntity_softwareAnimationRequestsNormalsAlso;
 	bool NewEntity_displaySkeleton = false, NewEntity_polygonModeOverrideable = false, NewEntity_vertexBufferUseShadow = false, NewEntity_indexBufferUseShadow = false;
 	wxString NewEntity_vertexBufferUsage = ToWxString("staticWriteOnly"), NewEntity_indexBufferUsage = ToWxString("staticWriteOnly"); // <- enum
 
@@ -273,8 +277,9 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
 	this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
 
-	Ogre::Entity* NewEntity = this->AttachEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	
+	//Ogre::Entity* NewEntity = this->AttachEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->AddEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+
 	LogMsg.Clear();
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << ToWxString(NewEntity->getName()) << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
 	this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
@@ -290,6 +295,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Environment(xercesc::D
 {
 
 }
+
 Ogre::Vector3 DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector3 * * * * * * * * *
@@ -379,4 +385,3 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument*
 
 	// More individual calls. Not necessary for a correct an full interpretation!
 }
-

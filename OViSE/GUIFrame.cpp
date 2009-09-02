@@ -61,17 +61,9 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	
 	scene->AppendSeparator();
 	
-	wxMenuItem* ImportScenePrototype;
-	ImportScenePrototype = new wxMenuItem( scene, ID_IMPORT_SCENEPROTOTYPE, wxString( wxT("Import ScenePrototype") ) + wxT('\t') + wxT("ALT+L"), wxT("Import complete scene from a dotScene description"), wxITEM_NORMAL );
-	scene->Append( ImportScenePrototype );
-	
-	wxMenuItem* ExportScenePrototype;
-	ExportScenePrototype = new wxMenuItem( scene, ID_EXPORT_SCENEPROTOTYPE, wxString( wxT("Export ScenePrototype") ) + wxT('\t') + wxT("ALT+S"), wxT("Export a complete scene to a dotScene describtion"), wxITEM_NORMAL );
-	scene->Append( ExportScenePrototype );
-	
-	wxMenuItem* AttachNewScene;
-	AttachNewScene = new wxMenuItem( scene, ID_ATTACH_NEW_SCENE, wxString( wxT("Attach new Scene") ) , wxEmptyString, wxITEM_NORMAL );
-	scene->Append( AttachNewScene );
+	wxMenuItem* OpenPrototypeManagement;
+	OpenPrototypeManagement = new wxMenuItem( scene, ID_OPEN_PROTOTYPE_MANAGEMENT, wxString( wxT("Manage Prototypes ( dotScene )") ) , wxT("Opens a dialog, which allows management of (dotScene) prototypes."), wxITEM_NORMAL );
+	scene->Append( OpenPrototypeManagement );
 	
 	scene->AppendSeparator();
 	
@@ -118,9 +110,7 @@ GUIFrame::GUIFrame( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	this->Connect( dynamicShadows->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnDynamicShadowsChange ) );
 	this->Connect( addMesh->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Connect( deleteMeshes->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
-	this->Connect( ImportScenePrototype->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnImportScenePrototype ) );
-	this->Connect( ExportScenePrototype->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnExportScenePrototype ) );
-	this->Connect( AttachNewScene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAttachNewScene ) );
+	this->Connect( OpenPrototypeManagement->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnOpenPrototypeManagement ) );
 	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadPointCloud ) );
 	this->Connect( startstopFramelisteners->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
@@ -138,9 +128,7 @@ GUIFrame::~GUIFrame()
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnDynamicShadowsChange ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnSceneAddMesh ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnMenuDeleteMeshes ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnImportScenePrototype ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnExportScenePrototype ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAttachNewScene ) );
+	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnOpenPrototypeManagement ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnLoadPointCloud ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnStartStopFrameListeners ) );
 	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( GUIFrame::OnAbout ) );
@@ -231,6 +219,9 @@ ExportMeshesDialog::ExportMeshesDialog( wxWindow* parent, wxWindowID id, const w
 	mOkButton = new wxButton( this, wxID_ANY, wxT("Ok"), wxDefaultPosition, wxDefaultSize, 0 );
 	ButtonSizer->Add( mOkButton, 0, wxALL, 5 );
 	
+	mDeleteButton = new wxButton( this, wxID_ANY, wxT("Delete"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mDeleteButton, 0, wxALL, 5 );
+	
 	MainSizer->Add( ButtonSizer, 1, wxEXPAND, 5 );
 	
 	this->SetSizer( MainSizer );
@@ -252,31 +243,47 @@ ExportMeshesDialog::~ExportMeshesDialog()
 	mOkButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickOk ), NULL, this );
 }
 
-AttachSceneDialog::AttachSceneDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxHORIZONTAL );
+	MainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* ListBoxSizer;
 	ListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 	
 	mPrototypeList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_ALWAYS_SB|wxLB_SORT ); 
-	ListBoxSizer->Add( mPrototypeList, 1, wxALL|wxEXPAND, 5 );
+	ListBoxSizer->Add( mPrototypeList, 2, wxALL|wxEXPAND, 5 );
 	
-	MainSizer->Add( ListBoxSizer, 3, wxEXPAND, 5 );
+	MainSizer->Add( ListBoxSizer, 1, wxEXPAND, 5 );
 	
 	wxBoxSizer* ButtonSizer;
-	ButtonSizer = new wxBoxSizer( wxVERTICAL );
+	ButtonSizer = new wxBoxSizer( wxHORIZONTAL );
 	
-	mCancelButton = new wxButton( this, wxID_ANY, wxT("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-	ButtonSizer->Add( mCancelButton, 0, wxALL, 5 );
+	mRemoveButton = new wxButton( this, wxID_ANY, wxT("Remove"), wxDefaultPosition, wxDefaultSize, 0 );
+	mRemoveButton->Enable( false );
 	
-	mOkButton = new wxButton( this, wxID_ANY, wxT("Ok"), wxDefaultPosition, wxDefaultSize, 0 );
-	ButtonSizer->Add( mOkButton, 1, wxALL, 5 );
+	ButtonSizer->Add( mRemoveButton, 0, wxALL, 5 );
 	
-	MainSizer->Add( ButtonSizer, 1, wxEXPAND, 5 );
+	mImportButton = new wxButton( this, wxID_ANY, wxT("Import"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mImportButton, 0, wxALL, 5 );
+	
+	mExportButton = new wxButton( this, wxID_ANY, wxT("Export"), wxDefaultPosition, wxDefaultSize, 0 );
+	mExportButton->Enable( false );
+	
+	ButtonSizer->Add( mExportButton, 0, wxALL, 5 );
+	
+	mBuildButton = new wxButton( this, wxID_ANY, wxT("Build Prototype"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mBuildButton, 0, wxALL, 5 );
+	
+	mAttachButton = new wxButton( this, wxID_ANY, wxT("Attach Prototype"), wxDefaultPosition, wxDefaultSize, 0 );
+	mAttachButton->Enable( false );
+	
+	ButtonSizer->Add( mAttachButton, 0, wxALL, 5 );
+	
+	mCloseButton = new wxButton( this, wxID_ANY, wxT("Close"), wxDefaultPosition, wxDefaultSize, 0 );
+	ButtonSizer->Add( mCloseButton, 1, wxALL, 5 );
+	
+	MainSizer->Add( ButtonSizer, 0, wxEXPAND, 5 );
 	
 	this->SetSizer( MainSizer );
 	this->Layout();
@@ -284,17 +291,25 @@ AttachSceneDialog::AttachSceneDialog( wxWindow* parent, wxWindowID id, const wxS
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( AttachSceneDialog::OnCloseDialog ) );
-	mPrototypeList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( AttachSceneDialog::OnProtoTypeListSelect ), NULL, this );
-	mCancelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachSceneDialog::OnClickCancel ), NULL, this );
-	mOkButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachSceneDialog::OnClickOk ), NULL, this );
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PrototypeManagementDialog::OnCloseDialog ) );
+	mPrototypeList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
+	mRemoveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickRemove ), NULL, this );
+	mImportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickImport ), NULL, this );
+	mExportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickExport ), NULL, this );
+	mBuildButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickBuild ), NULL, this );
+	mAttachButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickAttach ), NULL, this );
+	mCloseButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickClose ), NULL, this );
 }
 
-AttachSceneDialog::~AttachSceneDialog()
+PrototypeManagementDialog::~PrototypeManagementDialog()
 {
 	// Disconnect Events
-	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( AttachSceneDialog::OnCloseDialog ) );
-	mPrototypeList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( AttachSceneDialog::OnProtoTypeListSelect ), NULL, this );
-	mCancelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachSceneDialog::OnClickCancel ), NULL, this );
-	mOkButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( AttachSceneDialog::OnClickOk ), NULL, this );
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PrototypeManagementDialog::OnCloseDialog ) );
+	mPrototypeList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
+	mRemoveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickRemove ), NULL, this );
+	mImportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickImport ), NULL, this );
+	mExportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickExport ), NULL, this );
+	mBuildButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickBuild ), NULL, this );
+	mAttachButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickAttach ), NULL, this );
+	mCloseButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickClose ), NULL, this );
 }

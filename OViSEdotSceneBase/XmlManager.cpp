@@ -199,6 +199,7 @@ bool XmlManager::ExportScenePrototype(ScenePrototype* Prototype, wxFileName Dest
 	wxString UniquePrototypeName = Prototype->GetUniqueName();
 
 	// STEP 4: Write DOM-structure to *.xml file!
+	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
 	DOMLSSerializer* tempLSServializer = this->mImplementation->createLSSerializer();
 	tempLSServializer->writeToURI(Prototype->GetDOMRepresentation(), ToXMLString(Destination.GetFullPath()));
 
@@ -231,6 +232,27 @@ bool XmlManager::ExportScenePrototype(ScenePrototype* Prototype, wxFileName Dest
 			{
 				// First: Define location of source file...
 				wxFileName Source(Prototype->Data.MeshFiles[iter]);	
+				Source.MakeAbsolute(Prototype->Data.ResourceBaseDir);
+				
+				// ...then define location of destination file...
+				wxFileName Target(Source);
+
+				// ...by using the path of *.xml (dotScene-XML) file!
+				Target.SetPath(Destination.GetPath());
+
+				// Finally copy file!
+				// TODO: overwrite-options?
+				wxCopyFile(Source.GetFullPath(), Target.GetFullPath(), this->GetConfiguration()->doOverwriteWhileExport);
+			}
+		}
+		// Copy materialfiles
+		if (!Prototype->Data.MaterialFiles.IsEmpty())
+		{
+			for(unsigned int iter = 0; iter < Prototype->Data.MaterialFiles.GetCount(); iter++)
+			{
+				// First: Define location of source file...
+				wxFileName Source(Prototype->Data.MaterialFiles[iter]);	
+				Source.MakeAbsolute(Prototype->Data.ResourceBaseDir);
 				
 				// ...then define location of destination file...
 				wxFileName Target(Source);
@@ -350,8 +372,8 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
 		xercesc::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
 		xercesc::DOMDocument* tempDOMRepesentation = static_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
 
-		wxString UniquePrototypeName = this->GetConfiguration()->ScenePrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
-		ScenePrototype* NewPrototype = new ScenePrototype(UniquePrototypeName, tempDOMRepesentation);
+		wxString UniquePrototypeName = this->GetConfiguration()->PrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
+		ScenePrototype* NewPrototype = new ScenePrototype(UniquePrototypeName, TempURLofXML.GetName(), tempDOMRepesentation);
 
 		ScenePrototypeData PrototypeData;
 		PrototypeData.ResourceBaseDir = URLofXML.GetPath();
@@ -362,12 +384,17 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
 
 		for (unsigned int iter = 0; iter < PrototypeData.Files.GetCount(); iter++)
 		{
-			wxFileName TempFileName(PrototypeData.Files[iter]);
-			if (TempFileName.HasExt())
+			wxFileName AbsoluteFileName(PrototypeData.Files[iter]);
+
+			wxFileName RelativeFileName(AbsoluteFileName);
+			RelativeFileName.MakeRelativeTo(PrototypeData.ResourceBaseDir);
+			PrototypeData.Files[iter] = RelativeFileName.GetFullPath();
+
+			if (RelativeFileName.HasExt())
 			{
-				if (TempFileName.GetExt().IsSameAs(ToWxString("material"))) PrototypeData.MaterialFiles.Add(PrototypeData.Files[iter]);
-				if (TempFileName.GetExt().IsSameAs(ToWxString("mesh"))) PrototypeData.MeshFiles.Add(PrototypeData.Files[iter]);
-				if (TempFileName.GetExt().IsSameAs(ToWxString("xml"))) PrototypeData.XMLFiles.Add(PrototypeData.Files[iter]);
+				if (RelativeFileName.GetExt().IsSameAs(ToWxString("material"))) PrototypeData.MaterialFiles.Add(RelativeFileName.GetFullPath());
+				if (RelativeFileName.GetExt().IsSameAs(ToWxString("mesh"))) PrototypeData.MeshFiles.Add(RelativeFileName.GetFullPath());
+				if (RelativeFileName.GetExt().IsSameAs(ToWxString("xml"))) PrototypeData.XMLFiles.Add(RelativeFileName.GetFullPath());
 			}
 		}
 

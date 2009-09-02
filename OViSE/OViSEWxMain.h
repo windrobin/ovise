@@ -19,6 +19,9 @@
 #include <wx/tokenzr.h>
 #include <wx/aboutdlg.h>
 #include <wx/treectrl.h>
+
+#include <wx/treebase.h>
+
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
 #include <wx/imaglist.h>
@@ -28,6 +31,8 @@
 #include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
 #include "OViSESceneTree.h"
+
+#include "../OViSEAux/OgreAPIMediator.h"
 
 #ifndef OVISE_ADD_MESH_DIALOG_USED
 #define OVISE_ADD_MESH_DIALOG_USED
@@ -39,9 +44,9 @@
 #include "OViSEExportMeshesDialog.h"
 #endif
 
-#ifndef OVISE_ATTACH_SCENE_DIALOG_USED
-#define OVISE_ATTACH_SCENE_DIALOG_USED
-#include "OViSEAttachSceneDialog.h"
+#ifndef OVISE_PROTOTYPE_MANAGEMENT_DIALOG_USED
+#define OVISE_PROTOTYPE_MANAGEMENT_DIALOG_USED
+#include "OViSEPrototypeManagementDialog.h"
 #endif
 
 enum
@@ -71,9 +76,7 @@ class OViSEWxFrame: public GUIFrame
 		virtual void OnViewClick(wxMouseEvent& event);
 		virtual void OnPropertyChange(wxPropertyGridEvent& event);
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
-		virtual void OnImportScenePrototype( wxCommandEvent& event);
-		virtual void OnExportScenePrototype( wxCommandEvent& event );
-		virtual void OnAttachNewScene( wxCommandEvent& event );
+		virtual void OnOpenPrototypeManagement( wxCommandEvent& event );
 		virtual void OnLoadPointCloud( wxCommandEvent& event );
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
@@ -83,6 +86,10 @@ class OViSEWxFrame: public GUIFrame
 		void setObjectProperties(Ogre::MovableObject *object);
 		void clearObjectProperties();
 		void deleteMeshes();
+
+		void OnTreeSelectionChanged( wxTreeEvent& event );
+
+		void AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
 
     protected:
 		void finishOgreInitialization();
