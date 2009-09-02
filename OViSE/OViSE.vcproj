@@ -189,11 +189,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEAttachSceneDialog.cpp"
+					RelativePath=".\OViSEMessenger.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEMessenger.cpp"
+					RelativePath=".\OViSEPrototypeManagementDialog.cpp"
 					>
 				</File>
 				<File
@@ -279,11 +279,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEAttachSceneDialog.h"
+					RelativePath=".\OViSEMessenger.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEMessenger.h"
+					RelativePath=".\OViSEPrototypeManagementDialog.h"
 					>
 				</File>
 				<File

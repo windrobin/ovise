@@ -20,7 +20,7 @@ bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString NotUnique
 	if (this->SceneMgr == 0) return false; // "Configuration" is invalid!
 
 	// Create UniquePrototypeName...
-	this->UniquePrototypeName = this->Configuration->ScenePrototypeNameMgr->AllocateUniqueName(this->NotUniquePrototypeName);
+	this->UniquePrototypeName = this->Configuration->PrototypeNameMgr->AllocateUniqueName(this->NotUniquePrototypeName);
 
 	// Create DOMImplementation
 	this->Implementation = DOMImplementationRegistry::getDOMImplementation(ToXMLString("Core")); // Kommentar von HR: Core??? Welche Strings gehen hin noch rein? Enum wäre besser!
@@ -29,7 +29,7 @@ bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString NotUnique
 	xercesc::DOMDocument* TempDOMDocument = DotSceneInterpreter_OgreToDOM::Implementation->createDocument(0, ToXMLString("scene"), 0); // Don't use any more, but remember: "(XMLString::transcode(this->mDestinationURI.c_str()), XMLString::transcode("scene"), 0)"
 	
 	// Create new Prototype
-	this->Prototype = new ScenePrototype(this->UniquePrototypeName, TempDOMDocument);
+	this->Prototype = new ScenePrototype(this->UniquePrototypeName, NotUniquePrototypeName, TempDOMDocument);
 
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement* SceneElement = this->Prototype->GetDOMRepresentation()->getDocumentElement();

@@ -21,18 +21,22 @@ class ScenePrototype
 {
 private:
 	wxString UniqueName;
+	wxString OriginalName;
 	xercesc::DOMDocument* DOMRepresentation;
 	
-
-	void SetUniqueName(wxString UniqueName);
 	void SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation);
 public:
 	ScenePrototypeData Data;
 
+	void SetUniqueName(wxString UniqueName);
+	void SetOriginalName(wxString OriginalName);
+
 	wxString				GetUniqueName();
+	wxString				GetOriginalName();
 	xercesc::DOMDocument*	GetDOMRepresentation();
 
 	ScenePrototype(	wxString UniqueName,
+					wxString OriginalName,
 					xercesc::DOMDocument* DOMRepresentation);
 	~ScenePrototype(void);
 };

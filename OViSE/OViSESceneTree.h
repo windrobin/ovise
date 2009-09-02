@@ -1,5 +1,8 @@
 #pragma once
 #include <wx/treectrl.h>
+#include <wx/wx.h>
+#include <wx/event.h>
+#include "../OViSEAux/OgreAPIMediator.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -48,10 +51,16 @@ public:
 
 	void updateTreeContents();
 
+	void ConnectOgreAPIMediator();
+
 private:
 	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);
 
 	Ogre::SceneManager *mSceneManager;
 
 	bool mInitialized;
+
+	void OnSelectionChanged( wxCommandEvent& event );
+	void OnOgreChanged( wxCommandEvent& event );
 };
+

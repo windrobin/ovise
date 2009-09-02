@@ -2,11 +2,11 @@
 #ifndef STRING_CONVERTER_H_
 #define STRING_CONVERTER_H_
 
-// Include Xerces
-#include <xercesc/util/XMLString.hpp>
-
 // Include WX
 #include <wx/string.h>
+
+// Include Xerces
+#include <xercesc/util/XMLString.hpp>
 
 // Include STD
 #include <string>

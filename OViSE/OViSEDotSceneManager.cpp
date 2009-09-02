@@ -31,9 +31,7 @@ DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration(wxSt
 {
 	DotSceneBaseConfiguration *DefaultConfiguration = new DotSceneBaseConfiguration(
 			new OViSELogging(),
-			new UniqueNameManager(ToWxString("Scene")),
-			new UniqueNameManager(ToWxString("SceneNode")),
-			new UniqueNameManager(ToWxString("Entity")),
+			new UniqueNameManager(ToWxString("Prototype")),
 			SceneManagerName,
 			UniqueDotSceneManagerName,
 			UniqueDotSceneManagerName); // Name of DotSceneManager == name of ogre-resourcegroup
@@ -52,7 +50,18 @@ wxString OViSEDotSceneManager::GetURLofExportPath() { return this->mXmlMgr->GetU
 bool OViSEDotSceneManager::IsReadyToExport() { return this->mXmlMgr->IsReadyToExport(); }
 bool OViSEDotSceneManager::IsReadyToImport() { return this->mXmlMgr->IsReadyToImport(); }
 
-wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes() { return this->mImportedScenePrototypes; }
+wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes()
+{ 
+	wxArrayString KeyCollection;
+
+	for ( HashMap_ScenePrototypes::iterator iter = this->ScenePrototypes.begin(); iter != this->ScenePrototypes.end(); ++iter )
+	{
+		wxString Key = iter->first;
+		KeyCollection.Add(Key);
+	}
+
+	return KeyCollection;
+}
 
 bool OViSEDotSceneManager::SetPrototypeData(wxString UniquePrototypeName, ScenePrototypeData NewData)
 {
@@ -73,6 +82,12 @@ ScenePrototypeData OViSEDotSceneManager::GetPrototypeData(wxString UniquePrototy
 }
 
 
+wxString OViSEDotSceneManager::GetPrototypeOriginalName(wxString UniquePrototypeName)
+{
+	ScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
+	if (Prototype == 0) return wxString();
+	else return Prototype->GetOriginalName();
+}
 bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(wxString UniquePrototypeName, wxString AnchorNodeName)
 {
 	bool Match = false;
@@ -134,6 +149,35 @@ wxString OViSEDotSceneManager::ImportScenePrototype(wxFileName URLofXML)
 	{
 		this->ScenePrototypes[TempPrototype->GetUniqueName()] = TempPrototype;
 		return TempPrototype->GetUniqueName();
+	}
+}
+
+bool OViSEDotSceneManager::RemoveScenePrototype(wxString UniquePrototypeName)
+{
+	ScenePrototype* TempPrototype = this->ScenePrototypes[UniquePrototypeName];
+	if (TempPrototype == 0) return false;
+	else
+	{
+		this->ScenePrototypes.erase(UniquePrototypeName);
+		delete TempPrototype;
+		this->GetConfiguration()->PrototypeNameMgr->DeallocateUniqueName(UniquePrototypeName);
+		return true;
+	}
+}
+
+wxString OViSEDotSceneManager::RenameScenePrototype(wxString OldUniquePrototypeName, wxString OriginalPrototypeName)
+{
+	ScenePrototype* TempPrototype = this->ScenePrototypes[OldUniquePrototypeName];
+	if (TempPrototype == 0) return wxEmptyString;
+	else
+	{
+		this->ScenePrototypes.erase(OldUniquePrototypeName);
+		this->GetConfiguration()->PrototypeNameMgr->DeallocateUniqueName(OldUniquePrototypeName);
+		wxString NewUniquePrototypeName = this->GetConfiguration()->PrototypeNameMgr->AllocateUniqueName(OriginalPrototypeName);
+		TempPrototype->SetUniqueName(NewUniquePrototypeName);
+		TempPrototype->SetOriginalName(OriginalPrototypeName); 
+		this->ScenePrototypes[TempPrototype->GetUniqueName()] = TempPrototype;
+		return NewUniquePrototypeName;
 	}
 }
 

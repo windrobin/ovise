@@ -2,6 +2,10 @@
 #ifndef DOTSCENE_BASE_CONFIGURATION_H_
 #define DOTSCENE_BASE_CONFIGURATION_H_
 
+// Include WX
+#include <wx/string.h>
+#include <wx/filename.h>
+
 // Solution's includes
 #include "../OViSEAux/UniqueNameManager.h"
 #include "../OViSEAux/OViSELogging.h"
@@ -10,17 +14,11 @@
 // Include Ogre
 #include "Ogre.h"
 
-// Include WX
-#include <wx/string.h>
-#include <wx/filename.h>
-
 class DotSceneBaseConfiguration // TODO: Parameters -> integrity-check, range-check
 {
 public:
 	DotSceneBaseConfiguration(	OViSELogging *Log,
-								UniqueNameManager *SceneNameMgr,
-								UniqueNameManager *SceneNodeNameMgr,
-								UniqueNameManager *EntityNameMgr,
+								UniqueNameManager *PrototypeNameMgr,
 								wxString SceneManagerName,
 								wxString UniqueNameOfDotSceneManager,
 								wxString UniqueNameOfAssociatedResourceGroup);
@@ -38,9 +36,7 @@ public:
 
 	OViSELogging *Log;
 
-	UniqueNameManager *ScenePrototypeNameMgr;
-	UniqueNameManager *SceneNodeNameMgr;
-	UniqueNameManager *EntityNameMgr;
+	UniqueNameManager *PrototypeNameMgr;
 
 	wxString SceneManagerName;
 	wxString UniqueNameOfDotSceneManager;

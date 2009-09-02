@@ -29,11 +29,20 @@ OViSESceneTree::OViSESceneTree(Ogre::SceneManager *manager, wxWindow* parent, wx
 {
 	mSceneManager = manager;
 	mInitialized = false;
+
+	this->ConnectOgreAPIMediator();
 }
 
 void OViSESceneTree::setSceneManager(Ogre::SceneManager *manager)
 {
 	mSceneManager = manager;
+}
+
+
+void OViSESceneTree::ConnectOgreAPIMediator()
+{
+	OgreAPIMediator* test = OgreAPIMediator::GetSingletonPtr();
+	test->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OViSESceneTree::OnOgreChanged ), NULL, this);
 }
 
 void OViSESceneTree::initTree()
@@ -110,9 +119,17 @@ void OViSESceneTree::addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId pare
 void OViSESceneTree::updateTreeContents()
 {
 	DeleteAllItems();
+	this->mInitialized = false;
 	initTree();
 }
 
 OViSESceneTree::~OViSESceneTree(void)
 {
+	
+}
+
+
+void OViSESceneTree::OnOgreChanged(wxCommandEvent& event)
+{
+	this->updateTreeContents();
 }

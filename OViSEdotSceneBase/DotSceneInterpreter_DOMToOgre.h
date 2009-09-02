@@ -2,12 +2,18 @@
 #ifndef DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 #define DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 
+// Include WX
+#include <wx/string.h>
+#include <wx/filename.h>
+
 // Solution's includes
 #include "./DotSceneBaseConfiguration.h"
 #include "../OViSEAux/UniqueNameManager.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 #include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/OgreAPIMediator.h"
+
 
 // Include Ogre
 #include "Ogre.h"
@@ -20,10 +26,6 @@
 #include <xercesc/util/XMLFloat.hpp>
 
 XERCES_CPP_NAMESPACE_USE
-
-// Include WX
-#include <wx/string.h>
-#include <wx/filename.h>
 
 class DotSceneInterpreter_DOMToOgre
 {
@@ -47,14 +49,6 @@ protected:
 	wxString VersionString;
 
 	// Methods
-	Ogre::SceneNode* AttachSceneNode(	wxString NotUniqueName,
-										Ogre::Vector3 Translation_Relative,
-										Ogre::Vector3 Scale_Relative,
-										Ogre::Quaternion Rotation_Relative,
-										Ogre::SceneNode* ParentNode);
-	Ogre::Entity* AttachEntity(	wxString NotUniqueEntityName,
-								wxString MeshFile,
-								Ogre::SceneNode* AttachToThisNode);
 	bool Interpretation_DOMScene(	xercesc::DOMDocument* DOMRepresentationOfScene,
 									wxString AttachToNodeWithThisName,
 									DotSceneBaseConfiguration* Configuration);
@@ -74,4 +68,4 @@ public:
 								DotSceneBaseConfiguration* Configuration) = 0;
 };
 
-#endif /*DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_*/
+#endif // DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
