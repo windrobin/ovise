@@ -108,6 +108,10 @@ void OViSEPrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 				int newItemID = this->mPrototypeList->Append(UniquePrototypeName);
 				this->mPrototypeList->Select(newItemID);
 				this->setPrototypeProperties(UniquePrototypeName);
+
+				this->mRemoveButton->Enable();
+				this->mExportButton->Enable();
+				this->mAttachButton->Enable();
 			}
 		}
 	}
@@ -146,6 +150,10 @@ void OViSEPrototypeManagementDialog::OnClickBuild( wxCommandEvent& event )
 		int newItemID = this->mPrototypeList->Append(UniquePrototypeName);
 		this->mPrototypeList->Select(newItemID);
 		this->setPrototypeProperties(UniquePrototypeName);
+
+		this->mRemoveButton->Enable();
+		this->mExportButton->Enable();
+		this->mAttachButton->Enable();
 	}
 }
 void OViSEPrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )

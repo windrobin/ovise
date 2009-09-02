@@ -381,7 +381,10 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument*
 	if ( !this->IsValidFormatVersion(DOMRepresentationOfScene) ) return false;
 	
 	// Call of inherided method. Provides a basic setup and calls inplicid sub-methods for necessary interpretations...
-	return this->Interpretation_DOMScene(DOMRepresentationOfScene, AnchorNodeName, Configuration);
+	bool ReturnValue =  this->Interpretation_DOMScene(DOMRepresentationOfScene, AnchorNodeName, Configuration);
+
+	if ( ReturnValue ) OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
+	return ReturnValue;
 
 	// More individual calls. Not necessary for a correct an full interpretation!
 }
