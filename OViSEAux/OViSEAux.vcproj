@@ -169,6 +169,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OViSESelection.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SceneNodeOffset.cpp"
 				>
 			</File>
@@ -200,6 +204,10 @@
 			</File>
 			<File
 				RelativePath=".\OViSELogging.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OViSESelection.h"
 				>
 			</File>
 			<File
