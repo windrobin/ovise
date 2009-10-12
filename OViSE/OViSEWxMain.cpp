@@ -134,7 +134,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("NodeName")));
 	mObjectProperties->SetPropertyValidator(wxT("NodeName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 
-	wxPGId tID = mObjectProperties->Append(new wxStringProperty(wxT("Translation"), wxPG_LABEL, wxT("<composed>")));
+	wxPGProperty* tID = mObjectProperties->Append(new wxStringProperty(wxT("Translation"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("x"), wxT("tx")));
 	mObjectProperties->SetPropertyValidator(wxT("Translation.tx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("y"), wxT("ty")));
@@ -142,7 +142,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->AppendIn(tID, new wxFloatProperty(wxT("z"), wxT("tz")));
 	mObjectProperties->SetPropertyValidator(wxT("Translation.tz"), wxTextValidator(wxFILTER_NUMERIC));
 
-	wxPGId rID = mObjectProperties->Append(new wxStringProperty(wxT("Rotation"), wxPG_LABEL, wxT("<composed>")));
+	wxPGProperty* rID = mObjectProperties->Append(new wxStringProperty(wxT("Rotation"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("x"), wxT("rx")));
 	mObjectProperties->SetPropertyValidator(wxT("Rotation.rx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("y"), wxT("ry")));
@@ -150,7 +150,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->AppendIn(rID, new wxFloatProperty(wxT("z"), wxT("rz")));
 	mObjectProperties->SetPropertyValidator(wxT("Rotation.rz"), wxTextValidator(wxFILTER_NUMERIC));
 
-	wxPGId sID = mObjectProperties->Append(new wxStringProperty(wxT("Scale"), wxPG_LABEL, wxT("<composed>")));
+	wxPGProperty* sID = mObjectProperties->Append(new wxStringProperty(wxT("Scale"), wxPG_LABEL, wxT("<composed>")));
 	mObjectProperties->AppendIn(sID, new wxFloatProperty(wxT("x"), wxT("sx")));
 	mObjectProperties->SetPropertyValidator(wxT("Scale.sx"), wxTextValidator(wxFILTER_NUMERIC));
 	mObjectProperties->AppendIn(sID, new wxFloatProperty(wxT("y"), wxT("sy")));
@@ -502,25 +502,7 @@ void OViSEWxFrame::OnMenuDeleteMeshes(wxCommandEvent &event)
 
 void OViSEWxFrame::clearObjectProperties()
 {
-	mObjectProperties->ClearPropertyValue(wxT("NodeName"));
-
-	mObjectProperties->ClearPropertyValue(wxT("Translation"));
-	mObjectProperties->ClearPropertyValue(wxT("Translation.tx"));
-	mObjectProperties->ClearPropertyValue(wxT("Translation.ty"));
-	mObjectProperties->ClearPropertyValue(wxT("Translation.tz"));
-
-	mObjectProperties->ClearPropertyValue(wxT("Rotation"));
-	mObjectProperties->ClearPropertyValue(wxT("Rotation.rx"));
-	mObjectProperties->ClearPropertyValue(wxT("Rotation.ry"));
-	mObjectProperties->ClearPropertyValue(wxT("Rotation.rz"));
-
-	mObjectProperties->ClearPropertyValue(wxT("Scale"));
-	mObjectProperties->ClearPropertyValue(wxT("Scale.sx"));
-	mObjectProperties->ClearPropertyValue(wxT("Scale.sy"));
-	mObjectProperties->ClearPropertyValue(wxT("Scale.sz"));
-
-	mObjectProperties->ClearPropertyValue(wxT("MeshName"));
-	mObjectProperties->ClearPropertyValue(wxT("MeshMaterial"));
+	mObjectProperties->Clear();
 }
 
 void OViSEWxFrame::deleteMeshes()

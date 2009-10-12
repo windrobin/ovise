@@ -58,13 +58,7 @@ void OViSEPrototypeManagementDialog::setPrototypeProperties(wxString UniqueProto
 
 void OViSEPrototypeManagementDialog::clearPrototypeProperties()
 {
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("UniqueName"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("OriginalName"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("ResourceBaseDir"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("AllFiles"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("XMLFiles"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("MeshFiles"));
-	this->mPrototypeProperties->ClearPropertyValue(ToWxString("MaterialFiles"));
+	this->mPrototypeProperties->Clear();
 }
 
 void OViSEPrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
