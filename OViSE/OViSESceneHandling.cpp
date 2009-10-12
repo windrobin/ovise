@@ -1,5 +1,6 @@
 #include "OViSESceneHandling.h"
 #include <wx/dir.h>
+
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
 OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
@@ -514,14 +515,20 @@ void OViSESceneHandling::dynamicShadows(bool state)
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
+
+	OViSESelection* testSel = new OViSESelection(scnMgr);
+	Ogre::Entity* testEnt = scnMgr->createEntity(ToOgreString("TestEntity"), ToOgreString("xAxis.mesh"));
+	testSel->AddMovableObject(testEnt);
 }
 
 void OViSESceneHandling::startStopFrameListeners(bool on)
 {
+	/*
 	if(on)
 		mFrameListener->setFrameEventsProcessed(true);
 	else
 		mFrameListener->setFrameEventsProcessed(false);
+		*/
 }
 
 OViSESceneHandling::~OViSESceneHandling()
@@ -567,3 +574,5 @@ wxArrayString OViSESceneHandling::GetAvailablePrototypesOfDotSceneManager()
 {
 	return wxArrayString(); //this->mDotSceneMgr->GetImportedScenePrototypes();
 }
+
+

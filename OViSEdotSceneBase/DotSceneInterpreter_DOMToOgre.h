@@ -14,7 +14,6 @@
 #include "../OViSEAux/OViSELogging.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 
-
 // Include Ogre
 #include "Ogre.h"
 
