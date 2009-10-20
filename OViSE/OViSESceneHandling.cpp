@@ -32,14 +32,14 @@ OViSESceneHandling::OViSESceneHandling()
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid
-	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->AddEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
+	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->addEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
 
 	// Create KOS-scene
 	wxString UniqueNameoOfKOS = this->mDotSceneMgr->ImportScenePrototype(wxFileName(ToWxString("C:/Dokumente und Einstellungen/renartz.ITEC/Eigene Dateien/OViSE Checkout/KOS/KOS.xml")));
 	this->mDotSceneMgr->MakeOgreSceneFromPrototype(UniqueNameoOfKOS, ToWxString(this->mSceneManagers[ToStdString(sceneManagerName)]->getRootSceneNode()->getName()));
 	
 	// Create light
-	Ogre::Light *globalLight = OgreAPIMediator::GetSingletonPtr()->AddLight(ToWxString("GlobalLight"));
+	Ogre::Light *globalLight = OgreAPIMediator::GetSingletonPtr()->addLight(ToWxString("GlobalLight"));
 	globalLight->setType(Ogre::Light::LT_DIRECTIONAL);
 	globalLight->setCastShadows(true);
 	globalLight->setDiffuseColour(0.8, 0.8, 0.8);
@@ -515,10 +515,6 @@ void OViSESceneHandling::dynamicShadows(bool state)
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
-
-	OViSESelection* testSel = new OViSESelection(scnMgr);
-	Ogre::Entity* testEnt = scnMgr->createEntity(ToOgreString("TestEntity"), ToOgreString("xAxis.mesh"));
-	testSel->AddMovableObject(testEnt);
 }
 
 void OViSESceneHandling::startStopFrameListeners(bool on)

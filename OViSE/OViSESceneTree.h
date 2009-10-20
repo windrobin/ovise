@@ -2,6 +2,7 @@
 #include <wx/treectrl.h>
 #include <wx/wx.h>
 #include <wx/event.h>
+#include <wx/hashmap.h>
 #include "../OViSEAux/OgreAPIMediator.h"
 
 #ifndef __APPLE__
@@ -40,6 +41,11 @@ class OViSESceneTree :
 	public wxTreeCtrl
 {
 public:
+
+	// A hash map with string keys and wxTreeItemIds values
+	WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
+
+
 	OViSESceneTree(Ogre::SceneManager *manager, wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS, const wxValidator& validator = wxDefaultValidator,
 		const wxString& name = wxT("treeCtrl"));
@@ -52,6 +58,8 @@ public:
 	void updateTreeContents();
 
 	void ConnectOgreAPIMediator();
+
+	HashMap_wxTreeItemId Items;
 
 private:
 	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);

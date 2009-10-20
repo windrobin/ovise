@@ -181,10 +181,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath=".\OViSESelectionManager.cpp"
-				>
-			</File>
 			<Filter
 				Name="wx"
 				>
@@ -249,6 +245,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\OViSESelectionManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\wxOgreRenderWindow.cpp"
 					>
 				</File>
@@ -276,7 +276,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\OViSESelectionManager.h"
+				RelativePath=".\DevelpomentMarkup.h"
 				>
 			</File>
 			<Filter
@@ -340,6 +340,10 @@
 				</File>
 				<File
 					RelativePath=".\OViSESceneHandling.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OViSESelectionManager.h"
 					>
 				</File>
 				<File

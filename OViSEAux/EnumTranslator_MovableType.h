@@ -20,16 +20,26 @@ namespace OViSEOgreEnums
 
 	// COMMENT: This version fits Ogre 1.6.4
 
-	class EnumTranslator
+	class EnumTranslator_MovableType
 	{
 	private:
+		// De- & Constructors
+		EnumTranslator_MovableType(void);
+		~EnumTranslator_MovableType(void);
+		
+		// Singleton
+		static EnumTranslator_MovableType* instance;
+
+		// Methods
+		void createStandardAssociations_MovableType();
+
+		// Attributes
 		HashMap_Enums_MovableType_ByString	Register_MovableTypeByString;
 		HashMap_Enums_MovableType_ByEnum	Register_MovableTypeByEnum;
-		
-		void createStandardAssociations_MovableType();
+
 	public:
-		EnumTranslator(void);
-		~EnumTranslator(void);
+		// Singleton
+		static OViSEOgreEnums::EnumTranslator_MovableType* GetSingletonPtr();
 
 		// Get corresponding wxString of enum
 		wxString getEnumAsString(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType);

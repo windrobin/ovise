@@ -10,8 +10,6 @@
 #ifndef OVISEWXMAIN_H
 #define OVISEWXMAIN_H
 
-
-
 #include "OViSEWxApp.h"
 
 #include <wx/aui/aui.h>
@@ -33,6 +31,9 @@
 #include "OViSESceneTree.h"
 
 #include "../OViSEAux/OgreAPIMediator.h"
+#include "../OViSE/OViSESelectionManager.h"
+#include "../OViSEAux/EnumTranslator_MovableType.h"
+#include "../OViSEAux/OViSELogging.h"
 
 #ifndef OVISE_ADD_MESH_DIALOG_USED
 #define OVISE_ADD_MESH_DIALOG_USED
@@ -90,6 +91,11 @@ class OViSEWxFrame: public GUIFrame
 		void OnTreeSelectionChanged( wxTreeEvent& event );
 
 		void AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
+		void UnselectObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
+		void RemoveAllSelectedObjects();
+
+
+		OViSELogging Log;
 
     protected:
 		void finishOgreInitialization();

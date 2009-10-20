@@ -143,7 +143,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->AddSceneNode(NewNode_name, ParentNode);
+	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->addSceneNode(NewNode_name, ParentNode);
 
 	if (NewNode != 0)
 	{
@@ -278,7 +278,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
 
 	//Ogre::Entity* NewEntity = this->AttachEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->AddEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->addEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
 
 	LogMsg.Clear();
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << ToWxString(NewEntity->getName()) << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");

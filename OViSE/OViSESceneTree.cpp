@@ -51,11 +51,11 @@ void OViSESceneTree::initTree()
 		return;
 
 	// Intialize tree
-
 	Ogre::SceneNode *rn = mSceneManager->getRootSceneNode();
 
 	OViSESceneTreeData *rootData = new OViSESceneTreeData(ROOT, (void*)rn);
 	wxTreeItemId root = AddRoot(wxString(rn->getName().c_str(), wxConvLibc), 0, 0, rootData);
+	this->Items[wxString(rn->getName().c_str(), wxConvLibc)] = root;
 
 	wxTreeItemId id;
 	for(unsigned short i=0; i<rn->numAttachedObjects(); i++)
@@ -65,16 +65,19 @@ void OViSESceneTree::initTree()
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(ENTITY, (void*)obj);
 			id = AppendItem(root, wxString(obj->getName().c_str(), wxConvLibc), 2, 2, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 		else if(obj->getMovableType() == Ogre::String("Camera"))
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(CAMERA, (void*)obj);
 			id = AppendItem(root, wxString(obj->getName().c_str(), wxConvLibc), 3, 3, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 		else if(obj->getMovableType() == Ogre::String("Light"))
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(LIGHT, (void*)obj);
 			id = AppendItem(root, wxString(obj->getName().c_str(), wxConvLibc), 4, 4, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 	}
 	for(unsigned short k=0; k<rn->numChildren(); k++)
@@ -89,6 +92,8 @@ void OViSESceneTree::addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId pare
 {
 	OViSESceneTreeData *nodeData = new OViSESceneTreeData(SCENE_NODE, (void*)node);
 	wxTreeItemId current = AppendItem(parentItemId, wxString(node->getName().c_str(), wxConvLibc), 1, 1, nodeData);
+	this->Items[wxString(node->getName().c_str(), wxConvLibc)] = current;
+
 	wxTreeItemId id;
 	for(unsigned short i=0; i<node->numAttachedObjects(); i++)
 	{
@@ -97,16 +102,19 @@ void OViSESceneTree::addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId pare
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(ENTITY, (void*)obj);
 			id = AppendItem(current, wxString(obj->getName().c_str(), wxConvLibc), 2, 2, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 		else if(obj->getMovableType() == Ogre::String("Camera"))
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(CAMERA, (void*)obj);
 			id = AppendItem(current, wxString(obj->getName().c_str(), wxConvLibc), 3, 3, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 		else if(obj->getMovableType() == Ogre::String("Light"))
 		{
 			OViSESceneTreeData *dataItem = new OViSESceneTreeData(LIGHT, (void*)obj);
 			id = AppendItem(current, wxString(obj->getName().c_str(), wxConvLibc), 4, 4, dataItem);
+			this->Items[wxString(obj->getName().c_str(), wxConvLibc)] = id;
 		}
 	}
 
@@ -119,6 +127,7 @@ void OViSESceneTree::addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId pare
 void OViSESceneTree::updateTreeContents()
 {
 	DeleteAllItems();
+	this->Items.clear();
 	this->mInitialized = false;
 	initTree();
 }

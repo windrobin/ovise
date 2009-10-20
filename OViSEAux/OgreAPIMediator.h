@@ -4,15 +4,19 @@
 #include <wx/string.h>
 #include <wx/event.h>
 #include <wx/control.h>
+#include <wx/arrstr.h>
+
+#include <wx/propgrid/propgrid.h>
+#include <wx/valtext.h>
 
 // Solution's includes
-#include "./UniqueNameManagerCollection.h"
-#include "./StringConverter.h"
-#include "./UniqueNameManager.h"
+#include "../OViSEAux/UniqueNameManagerCollection.h"
+#include "../OViSEAux/StringConverter.h"
+#include "../OViSEAux/EnumsForABetterWorld.h"
+#include "../OViSEAux/EnumTranslator_MovableType.h"
 
 // Include Ogre
 #include "Ogre.h"
-
 
 BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(OViSE_EVT_OGRE_CHANGED, wxNewEventType())
@@ -21,11 +25,8 @@ END_DECLARE_EVENT_TYPES()
 class OgreAPIMediator : public wxControl
 {
 private:
-	//DECLARE_EVENT_TABLE()
-
 	// De- & Constructors
 	OgreAPIMediator();
-	OgreAPIMediator(const OgreAPIMediator&);
 	~OgreAPIMediator(void);
 
 	// Singleton
@@ -34,18 +35,14 @@ private:
 	// General
 	bool Valid;
 
-	// Attributes, used in implicid name-management
-	UniqueNameManager* CameraNameMgr;
-	UniqueNameManager* EntityNameMgr;
-	UniqueNameManager* LightNameMgr;
-	UniqueNameManager* SceneNodeNameMgr;
-
 	// Attributes, used for access to ogre
 	Ogre::SceneManager* SceneMgr;
 	wxString SceneMgrName;
 
 	// Attributes, used for update-priority
 	bool OgreChanged;
+
+	OViSEOgreEnums::HashMap_Enums_MovableType_ByString MovableObjectVsTypeRegister; // ATTENTION: not working on different scenemanagers !!!! HR!
 
 public:
 	// Singleton
@@ -66,12 +63,35 @@ public:
 	void OnOgreChanged(wxCommandEvent& event);
 
 	// API to Ogre
-	Ogre::Camera*		AddCamera(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode = 0);
-	Ogre::Entity*		AddEntity(wxString NotUniqueName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode = 0);
-	Ogre::Light*		AddLight(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode = 0);
-	Ogre::SceneNode*	AddSceneNode(wxString NotUniqueName, Ogre::SceneNode* ParentNode = 0);
-	bool RemoveCamera(wxString UniqueName);
-	bool RemoveEntity(wxString UniqueName);
-	bool RemoveLight(wxString UniqueName);
-	bool RemoveSceneNode(wxString UniqueName, bool RemoveRecursive = true);
+	// Get...
+	wxArrayString getSceneManagerNames();
+
+	// Get pointer
+	Ogre::Camera*			getCameraPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera);
+	Ogre::Entity*			getEntityPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity);
+	Ogre::Light*			getLightPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight);
+	Ogre::MovableObject*	getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject);
+	Ogre::MovableObject*	getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type);
+	Ogre::SceneNode*		getSceneNodePtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode);
+	Ogre::SceneManager*		getSceneManagerPtr(wxString UniqueNameOfSceneManager);
+
+	// Has objects // Markup: DOUBLE_SAFETY_DIRECTIVE
+	bool hasCamera(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera);
+	bool hasEntity(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity);
+	bool hasLight(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight);
+	bool hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type);
+	bool hasSceneNode(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode);
+	bool hasSceneManager(wxString UniqueNameOfSceneManager); // Not double-save
+	
+	// Add objects
+	Ogre::Camera*		addCamera(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode = 0);
+	Ogre::Entity*		addEntity(wxString NotUniqueName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode = 0);
+	Ogre::Light*		addLight(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode = 0);
+	Ogre::SceneNode*	addSceneNode(wxString NotUniqueName, Ogre::SceneNode* ParentNode = 0);
+
+	// Remove objects
+	bool removeCamera(wxString UniqueName);
+	bool removeEntity(wxString UniqueName);
+	bool removeLight(wxString UniqueName);
+	bool removeSceneNode(wxString UniqueName, bool RemoveRecursive = true);
 };

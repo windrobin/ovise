@@ -1,17 +1,26 @@
-#include "EnumTranslator.h"
+#include "EnumTranslator_MovableType.h"
 
-OViSEOgreEnums::EnumTranslator::EnumTranslator(void)
+// Singleton
+OViSEOgreEnums::EnumTranslator_MovableType* OViSEOgreEnums::EnumTranslator_MovableType::instance = 0;
+
+OViSEOgreEnums::EnumTranslator_MovableType* OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()
+{
+	if (OViSEOgreEnums::EnumTranslator_MovableType::instance == 0) OViSEOgreEnums::EnumTranslator_MovableType::instance = new OViSEOgreEnums::EnumTranslator_MovableType();
+	return OViSEOgreEnums::EnumTranslator_MovableType::instance;
+}
+
+OViSEOgreEnums::EnumTranslator_MovableType::EnumTranslator_MovableType(void)
 {
 	this->createStandardAssociations_MovableType();
 }
 
-OViSEOgreEnums::EnumTranslator::~EnumTranslator(void)
+OViSEOgreEnums::EnumTranslator_MovableType::~EnumTranslator_MovableType(void)
 {
 	this->Register_MovableTypeByEnum.clear();
 	this->Register_MovableTypeByString.clear();
 }
 
-void OViSEOgreEnums::EnumTranslator::createStandardAssociations_MovableType()
+void OViSEOgreEnums::EnumTranslator_MovableType::createStandardAssociations_MovableType()
 {
 	this->addAssociation_MovableType(OViSEOgreEnums::MovableObject::MOVABLETYPE_Invalid, ToWxString("MOVABLETYPE_Invalid"));
 
@@ -30,36 +39,16 @@ void OViSEOgreEnums::EnumTranslator::createStandardAssociations_MovableType()
 	this->addAssociation_MovableType(OViSEOgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region, ToWxString("StaticGeometry"/* Ogre::StaticGeometry::Region::getMovableType() // -> not instanciated -> inaccessible*/));
 }
 
-wxString OViSEOgreEnums::EnumTranslator::getEnumAsString(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType) { return this->Register_MovableTypeByEnum[EnumOf_MovableType]; }
-OViSEOgreEnums::MovableObject::MovableType OViSEOgreEnums::EnumTranslator::getStringAsEnum(wxString StringOf_MovableType) { return this->Register_MovableTypeByString[StringOf_MovableType]; }
-OViSEOgreEnums::MovableObject::MovableType OViSEOgreEnums::EnumTranslator::getMovableObjectAsEnum(Ogre::MovableObject* SomeMovableObject)
+wxString OViSEOgreEnums::EnumTranslator_MovableType::getEnumAsString(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType) { return this->Register_MovableTypeByEnum[EnumOf_MovableType]; }
+OViSEOgreEnums::MovableObject::MovableType OViSEOgreEnums::EnumTranslator_MovableType::getStringAsEnum(wxString StringOf_MovableType) { return this->Register_MovableTypeByString[StringOf_MovableType]; }
+OViSEOgreEnums::MovableObject::MovableType OViSEOgreEnums::EnumTranslator_MovableType::getMovableObjectAsEnum(Ogre::MovableObject* SomeMovableObject)
 {
 	if ( SomeMovableObject == 0 ) return OViSEOgreEnums::MovableObject::MOVABLETYPE_Invalid;
-
-	if ( typeid(SomeMovableObject) == typeid(Ogre::MovableObject*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_BaseClass;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::BillboardChain*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_BillBoardChain;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::BillboardSet*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_BillboardSet;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::Camera*) )			return OViSEOgreEnums::MovableObject::MOVABLETYPE_Camera;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::Entity*) )			return OViSEOgreEnums::MovableObject::MOVABLETYPE_Entity;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::Frustum*) )			return OViSEOgreEnums::MovableObject::MOVABLETYPE_Frustum;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::InstancedGeometry::BatchInstance*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::InstancedGeometry::GeometryBucket*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::Light*) )			return OViSEOgreEnums::MovableObject::MOVABLETYPE_Light;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::ManualObject*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_ManualObject;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::MovablePlane*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_MovablePlane;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::ParticleSystem*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_ParticleSystem;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::Rectangle2D*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::RibbonTrail*) )		return OViSEOgreEnums::MovableObject::MOVABLETYPE_RibbonTrail;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::SimpleRenderable*) ) return OViSEOgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::StaticGeometry::Region*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region;
-	if ( typeid(SomeMovableObject) == typeid(Ogre::WireBoundingBox*) )	return OViSEOgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable;
-
-	// else
-	return OViSEOgreEnums::MovableObject::MOVABLETYPE_Invalid;
+	return this->getStringAsEnum(ToWxString(SomeMovableObject->getMovableType()));
 }
-wxString OViSEOgreEnums::EnumTranslator::getMovableObjectAsString(Ogre::MovableObject* SomeMovableObject) { return this->getEnumAsString(this->getMovableObjectAsEnum(SomeMovableObject)); }
+wxString OViSEOgreEnums::EnumTranslator_MovableType::getMovableObjectAsString(Ogre::MovableObject* SomeMovableObject) { return this->getEnumAsString(this->getMovableObjectAsEnum(SomeMovableObject)); }
 
-bool OViSEOgreEnums::EnumTranslator::addAssociation_MovableType(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType, wxString StringOf_MovableType)
+bool OViSEOgreEnums::EnumTranslator_MovableType::addAssociation_MovableType(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType, wxString StringOf_MovableType)
 {
 	if ( this->Register_MovableTypeByString.count( StringOf_MovableType ) != 0 ) return false;
 	if ( this->Register_MovableTypeByEnum.count( EnumOf_MovableType ) != 0 ) return false;
@@ -70,7 +59,7 @@ bool OViSEOgreEnums::EnumTranslator::addAssociation_MovableType(OViSEOgreEnums::
 	return true;
 }
 
-bool OViSEOgreEnums::EnumTranslator::removeAssociation_MovableType(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType)
+bool OViSEOgreEnums::EnumTranslator_MovableType::removeAssociation_MovableType(OViSEOgreEnums::MovableObject::MovableType EnumOf_MovableType)
 {
 	if ( this->Register_MovableTypeByEnum.count( EnumOf_MovableType ) == 0 ) return false;
 
@@ -81,7 +70,7 @@ bool OViSEOgreEnums::EnumTranslator::removeAssociation_MovableType(OViSEOgreEnum
 	return true;
 }
 
-bool OViSEOgreEnums::EnumTranslator::removeAssociation_MovableType(wxString StringOf_MovableType)
+bool OViSEOgreEnums::EnumTranslator_MovableType::removeAssociation_MovableType(wxString StringOf_MovableType)
 {
 	if ( this->Register_MovableTypeByString.count( StringOf_MovableType ) == 0 ) return false;
 

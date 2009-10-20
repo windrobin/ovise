@@ -157,7 +157,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\EnumsTranslator.cpp"
+				RelativePath=".\EnumTranslator_MovableType.cpp"
 				>
 			</File>
 			<File
@@ -203,7 +203,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EnumTranslator.h"
+				RelativePath=".\EnumTranslator_MovableType.h"
 				>
 			</File>
 			<File
