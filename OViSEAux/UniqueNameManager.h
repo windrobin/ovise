@@ -20,6 +20,8 @@ public:
 
 	wxString AllocateUniqueName(wxString OriginalName);
 	bool DeallocateUniqueName(wxString ModifiedOriginalName);
+
+	bool isUniqueName(wxString SomeString);
 };
 
 #endif /*_UNIQUE_NAME_GENERATOR_H_*/

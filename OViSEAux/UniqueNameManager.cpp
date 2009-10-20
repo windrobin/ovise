@@ -35,9 +35,15 @@ wxString UniqueNameManager::AllocateUniqueName(wxString OriginalName)
 bool UniqueNameManager::DeallocateUniqueName(wxString ModifiedOriginalName)
 {
 	// ModifiedOriginalName is not allocated. Error.
-	if (this->mUsedUniqueNames.find(ModifiedOriginalName) == this->mUsedUniqueNames.end()) return false;
+	if (!this->isUniqueName(ModifiedOriginalName)) return false;
 
 	// ModifiedOriginalName is allocated.
 	this->mUsedUniqueNames.erase(ModifiedOriginalName);
 	return true;
+}
+
+bool UniqueNameManager::isUniqueName(wxString SomeString)
+{
+	if (this->mUsedUniqueNames.find(SomeString) == this->mUsedUniqueNames.end()) return false;
+	else return true;
 }
