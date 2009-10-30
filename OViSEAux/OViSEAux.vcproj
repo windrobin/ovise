@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QualifiedName.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SceneNodeOffset.cpp"
 				>
 			</File>
@@ -220,6 +224,10 @@
 			</File>
 			<File
 				RelativePath=".\OViSESelection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\QualifiedName.h"
 				>
 			</File>
 			<File

@@ -59,6 +59,8 @@ void OViSEPrototypeManagementDialog::setPrototypeProperties(wxString UniqueProto
 void OViSEPrototypeManagementDialog::clearPrototypeProperties()
 {
 	this->mPrototypeProperties->Clear();
+
+	std::pair<wxString, wxString> test = std::pair<wxString, wxString>(wxString(), wxString());
 }
 
 void OViSEPrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
