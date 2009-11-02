@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\QualifiedNameCollectionInterface.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SceneNodeOffset.cpp"
 				>
 			</File>
@@ -228,6 +232,10 @@
 			</File>
 			<File
 				RelativePath=".\QualifiedName.h"
+				>
+			</File>
+			<File
+				RelativePath=".\QualifiedNameCollectionInterface.h"
 				>
 			</File>
 			<File
