@@ -1,19 +1,16 @@
 /********************************************************************************
- * Name:      QualifiedName.h													*
- * Purpose:   Code describes a class for qualified names, composed of a	native	*
+ * Name:      QualifiedName.cpp													*
+ * Purpose:   Code implements a class for qualified names, composed of a native	*
  *			  and a generic part. It ensures a unique instance for a given		*
  *			  native name, divided from generic part and compareable.			*
  * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
- * Created:   2009-10-29														*
+ * Created:   2009-11-02														*
  * Copyright: Henning Renartz,													*
  *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
  * License:																		*
  ********************************************************************************/
 
 #include "QualifiedName.h"
-
-#include <wx/arrimpl.cpp>
-WX_DEFINE_OBJARRAY(ArrayOfDirectories); // Attention: using macros!
 
 wxString QualifiedName::AllocateGenericName()
 {
@@ -22,23 +19,32 @@ wxString QualifiedName::AllocateGenericName()
 	BasicGenericName << ToWxString("_");
 
 	// Search for not used generic name
-	int Counter = 0;
+	unsigned long Counter = 0;
 	wxString FinalGenericName;
-	
+
 	do
 	{
+		if (Counter > 4000000000)
+		{
+			// When ever 4.000.000.000 generic names are used: modifiy generic hint in a way,
+			// that allows searching final QualifiedName by hint sucessfully - and reset counter.
+			Counter = 0;
+			BasicGenericName << this->mGenericHint;
+			this->mGenericHint = BasicGenericName;
+			BasicGenericName << ToWxString("_");
+		}
 		FinalGenericName.Clear();
 		FinalGenericName << BasicGenericName << wxString::Format(wxT("%i"), Counter);
 		Counter++;
 	}
-	while(QualifiedName::sUsedGenericNames.count(FinalGenericName) != 0);
+	while(QualifiedName::sAllocatedGenericNames.count(FinalGenericName) != 0);
 
 	// Found unique generic name
-	this->first = FinalGenericName;
+	this->mGenericName = FinalGenericName;
 
 	// Store unique generic name as key. Using native name as value. So reverse tracking is possible.
-	QualifiedName::sUsedGenericNames[this->first] = this->second;
-	QualifiedName::sGenericHints[this->first] = this->mGenericHint;
+	QualifiedName::sAllocatedGenericNames[this->mGenericName] = this->mNativeName;
+	QualifiedName::sStoredGenericHints[this->mGenericName] = this->mGenericHint;
 
 	return FinalGenericName;
 }
@@ -46,169 +52,134 @@ wxString QualifiedName::AllocateGenericName()
 bool QualifiedName::DeallocateGenericName()
 {
 	// Generic name is not allocated. Error.
-	if (QualifiedName::sUsedGenericNames.count(this->first) == 0) return false;
+	if (!this->IsValid()) return false;
 
 	// Generic name is allocated. Delete it!
-	QualifiedName::sUsedGenericNames.erase(this->first);
-	QualifiedName::sGenericHints.erase(this->first);
+	QualifiedName::sAllocatedGenericNames.erase(this->mGenericName);
+	QualifiedName::sStoredGenericHints.erase(this->mGenericName);
 	return true;
 }
 
-QualifiedName::QualifiedName(wxString NativeName) : QualifiedName(NativeName, ToWxString("") { }
-QualifiedName::QualifiedName(wxString NativeName, wxString GenericHint)
-{
-	// Set native name
-	this->second = NativeName;
-
-	// Store hint
-	this->mGenericHint = GenericHint;
-
-	// Allocate and implicid set generic name
-	this->AllocateGenericName(GenericHint);
-}
-
+QualifiedName::QualifiedName() { }
 QualifiedName::QualifiedName(const QualifiedName& ToCopy)
 {
-	this->first = ToCopy.first;
-	this->second = ToCopy.second;
-	this->mGenericHint = ToCopy.mGenericHint();
+	this->mGenericName = ToCopy.mGenericName;
+	this->mNativeName = ToCopy.mNativeName;
+	this->mGenericHint = ToCopy.mGenericHint;
 }
-QualifiedName::~QualifiedName(void) { this->DeallocateGenericName(); }
-bool QualifiedName::IsValid() { return this->HasQualifiedNameWithGenericName(this->first); }
-bool QualifiedName::Destroy()
+QualifiedName::~QualifiedName(void) { }
+QualifiedName QualifiedName::Create(wxString NativeName) { return QualifiedName::Create(NativeName, ToWxString("")); }
+QualifiedName QualifiedName::Create(wxString NativeName, wxString GenericHint)
 {
-	// Check, if QName exists
-	if (!this->IsValid())
-	{
-		return false;
-	}
-	else
-	{
-		// Deallocate itself
-		this->DeallocateGenericName();
-		return true;
-	}
+	// Create empty QName
+	QualifiedName QName;
+
+	// Set native name
+	QName.mNativeName = NativeName;
+
+	// Store hint
+	QName.mGenericHint = GenericHint;
+
+	// Allocate and implicid set generic name
+	QName.AllocateGenericName();
+
+	return QName;
 }
-void QualifiedName::GetGenericHint() { return this->mGenericHint; }
-wxString QualifiedName::GenericName() { return this->first; }
-wxString QualifiedName::NativeName() { return this->second; }
+bool QualifiedName::Destroy(QualifiedName QName) { return QName.DeallocateGenericName(); }
+bool QualifiedName::Destroy(wxString GenericName)
+{
+	QualifiedName* pQName = QualifiedName::GetQualifiedNameByGeneric(GenericName);
+	
+	if (pQName == 0) return false;
+	else return QualifiedName::Destroy(*pQName);
+}
+bool QualifiedName::Destroy() { return QualifiedName::Destroy(*this); }
+bool QualifiedName::IsValid() { return QualifiedName::HasQualifiedNameWithGenericName(this->mGenericName); }
+wxString QualifiedName::GenericHint() { return this->mGenericHint; }
+wxString QualifiedName::GenericName() { return this->mGenericName; }
+wxString QualifiedName::NativeName() { return this->mNativeName; }
 wxString QualifiedName::UniqueName()
 {
 	wxString QName;
 	QName.clear();
-	QName << this->second;
+	QName << this->mNativeName;
 	QName << ToWxString("_");
-	QName << this->first;
+	QName << this->mGenericName;
 	return QName;
 }
-static Array_QualifiedName QualifiedName::GetQualifiedNameByGenericName(wxString GenericName)
+bool QualifiedName::Equals(QualifiedName QName)
 {
-	Array_QualifiedName TempArray;
-	TempArray.clear();
+	bool NativeMatch = this->NativeName().IsSameAs(QName.NativeName());
+	bool GenericMatch = this->GenericName().IsSameAs(QName.GenericName());
 
-	if (QualifiedName::sUsedGenericNames.count(GenericName) == 1)
-	{
-		QualifiedName QName;
-		QName.first = GenericName;
-		QName.second = QualifiedName::sUsedGenericNames[GenericName];
-		QName.mGenericHint = QualifiedName::sGenericHints[GenericName];
-
-		TempArray.Add(QName);
-	}
-
-	return TempArray;
+	return (this->EqualsNative(QName) && this->EqualsGeneric(QName));
 }
-static Array_QualifiedName QualifiedName::GetQualifiedNameByNativeName(wxString NativeName)
+bool QualifiedName::EqualsNative(QualifiedName QName) { return this->NativeName().IsSameAs(QName.NativeName()); }
+bool QualifiedName::EqualsGeneric(QualifiedName QName) { return this->GenericName().IsSameAs(QName.GenericName()); }
+bool QualifiedName::EqualsHint(QualifiedName QName) { return this->GenericHint().IsSameAs(QName.GenericHint()); }
+bool QualifiedName::operator==(QualifiedName QName) { return this->Equals(QName); }
+bool QualifiedName::operator!=(QualifiedName QName) { return !(this->Equals(QName)); }
+QualifiedName* QualifiedName::GetQualifiedNameByGeneric(wxString GenericName)
 {
-	Array_QualifiedName TempArray;
+	if (QualifiedName::HasQualifiedNameWithGenericName(GenericName))
+	{
+		QualifiedName* pQName = new QualifiedName();
+		pQName->mGenericName = GenericName;
+		pQName->mNativeName = QualifiedName::sAllocatedGenericNames[GenericName];
+		pQName->mGenericHint = QualifiedName::sStoredGenericHints[GenericName];
+	}
+	else return 0;
+}
+wxArrayString QualifiedName::GetGenericByNative(wxString NativeName)
+{
+	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sUsedGenericNames.begin(); IT != QualifiedName::sUsedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
 	{
-		if (IT->second.IsSameAs(NativeName))
-		{
-			QualifiedName QName;
-			QName.first = IT->first;
-			QName.second = IT->second;
-			QName.mGenericHint = QualifiedName::sGenericHints[IT->first];
-
-			TempArray.Add(QName);
-		}
+		if (IT->second.IsSameAs(NativeName)) TempArray.Add(IT->first);
 	}
 	
 	return TempArray;
 }
-static Array_QualifiedName QualifiedName::GetQualifiedNameByGenericHint(wxString GenericHint)
+wxArrayString QualifiedName::GetGenericByHint(wxString GenericHint)
 {
-	Array_QualifiedName TempArray;
+	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sUsedGenericNames.begin(); IT != QualifiedName::sUsedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
 	{
-		if (IT->first.Contains(GenericHint))
-		{
-			QualifiedName QName;
-			QName.first = IT->first;
-			QName.second = IT->second;
-			QName.mGenericHint = QualifiedName::sGenericHints[IT->first];
-
-			TempArray.Add(QName);
-		}
+		if (QualifiedName::sStoredGenericHints[IT->first].Contains(GenericHint)) TempArray.Add(IT->first);
 	}
 	
 	return TempArray;
 }
-static Array_QualifiedName QualifiedName::GetQualifiedNameByHint(wxString Hint)
+wxArrayString QualifiedName::GetGenericBySubString(wxString SubString)
 {
-	Array_QualifiedName TempArray;
+	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sUsedGenericNames.begin(); IT != QualifiedName::sUsedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
 	{
-		QualifiedName QName;
-		QName.first = IT->first;
-		QName.second = IT->second;
-		QName.mGenericHint = QualifiedName::sGenericHints[IT->first];
-
-		if (QName.UniqueName().Contains(Hint)) TempArray.Add(QName);
+		if (QualifiedName::GetQualifiedNameByGeneric(IT->first)->UniqueName().Contains(SubString)) TempArray.Add(IT->first);
 	}
 	
 	return TempArray;
 }
-static Array_QualifiedName QualifiedName::GetAllQualifiedNames()
+wxArrayString QualifiedName::GetGenericNames()
 {
-	Array_QualifiedName TempArray;
+	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sUsedGenericNames.begin(); IT != QualifiedName::sUsedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
 	{
-		QualifiedName QName;
-		QName.first = IT->first;
-		QName.second = IT->second;
-		QName.mGenericHint = QualifiedName::sGenericHints[IT->first];
-
-		TempArray.Add(QName);
+		TempArray.Add(IT->first);
 	}
 	
 	return TempArray;
 }
-static bool QualifiedName::HasQualifiedNameWithGenericName(wxString GenericName)
+bool QualifiedName::HasQualifiedNameWithGenericName(wxString GenericName)
 {
-	if (QualifiedName::GetQualifiedNameByGenericName(GenericName).Count > 0) return true;
-	else return false;
-}
-static bool QualifiedName::HasQualifiedNameWithNativeName(wxString NativeName)
-{
-	if (QualifiedName::GetQualifiedNameByNativeName(GenericName).Count > 0) return true;
-	else return false;
-}
-static bool QualifiedName::HasQualifiedNameWithGenericHint(wxString GenericHint)
-{
-	if (QualifiedName::GetQualifiedNameByGenericHint(GenericName).Count > 0) return true;
-	else return false;
-}
-static bool QualifiedName::HasQualifiedNameWithHint(wxString Hint)
-{
-	if (QualifiedName::GetQualifiedNameByHint(GenericName).Count > 0) return true;
+	if (QualifiedName::sAllocatedGenericNames.count(GenericName) > 0) return true;
 	else return false;
 }
