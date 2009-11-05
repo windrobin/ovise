@@ -1,6 +1,3 @@
-#pragma once
-
-// Include WX
 /********************************************************************************
  * Name:      QualifiedNameCollectionInterface.h								*
  * Purpose:   Code describes a container for QualifiedName-objects and a		*
@@ -12,6 +9,10 @@
  * License:																		*
  ********************************************************************************/
 
+#pragma once
+
+// Include WX
+#include <wx/hashmap.h>
 #include <wx/dynarray.h>
 #include <wx/arrstr.h>
 
@@ -19,6 +20,7 @@
 #include "../OViSEAux/QualifiedName.h"
 
 WX_DECLARE_OBJARRAY(QualifiedName, QualifiedNameCollection);
+WX_DECLARE_STRING_HASH_MAP(QualifiedName, QualifiedNameHashMap);
 
 class QualifiedNameCollectionInterface
 {
@@ -38,11 +40,14 @@ public:
 	// Get QualifiedName by native name (returns a wxArray of QualifiedNames)
 	static QualifiedNameCollection GetQualifiedNameByNative(wxString NativeName);
 
-	// Get QualifiedName by generic hint (returns a wxArray of QualifiedNames)
+	// Get QualifiedName by hint (returns a wxArray of QualifiedNames)
 	static QualifiedNameCollection GetQualifiedNameByHint(wxString GenericHint);
 
-	// Get QualifiedName by hint (returns a wxArray of QualifiedNames)
+	// Get QualifiedName by substring (returns a wxArray of QualifiedNames)
 	static QualifiedNameCollection GetQualifiedNameBySubString(wxString SubString);
+
+	// Get QualifiedName by unique name (returns a wxArray of QualifiedNames)
+	static QualifiedNameCollection GetQualifiedNameByUnique(wxString UniqueName);
 
 	// Get all QualifiedNames (returns a wxArray of QualifiedNames)
 	static QualifiedNameCollection GetAllQualifiedNames();
