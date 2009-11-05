@@ -12,11 +12,16 @@ OgreAPIMediator* OgreAPIMediator::GetSingletonPtr()
 }
 OgreAPIMediator::OgreAPIMediator()
 {
+	
+	this->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OgreAPIMediator::OnOgreChanged ), NULL, this);
+
+	// Create default SceneManager
+	this->ActiveSceneManager = *(this->CreateSceneManager(ToWxString("Default")));
+
 	this->Valid = false;
 	this->OgreChanged = false;
-	this->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OgreAPIMediator::OnOgreChanged ), NULL, this);
 }
-OgreAPIMediator::~OgreAPIMediator(void) { }
+OgreAPIMediator::~OgreAPIMediator(void) { this->DestroySceneManager(); }
 // General
 bool OgreAPIMediator::IsValid() { return this->Valid; }
 // Get & Set properies
@@ -249,6 +254,624 @@ Ogre::SceneNode* OgreAPIMediator::addSceneNode(wxString NotUniqueName, Ogre::Sce
 	this->OgreChanged = true;
 	return NewSN;
 }
+
+// Get QualifiedName by pointer
+QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Camera* pCamera)
+{
+	QualifiedName* qCamera = 0;
+
+	wxString UniqueName = ToWxString(pCamera->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		qCamera = new QualifiedName(QNames[0]);
+	}
+
+	return qCamera;
+}
+QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Entity* pEntity)
+{
+	QualifiedName* qEntity = 0;
+
+	wxString UniqueName = ToWxString(pEntity->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		qEntity = new QualifiedName(QNames[0]);
+	}
+
+	return qEntity;
+}
+QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Light* pLight)
+{
+	QualifiedName* qLight = 0;
+
+	wxString UniqueName = ToWxString(pLight->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		qLight = new QualifiedName(QNames[0]);
+	}
+
+	return qLight;
+}
+QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::SceneManager* pSceneManager)
+{
+	QualifiedName* qSceneManager = 0;
+
+	wxString UniqueName = ToWxString(pSceneManager->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		qSceneManager = new QualifiedName(QNames[0]);
+	}
+
+	return qSceneManager;
+}
+QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::SceneNode* pSceneNode)
+{
+	QualifiedName* qSceneNode = 0;
+
+	wxString UniqueName = ToWxString(pSceneNode->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		qSceneNode = new QualifiedName(QNames[0]);
+	}
+
+	return qSceneNode;
+}
+
+// Get pointer by QualifiedName
+Ogre::Camera*		OgreAPIMediator::GetCameraPtr(QualifiedName qCamera)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qCamera
+	if (!qCamera.IsValid()) return false;
+
+	// Get Camera and return it (or null)
+	return this->QuickObjectAccess.GetCamera(qCamera);
+}
+Ogre::Entity*		OgreAPIMediator::GetEntityPtr(QualifiedName qEntity)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qEntity
+	if (!qEntity.IsValid()) return false;
+
+	// Get Entity and return it (or null)
+	return this->QuickObjectAccess.GetEntity(qEntity);
+}
+Ogre::Light*		OgreAPIMediator::GetLightPtr(QualifiedName qLight)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qLight
+	if (!qLight.IsValid()) return false;
+	
+	// Get Light and return it (or null)
+	return this->QuickObjectAccess.GetLight(qLight);
+}
+Ogre::SceneManager*	OgreAPIMediator::GetSceneManagerPtr(QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return false;
+
+	// Get SceneManager and return it (or null)
+	return this->QuickObjectAccess.GetSceneManager(qSceneManager);
+}
+Ogre::SceneNode*	OgreAPIMediator::GetSceneNodePtr(QualifiedName qSceneNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qSceneNode
+	if (!qSceneNode.IsValid()) return false;
+	
+	// Get SceneNode and return it (or null)
+	return this->QuickObjectAccess.GetSceneNode(qSceneNode);
+}
+// Create objects
+QualifiedName* OgreAPIMediator::CreateCamera(wxString Name, Ogre::SceneNode* AttachToThisNode)
+{
+	return this->CreateCamera(this->ActiveSceneManager, Name, AttachToThisNode);
+}
+QualifiedName* OgreAPIMediator::CreateEntity(wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+{
+	return this->CreateEntity(this->ActiveSceneManager, Name, MeshFile, AttachToThisNode);
+}
+QualifiedName* OgreAPIMediator::CreateLight(wxString Name, Ogre::SceneNode* AttachToThisNode)
+{
+	return this->CreateLight(this->ActiveSceneManager, Name, AttachToThisNode);
+}
+QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name)
+{
+	return this->CreateSceneManager(Name, Ogre::ST_GENERIC);
+}
+QualifiedName* OgreAPIMediator::CreateSceneNode(wxString Name, Ogre::SceneNode* ParentNode)
+{
+	return this->CreateSceneNode(this->ActiveSceneManager, Name, ParentNode);
+}
+QualifiedName* OgreAPIMediator::CreateCamera(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+	
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+
+	// Create QualifiedName of new Ogre::Camera
+	QualifiedName qCamera = QualifiedName::Create(Name, "Camera");
+
+	// Check Collections and abort, if unexpected entries are found.
+	if (	(this->QuickObjectAccess.GetCamera(qCamera) != 0)
+		||	(this->QuickObjectAccess.GetAssociatedSceneManager(qCamera) != 0))
+	{
+		QualifiedName::Destroy(qCamera);
+		return 0;
+	}
+
+	// Create new Ogre::Camera
+	Ogre::Camera* C = SM->createCamera(ToOgreString(qCamera.UniqueName()));
+
+	// Abort if Ogre::Camera is null
+	if (C == 0)
+	{
+		QualifiedName::Destroy(qCamera);
+		return 0;
+	}
+
+	// Add new Ogre::Camera ObjectManager
+	this->QuickObjectAccess.AddCamera(qCamera, C);
+
+	// Add new association between Ogre::Camera and Ogre::SceneManager
+	this->QuickObjectAccess.AddAssociatedSceneManager(qSceneManager, qCamera);
+
+	// Attach new Ogre::Camera
+	if (AttachToThisNode == 0)  SM->getRootSceneNode()->attachObject(C);
+	else AttachToThisNode->attachObject(C);
+	
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+	
+	// Return QualifiedName of new Ogre::Camera
+	return new QualifiedName(qCamera);
+}
+QualifiedName* OgreAPIMediator::CreateEntity(QualifiedName qSceneManager, wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+	
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+
+	// Create QualifiedName of new Ogre::Entity
+	QualifiedName qEntity = QualifiedName::Create(Name, "Entity");
+
+	// Check Collections and abort, if unexpected entries are found.
+	if (	(this->QuickObjectAccess.GetEntity(qEntity) != 0)
+		||	(this->QuickObjectAccess.GetAssociatedSceneManager(qEntity) != 0))
+	{
+		QualifiedName::Destroy(qEntity);
+		return 0;
+	}
+
+	// Create new Ogre::Entity
+	Ogre::Entity* E = SM->createEntity(ToOgreString(qEntity.UniqueName()), ToOgreString(MeshFile));
+
+	// Abort if Ogre::Entity is null
+	if (E == 0)
+	{
+		QualifiedName::Destroy(qEntity);
+		return 0;
+	}
+
+	// Add new Ogre::Entity ObjectManager
+	this->QuickObjectAccess.AddEntity(qEntity, E);
+
+	// Add new association between Ogre::Entity and Ogre::SceneManager
+	this->QuickObjectAccess.AddAssociatedSceneManager(qSceneManager, qEntity);
+
+	// Attach new Ogre::Entity
+	if (AttachToThisNode == 0)  SM->getRootSceneNode()->attachObject(E);
+	else AttachToThisNode->attachObject(E);
+	
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+	
+	// Return QualifiedName of new Ogre::Entity
+	return new QualifiedName(qEntity);
+}
+QualifiedName* OgreAPIMediator::CreateLight(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+	
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+
+	// Create QualifiedName of new Ogre::Light
+	QualifiedName qLight = QualifiedName::Create(Name, "Light");
+
+	// Check Collections and abort, if unexpected entries are found.
+	if (	(this->QuickObjectAccess.GetLight(qLight) != 0)
+		||	(this->QuickObjectAccess.GetAssociatedSceneManager(qLight) != 0))
+	{
+		QualifiedName::Destroy(qLight);
+		return 0;
+	}
+
+	// Create new Ogre::Light
+	Ogre::Light* L = SM->createLight(ToOgreString(qLight.UniqueName()));
+
+	// Abort if Ogre::Light is null
+	if (L == 0)
+	{
+		QualifiedName::Destroy(qLight);
+		return 0;
+	}
+
+	// Add new Ogre::Light ObjectManager
+	this->QuickObjectAccess.AddLight(qLight, L);
+
+	// Add new association between Ogre::Light and Ogre::SceneManager
+	this->QuickObjectAccess.AddAssociatedSceneManager(qSceneManager, qLight);
+
+	// Attach new Ogre::Light
+	if (AttachToThisNode == 0)  SM->getRootSceneNode()->attachObject(L);
+	else AttachToThisNode->attachObject(L);
+	
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+	
+	// Return QualifiedName of new Ogre::Light
+	return new QualifiedName(qLight);
+}
+QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name, Ogre::SceneType pSceneType)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Create QualifiedName of new Ogre::SceneManager
+	QualifiedName qSceneManager = QualifiedName::Create(Name, "SceneManager");
+
+	// Check Collections and abort, if unexpected entries are found.
+	if (	(this->QuickObjectAccess.GetSceneManager(qSceneManager) != 0)
+		||	(this->QuickObjectAccess.GetAssociatedSceneManager(qSceneManager) != 0))
+	{
+		QualifiedName::Destroy(qSceneManager);
+		return 0;
+	}
+
+	// Create new Ogre::SceneManager
+	Ogre::SceneManager* SM = Ogre::Root::getSingletonPtr()->createSceneManager(pSceneType, ToOgreString(qSceneManager.UniqueName()));
+
+	if (SM == 0)
+	{
+		QualifiedName::Destroy(qSceneManager);
+		return 0;
+	}
+
+	// Add new Ogre::Camera ObjectManager
+	this->QuickObjectAccess.AddSceneManager(qSceneManager, SM);
+
+	// Add new association between Ogre::SceneManager and Ogre::SceneManager
+	this->QuickObjectAccess.AddAssociatedSceneManager(qSceneManager, qSceneManager);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+	
+	// Return QualifiedName of new Ogre::Camera
+	return new QualifiedName(qSceneManager);
+}
+QualifiedName* OgreAPIMediator::CreateSceneNode(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* ParentNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+	
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+
+	// Create QualifiedName of new Ogre::SceneNode
+	QualifiedName qSceneNode = QualifiedName::Create(Name, "SceneNode");
+
+	// Check Collections and abort, if unexpected entries are found.
+	if (	(this->QuickObjectAccess.GetSceneNode(qSceneNode) != 0)
+		||	(this->QuickObjectAccess.GetAssociatedSceneManager(qSceneNode) != 0))
+	{
+		QualifiedName::Destroy(qSceneNode);
+		return 0;
+	}
+
+	// Create new Ogre::SceneNode
+	Ogre::SceneNode* SN;
+	if (ParentNode == 0) SN = SM->getRootSceneNode()->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
+	else SN = ParentNode->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
+
+	// Abort if Ogre::SceneNode is null
+	if (SN == 0)
+	{
+		QualifiedName::Destroy(qSceneNode);
+		return 0;
+	}
+
+	// Add new Ogre::SceneNode ObjectManager
+	this->QuickObjectAccess.AddSceneNode(qSceneNode, SN);
+
+	// Add new association between Ogre::SceneNode and Ogre::SceneManager
+	this->QuickObjectAccess.AddAssociatedSceneManager(qSceneManager, qSceneNode);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+	
+	// Return QualifiedName of new Ogre::SceneNode
+	return new QualifiedName(qSceneNode);
+}
+// Destroy objects
+bool OgreAPIMediator::DestroySceneManager()
+{
+	return this->DestroySceneManager(this->ActiveSceneManager);
+}
+bool OgreAPIMediator::DestroyCamera(QualifiedName qCamera)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qCamera
+	if (!qCamera.IsValid()) return false;
+
+	// Get associated qSceneManager
+	QualifiedName* qSceneManager = this->QuickObjectAccess.GetAssociatedSceneManager(qCamera);
+	if (qSceneManager == 0) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager->IsValid()) return false;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(*qSceneManager);
+	if (SM == 0) return false;
+
+	// Get Camera
+	Ogre::Camera* C = this->QuickObjectAccess.GetCamera(qCamera);
+	if (C == 0) return false;
+	
+	// Get SceneNode
+	Ogre::SceneNode* SN = C->getParentSceneNode();
+	if (SN == 0) return false;
+
+	// Remove QualifiedName from ObjectManager
+	this->QuickObjectAccess.RemoveAssociatedSceneManager(qCamera);
+	this->QuickObjectAccess.RemoveCamera(qCamera);
+
+	// Destroy Ogre::Camera
+	SN->detachObject(ToOgreString(qCamera.UniqueName()));
+	SM->destroyCamera(C);
+
+	// Destroy QualifiedName of Ogre::Camera
+	QualifiedName::Destroy(qCamera);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+
+	return true;
+}
+bool OgreAPIMediator::DestroyEntity(QualifiedName qEntity)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qEntity
+	if (!qEntity.IsValid()) return false;
+
+	// Get associated qSceneManager
+	QualifiedName* qSceneManager = this->QuickObjectAccess.GetAssociatedSceneManager(qEntity);
+	if (qSceneManager == 0) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager->IsValid()) return false;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(*qSceneManager);
+	if (SM == 0) return false;
+
+	// Get Entity
+	Ogre::Entity* C = this->QuickObjectAccess.GetEntity(qEntity);
+	if (C == 0) return false;
+	
+	// Get SceneNode
+	Ogre::SceneNode* SN = C->getParentSceneNode();
+	if (SN == 0) return false;
+
+	// Remove QualifiedName from ObjectManager
+	this->QuickObjectAccess.RemoveAssociatedSceneManager(qEntity);
+	this->QuickObjectAccess.RemoveEntity(qEntity);
+
+	// Destroy Ogre::Entity
+	SN->detachObject(ToOgreString(qEntity.UniqueName()));
+	SM->destroyEntity(C);
+
+	// Destroy QualifiedName of Ogre::Entity
+	QualifiedName::Destroy(qEntity);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+
+	return true;
+}
+bool OgreAPIMediator::DestroyLight(QualifiedName qLight)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qLight
+	if (!qLight.IsValid()) return false;
+
+	// Get associated qSceneManager
+	QualifiedName* qSceneManager = this->QuickObjectAccess.GetAssociatedSceneManager(qLight);
+	if (qSceneManager == 0) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager->IsValid()) return false;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(*qSceneManager);
+	if (SM == 0) return false;
+
+	// Get Light
+	Ogre::Light* C = this->QuickObjectAccess.GetLight(qLight);
+	if (C == 0) return false;
+	
+	// Get SceneNode
+	Ogre::SceneNode* SN = C->getParentSceneNode();
+	if (SN == 0) return false;
+
+	// Remove QualifiedName from ObjectManager
+	this->QuickObjectAccess.RemoveAssociatedSceneManager(qLight);
+	this->QuickObjectAccess.RemoveLight(qLight);
+
+	// Destroy Ogre::Light
+	SN->detachObject(ToOgreString(qLight.UniqueName()));
+	SM->destroyLight(C);
+
+	// Destroy QualifiedName of Ogre::Light
+	QualifiedName::Destroy(qLight);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+
+	return true;
+}
+bool OgreAPIMediator::DestroySceneManager(QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return false;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return false;
+
+	// Destroy recusive: childnodes
+	Ogre::SceneNode* RSN = SM->getRootSceneNode();
+	wxString UniqueName = ToWxString(RSN->getName());
+	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+	if (QNames.Count() > 0)
+	{
+		QualifiedName qRootSceneNode = QNames[0];
+		this->DestroySceneNode(qRootSceneNode);
+	}
+
+	// Movable objects are destroy implicit!
+
+	// Remove QualifiedName from ObjectManager
+	this->QuickObjectAccess.RemoveAssociatedSceneManager(qSceneManager);
+	this->QuickObjectAccess.RemoveSceneManager(qSceneManager);
+
+	// Destroy Ogre::Camera
+	Ogre::Root::getSingletonPtr()->destroySceneManager(SM);
+
+	// Destroy QualifiedName of Ogre::Camera
+	QualifiedName::Destroy(qSceneManager);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+
+	return true;
+}
+bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return false;
+
+	// Verify qSceneNode
+	if (!qSceneNode.IsValid()) return false;
+
+	// Get associated qSceneManager
+	QualifiedName* qSceneManager = this->QuickObjectAccess.GetAssociatedSceneManager(qSceneNode);
+	if (qSceneManager == 0) return false;
+
+	// Verify qSceneManager
+	if (!qSceneManager->IsValid()) return false;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(*qSceneManager);
+	if (SM == 0) return false;
+
+	// Get SceneNode
+	Ogre::SceneNode* SN = this->QuickObjectAccess.GetSceneNode(qSceneNode);
+	if (SN == 0) return false;
+
+	// Destroy recusive: childnodes
+	Ogre::SceneNode::ChildNodeIterator IT_ChildSN = SN->getChildIterator();
+	while(IT_ChildSN.hasMoreElements())
+	{
+		Ogre::SceneNode* SN_Child = (Ogre::SceneNode*)IT_ChildSN.getNext();
+		wxString UniqueName = ToWxString(SN_Child->getName());
+		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+		if (QNames.Count() > 0)
+		{
+			QualifiedName qChildSceneNode = QNames[0];
+			this->DestroySceneNode(qChildSceneNode);
+		}
+	}
+
+	// Destroy recusive: movable objects
+	Ogre::SceneNode::ObjectIterator IT_MobObj = SN->getAttachedObjectIterator();
+	while(IT_MobObj.hasMoreElements())
+	{
+		Ogre::MovableObject* MO = IT_MobObj.getNext();
+		wxString UniqueName = ToWxString(MO->getName());
+		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
+		if (QNames.Count() > 0)
+		{
+			QualifiedName qMovableObject = QNames[0];
+			SM->destroyMovableObject(MO);
+
+			// Remove QualifiedName from ObjectManager
+			this->QuickObjectAccess.RemoveAssociatedSceneManager(qMovableObject);
+			this->QuickObjectAccess.RemoveMovableObject(qSceneNode);
+
+			QualifiedName::Destroy(qMovableObject);
+		}
+	}
+
+	// Remove QualifiedName from ObjectManager
+	this->QuickObjectAccess.RemoveAssociatedSceneManager(qSceneNode);
+	this->QuickObjectAccess.RemoveSceneNode(qSceneNode);
+
+	// Destroy Ogre::Camera
+	SM->destroySceneNode(SN);
+
+	// Destroy QualifiedName of Ogre::Camera
+	QualifiedName::Destroy(qSceneNode);
+
+	// Flag Ogre-engine as chanced
+	this->OgreChanged = true;
+
+	return true;
+}
+
 // Remove objects
 bool OgreAPIMediator::removeCamera(wxString UniqueName)
 {
@@ -307,7 +930,6 @@ bool OgreAPIMediator::removeSceneNode(wxString UniqueName, bool RemoveRecursive)
 	this->SceneMgr->destroySceneNode(ToOgreString(UniqueName));
 	this->OgreChanged = true;
 	return true;
-	
 }
 /*
 bool OViSESelection::AddMovableObject(Ogre::MovableObject* pMovableObject)

@@ -54,6 +54,23 @@ QualifiedNameCollection QualifiedNameCollectionInterface::GetQualifiedNameBySubS
 	wxArrayString GenericNames = QualifiedName::GetGenericBySubString(SubString);
 	return QualifiedNameCollectionInterface::CreateQualifiedNameCollectionFromGenericNames(GenericNames);
 }
+QualifiedNameCollection QualifiedNameCollectionInterface::GetQualifiedNameByUnique(wxString UniqueName)
+{
+	QualifiedNameCollection QNameMatch;
+	QualifiedNameCollection QNColl = QualifiedNameCollectionInterface::GetQualifiedNameBySubString(UniqueName);
+	if (QNColl.GetCount() > 0)
+	{
+		for(unsigned long IT = 0; IT < QNColl.GetCount(); IT++)
+		{
+			if (QNColl[IT].UniqueName().IsSameAs(UniqueName))
+			{
+				QNameMatch.Add(QNColl[IT]);
+			}
+		}
+	}
+
+	return QNameMatch;
+}
 QualifiedNameCollection QualifiedNameCollectionInterface::GetAllQualifiedNames()
 {
 	wxArrayString GenericNames = QualifiedName::GetGenericNames();
