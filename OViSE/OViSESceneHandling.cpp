@@ -1,6 +1,11 @@
 #include "OViSESceneHandling.h"
 #include <wx/dir.h>
 
+// REFACTORING:		IN PROGRESS
+// REFACTOR-ID:		ID#0001 = revieved
+// REFACTOR-ID:		ID#0002 = observe
+// AUTHOR:			H.R.
+
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
 
 OViSESceneHandling* OViSESceneHandling::getSingletonPtr()
@@ -16,7 +21,7 @@ OViSESceneHandling::OViSESceneHandling()
 {
 	if(mInstance == NULL)
 	{
-		Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager");
+		Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager"); //ID#0001//move to OgreAPIMediator
 		mSceneManagers["BaseSceneManager"] = mainSceneManager;
 		mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
 		mObjectSelectionsMap["BaseSceneManager"] = OViSESelectionMap();
@@ -24,8 +29,8 @@ OViSESceneHandling::OViSESceneHandling()
 		mFrameListener = new OViSEFrameListener();
 		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
 		
-		OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager);
-		this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName())));
+		OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
+		this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreAPIMediator
 	}
 }
 
@@ -50,6 +55,7 @@ void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 	OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
 }
 
+//ID#0001//already implemented in OgreAPIMediator
 void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
 {
 	for(OViSEScnMgrMap::iterator it = mSceneManagers.begin(); it != mSceneManagers.end(); it++)
@@ -67,6 +73,7 @@ void OViSESceneHandling::addSceneManager(std::string sceneManagerName)
 	mObjectSelectionsMap[sceneManagerName] = OViSESelectionMap();
 }
 
+//ID#0001//already implemented in OgreAPIMediator
 Ogre::SceneManager* OViSESceneHandling::getSceneManager(std::string sceneManagerName)
 {
 	OViSEScnMgrMap::iterator it = mSceneManagers.find(sceneManagerName);
@@ -78,6 +85,7 @@ Ogre::SceneManager* OViSESceneHandling::getSceneManager(std::string sceneManager
 	else return it->second;
 }
 
+//ID#0001//already implemented in OgreAPIMediator
 void OViSESceneHandling::removeSceneManager(std::string sceneManagerName)
 {
 	OViSEScnMgrMap::iterator it = mSceneManagers.find(sceneManagerName);
@@ -94,6 +102,7 @@ void OViSESceneHandling::removeSceneManager(std::string sceneManagerName)
 	mObjectSelectionsMap.erase(sceneManagerName);
 }
 
+//ID#0001//move to OgreAPIMediator
 Ogre::RaySceneQuery* OViSESceneHandling::getObjectSelectionQuery(std::string sceneManagerName)
 {
 	OViSERayQueryMap::iterator it = mObjectSelectionQuerys.find(sceneManagerName);
@@ -105,6 +114,7 @@ Ogre::RaySceneQuery* OViSESceneHandling::getObjectSelectionQuery(std::string sce
 	return it->second;
 }
 
+//ID#0001//move to OgreAPIMediator
 Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float screeny, float& dist, Ogre::Camera *cam, std::string sceneManagerName)
 {
 	try
@@ -141,6 +151,7 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(float screenx, float 
 	}
 }
 
+//ID#0001//outdated
 Ogre::MovableObject* OViSESceneHandling::getSelectedObject(wxString ObjectName, Ogre::SceneManager* ScnMgr)
 {
 	try
@@ -184,6 +195,7 @@ Ogre::MovableObject* OViSESceneHandling::getSelectedObject(wxString ObjectName, 
 	}
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 {
 	try
@@ -201,6 +213,7 @@ void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 	}
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection, std::string sceneManagerName)
 {
 	try
@@ -226,6 +239,7 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 	}
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::removeObjectFromSelection(Ogre::MovableObject *movObj, bool hideSelection, std::string sceneManagerName)
 {
 	try
@@ -241,6 +255,7 @@ void OViSESceneHandling::removeObjectFromSelection(Ogre::MovableObject *movObj, 
 	}
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::removeObjectFromSelection(std::string name, bool hideSelection, std::string sceneManagerName)
 {
 	try
@@ -256,6 +271,7 @@ void OViSESceneHandling::removeObjectFromSelection(std::string name, bool hideSe
 	}
 }
 
+//ID#0001//outdated
 OViSESelectionMap OViSESceneHandling::getSelectedObjects(std::string sceneManagerName)
 {
 	try
@@ -269,6 +285,7 @@ OViSESelectionMap OViSESceneHandling::getSelectedObjects(std::string sceneManage
 	}
 }
 
+//ID#0001//outdated
 bool OViSESceneHandling::hasSelectedObjects(std::string sceneManagerName)
 {
 	try
@@ -285,6 +302,7 @@ bool OViSESceneHandling::hasSelectedObjects(std::string sceneManagerName)
 	}
 }
 
+//ID#0001//move to OgreAPIMediator
 void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 col, std::string sceneManagerName, Ogre::SceneNode *node)
 {
 	try
@@ -332,6 +350,7 @@ void OViSESceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vecto
 	}
 }
 
+//ID#0001//move to OgreAPIMediator
 void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
 	try
@@ -364,6 +383,7 @@ void OViSESceneHandling::addCOS(float scale, bool castShadows, wxString sceneMan
 	catch (...) {}
 }
 
+//ID#0002//
 std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string group)
 {
 	Ogre::StringVectorPtr resources = Ogre::ResourceGroupManager::getSingletonPtr()->listResourceNames(group);
@@ -375,11 +395,13 @@ std::vector<std::string> OViSESceneHandling::getAvailableMeshes(std::string grou
 	return returnvec;
 }
 
+//ID#0002//
 std::vector<std::string> OViSESceneHandling::getAvailableResourceGroupNames()
 {
 	return Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups();
 }
 
+//ID#0002//
 void OViSESceneHandling::addMesh(std::string meshName, std::string meshFileName, std::string sceneManagerName, Ogre::SceneNode *node)
 {
 	try
@@ -407,6 +429,7 @@ void OViSESceneHandling::addMesh(std::string meshName, std::string meshFileName,
 	}
 }
 
+//ID#0002//
 void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManagerName)
 {
 	try
@@ -430,6 +453,7 @@ void OViSESceneHandling::deleteMesh(std::string meshName, std::string sceneManag
 }
 
 
+//ID#0002//
 void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
@@ -497,6 +521,7 @@ void OViSESceneHandling::showSceneGraphStructure(bool update, std::string sceneM
 	scnMgr->getRootSceneNode()->attachObject(sgs);
 }
 
+//ID#0002//
 void OViSESceneHandling::updateObjectTitles()
 {
 	for(OViSEObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
@@ -505,6 +530,7 @@ void OViSESceneHandling::updateObjectTitles()
 	}
 }
 
+//ID#0002//
 void OViSESceneHandling::dynamicShadows(bool state)
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
@@ -512,11 +538,13 @@ void OViSESceneHandling::dynamicShadows(bool state)
 	else scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::testStuff()
 {
 	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::startStopFrameListeners(bool on)
 {
 	/*
@@ -527,15 +555,19 @@ void OViSESceneHandling::startStopFrameListeners(bool on)
 		*/
 }
 
+//ID#0001//outdated
 OViSESceneHandling::~OViSESceneHandling()
 {
 	//delete this->mDotSceneMgr;
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::ImportPrototypeFromXML(wxString URLofXML)
 {
 	/*this->mDotSceneMgr->ImportPrototype(URLofXML);*/
 }
+
+//ID#0001//outdated
 void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
 	/* Export depending on selection */
@@ -552,6 +584,7 @@ void OViSESceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxSt
 	}
 }
 
+//ID#0001//outdated
 void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 {
 	if (!UniqueNameOfPrototype.IsEmpty())
@@ -560,12 +593,13 @@ void OViSESceneHandling::AttachNewScene(wxString UniqueNameOfPrototype)
 	}
 }
 
+//ID#0002//
 void OViSESceneHandling::release()
 {
 	delete OViSESceneHandling::getSingletonPtr();
 }
 
-
+//ID#0001//outdated
 wxArrayString OViSESceneHandling::GetAvailablePrototypesOfDotSceneManager()
 {
 	return wxArrayString(); //this->mDotSceneMgr->GetImportedScenePrototypes();
