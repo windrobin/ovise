@@ -153,4 +153,8 @@ public:
 	bool				DestroyLight(QualifiedName qLight);
 	bool				DestroySceneManager(QualifiedName qSceneManager);
 	bool				DestroySceneNode(QualifiedName qSceneNode);
+
+
+	// NEW // Get selected object
+
 };
