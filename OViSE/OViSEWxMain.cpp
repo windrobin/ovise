@@ -83,6 +83,10 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 	// When selection in OViSESceneTree changed, call OViSEWxFrame::OnSelectionChanged(...) !
 	this->mSceneTree->Connect(wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( OViSEWxFrame::OnTreeSelectionChanged ), NULL, this);
 	// OViSEWxFrame::OnViewClick handles the other direction
+
+	// Parking call here for a short time whil REFACTORING. H.R.
+	// Initialize DotSceneManager
+	this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName()));
 }
 
 OViSEWxFrame::~OViSEWxFrame()
@@ -331,15 +335,76 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	float sy = (float)s.y / (float)height;
 	float d = -1;
 
+	// REACTORING of "OViSESceneHandling" takes affect here! //
+
 	Ogre::Camera *cam = win->GetCamera();
 	Ogre::MovableObject *selectedObject = mSceneHdlr->getSelectedObject(sx, sy, d, cam, cam->getSceneManager()->getName());
+	QualifiedNameCollection QNames = OgreAPIMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, cam, OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
 	
-	if(selectedObject != NULL)
+	if(!QNames.IsEmpty())
 	{
+		// CASE:				ACTION:
+		// 1:	-			->	Unselect all, Select one or nothing
+		// 2:	CTRL		->	Unselect one or nothing, Add one Selection(front)
+		// 3:	SHIFT		->	Unselect all, Add complete Query
+		// 4:	CTRL, SHIFT ->	Unselect all in complete Query, Add complete Query < IRREGULAR: only unselect, if all from Query are selected
+
+		if (event.ControlDown())
+		{
+			if (event.ShiftDown())
+			{
+				// CASE 4
+			}
+			else
+			{
+				// CASE 2
+			}
+		}
+		else
+		{
+			if (event.ShiftDown())
+			{
+				// CASE 3: Unselect all, Add complete Query
+				SelectionManager::getSingletonPtr()->Selection.Clear();
+				this->mSceneTree->UnselectAll();
+
+				if (QNames.GetCount() > 0)
+				{
+					for (unsigned long IT = 0; IT < QNames.GetCount(); IT++)
+					{
+						// Add to all selection // Selection is clear, so it's not neccessary to test, if QName is already in there
+						SelectionManager::getSingletonPtr()->Selection.Add(QNames[IT]);
+						
+						// Select in SceneTree-View
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
+						this->mSceneTree->SelectItem(Item);
+					}
+				}
+			}
+			else
+			{
+				// CASE 1: Unselect all, Select one or nothing
+				SelectionManager::getSingletonPtr()->Selection.Clear();
+				this->mSceneTree->UnselectAll();
+
+				if (QNames.GetCount() > 0)
+				{
+					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
+					SelectionManager::getSingletonPtr()->Selection.Add(QNames[0]);
+
+					// Select in SceneTree-View
+					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
+					this->mSceneTree->SelectItem(Item);
+				}
+			}
+		}
+	}
+	/*
+
 		//if(!event.ControlDown()) this->RemoveAllSelectedObjects(); // ????
 		wxString ObjectName = ToWxString(selectedObject->getName());
 		wxTreeItemId Item = this->mSceneTree->Items[ObjectName];
-		if(OViSESelectionManager::getSingletonPtr()->Selection.SelectedObjects.count(ObjectName) == 1/*this->mSceneTree->IsSelected(Item)*/)
+		if(OViSESelectionManager::getSingletonPtr()->Selection.SelectedObjects.count(ObjectName) == 1/*this->mSceneTree->IsSelected(Item)*//*)
 		{
 			if(event.ControlDown()) this->mSceneTree->UnselectItem(Item);
 			else this->mSceneTree->UnselectAll();
@@ -359,9 +424,8 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	}
 	else
 	{
-		//this->RemoveAllSelectedObjects(); // ???
 		this->mSceneTree->UnselectAll();
-	}
+	}*/
 }
 
 void OViSEWxFrame::OnDynamicShadowsChange(wxCommandEvent& event)
@@ -379,7 +443,7 @@ void OViSEWxFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *prop = event.GetProperty();
-	OViSESelectionManager::getSingletonPtr()->handlePropertyChanged(prop);
+	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop);
 	/*
     // It may be NULL
     if ( !prop )
@@ -566,7 +630,7 @@ void OViSEWxFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 		wxArrayTreeItemIds SelectedItems;
 		this->mSceneTree->GetSelections(SelectedItems);
 
-		wxString SceneManagerName = OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
+		wxString SceneManagerName;// = SelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
 
 		
 		int count = SelectedItems.Count();
@@ -600,7 +664,7 @@ void OViSEWxFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 
 void OViSEWxFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName)
 {
-
+	/*
 	//mSceneHdlr->addObjectToSelection(selectedObject, true, ToStdString(SceneManagerName));
 	//setObjectProperties(selectedObject);
 
@@ -608,7 +672,7 @@ void OViSEWxFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxStri
 
 	wxString ObjectName = ToWxString(selectedObject->getName());
 
-	OViSESelectionManager::getSingletonPtr()->Selection.setSceneManagerName(SceneManagerName);
+	/SelectionManager::getSingletonPtr()->Selection.setSceneManagerName(SceneManagerName);
 	/*if (OViSESelectionManager::getSingletonPtr()->Selection.hasMovableObject(ObjectName))
 	{
 		// Remove from selection
@@ -618,24 +682,25 @@ void OViSEWxFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxStri
 		selectedObject->getParentSceneNode()->showBoundingBox(false);
 	}
 	else
-	{*/
+	{*//*
 		// Add to selection
-		OViSEOgreEnums::MovableObject::MovableType Type = OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getStringAsEnum(ToWxString(selectedObject->getMovableType()));
-		OViSESelectionManager::getSingletonPtr()->Selection.addMovableObject(ObjectName, Type);
+		OgreEnums::MovableObject::MovableType Type = OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getStringAsEnum(ToWxString(selectedObject->getMovableType()));
+		SelectionManager::getSingletonPtr()->Selection.addMovableObject(ObjectName, Type);
 		
 		// Show bounding box
 		selectedObject->getParentSceneNode()->showBoundingBox(true);
 	//}
 
-	OViSESelectionManager::getSingletonPtr()->generatePropertyGridContentFromSelection(this->mObjectProperties);
+	SelectionManager::getSingletonPtr()->generatePropertyGridContentFromSelection(this->mObjectProperties);
+	*/
 }
 
 void OViSEWxFrame::RemoveAllSelectedObjects()
 {
 	//this->mSceneHdlr->clearObjectSelection(/*cam->getSceneManager()->getName()*/);
 	//clearObjectProperties();
-
-	wxArrayString Keys = OViSESelectionManager::getSingletonPtr()->Selection.getAllMovableObjectNames();
+	/*
+	wxArrayString Keys = SelectionManager::getSingletonPtr()->Selection.getAllMovableObjectNames();
 	wxString NameOfSceneManager = OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
 	for (int IT = 0; IT < Keys.Count(); IT++)
 	{
@@ -653,6 +718,7 @@ void OViSEWxFrame::RemoveAllSelectedObjects()
 	OViSESelectionManager::getSingletonPtr()->Selection.removeAll();
 
 	this->mObjectProperties->Clear();
+	*/
 }
 void OViSEWxFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {

@@ -50,23 +50,15 @@
 #pragma once
 
 // Include WX
-#include <wx/hashmap.h>
 #include <wx/arrstr.h> 
 
 // Solution's includes
 #include "../OViSEAux/StringConverter.h"
-
-// WX container declarations (Attention: use of makros)
-WX_DECLARE_STRING_HASH_MAP(wxString, HashMap_wxString);
+#include "../OViSEAux/QualifiedNameRegister.h"
 
 class QualifiedName
 {
 private:
-	// Attributes, static
-	// HashMaps allow access in O(1)
-	static HashMap_wxString sAllocatedGenericNames;
-	static HashMap_wxString sStoredGenericHints;
-
 	// Attributes, data
 	// String will be part of generic name. Users can add an additional part to generic name.
 	// For example, if users want to differentiate between special classifications.
@@ -91,8 +83,8 @@ public:
 	static bool Destroy(wxString GenericName);
 
 	// Methods, management
-	bool IsValid();
 	bool Destroy();
+	bool IsValid();
 
 	// Methods, access to names
 	wxString GenericHint();

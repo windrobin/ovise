@@ -1,4 +1,4 @@
-#include "ObjectManager.h"
+#include "../OViSEAux/ObjectManager.h"
 
 ObjectManager::ObjectManager(void) { }
 ObjectManager::~ObjectManager(void)
@@ -85,6 +85,7 @@ bool ObjectManager::AddCamera(QualifiedName QName, Ogre::Camera* pCamera)
 	// Everything OK, store QualifiedName and Ogre::Camera
 	this->mQNames[QName.UniqueName()] = QName;
 	this->mCameras[QName.UniqueName()] = pCamera;
+	this->mMovableTypeEnums[QName.UniqueName()] = OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetMovableObjectAsEnum(pCamera);
 
 	return true;
 }
@@ -101,6 +102,7 @@ bool ObjectManager::RemoveCamera(QualifiedName QName)
 	// Remove QName from ObjectManager
 	this->mQNames.erase(QName.UniqueName());
 	this->mCameras.erase(QName.UniqueName());
+	this->mMovableTypeEnums.erase(QName.UniqueName());
 
 	return true;
 }
@@ -139,6 +141,7 @@ bool ObjectManager::AddEntity(QualifiedName QName, Ogre::Entity* pEntity)
 	// Everything OK, store QualifiedName and Ogre::Entity
 	this->mQNames[QName.UniqueName()] = QName;
 	this->mEntities[QName.UniqueName()] = pEntity;
+	this->mMovableTypeEnums[QName.UniqueName()] = OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetMovableObjectAsEnum(pEntity);
 
 	return true;
 }
@@ -155,6 +158,7 @@ bool ObjectManager::RemoveEntity(QualifiedName QName)
 	// Remove QName from ObjectManager
 	this->mQNames.erase(QName.UniqueName());
 	this->mEntities.erase(QName.UniqueName());
+	this->mMovableTypeEnums.erase(QName.UniqueName());
 
 	return true;
 }
@@ -193,6 +197,7 @@ bool ObjectManager::AddLight(QualifiedName QName, Ogre::Light* pLight)
 	// Everything OK, store QualifiedName and Ogre::Light
 	this->mQNames[QName.UniqueName()] = QName;
 	this->mLights[QName.UniqueName()] = pLight;
+	this->mMovableTypeEnums[QName.UniqueName()] = OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetMovableObjectAsEnum(pLight);
 
 	return true;
 }
@@ -209,6 +214,7 @@ bool ObjectManager::RemoveLight(QualifiedName QName)
 	// Remove QName from ObjectManager
 	this->mQNames.erase(QName.UniqueName());
 	this->mLights.erase(QName.UniqueName());
+	this->mMovableTypeEnums.erase(QName.UniqueName());
 
 	return true;
 }
@@ -247,6 +253,7 @@ bool ObjectManager::AddSceneManager(QualifiedName QName, Ogre::SceneManager* pSc
 	// Everything OK, store QualifiedName and Ogre::SceneManager
 	this->mQNames[QName.UniqueName()] = QName;
 	this->mSceneManagers[QName.UniqueName()] = pSceneManager;
+	this->mMovableTypeEnums[QName.UniqueName()] = OgreEnums::MovableObject::MOVABLETYPE_Invalid;
 
 	return true;
 }
@@ -263,6 +270,7 @@ bool ObjectManager::RemoveSceneManager(QualifiedName QName)
 	// Remove QName from ObjectManager
 	this->mQNames.erase(QName.UniqueName());
 	this->mSceneManagers.erase(QName.UniqueName());
+	this->mMovableTypeEnums.erase(QName.UniqueName());
 
 	return true;
 }
@@ -301,6 +309,7 @@ bool ObjectManager::AddSceneNode(QualifiedName QName, Ogre::SceneNode* pSceneNod
 	// Everything OK, store QualifiedName and Ogre::SceneNode
 	this->mQNames[QName.UniqueName()] = QName;
 	this->mSceneNodes[QName.UniqueName()] = pSceneNode;
+	this->mMovableTypeEnums[QName.UniqueName()] = OgreEnums::MovableObject::MOVABLETYPE_Invalid;
 
 	return true;
 }
@@ -317,6 +326,7 @@ bool ObjectManager::RemoveSceneNode(QualifiedName QName)
 	// Remove QName from ObjectManager
 	this->mQNames.erase(QName.UniqueName());
 	this->mSceneNodes.erase(QName.UniqueName());
+	this->mMovableTypeEnums.erase(QName.UniqueName());
 
 	return true;
 }
@@ -349,4 +359,34 @@ bool ObjectManager::RemoveMovableObject(QualifiedName QName)
 	if (this->RemoveLight(QName)) return true;
 
 	return false;
+}
+Ogre::MovableObject* ObjectManager::GetMovableObject(QualifiedName QName)
+{
+	if ( !QName.IsValid() ) return 0;
+
+	Ogre::MovableObject* MO = 0;
+
+	switch(this->GetMovableType(QName))
+	{
+	case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			break;
+	case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Camera:					MO = this->GetCamera(QName); break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Entity:					MO = this->GetEntity(QName); break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					break;
+	case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Light:					MO = this->GetLight(QName); break;
+	case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			break;
+	case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			break;
+	case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			break;
+	case OgreEnums::MovableObject::MOVABLETYPE_RibbonTrail:				break;
+	case OgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable:		break;
+	case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	break;
+	default: break;
+	}
+	return MO;
+}
+OgreEnums::MovableObject::MovableType ObjectManager::GetMovableType(QualifiedName QName)
+{
+	if (this->mMovableTypeEnums.count(QName.UniqueName()) == 1) return this->mMovableTypeEnums[QName.UniqueName()];
+	else return OgreEnums::MovableObject::MOVABLETYPE_Invalid;
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#ifndef OVISE_OGRE_ENUMS_H_
-#define OVISE_OGRE_ENUMS_H_
+#ifndef OGRE_ENUMS_H_
+#define OGRE_ENUMS_H_
 
-namespace OViSEOgreEnums
+namespace OgreEnums
 {
 	// COMMENT: This version fits Ogre 1.6.4
 
@@ -31,4 +31,4 @@ namespace OViSEOgreEnums
 	};
 };
 
-#endif // OVISE_OGRE_ENUMS_H_
+#endif // OGRE_ENUMS_H_

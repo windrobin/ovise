@@ -157,7 +157,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\EnumTranslator_MovableType.cpp"
+				RelativePath=".\MovableTypeTranslator.cpp"
 				>
 			</File>
 			<File
@@ -177,15 +177,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OViSESelection.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\QualifiedName.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\QualifiedNameCollectionInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\QualifiedNameRegister.cpp"
 				>
 			</File>
 			<File
@@ -215,7 +215,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EnumTranslator_MovableType.h"
+				RelativePath=".\MovableTypeTranslator.h"
 				>
 			</File>
 			<File
@@ -235,15 +235,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OViSESelection.h"
-				>
-			</File>
-			<File
 				RelativePath=".\QualifiedName.h"
 				>
 			</File>
 			<File
 				RelativePath=".\QualifiedNameCollectionInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\QualifiedNameRegister.h"
 				>
 			</File>
 			<File
