@@ -1,10 +1,14 @@
 #pragma once
 
+#ifndef OGRE_API_MEDIATOR_H_
+#define OGRE_API_MEDIATOR_H_
+
 // Include WX
 #include <wx/string.h>
 #include <wx/event.h>
 #include <wx/control.h>
 #include <wx/arrstr.h>
+#include <wx/hashmap.h>
 
 #include <wx/propgrid/propgrid.h>
 #include <wx/valtext.h>
@@ -13,10 +17,11 @@
 #include "../OViSEAux/UniqueNameManagerCollection.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/EnumsForABetterWorld.h"
-#include "../OViSEAux/EnumTranslator_MovableType.h"
+#include "../OViSEAux/MovableTypeTranslator.h"
 #include "../OViSEAux/QualifiedName.h"
 #include "../OViSEAux/QualifiedNameCollectionInterface.h"
 #include "../OViSEAux/ObjectManager.h"
+//#include "../OViSE/OViSEDotSceneManager.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -24,6 +29,10 @@
 BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(OViSE_EVT_OGRE_CHANGED, wxNewEventType())
 END_DECLARE_EVENT_TYPES()
+
+// NEW - from OViSESceneHandling
+WX_DECLARE_STRING_HASH_MAP(Ogre::RaySceneQuery*, RaySceneQueryHashMap);
+
 
 class OgreAPIMediator : public wxControl
 {
@@ -42,12 +51,14 @@ private:
 	wxString SceneMgrName;
 
 	// NEW
-	Ogre::SceneManager* mActiveSceneManager;
+	QualifiedName mActiveSceneManager;
+	Ogre::SceneManager* mActiveSceneManagerPtr;
+	RaySceneQueryHashMap mSceneQuerys;
 
 	// Attributes, used for update-priority
 	bool OgreChanged;
 
-	OViSEOgreEnums::HashMap_Enums_MovableType_ByString MovableObjectVsTypeRegister; // ATTENTION: not working on different scenemanagers !!!! HR!
+	OgreEnums::MovableTypeByStringHashMap MovableObjectVsTypeRegister; // ATTENTION: not working on different scenemanagers !!!! HR!
 
 public:
 	// De- & Constructors
@@ -81,7 +92,7 @@ public:
 	Ogre::Entity*			getEntityPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity);
 	Ogre::Light*			getLightPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight);
 	Ogre::MovableObject*	getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject);
-	Ogre::MovableObject*	getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type);
+	Ogre::MovableObject*	getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type);
 	Ogre::SceneNode*		getSceneNodePtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode);
 	Ogre::SceneManager*		getSceneManagerPtr(wxString UniqueNameOfSceneManager);
 
@@ -89,7 +100,7 @@ public:
 	bool hasCamera(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera);
 	bool hasEntity(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity);
 	bool hasLight(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight);
-	bool hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type);
+	bool hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type);
 	bool hasSceneNode(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode);
 	bool hasSceneManager(wxString UniqueNameOfSceneManager); // Not double-save
 	
@@ -109,7 +120,17 @@ public:
 
 	// NEW // Attributes, public
 	ObjectManager QuickObjectAccess;
-	QualifiedName ActiveSceneManager;
+
+	// NEW // Get context information
+
+	// NEW // SceneManager handling
+	bool					SetActiveSceneManager(QualifiedName qSceneManager);
+	QualifiedName			GetActiveSceneManager(); // There is anytime one!
+	Ogre::RaySceneQuery*	CreateRaySceneQuery(QualifiedName qSceneManager);
+	Ogre::RaySceneQuery*	GetRaySceneQuery(QualifiedName qSceneManager);
+	QualifiedNameCollection	GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
+	QualifiedName*			GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
+	QualifiedName*			GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
 
 	// NEW // Has objects?
 	bool				HasCamera(QualifiedName qCamera);
@@ -118,19 +139,19 @@ public:
 	bool				HasSceneManager(QualifiedName qSceneManager);
 	bool				HasSceneNode(QualifiedName qSceneNode);
 
-	// NEW // Get pointer by QualifiedName
-	Ogre::Camera*		GetCameraPtr(QualifiedName qCamera);
-	Ogre::Entity*		GetEntityPtr(QualifiedName qEntity);
-	Ogre::Light*		GetLightPtr(QualifiedName qLight);
-	Ogre::SceneManager*	GetSceneManagerPtr(QualifiedName qSceneManager);
-	Ogre::SceneNode*	GetSceneNodePtr(QualifiedName qSceneNode);
-
 	// NEW // Get QualifiedName by pointer
 	QualifiedName*		GetQualifiedName(Ogre::Camera* pCamera);
 	QualifiedName*		GetQualifiedName(Ogre::Entity* pEntity);
 	QualifiedName*		GetQualifiedName(Ogre::Light* pLight);
 	QualifiedName*		GetQualifiedName(Ogre::SceneManager* pSceneManager);
 	QualifiedName*		GetQualifiedName(Ogre::SceneNode* pSceneNode);
+
+	// NEW // Get pointer by QualifiedName
+	Ogre::Camera*		GetCameraPtr(QualifiedName qCamera);
+	Ogre::Entity*		GetEntityPtr(QualifiedName qEntity);
+	Ogre::Light*		GetLightPtr(QualifiedName qLight);
+	Ogre::SceneManager*	GetSceneManagerPtr(QualifiedName qSceneManager);
+	Ogre::SceneNode*	GetSceneNodePtr(QualifiedName qSceneNode);
 
 	// NEW // Create objects
 	QualifiedName*		CreateCamera(wxString Name, Ogre::SceneNode* AttachToThisNode = 0);
@@ -155,6 +176,8 @@ public:
 	bool				DestroySceneNode(QualifiedName qSceneNode);
 
 
-	// NEW // Get selected object
+	// NEW - from OViSESceneHandling // Get selected object
 
 };
+
+#endif // OGRE_API_MEDIATOR_H_

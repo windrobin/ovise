@@ -245,7 +245,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESelectionManager.cpp"
+					RelativePath=".\SelectionManager.cpp"
 					>
 				</File>
 				<File
@@ -343,7 +343,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESelectionManager.h"
+					RelativePath=".\SelectionManager.h"
 					>
 				</File>
 				<File

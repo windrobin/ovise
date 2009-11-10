@@ -2,8 +2,10 @@
 #include <wx/dir.h>
 
 // REFACTORING:		IN PROGRESS
-// REFACTOR-ID:		ID#0001 = revieved
+// REFACTOR-ID:		ID#0000 = outdated
+// REFACTOR-ID:		ID#0001 = reviewed
 // REFACTOR-ID:		ID#0002 = observe
+// REFACTOR-ID:		ID#0003 = refactoting done
 // AUTHOR:			H.R.
 
 OViSESceneHandling* OViSESceneHandling::mInstance = NULL;
@@ -21,19 +23,20 @@ OViSESceneHandling::OViSESceneHandling()
 {
 	if(mInstance == NULL)
 	{
-		Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager"); //ID#0001//move to OgreAPIMediator
-		mSceneManagers["BaseSceneManager"] = mainSceneManager;
-		mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
-		mObjectSelectionsMap["BaseSceneManager"] = OViSESelectionMap();
+		//ID#0003//Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager"); //ID#0001//move to OgreAPIMediator
+		//ID#0003//mSceneManagers["BaseSceneManager"] = mainSceneManager;
+		//ID#0003//mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
+		//ID#0000//mObjectSelectionsMap["BaseSceneManager"] = OViSESelectionMap();
 
-		mFrameListener = new OViSEFrameListener();
-		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);
+		mFrameListener = new OViSEFrameListener();//ID#0002 = observe//
+		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);//ID#0002 = observe//
 		
-		OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
-		this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreAPIMediator
+		//ID#0003//OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
+		//ID#0003//this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreAPIMediator
 	}
 }
 
+//ID#0002//
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	// Create default grid

@@ -12,13 +12,19 @@ OgreAPIMediator* OgreAPIMediator::GetSingletonPtr()
 }
 OgreAPIMediator::OgreAPIMediator()
 {
-	
 	this->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OgreAPIMediator::OnOgreChanged ), NULL, this);
 
-	// Create default SceneManager
-	this->ActiveSceneManager = *(this->CreateSceneManager(ToWxString("Default")));
+	this->Valid = true;
 
-	this->Valid = false;
+	// Create default SceneManager
+	QualifiedName qDefaultSceneManager = *(this->CreateSceneManager(ToWxString("Default")));
+
+	// Set it as ActiveSceneManager
+	this->SetActiveSceneManager(qDefaultSceneManager);
+
+	// Create and store RaySceneQuery
+	this->CreateRaySceneQuery(qDefaultSceneManager);
+
 	this->OgreChanged = false;
 }
 OgreAPIMediator::~OgreAPIMediator(void) { this->DestroySceneManager(); }
@@ -121,17 +127,17 @@ Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfS
 	if (this->MovableObjectVsTypeRegister.count(UniqueNameOfMovableObject) == 0) return 0;
 	else
 	{
-		OViSEOgreEnums::MovableObject::MovableType Type = this->MovableObjectVsTypeRegister[UniqueNameOfMovableObject];
+		OgreEnums::MovableObject::MovableType Type = this->MovableObjectVsTypeRegister[UniqueNameOfMovableObject];
 		if (Type < 1) return 0; // Baseclass (0) is absract. It doesn't exits, like Type == Invalid (-1). So Type has to be greather than 1 !
-		return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getEnumAsString(Type)));
+		return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 	}
 }
-Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type)
+Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	if (Type < 1) return 0; // Baseclass (0) is absract. It doesn't exits, like Type == Invalid (-1). So Type has to be greather than 1 !
-	return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getEnumAsString(Type)));
+	return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 }
 Ogre::SceneNode* OgreAPIMediator::getSceneNodePtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
 {
@@ -162,7 +168,7 @@ bool OgreAPIMediator::hasLight(wxString UniqueNameOfSceneManager, wxString Uniqu
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	return SM->hasLight(ToOgreString(UniqueNameOfLight));
 }
-bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OViSEOgreEnums::MovableObject::MovableType Type)
+bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	// check name? //TODO
@@ -170,15 +176,15 @@ bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxStri
 	
 	switch(Type)
 	{
-		case OViSEOgreEnums::MovableObject::MOVABLETYPE_Camera:
+		case OgreEnums::MovableObject::MOVABLETYPE_Camera:
 			if (!this->hasCamera(UniqueNameOfSceneManager, UniqueNameOfMovableObject)) return false;
 			break;
 
-		case OViSEOgreEnums::MovableObject::MOVABLETYPE_Entity:
+		case OgreEnums::MovableObject::MOVABLETYPE_Entity:
 			if (!this->hasEntity(UniqueNameOfSceneManager, UniqueNameOfMovableObject)) return false;
 			break;
 
-		case OViSEOgreEnums::MovableObject::MOVABLETYPE_Light:
+		case OgreEnums::MovableObject::MOVABLETYPE_Light:
 			if (!this->hasLight(UniqueNameOfSceneManager, UniqueNameOfMovableObject)) return false;
 			break;
 
@@ -186,7 +192,7 @@ bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxStri
 	}
 
 	// Now, ever return true ;-)
-	return SM->hasMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getEnumAsString(Type)));
+	return SM->hasMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 }
 bool OgreAPIMediator::hasSceneNode(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
 {
@@ -212,7 +218,7 @@ Ogre::Camera* OgreAPIMediator::addCamera(wxString NotUniqueName, Ogre::SceneNode
 	Ogre::Camera* C = this->SceneMgr->createCamera(ToOgreString(UniqueName));
 	if (AttachToThisNode == 0)  this->SceneMgr->getRootSceneNode()->attachObject(C);
 	else AttachToThisNode->attachObject(C);
-	this->MovableObjectVsTypeRegister[UniqueName] = OViSEOgreEnums::MovableObject::MOVABLETYPE_Camera;
+	this->MovableObjectVsTypeRegister[UniqueName] = OgreEnums::MovableObject::MOVABLETYPE_Camera;
 	this->OgreChanged = true;
 	return C;
 }
@@ -225,7 +231,7 @@ Ogre::Entity* OgreAPIMediator::addEntity(wxString NotUniqueName, wxString MeshFi
 	Ogre::Entity* E = this->SceneMgr->createEntity(ToOgreString(UniqueName), ToOgreString(MeshFile));
 	if (AttachToThisNode == 0) this->SceneMgr->getRootSceneNode()->attachObject(E);
 	else AttachToThisNode->attachObject(E);
-	this->MovableObjectVsTypeRegister[UniqueName] = OViSEOgreEnums::MovableObject::MOVABLETYPE_Entity;
+	this->MovableObjectVsTypeRegister[UniqueName] = OgreEnums::MovableObject::MOVABLETYPE_Entity;
 	this->OgreChanged = true;
 	return E;
 }
@@ -238,7 +244,7 @@ Ogre::Light* OgreAPIMediator::addLight(wxString NotUniqueName, Ogre::SceneNode* 
 	Ogre::Light* L = this->SceneMgr->createLight(ToOgreString(UniqueName));
 	if (AttachToThisNode == 0)  this->SceneMgr->getRootSceneNode()->attachObject(L);
 	else AttachToThisNode->attachObject(L);
-	this->MovableObjectVsTypeRegister[UniqueName] = OViSEOgreEnums::MovableObject::MOVABLETYPE_Light;
+	this->MovableObjectVsTypeRegister[UniqueName] = OgreEnums::MovableObject::MOVABLETYPE_Light;
 	this->OgreChanged = true;
 	return L;
 }
@@ -254,7 +260,187 @@ Ogre::SceneNode* OgreAPIMediator::addSceneNode(wxString NotUniqueName, Ogre::Sce
 	this->OgreChanged = true;
 	return NewSN;
 }
+// Handling
+bool OgreAPIMediator::SetActiveSceneManager(QualifiedName qSceneManager)
+{
+	if (this->HasSceneManager(qSceneManager))
+	{
+		this->mActiveSceneManagerPtr = this->GetSceneManagerPtr(qSceneManager);
+		this->mActiveSceneManager = qSceneManager;
+		return true;
+	}
+	else return false;
+}
+QualifiedName OgreAPIMediator::GetActiveSceneManager() { return this->mActiveSceneManager; }
+Ogre::RaySceneQuery* OgreAPIMediator::CreateRaySceneQuery(QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
 
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+	
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
+
+	// Create RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = SM->createRayQuery(Ogre::Ray());
+	if (RSQ == 0) return 0;
+
+	// Store RaySceneQuery
+	this->mSceneQuerys[qSceneManager.UniqueName()] = RSQ;
+
+	return RSQ;
+}
+Ogre::RaySceneQuery* OgreAPIMediator::GetRaySceneQuery(QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+
+	// Prepare RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = 0;
+
+	// Get RaySceneQuery
+	if (this->mSceneQuerys.count(qSceneManager.UniqueName()) != 0)
+	{
+		RSQ = this->mSceneQuerys[qSceneManager.UniqueName()];
+	}
+
+	return RSQ;
+}
+QualifiedNameCollection OgreAPIMediator::GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+{
+	QualifiedNameCollection QNames;
+	QNames.Clear();
+
+	// Verify OgreAPIMediator
+	if (!this->Valid) return QNames;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return QNames;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return QNames;
+
+	// Get Query
+	Ogre::RaySceneQuery* Q = this->GetRaySceneQuery(qSceneManager);
+	if (Q == 0) return QNames;
+
+	// Prepare RayScan
+	Q->setRay(cam->getCameraToViewportRay(screenx, screeny));
+	Q->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	Q->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = Q->execute();
+	if(RayScanResult.size() != 0)
+	{
+		for(int IT = 0; IT < RayScanResult.size(); IT++)
+		{
+			Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[IT];
+			Ogre::MovableObject* MO = RayScanResultEntry.movable;
+			QualifiedName*	qMO = this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+			if (qMO != 0) QNames.Add(*qMO);
+		}
+	}
+	
+	return QNames;
+}
+
+
+QualifiedName* OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
+
+	// Get Query
+	Ogre::RaySceneQuery* Q = this->GetRaySceneQuery(qSceneManager);
+	if (Q == 0) return 0;
+
+	// Prepare RayScan
+	Q->setRay(cam->getCameraToViewportRay(screenx, screeny));
+	Q->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	Q->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = Q->execute();
+	if(RayScanResult.size() != 0)
+	{
+		Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[0];
+		Ogre::MovableObject* MO = RayScanResultEntry.movable;
+		return this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	}
+	else return 0;
+}
+QualifiedName* OgreAPIMediator::GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+{
+	// Verify OgreAPIMediator
+	if (!this->Valid) return 0;
+
+	// Verify qSceneManager
+	if (!qSceneManager.IsValid()) return 0;
+
+	// Get SceneManager
+	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
+
+	// Get Query
+	Ogre::RaySceneQuery* Q = this->GetRaySceneQuery(qSceneManager);
+	if (Q == 0) return 0;
+
+	// Prepare RayScan
+	Q->setRay(cam->getCameraToViewportRay(screenx, screeny));
+	Q->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	Q->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = Q->execute();
+	if(RayScanResult.size() != 0)
+	{
+		Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[RayScanResult.size()-1];
+		Ogre::MovableObject* MO = RayScanResultEntry.movable;
+		return this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	}
+	else return 0;
+}
+// Has objects?
+bool OgreAPIMediator::HasCamera(QualifiedName qCamera)
+{
+	if (this->GetCameraPtr(qCamera) != 0) return true;
+	else false;
+}
+bool OgreAPIMediator::HasEntity(QualifiedName qEntity)
+{
+	if (this->GetEntityPtr(qEntity) != 0) return true;
+	else false;
+}
+bool OgreAPIMediator::HasLight(QualifiedName qLight)
+{
+	if (this->GetLightPtr(qLight) != 0) return true;
+	else false;
+}
+bool OgreAPIMediator::HasSceneManager(QualifiedName qSceneManager)
+{
+	if (this->GetSceneManagerPtr(qSceneManager) != 0) return true;
+	else false;
+}
+bool OgreAPIMediator::HasSceneNode(QualifiedName qSceneNode)
+{
+	if (this->GetSceneNodePtr(qSceneNode) != 0) return true;
+	else false;
+}
 // Get QualifiedName by pointer
 QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Camera* pCamera)
 {
@@ -381,15 +567,15 @@ Ogre::SceneNode*	OgreAPIMediator::GetSceneNodePtr(QualifiedName qSceneNode)
 // Create objects
 QualifiedName* OgreAPIMediator::CreateCamera(wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
-	return this->CreateCamera(this->ActiveSceneManager, Name, AttachToThisNode);
+	return this->CreateCamera(this->mActiveSceneManager, Name, AttachToThisNode);
 }
 QualifiedName* OgreAPIMediator::CreateEntity(wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
 {
-	return this->CreateEntity(this->ActiveSceneManager, Name, MeshFile, AttachToThisNode);
+	return this->CreateEntity(this->mActiveSceneManager, Name, MeshFile, AttachToThisNode);
 }
 QualifiedName* OgreAPIMediator::CreateLight(wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
-	return this->CreateLight(this->ActiveSceneManager, Name, AttachToThisNode);
+	return this->CreateLight(this->mActiveSceneManager, Name, AttachToThisNode);
 }
 QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name)
 {
@@ -397,7 +583,7 @@ QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name)
 }
 QualifiedName* OgreAPIMediator::CreateSceneNode(wxString Name, Ogre::SceneNode* ParentNode)
 {
-	return this->CreateSceneNode(this->ActiveSceneManager, Name, ParentNode);
+	return this->CreateSceneNode(this->mActiveSceneManager, Name, ParentNode);
 }
 QualifiedName* OgreAPIMediator::CreateCamera(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
@@ -409,6 +595,7 @@ QualifiedName* OgreAPIMediator::CreateCamera(QualifiedName qSceneManager, wxStri
 	
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
 
 	// Create QualifiedName of new Ogre::Camera
 	QualifiedName qCamera = QualifiedName::Create(Name, "Camera");
@@ -457,6 +644,7 @@ QualifiedName* OgreAPIMediator::CreateEntity(QualifiedName qSceneManager, wxStri
 	
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
 
 	// Create QualifiedName of new Ogre::Entity
 	QualifiedName qEntity = QualifiedName::Create(Name, "Entity");
@@ -505,6 +693,7 @@ QualifiedName* OgreAPIMediator::CreateLight(QualifiedName qSceneManager, wxStrin
 	
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
 
 	// Create QualifiedName of new Ogre::Light
 	QualifiedName qLight = QualifiedName::Create(Name, "Light");
@@ -590,6 +779,7 @@ QualifiedName* OgreAPIMediator::CreateSceneNode(QualifiedName qSceneManager, wxS
 	
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
+	if (SM == 0) return 0;
 
 	// Create QualifiedName of new Ogre::SceneNode
 	QualifiedName qSceneNode = QualifiedName::Create(Name, "SceneNode");
@@ -629,7 +819,7 @@ QualifiedName* OgreAPIMediator::CreateSceneNode(QualifiedName qSceneManager, wxS
 // Destroy objects
 bool OgreAPIMediator::DestroySceneManager()
 {
-	return this->DestroySceneManager(this->ActiveSceneManager);
+	return this->DestroySceneManager(this->mActiveSceneManager);
 }
 bool OgreAPIMediator::DestroyCamera(QualifiedName qCamera)
 {

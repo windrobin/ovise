@@ -43,7 +43,7 @@
 #include "OViSEMessenger.h"
 #endif
 
-#include "../OViSEAux/OViSESelection.h"
+#include "../OViSEAux/ObjectSelection.h"
 
 #include "../OViSEAux/OViSELogging.h"
 #include "../OViSEAux/OgreAPIMediator.h"

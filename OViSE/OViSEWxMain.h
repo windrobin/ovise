@@ -30,9 +30,11 @@
 #include "OViSELogListener.h"
 #include "OViSESceneTree.h"
 
+#include "../OViSEAux/QualifiedName.h"
+#include "../OViSEAux/QualifiedNameCollectionInterface.h"
 #include "../OViSEAux/OgreAPIMediator.h"
-#include "../OViSE/OViSESelectionManager.h"
-#include "../OViSEAux/EnumTranslator_MovableType.h"
+#include "../OViSE/SelectionManager.h"
+#include "../OViSEAux/MovableTypeTranslator.h"
 #include "../OViSEAux/OViSELogging.h"
 
 #ifndef OVISE_ADD_MESH_DIALOG_USED
@@ -96,6 +98,10 @@ class OViSEWxFrame: public GUIFrame
 
 
 		OViSELogging Log;
+
+		// NEW // DotSceneManager
+		/// Standard factory for dotScene loading
+		OViSEDotSceneManager *mDotSceneMgr;
 
     protected:
 		void finishOgreInitialization();

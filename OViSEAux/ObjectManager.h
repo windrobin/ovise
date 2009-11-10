@@ -8,6 +8,9 @@
 #include "../OViSEAux/QualifiedName.h"
 #include "../OViSEAux/QualifiedNameCollectionInterface.h"
 
+#include "../OViSEAux/EnumsForABetterWorld.h"
+#include "../OViSEAux/MovableTypeTranslator.h"
+
 // Include Ogre
 #include "Ogre.h"
 
@@ -29,6 +32,8 @@ private:
 	LightHashMap		 mLights;
 	SceneManagerHashMap  mSceneManagers;
 	SceneNodeHashMap	 mSceneNodes;
+
+	OgreEnums::MovableTypeByStringHashMap mMovableTypeEnums;
 
 public:
 	ObjectManager(void);
@@ -74,5 +79,7 @@ public:
 	QualifiedNameCollection GetSceneNodes();
 
 	// Ogre::MovableObject (abtract)
-	bool					RemoveMovableObject(QualifiedName QName);
+	bool									RemoveMovableObject(QualifiedName QName);
+	Ogre::MovableObject*					GetMovableObject(QualifiedName QName);
+	OgreEnums::MovableObject::MovableType	GetMovableType(QualifiedName QName);
 };

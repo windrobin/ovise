@@ -10,7 +10,7 @@
  * License:																		*
  ********************************************************************************/
 
-#include "QualifiedName.h"
+#include "../OViSEAux/QualifiedName.h"
 
 wxString QualifiedName::AllocateGenericName()
 {
@@ -37,14 +37,14 @@ wxString QualifiedName::AllocateGenericName()
 		FinalGenericName << BasicGenericName << wxString::Format(wxT("%i"), Counter);
 		Counter++;
 	}
-	while(QualifiedName::sAllocatedGenericNames.count(FinalGenericName) != 0);
+	while(QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.count(FinalGenericName) != 0);
 
 	// Found unique generic name
 	this->mGenericName = FinalGenericName;
 
 	// Store unique generic name as key. Using native name as value. So reverse tracking is possible.
-	QualifiedName::sAllocatedGenericNames[this->mGenericName] = this->mNativeName;
-	QualifiedName::sStoredGenericHints[this->mGenericName] = this->mGenericHint;
+	QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames[this->mGenericName] = this->mNativeName;
+	QualifiedNameRegister::GetSingletonPtr()->StoredGenericHints[this->mGenericName] = this->mGenericHint;
 
 	return FinalGenericName;
 }
@@ -55,8 +55,8 @@ bool QualifiedName::DeallocateGenericName()
 	if (!this->IsValid()) return false;
 
 	// Generic name is allocated. Delete it!
-	QualifiedName::sAllocatedGenericNames.erase(this->mGenericName);
-	QualifiedName::sStoredGenericHints.erase(this->mGenericName);
+	QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.erase(this->mGenericName);
+	QualifiedNameRegister::GetSingletonPtr()->StoredGenericHints.erase(this->mGenericName);
 	return true;
 }
 
@@ -125,8 +125,8 @@ QualifiedName* QualifiedName::GetQualifiedNameByGeneric(wxString GenericName)
 	{
 		QualifiedName* pQName = new QualifiedName();
 		pQName->mGenericName = GenericName;
-		pQName->mNativeName = QualifiedName::sAllocatedGenericNames[GenericName];
-		pQName->mGenericHint = QualifiedName::sStoredGenericHints[GenericName];
+		pQName->mNativeName = QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames[GenericName];
+		pQName->mGenericHint = QualifiedNameRegister::GetSingletonPtr()->StoredGenericHints[GenericName];
 	}
 	else return 0;
 }
@@ -135,7 +135,7 @@ wxArrayString QualifiedName::GetGenericByNative(wxString NativeName)
 	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.begin(); IT != QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.end(); IT++)
 	{
 		if (IT->second.IsSameAs(NativeName)) TempArray.Add(IT->first);
 	}
@@ -147,9 +147,9 @@ wxArrayString QualifiedName::GetGenericByHint(wxString GenericHint)
 	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.begin(); IT != QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.end(); IT++)
 	{
-		if (QualifiedName::sStoredGenericHints[IT->first].Contains(GenericHint)) TempArray.Add(IT->first);
+		if (QualifiedNameRegister::GetSingletonPtr()->StoredGenericHints[IT->first].Contains(GenericHint)) TempArray.Add(IT->first);
 	}
 	
 	return TempArray;
@@ -159,7 +159,7 @@ wxArrayString QualifiedName::GetGenericBySubString(wxString SubString)
 	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.begin(); IT != QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.end(); IT++)
 	{
 		if (QualifiedName::GetQualifiedNameByGeneric(IT->first)->UniqueName().Contains(SubString)) TempArray.Add(IT->first);
 	}
@@ -171,7 +171,7 @@ wxArrayString QualifiedName::GetGenericNames()
 	wxArrayString TempArray;
 	TempArray.clear();
 	
-	for(HashMap_wxString::iterator IT = QualifiedName::sAllocatedGenericNames.begin(); IT != QualifiedName::sAllocatedGenericNames.end(); IT++)
+	for(HashMap_wxString::iterator IT = QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.begin(); IT != QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.end(); IT++)
 	{
 		TempArray.Add(IT->first);
 	}
@@ -180,6 +180,6 @@ wxArrayString QualifiedName::GetGenericNames()
 }
 bool QualifiedName::HasQualifiedNameWithGenericName(wxString GenericName)
 {
-	if (QualifiedName::sAllocatedGenericNames.count(GenericName) > 0) return true;
+	if (QualifiedNameRegister::GetSingletonPtr()->AllocatedGenericNames.count(GenericName) > 0) return true;
 	else return false;
 }
