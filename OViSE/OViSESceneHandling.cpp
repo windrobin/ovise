@@ -226,14 +226,14 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 		if(showSelection)
 			movObj->getParentSceneNode()->showBoundingBox(true);
 
-		OViSELogging* TempLog = new OViSELogging();
+		Logging* TempLog = new Logging();
 		wxString LogMsg;
 		LogMsg << ToWxString("USER selected MovableObject: '");
 		LogMsg << ToWxString(movObj->getName());
 		LogMsg << ToWxString("'. It belongs to SceneNode: '");
 		LogMsg << ToWxString(movObj->getParentSceneNode()->getName());
 		LogMsg << ToWxString("'.");
-		TempLog->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+		TempLog->WriteToOgreLog(LogMsg, Logging::Normal);
 		delete TempLog;
 	}
 	catch (...)

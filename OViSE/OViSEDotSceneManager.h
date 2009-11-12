@@ -51,7 +51,7 @@ private:
 	//wxArrayString mImportedScenePrototypes;
 
 	// Sub-managers for logging and unique names
-	OViSELogging *Log;
+	Logging *Log;
 
 	bool mValid;
 
@@ -89,7 +89,7 @@ public:
 
 	// Management of DOMDocuments
 	bool		MakeOgreSceneFromPrototype(wxString UniquePrototypeName, wxString AnchorNodeName);
-	wxString	MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, OViSESelectionMap Selection, wxString VersionStringForExport); // Returns UniquePrototypeName
+	wxString	MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport); // Returns UniquePrototypeName
 	
 	bool		ExportScenePrototype(wxString UniquePrototypeName, wxFileName DestinationURL);
 	wxString	ImportScenePrototype(wxFileName URLofXML);  // Returns UniquePrototypeName

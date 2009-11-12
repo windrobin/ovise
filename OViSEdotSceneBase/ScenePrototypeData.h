@@ -1,4 +1,18 @@
+/********************************************************************************
+ * Name:      ScenePrototypeData.h												*
+ * Purpose:   Code describes a class, where all data of a scene-prototype is 	*
+ *			  stored. Additional, pointers to meshs in Ogre-engine are stord	*
+ *			  too. Goal is to have everything in right position, when a scene	*
+ *			  should be exported.												*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-12														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef SCENE_PROTOTYPE_DATA_H_
 #define SCENE_PROTOTYPE_DATA_H_
 

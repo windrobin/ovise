@@ -1,12 +1,12 @@
-#include "OViSEPrototypeManagementDialog.h"
+#include "PrototypeManagementDialog.h"
 
-OViSEPrototypeManagementDialog::OViSEPrototypeManagementDialog( wxWindow* parent, OViSESceneHandling* SceneHdlr ) : PrototypeManagementDialog( parent )
+PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, OViSEDotSceneManager* DotSceneMgr ) : _PrototypeManagementDialog( parent )
 {
 	this->mValid = false;
 	this->mResultingUniqueNameOfPrototype.Empty();
 
-	this->mSceneHdlr = SceneHdlr;
-	this->mDotSceneMgr = this->mSceneHdlr->mDotSceneMgr; // test, if it is 0!!!
+	//this->mSceneHdlr = SceneHdlr;
+	this->mDotSceneMgr = DotSceneMgr; // test, if it is 0!!!
 
 	//this->mWindowManager = new wxAuiManager(this);
 
@@ -17,11 +17,11 @@ OViSEPrototypeManagementDialog::OViSEPrototypeManagementDialog( wxWindow* parent
 	this->Update();
 }
 
-void OViSEPrototypeManagementDialog::setupPrototypeProperties()
+void PrototypeManagementDialog::setupPrototypeProperties()
 {
 	this->mPrototypeProperties = new wxPropertyGrid(this, PROTOPGID);
 	this->ListBoxSizer->Add(this->mPrototypeProperties, 1, wxALL|wxEXPAND, 5 );
-	this->Connect(PROTOPGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEPrototypeManagementDialog::OnPropertyChange));
+	this->Connect(PROTOPGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PrototypeManagementDialog::OnPropertyChange));
 	this->mPrototypeProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
 
 	this->mPrototypeProperties->Append(new wxPropertyCategory(ToWxString("Prototype Names")));
@@ -44,7 +44,7 @@ void OViSEPrototypeManagementDialog::setupPrototypeProperties()
 	this->mPrototypeProperties->SetPropertyValidator(ToWxString("MaterialFiles"), wxTextValidator(wxFILTER_ASCII));
 }
 
-void OViSEPrototypeManagementDialog::setPrototypeProperties(wxString UniquePrototypeName)
+void PrototypeManagementDialog::setPrototypeProperties(wxString UniquePrototypeName)
 {
 	this->mSelectedUniquePrototypeName = UniquePrototypeName;
 	this->mPrototypeProperties->SetPropertyValue(ToWxString("UniqueName"), this->mSelectedUniquePrototypeName);
@@ -56,14 +56,14 @@ void OViSEPrototypeManagementDialog::setPrototypeProperties(wxString UniqueProto
 	this->mPrototypeProperties->SetPropertyValue(ToWxString("MaterialFiles"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).MaterialFiles);
 }
 
-void OViSEPrototypeManagementDialog::clearPrototypeProperties()
+void PrototypeManagementDialog::clearPrototypeProperties()
 {
 	this->mPrototypeProperties->Clear();
 
 	std::pair<wxString, wxString> test = std::pair<wxString, wxString>(wxString(), wxString());
 }
 
-void OViSEPrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
 {
 	int ID = this->mPrototypeList->GetSelection();
 	if ( ID > -1 )
@@ -83,7 +83,7 @@ void OViSEPrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
 		}
 	}
 }
-void OViSEPrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 {
 	wxFileDialog* FDlg = new wxFileDialog(this, ToWxString("Choose dotScene-XML file to import"), wxFileName::GetCwd(), wxEmptyString, ToWxString("*.xml"), wxFD_OPEN);
 	FDlg->ShowModal();
@@ -112,7 +112,7 @@ void OViSEPrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 		}
 	}
 }
-void OViSEPrototypeManagementDialog::OnClickExport( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickExport( wxCommandEvent& event )
 {
 	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
 	{
@@ -135,12 +135,12 @@ void OViSEPrototypeManagementDialog::OnClickExport( wxCommandEvent& event )
 	}
 }
 
-void OViSEPrototypeManagementDialog::OnClickBuild( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickBuild( wxCommandEvent& event )
 {
 	wxString VersionString = ToWxString("1.0.0");
 	wxString NotUniquePrototypeName = ToWxString("Unnamend");
 	
-	wxString UniquePrototypeName = this->mDotSceneMgr->MakePrototypeFromOgreScene(NotUniquePrototypeName, this->mSceneHdlr->getSelectedObjects(), VersionString);
+	wxString UniquePrototypeName = this->mDotSceneMgr->MakePrototypeFromOgreScene(NotUniquePrototypeName, SelectionManager::getSingletonPtr()->Selection, VersionString);
 	if ( !UniquePrototypeName.IsEmpty() )
 	{
 		int newItemID = this->mPrototypeList->Append(UniquePrototypeName);
@@ -152,8 +152,29 @@ void OViSEPrototypeManagementDialog::OnClickBuild( wxCommandEvent& event )
 		this->mAttachButton->Enable();
 	}
 }
-void OViSEPrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 {
+	Ogre::SceneNode* AnchorNode;
+
+	if (SelectionManager::getSingletonPtr()->Selection.GetCount() > 0)
+	{
+		QualifiedName qNameOfFirst = SelectionManager::getSingletonPtr()->Selection[0];
+		Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qNameOfFirst);
+		if ( MO == 0 )
+		{
+			AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
+		}
+		else AnchorNode = MO->getParentSceneNode();
+	}
+	else AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
+
+	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
+	{
+		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->mSelectedUniquePrototypeName, ToWxString(AnchorNode->getName()));
+	}
+
+	// OLD
+	/*
 	OViSESelectionMap Selection = this->mSceneHdlr->getSelectedObjects();
 	Ogre::SceneNode* AnchorNode;
 	if ( Selection.size() > 0 )
@@ -172,12 +193,12 @@ void OViSEPrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
 	{
 		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->mSelectedUniquePrototypeName, ToWxString(AnchorNode->getName()));
-	}
+	}*/
 }
 
-void OViSEPrototypeManagementDialog::OnClickClose( wxCommandEvent& event ) { this->Destroy(); }
-void OViSEPrototypeManagementDialog::OnCloseDialog( wxCloseEvent& event ) {	this->Destroy(); }
-void OViSEPrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickClose( wxCommandEvent& event ) { this->Destroy(); }
+void PrototypeManagementDialog::OnCloseDialog( wxCloseEvent& event ) {	this->Destroy(); }
+void PrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
 {
 	int ID = this->mPrototypeList->GetSelection();
 	if ( ID > -1 )
@@ -197,7 +218,7 @@ void OViSEPrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& even
 	}
 }
 
-void OViSEPrototypeManagementDialog::OnPropertyChange(wxPropertyGridEvent& event)
+void PrototypeManagementDialog::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *ChangedProperty = event.GetProperty();
 
@@ -272,7 +293,7 @@ void OViSEPrototypeManagementDialog::OnPropertyChange(wxPropertyGridEvent& event
 	if ( !Match ) return;
 }
 /*
-void OViSEPrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
+void PrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
 {
 	if (this->mValid)
 	{
@@ -284,25 +305,25 @@ void OViSEPrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& even
 	}
 }
 
-void OViSEPrototypeManagementDialog::OnClickCancel( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickCancel( wxCommandEvent& event )
 {
 	this->Close();
 	this->mResultingUniqueNameOfPrototype.Empty();
 }
 
-void OViSEPrototypeManagementDialog::OnClickOk( wxCommandEvent& event )
+void PrototypeManagementDialog::OnClickOk( wxCommandEvent& event )
 {
 	this->Close();
 }
 
-void OViSEPrototypeManagementDialog::SetAvailablePrototypes(wxArrayString ListOfAvailablePrototypes)
+void PrototypeManagementDialog::SetAvailablePrototypes(wxArrayString ListOfAvailablePrototypes)
 {
 	this->mPrototypeList->Append(ListOfAvailablePrototypes);
 	if (this->mPrototypeList->GetCount() > 0) this->mValid = true;
 	else this->mValid = false;
 }
 
-wxString OViSEPrototypeManagementDialog::GetResultingUniqueNameOfPrototype() { return this->mResultingUniqueNameOfPrototype; }
+wxString PrototypeManagementDialog::GetResultingUniqueNameOfPrototype() { return this->mResultingUniqueNameOfPrototype; }
 */
 
 /*

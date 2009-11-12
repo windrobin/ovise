@@ -63,4 +63,15 @@ public:
 
 	// Check, if one or more QualifiedName contain a given generic hint exists...
 	static bool HasQualifiedNameWithSubString(wxString SubString);
+
+	// Methods, implement mathematical operations of set-theory.
+	// Actually these methods are expencive ( from O (m) to O(n+m) up to O(n*m) )
+	// When the QualifiedNameCollection-class must be upgraded with a additional wxHashMap, to limit complexity to O(n)
+	static bool CollectionContains(QualifiedNameCollection& QCollection, QualifiedName qName);
+	static unsigned long CollectionCount(QualifiedNameCollection& QCollection, QualifiedName qName);
+	static bool CollectionRemove(QualifiedNameCollection& QCollection, QualifiedName qName, bool OnlyOne);
+	static QualifiedNameCollection CollectionUnion(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
+	static QualifiedNameCollection CollectionIntersection(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
+	static QualifiedNameCollection CollectionDifference(QualifiedNameCollection& Minuend, QualifiedNameCollection& Subtrahend);
+	static QualifiedNameCollection CollectionSymmetricDifference(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
 };

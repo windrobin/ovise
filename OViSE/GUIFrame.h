@@ -135,9 +135,9 @@ class ExportMeshesDialog : public wxDialog
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class PrototypeManagementDialog
+/// Class _PrototypeManagementDialog
 ///////////////////////////////////////////////////////////////////////////////
-class PrototypeManagementDialog : public wxDialog 
+class _PrototypeManagementDialog : public wxDialog 
 {
 	private:
 	
@@ -164,8 +164,8 @@ class PrototypeManagementDialog : public wxDialog
 		
 	
 	public:
-		PrototypeManagementDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("( dotScene ) Prototype Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,339 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~PrototypeManagementDialog();
+		_PrototypeManagementDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("( dotScene ) Prototype Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,339 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~_PrototypeManagementDialog();
 	
 };
 

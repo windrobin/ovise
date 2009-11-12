@@ -1,18 +1,35 @@
-#include "ScenePrototype.h"
+/********************************************************************************
+ * Name:      ScenePrototype.cpp												*
+ * Purpose:   Code implements a class, holding all data of a prototype. A		*
+ *			  prototype contains an imported dotScene xml-file as DOM-structure,*
+ *			  its unique qualified name (which is generated from the native name*
+ *			  of dotScene xml-file), and additional data, which is stored inside*
+ *			  ScenePrototypeData.												*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-12														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
 
-void ScenePrototype::SetUniqueName(wxString UniqueName) { this->UniqueName = UniqueName; }
-void ScenePrototype::SetOriginalName(wxString OriginalName) { this->OriginalName = OriginalName; }
+#include "../OViSEdotSceneBase/ScenePrototype.h"
+
 void ScenePrototype::SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation) { this->DOMRepresentation = DOMRepresentation; }
-
-wxString ScenePrototype::GetUniqueName() { return this->UniqueName; }
-wxString ScenePrototype::GetOriginalName() { return this->OriginalName; }
+QualifiedName ScenePrototype::GetName() { return this->qName; }
 xercesc::DOMDocument* ScenePrototype::GetDOMRepresentation() { return this->DOMRepresentation; }
-ScenePrototype::ScenePrototype(	wxString UniqueName,
-								wxString OriginalName,
-								xercesc::DOMDocument* DOMRepresentation)
+ScenePrototype::ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation)
 {
-	this->SetUniqueName(UniqueName);
-	this->SetOriginalName(OriginalName);
+	this->qName = QualifiedName::Create(NativeName, ToWxString("Prototype"));
 	this->SetDOMRepresentation(DOMRepresentation);
 }
-ScenePrototype::~ScenePrototype(void) { this->DOMRepresentation->release(); }
+ScenePrototype::ScenePrototype(const ScenePrototype& ToCopy)
+{
+	this->qName = ToCopy.qName;
+	this->DOMRepresentation = ToCopy.DOMRepresentation;
+	this->Data = ToCopy.Data;
+}
+ScenePrototype::~ScenePrototype(void) 
+{
+	if ( this->qName.IsValid() ) this->qName.Destroy();
+	if ( this->DOMRepresentation != 0 ) this->DOMRepresentation->release();
+}

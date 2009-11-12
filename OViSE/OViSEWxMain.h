@@ -35,7 +35,7 @@
 #include "../OViSEAux/OgreAPIMediator.h"
 #include "../OViSE/SelectionManager.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/Logging.h"
 
 #ifndef OVISE_ADD_MESH_DIALOG_USED
 #define OVISE_ADD_MESH_DIALOG_USED
@@ -49,7 +49,7 @@
 
 #ifndef OVISE_PROTOTYPE_MANAGEMENT_DIALOG_USED
 #define OVISE_PROTOTYPE_MANAGEMENT_DIALOG_USED
-#include "OViSEPrototypeManagementDialog.h"
+#include "PrototypeManagementDialog.h"
 #endif
 
 enum
@@ -97,7 +97,7 @@ class OViSEWxFrame: public GUIFrame
 		void RemoveAllSelectedObjects();
 
 
-		OViSELogging Log;
+		Logging Log;
 
 		// NEW // DotSceneManager
 		/// Standard factory for dotScene loading

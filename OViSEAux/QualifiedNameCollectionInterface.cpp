@@ -93,3 +93,131 @@ bool QualifiedNameCollectionInterface::HasQualifiedNameWithSubString(wxString Su
 	if (QualifiedName::GetGenericBySubString(SubString).GetCount() > 0) return true;
 	else return false;
 }
+bool QualifiedNameCollectionInterface::CollectionContains(QualifiedNameCollection& QCollection, QualifiedName qName)
+{
+	if ( !qName.IsValid() ) return false;
+	
+	if ( QCollection.GetCount() > 0 )
+	{
+		for (unsigned long IT = 0; IT < QCollection.GetCount(); IT++)
+		{
+			if ( QCollection[IT] == qName ) return true;
+		}
+	}
+
+	return false;
+}
+unsigned long QualifiedNameCollectionInterface::CollectionCount(QualifiedNameCollection& QCollection, QualifiedName qName)
+{
+	unsigned long ReturnValue = 0;
+
+	if ( !qName.IsValid() ) return 0;
+	
+	if ( QCollection.GetCount() > 0 )
+	{
+		for (unsigned long IT = 0; IT < QCollection.GetCount(); IT++)
+		{
+			if ( QCollection[IT] == qName ) ReturnValue++;
+		}
+	}
+
+	return ReturnValue;
+}
+bool QualifiedNameCollectionInterface::CollectionRemove(QualifiedNameCollection& QCollection, QualifiedName qName, bool OnlyOne)
+{
+	if ( !qName.IsValid() ) return false;
+	
+	if ( QCollection.GetCount() > 0 )
+	{
+		for (unsigned long IT = 0; IT < QCollection.GetCount(); IT++)
+		{
+			if ( QCollection[IT] == qName )
+			{
+				QCollection.RemoveAt(IT);
+				if ( OnlyOne ) return true;
+			}
+		}
+	}
+
+	return true;
+}
+QualifiedNameCollection QualifiedNameCollectionInterface::CollectionUnion(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2)
+{
+	QualifiedNameCollection Result;
+
+	if ( QCollection_1.GetCount() > 0 )
+	{
+		for (unsigned long IT = 0; IT < QCollection_1.GetCount(); IT++)
+		{
+			Result.Add(QCollection_1[IT]);
+		}
+	}
+
+	if ( QCollection_2.GetCount() > 0 )
+	{
+		for (unsigned long IT = 0; IT < QCollection_2.GetCount(); IT++)
+		{
+			if ( !QualifiedNameCollectionInterface::CollectionContains(Result, QCollection_2[IT]) )
+			{
+				Result.Add(QCollection_2[IT]);
+			}
+		}
+	}
+
+	return Result;
+}
+QualifiedNameCollection QualifiedNameCollectionInterface::CollectionIntersection(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2)
+{
+	QualifiedNameCollection Result;
+
+	if (( QCollection_1.GetCount() > 0 ) || ( QCollection_2.GetCount() > 0 ))
+	{
+		for (unsigned long IT = 0; IT < QCollection_1.GetCount(); IT++)
+		{
+			if (QualifiedNameCollectionInterface::CollectionContains(QCollection_2, QCollection_1[IT]))
+			{
+				Result.Add(QCollection_1[IT]);
+			}
+		}
+	}
+
+	return Result;
+}
+QualifiedNameCollection QualifiedNameCollectionInterface::CollectionDifference(QualifiedNameCollection& Minuend, QualifiedNameCollection& Subtrahend)
+{
+	QualifiedNameCollection Difference;
+
+	if (( Subtrahend.GetCount() ==  0 ))
+	{
+		Difference = Minuend;
+		return Difference;
+	}
+	if (( Minuend.GetCount() == 0 ))
+	{
+		return Difference;
+	}
+
+	for (unsigned long IT = 0; IT < Minuend.GetCount(); IT++)
+	{
+		if (!QualifiedNameCollectionInterface::CollectionContains(Subtrahend, Minuend[IT]))
+		{
+			Difference.Add(Minuend[IT]);
+		}
+	}
+
+	return Difference;
+}
+QualifiedNameCollection QualifiedNameCollectionInterface::CollectionSymmetricDifference(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2)
+{
+	QualifiedNameCollection Result;
+
+	if (( QCollection_1.GetCount() > 0 ) || ( QCollection_2.GetCount() > 0 ))
+	{
+		
+		Result = QualifiedNameCollectionInterface::CollectionUnion(
+			QualifiedNameCollectionInterface::CollectionDifference(QCollection_1, QCollection_2),
+			QualifiedNameCollectionInterface::CollectionDifference(QCollection_2, QCollection_1));
+	}
+
+	return Result;
+}

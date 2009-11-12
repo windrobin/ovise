@@ -243,7 +243,7 @@ ExportMeshesDialog::~ExportMeshesDialog()
 	mOkButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( ExportMeshesDialog::OnClickOk ), NULL, this );
 }
 
-PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+_PrototypeManagementDialog::_PrototypeManagementDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
@@ -291,25 +291,25 @@ PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, wxWindow
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PrototypeManagementDialog::OnCloseDialog ) );
-	mPrototypeList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
-	mRemoveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickRemove ), NULL, this );
-	mImportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickImport ), NULL, this );
-	mExportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickExport ), NULL, this );
-	mBuildButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickBuild ), NULL, this );
-	mAttachButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickAttach ), NULL, this );
-	mCloseButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickClose ), NULL, this );
+	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( _PrototypeManagementDialog::OnCloseDialog ) );
+	mPrototypeList->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
+	mRemoveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickRemove ), NULL, this );
+	mImportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickImport ), NULL, this );
+	mExportButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickExport ), NULL, this );
+	mBuildButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickBuild ), NULL, this );
+	mAttachButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickAttach ), NULL, this );
+	mCloseButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickClose ), NULL, this );
 }
 
-PrototypeManagementDialog::~PrototypeManagementDialog()
+_PrototypeManagementDialog::~_PrototypeManagementDialog()
 {
 	// Disconnect Events
-	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PrototypeManagementDialog::OnCloseDialog ) );
-	mPrototypeList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
-	mRemoveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickRemove ), NULL, this );
-	mImportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickImport ), NULL, this );
-	mExportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickExport ), NULL, this );
-	mBuildButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickBuild ), NULL, this );
-	mAttachButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickAttach ), NULL, this );
-	mCloseButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PrototypeManagementDialog::OnClickClose ), NULL, this );
+	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( _PrototypeManagementDialog::OnCloseDialog ) );
+	mPrototypeList->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( _PrototypeManagementDialog::OnProtoTypeListSelect ), NULL, this );
+	mRemoveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickRemove ), NULL, this );
+	mImportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickImport ), NULL, this );
+	mExportButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickExport ), NULL, this );
+	mBuildButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickBuild ), NULL, this );
+	mAttachButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickAttach ), NULL, this );
+	mCloseButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( _PrototypeManagementDialog::OnClickClose ), NULL, this );
 }

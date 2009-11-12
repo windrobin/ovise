@@ -996,7 +996,7 @@
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
             <property name="minimum_size"></property>
-            <property name="name">PrototypeManagementDialog</property>
+            <property name="name">_PrototypeManagementDialog</property>
             <property name="pos"></property>
             <property name="size">557,339</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
