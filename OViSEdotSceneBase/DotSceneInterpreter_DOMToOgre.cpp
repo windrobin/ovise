@@ -32,7 +32,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 
 		LogMsg.Clear();
 		LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Name of anchor-SceneNode is empty. Using RootSceneNode!");
-		this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+		this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
 	}
 	else
 	{
@@ -42,7 +42,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 
 			LogMsg.Clear();
 			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Using given anchor-SceneNode \"") << AnchorNodeName << ToWxString("\".");
-			this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+			this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
 		}
 		else
 		{
@@ -50,7 +50,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 
 			LogMsg.Clear();
 			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Given anchor-SceneNode \"") << AnchorNodeName << ToWxString("\" does not exist. Using RootSceneNode instead!");
-			this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+			this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
 		}
 	}
 
@@ -109,14 +109,14 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	
 	LogMsg.Clear();
 	LogMsg = ToWxString("OViSE DOM Interpretation (abstract): Rotated anchor-node with offset-settings.");
-	this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+	this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
 
     // STEP 5: Apply  offset-settings to anchornode: scale anchornode
 	this->AnchorNode->scale((float)this->Configuration->SceneOffset.GetScaleOffset(), (float)this->Configuration->SceneOffset.GetScaleOffset(), (float)this->Configuration->SceneOffset.GetScaleOffset());
 	
 	LogMsg.Clear();
 	LogMsg = ToWxString("OViSE DOM Interpretation (abstract): Scaled anchor-node with offset-settings.");
-	this->Configuration->Log->WriteToOgreLog(LogMsg, OViSELogging::Normal);
+	this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
 
 	return true;
 }

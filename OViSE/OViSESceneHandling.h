@@ -43,9 +43,9 @@
 #include "OViSEMessenger.h"
 #endif
 
-#include "../OViSEAux/ObjectSelection.h"
+//#include "../OViSEAux/ObjectSelection.h"
 
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/Logging.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 
 // Include Ogre

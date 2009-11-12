@@ -1,6 +1,6 @@
-#include "DotSceneBaseConfiguration.h"
+#include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 
-DotSceneBaseConfiguration::DotSceneBaseConfiguration(	OViSELogging *Log,
+DotSceneBaseConfiguration::DotSceneBaseConfiguration(	Logging *Log,
 														UniqueNameManager *PrototypeNameMgr,
 														wxString SceneManagerName,
 														wxString UniqueNameOfDotSceneManager,

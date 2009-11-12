@@ -305,54 +305,54 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
         this->mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
 
 		ParsingMsg << ToWxString("done!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Normal);
     }
     catch (const XMLException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
     catch (const DOMException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (const SAXException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (std::exception e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }
     catch (...) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }
@@ -1008,54 +1008,54 @@ xercesc::DOMDocument* OViSEXmlManager::ImportDotScene(wxString URLofXML)
     {
         mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
 		ParsingMsg << ToWxString("done!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Normal);
     }
     catch (const XMLException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
     catch (const DOMException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (const SAXException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (std::exception e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
-        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }
     catch (...) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+		this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
-        this->Configuration->Log->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+        this->Configuration->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }

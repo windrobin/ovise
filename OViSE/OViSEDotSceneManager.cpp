@@ -30,7 +30,7 @@ wxString OViSEDotSceneManager::GetUniqueNameOfAssociatedResourceGroup() { return
 DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration(wxString UniqueDotSceneManagerName, wxString SceneManagerName)
 {
 	DotSceneBaseConfiguration *DefaultConfiguration = new DotSceneBaseConfiguration(
-			new OViSELogging(),
+			new Logging(),
 			new UniqueNameManager(ToWxString("Prototype")),
 			SceneManagerName,
 			UniqueDotSceneManagerName,
@@ -109,9 +109,9 @@ bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(wxString UniquePrototypeNa
 	else return false;
 }
 
-wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, OViSESelectionMap Selection, wxString VersionStringForExport)
+wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport)
 {
-	bool Match = false;
+	/*bool Match = false;
 	ScenePrototype* NewPrototype = 0;
 	
 	// Hier weiter. TODO: Erzeugen eines unique-name, Auswahl des richtigen Interpreters. Steht schon alles zur Verfügung.
@@ -131,7 +131,8 @@ wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniqueProt
 	// while (!Match);
 
 	if (Match) return NewPrototype->GetUniqueName();
-	else return wxString();
+	else */
+	return wxString();
 }
 
 bool OViSEDotSceneManager::ExportScenePrototype(wxString UniquePrototypeName, wxFileName DestinationURL)

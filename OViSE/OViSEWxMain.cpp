@@ -62,8 +62,9 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
 	loadSceneTreeImageList(sceneTreeImageList);
-
-	mSceneTree = new OViSESceneTree(mSceneHdlr->getSceneManager(), this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	
+	//mSceneTree = new OViSESceneTree(mSceneHdlr->getSceneManager(), this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	this->mSceneTree = new OViSESceneTree(OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager()), this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
 	mWindowManager->AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
 	mSceneTree->SetImageList(sceneTreeImageList);
 	mSceneTree->initTree();
@@ -96,7 +97,46 @@ OViSEWxFrame::~OViSEWxFrame()
 
 void OViSEWxFrame::finishOgreInitialization()
 {
-	mSceneHdlr = OViSESceneHandling::getSingletonPtr();
+	// NEW
+	QualifiedName* qCamFokusSceneNode = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(ToWxString("mainCamFocusNode"));
+	if (qCamFokusSceneNode == 0 ) return;
+	Ogre::SceneNode *camFocusNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamFokusSceneNode);
+
+	camFocusNode->setFixedYawAxis(true);
+
+	QualifiedName* qCamSceneNode = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(ToWxString("CamNode"), camFocusNode);
+	if (qCamSceneNode == 0 ) return;
+	Ogre::SceneNode *camNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamSceneNode);
+
+	camNode->setFixedYawAxis(true);
+	camNode->setPosition(0, 10, 20);
+
+	QualifiedName* qCamera = OgreAPIMediator::GetSingletonPtr()->CreateCamera(ToWxString("MainCam"), camNode);
+	if (qCamera == 0 ) return;
+	this->mCam = OgreAPIMediator::GetSingletonPtr()->GetCameraPtr(*qCamera);
+
+	this->mCam->setPosition(Ogre::Vector3(0,0,20));
+	// Look back along -Z
+	this->mCam->lookAt(Ogre::Vector3::ZERO);
+    this->mCam->setNearClipDistance(5);
+
+    this->mCam->setFixedYawAxis(true);
+	this->mCam->setQueryFlags(0x01);
+
+	// UNCHANGED
+    Ogre::Viewport *mVp = mMainRenderWin->GetRenderWindow()->addViewport(mCam);
+	mMainRenderWin->SetCamera(mCam, camFocusNode);
+
+    Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
+
+	//mSceneHdlr->createDefaultScene();
+
+	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+
+    mCam->setAutoAspectRatio(true);
+
+	// OLD
+	/*mSceneHdlr = OViSESceneHandling::getSingletonPtr();
 	mSceneMgr = mSceneHdlr->getSceneManager();
 
     mCam = mSceneMgr->createCamera("MainCam");
@@ -125,7 +165,7 @@ void OViSEWxFrame::finishOgreInitialization()
 
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
-    mCam->setAutoAspectRatio(true);
+    mCam->setAutoAspectRatio(true);*/
 }
 
 void OViSEWxFrame::setupObjectProperties()
@@ -345,7 +385,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	{
 		// CASE:				ACTION:
 		// 1:	-			->	Unselect all, Select one or nothing
-		// 2:	CTRL		->	Unselect one or nothing, Add one Selection(front)
+		// 2:	CTRL		->	Unselect one or nothing, Add one or nothing to Selection(front)
 		// 3:	SHIFT		->	Unselect all, Add complete Query
 		// 4:	CTRL, SHIFT ->	Unselect all in complete Query, Add complete Query < IRREGULAR: only unselect, if all from Query are selected
 
@@ -353,11 +393,53 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 		{
 			if (event.ShiftDown())
 			{
-				// CASE 4
+				// CASE 4: Unselect all in complete Query, Add complete Query < IRREGULAR: only unselect, if all from Query are selected
+				if (QNames.GetCount() > 0)
+				{
+					QualifiedNameCollection UnselectedQNames = QualifiedNameCollectionInterface::CollectionDifference(QNames, SelectionManager::getSingletonPtr()->Selection);
+					if (UnselectedQNames.GetCount() > 0)
+					{
+						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollectionInterface::CollectionUnion(SelectionManager::getSingletonPtr()->Selection, UnselectedQNames);
+						for (unsigned long IT = 0; IT < UnselectedQNames.GetCount(); IT++)
+						{
+							// Select in SceneTree-View
+							wxTreeItemId Item = this->mSceneTree->Items[UnselectedQNames[IT].UniqueName()]; // TODO: Upgrade
+							this->mSceneTree->SelectItem(Item);
+						}
+					}
+					else
+					{
+						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollectionInterface::CollectionDifference(SelectionManager::getSingletonPtr()->Selection, QNames);
+						for (unsigned long IT = 0; IT < QNames.GetCount(); IT++)
+						{
+							// Select in SceneTree-View
+							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()]; // TODO: Upgrade
+							this->mSceneTree->UnselectItem(Item);
+						}
+					}
+				}
 			}
 			else
 			{
-				// CASE 2
+				// CASE 2: Unselect one or nothing, Add one or nothing to Selection(front)
+				if (QNames.GetCount() > 0)
+				{
+					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
+					if (QualifiedNameCollectionInterface::CollectionContains(SelectionManager::getSingletonPtr()->Selection, QNames[0]))
+					{
+						QualifiedNameCollectionInterface::CollectionRemove(SelectionManager::getSingletonPtr()->Selection, QNames[0], true);
+	
+						// Unelect in SceneTree-View
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						this->mSceneTree->UnselectItem(Item);
+					}
+					else
+					{
+						// Select in SceneTree-View
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						this->mSceneTree->SelectItem(Item);
+					}
+				}
 			}
 		}
 		else
@@ -376,7 +458,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 						SelectionManager::getSingletonPtr()->Selection.Add(QNames[IT]);
 						
 						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()]; // TODO: Upgrade
 						this->mSceneTree->SelectItem(Item);
 					}
 				}
@@ -393,7 +475,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 					SelectionManager::getSingletonPtr()->Selection.Add(QNames[0]);
 
 					// Select in SceneTree-View
-					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
+					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
 					this->mSceneTree->SelectItem(Item);
 				}
 			}
@@ -722,7 +804,7 @@ void OViSEWxFrame::RemoveAllSelectedObjects()
 }
 void OViSEWxFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {
-	OViSEPrototypeManagementDialog *PrototypeManagementDlg = new OViSEPrototypeManagementDialog(this, this->mSceneHdlr);
+	PrototypeManagementDialog *PrototypeManagementDlg = new PrototypeManagementDialog(this, this->mDotSceneMgr);
 	//PrototypeManagementDlg->SetAvailablePrototypes(this->mSceneHdlr->GetAvailablePrototypesOfDotSceneManager());
 	PrototypeManagementDlg->ShowModal();
 	//this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype());

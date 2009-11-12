@@ -1,6 +1,6 @@
 #include "OViSEXmlErrorReporter.h"
 
-OViSEXmlErrorReporter::OViSEXmlErrorReporter() : mFoundErrors(false) { this->mLog = new OViSELogging(); }
+OViSEXmlErrorReporter::OViSEXmlErrorReporter() : mFoundErrors(false) { this->mLog = new Logging(); }
 OViSEXmlErrorReporter::~OViSEXmlErrorReporter() { delete this->mLog; }
 void OViSEXmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 {
@@ -30,13 +30,13 @@ void OViSEXmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Critical);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Critical);
 }
 
 void OViSEXmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
@@ -67,13 +67,13 @@ void OViSEXmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Normal);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Normal);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Normal);
 }
 
 void OViSEXmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
@@ -104,13 +104,13 @@ void OViSEXmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Trivial);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Trivial);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, OViSELogging::Trivial);
+	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Trivial);
 }
 
 void OViSEXmlErrorReporter::resetErrors()

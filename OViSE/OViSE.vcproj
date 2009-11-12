@@ -193,10 +193,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEPrototypeManagementDialog.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\OViSESceneTree.cpp"
 					>
 				</File>
@@ -206,6 +202,10 @@
 				</File>
 				<File
 					RelativePath=".\OViSEWxMain.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PrototypeManagementDialog.cpp"
 					>
 				</File>
 			</Filter>
@@ -291,10 +291,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEPrototypeManagementDialog.h"
-					>
-				</File>
-				<File
 					RelativePath=".\OViSESceneTree.h"
 					>
 				</File>
@@ -304,6 +300,10 @@
 				</File>
 				<File
 					RelativePath=".\OViSEWxMain.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PrototypeManagementDialog.h"
 					>
 				</File>
 			</Filter>

@@ -7,45 +7,39 @@
 #include <wx/filename.h>
 
 // Solution's includes
-#include "../OViSEAux/UniqueNameManager.h"
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/QualifiedName.h"
+#include "../OViSEAux/Logging.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 
 // Include Ogre
 #include "Ogre.h"
 
-class DotSceneBaseConfiguration // TODO: Parameters -> integrity-check, range-check
+class DotSceneBaseConfiguration
 {
 public:
-	DotSceneBaseConfiguration(	OViSELogging *Log,
-								UniqueNameManager *PrototypeNameMgr,
-								wxString SceneManagerName,
+	DotSceneBaseConfiguration(	wxString SceneManagerName,
 								wxString UniqueNameOfDotSceneManager,
 								wxString UniqueNameOfAssociatedResourceGroup);
 	~DotSceneBaseConfiguration(void);
 
-	bool doAttachNodes;
-	bool doAttachExternals;
-	bool doAttachEnvironment;
+	bool doAttachNodes; // <--
+	bool doAttachExternals; // <--
+	bool doAttachEnvironment; // <--
 
-	wxFileName LocationOfMeshFiles;
+	wxFileName LocationOfMeshFiles; // <--
 
-	bool doExportNotSelectedChildToo;
-	bool doExportMeshFiles;
-	bool doOverwriteWhileExport;
+	bool doExportNotSelectedChildToo; // <--
+	bool doExportMeshFiles; // <--
+	bool doOverwriteWhileExport; // <--
 
-	OViSELogging *Log;
+	wxString SceneManagerName; // <--
+	wxString UniqueNameOfDotSceneManager; // <--
+	wxString UniqueNameOfAssociatedResourceGroup; // <--
 
-	UniqueNameManager *PrototypeNameMgr;
+	SceneNodeOffset SceneOffset; // <--
 
-	wxString SceneManagerName;
-	wxString UniqueNameOfDotSceneManager;
-	wxString UniqueNameOfAssociatedResourceGroup;
-
-	SceneNodeOffset SceneOffset;
-
-	void SetUniqueName(wxString UniqueNameOfDotSceneManager);
-	void SetUniqueNameOfOwnedResourceGroup(wxString UniqueNameOfOwnedResourceGroup);
+	void SetUniqueName(wxString UniqueNameOfDotSceneManager); // <--
+	void SetUniqueNameOfOwnedResourceGroup(wxString UniqueNameOfOwnedResourceGroup); // <--
 };
 
 #endif /*DOTSCENE_BASE_CONFIGURATION_H_*/

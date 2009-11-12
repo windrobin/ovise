@@ -157,6 +157,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Logging.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MovableTypeTranslator.cpp"
 				>
 			</File>
@@ -170,10 +174,6 @@
 			</File>
 			<File
 				RelativePath=".\OViSEException.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSELogging.cpp"
 				>
 			</File>
 			<File
@@ -215,6 +215,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Logging.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MovableTypeTranslator.h"
 				>
 			</File>
@@ -228,10 +232,6 @@
 			</File>
 			<File
 				RelativePath=".\OViSEException.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSELogging.h"
 				>
 			</File>
 			<File

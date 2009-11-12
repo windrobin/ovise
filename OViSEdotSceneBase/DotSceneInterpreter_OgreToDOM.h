@@ -6,7 +6,7 @@
 #include "./DotSceneBaseConfiguration.h"
 #include "./ScenePrototype.h"
 #include "../OViSEAux/StringConverter.h"
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/Logging.h"
 
 
 // Include Ogre

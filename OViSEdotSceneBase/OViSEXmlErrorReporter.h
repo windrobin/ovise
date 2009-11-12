@@ -4,7 +4,7 @@
 
 // Solution's includes
 #include "../OViSEAux/StringConverter.h"
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/Logging.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -20,7 +20,7 @@ class OViSEXmlErrorReporter : xercesc::ErrorHandler
 {
 private:
 	bool mFoundErrors;
-	OViSELogging* mLog;
+	Logging* mLog;
 public:
 	OViSEXmlErrorReporter();
 	~OViSEXmlErrorReporter();

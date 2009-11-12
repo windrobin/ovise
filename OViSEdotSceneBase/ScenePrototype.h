@@ -1,9 +1,25 @@
+/********************************************************************************
+ * Name:      ScenePrototype.h													*
+ * Purpose:   Code describes a class, holding all data of a prototype. A		*
+ *			  prototype contains an imported dotScene xml-file as DOM-structure,*
+ *			  its unique qualified name (which is generated from the native name*
+ *			  of dotScene xml-file), and additional data, which is stored inside*
+ *			  ScenePrototypeData.												*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-12														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef SCENE_PROTOTYPE_H_
 #define SCENE_PROTOTYPE_H_
 
 // Solutuion's inludes
-#include "./ScenePrototypeData.h"
+#include "../OViSEdotSceneBase/ScenePrototypeData.h"
+#include "../OViSEAux/QualifiedName.h"
 
 // Include Xerces
 #include <xercesc/util/XMLString.hpp>
@@ -20,24 +36,19 @@ XERCES_CPP_NAMESPACE_USE
 class ScenePrototype
 {
 private:
-	wxString UniqueName;
-	wxString OriginalName;
+	QualifiedName qName;
 	xercesc::DOMDocument* DOMRepresentation;
 	
 	void SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation);
 public:
 	ScenePrototypeData Data;
 
-	void SetUniqueName(wxString UniqueName);
-	void SetOriginalName(wxString OriginalName);
-
-	wxString				GetUniqueName();
-	wxString				GetOriginalName();
+	QualifiedName			GetName();
 	xercesc::DOMDocument*	GetDOMRepresentation();
 
-	ScenePrototype(	wxString UniqueName,
-					wxString OriginalName,
-					xercesc::DOMDocument* DOMRepresentation);
+	ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation);
+	ScenePrototype(QualifiedName qName, xercesc::DOMDocument* DOMRepresentation);
+	ScenePrototype(const ScenePrototype& ToCopy);
 	~ScenePrototype(void);
 };
 

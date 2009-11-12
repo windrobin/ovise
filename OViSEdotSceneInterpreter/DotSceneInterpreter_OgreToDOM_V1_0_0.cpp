@@ -99,7 +99,7 @@ xercesc::DOMElement* DotSceneInterpreter_OgreToDOM_V1_0_0::Interpretation_Entity
 			Ogre::MaterialPtr MatPtr = SubEnt->getMaterial();
 			wxString MatName;
 			MatName << ToWxString("ENTITY-MATERIAL-NAME (FILE?)") << ToWxString(MatPtr->getName());
-			this->Configuration->Log->WriteToOgreLog(MatName, OViSELogging::Normal);
+			this->Configuration->Log->WriteToOgreLog(MatName, Logging::Normal);
 
 		}
 	}

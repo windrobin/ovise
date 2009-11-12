@@ -11,7 +11,7 @@
 #include "../OViSEAux/UniqueNameManager.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/SceneNodeOffset.h"
-#include "../OViSEAux/OViSELogging.h"
+#include "../OViSEAux/Logging.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 
 // Include Ogre
