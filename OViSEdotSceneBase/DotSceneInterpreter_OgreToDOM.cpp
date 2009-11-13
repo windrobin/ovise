@@ -1,35 +1,50 @@
-#include "DotSceneInterpreter_OgreToDOM.h"
+/********************************************************************************
+ * Name:      DotSceneInterpreter_OgreToDOM.cpp									*
+ * Purpose:   Code implements central methods of it's abstract class,			*
+ *			  which provides the basic methods for interpretation of content of *
+ *			  ogre-engine as a DOM-structure. In a inherited class all methods	*
+ *			  must be implemented.												*
+ *			  That garants full compatiblility to dotScene-format.				*
+ *			  Here implemented methods is always the same and ensures			*
+ *			  interpretation with only one method-call.							*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
+#include "../OViSEdotSceneBase/DotSceneInterpreter_OgreToDOM.h"
 
 wxString DotSceneInterpreter_OgreToDOM::GetVersionString() { return VersionString; }
 DotSceneInterpreter_OgreToDOM::~DotSceneInterpreter_OgreToDOM(void) { }
-bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString NotUniquePrototypeName,
-																OViSESelectionMap Selection,
+bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString PrototypeNativeName,
+																QualifiedNameCollection Selection,
 																DotSceneBaseConfiguration* Configuration)
 {
 	wxString LogMsg;
 
-	if (NotUniquePrototypeName.IsSameAs(ToWxString(""))) this->NotUniquePrototypeName = ToWxString("NoName");
-	else this->NotUniquePrototypeName = NotUniquePrototypeName;
+	if (PrototypeNativeName.IsSameAs(ToWxString(""))) PrototypeNativeName = ToWxString("NoName");
 
 	this->Selection  = Selection;
 	this->Configuration = Configuration;
 	this->SetVersionString(ToWxString("1.0.0"));
 
 	// Get and check Ogre::SceneManager...
-	this->SceneMgr = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(this->Configuration->SceneManagerName));
+	this->SceneMgr = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(this->Configuration->qSceneManager);
 	if (this->SceneMgr == 0) return false; // "Configuration" is invalid!
 
-	// Create UniquePrototypeName...
-	this->UniquePrototypeName = this->Configuration->PrototypeNameMgr->AllocateUniqueName(this->NotUniquePrototypeName);
-
 	// Create DOMImplementation
-	this->Implementation = DOMImplementationRegistry::getDOMImplementation(ToXMLString("Core")); // Kommentar von HR: Core??? Welche Strings gehen hin noch rein? Enum wäre besser!
+	this->Implementation = DOMImplementationRegistry::getDOMImplementation(ToXMLString("Core")); // Comment by HR: Core??? Has anyone a list of more valid strings? An enum would be better!
 
 	// Create DOMDocument
 	xercesc::DOMDocument* TempDOMDocument = DotSceneInterpreter_OgreToDOM::Implementation->createDocument(0, ToXMLString("scene"), 0); // Don't use any more, but remember: "(XMLString::transcode(this->mDestinationURI.c_str()), XMLString::transcode("scene"), 0)"
 	
 	// Create new Prototype
-	this->Prototype = new ScenePrototype(this->UniquePrototypeName, NotUniquePrototypeName, TempDOMDocument);
+	this->Prototype = new ScenePrototype(PrototypeNativeName, TempDOMDocument);
+
+	// Store qualified name of prototype
+	this->qPrototype = this->Prototype->GetName();
 
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement* SceneElement = this->Prototype->GetDOMRepresentation()->getDocumentElement();
@@ -57,33 +72,36 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 	HashMap_DOMPointer BlackList_STAGE2; // List of already created nodes/DOMElements
 	
 	// STEP 1: Generate Stage 2 WhiteList == Selected SceneNodes (WhilteList_STAGE1)
-	if (!this->Selection.empty())
+	if (this->Selection.GetCount() > 0)
 	{
-		for (OViSESelectionMap::const_iterator iter = this->Selection.begin(); iter != this->Selection.end(); iter++)
+		for (unsigned long IT = 0; IT < this->Selection.GetCount(); IT++)
 		{
-			// OViSESelectionMap uses objects of Ogre::MovableObject and not Ogre::Node or Ogre::SceneNode.
-			// First get these nodes, then find out if a Ogre::Node is a Ogre::SceneNode
-			// Ogre::SceneNodes will be added to WhilteList_STAGE1
-
-			Ogre::MovableObject* MovObj = iter->second; // Maybe Ogre::Light, Ogre::Cam or Ogre::Entity etc.
+			// OLD: OViSESelectionMap uses objects of Ogre::MovableObject and not Ogre::Node or Ogre::SceneNode.
+			// OLD: First get these nodes, then find out if a Ogre::Node is a Ogre::SceneNode
+			// OLD: Ogre::SceneNodes will be added to WhilteList_STAGE1
+			// NEW: Now using qualified names instead!
+			QualifiedName qMO = this->Selection[IT];
 
 			// Filter: Only Ogre::Light, Ogre::Cam and Ogre::Entity are handled. Ignore other classes!
 			// TODO: Improve to all ogre types (far futhur)
-			bool match = false;
-			if((!match) && (MovObj->getMovableType() == "Camera"))
+			bool Match = false;
+			
+			switch(OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMO))
 			{
-				match = false; //true;
-			}
-			if((!match) && (MovObj->getMovableType() == "Entity")) match = true;
-			if((!match) && (MovObj->getMovableType() == "Light"))
-			{
-				match = false; //true;
+			case OgreEnums::MovableObject::MOVABLETYPE_Camera: Match = false; break;
+			case OgreEnums::MovableObject::MOVABLETYPE_Entity: Match = true; break;
+			case OgreEnums::MovableObject::MOVABLETYPE_Light: Match = false; break;
 			}
 
-			if (match)
+			if (Match)
 			{
-				Ogre::SceneNode* tempSceneNode = static_cast<Ogre::SceneNode*>(MovObj->getParentSceneNode());
-				WhiteList_STAGE1[ToWxString(tempSceneNode->getName())] = tempSceneNode;
+				// Now get Ogre::MovableObject
+				Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+				if ( MO != 0 )
+				{
+					Ogre::SceneNode* SN = static_cast<Ogre::SceneNode*>(MO->getParentSceneNode());
+					WhiteList_STAGE1[ToWxString(SN->getName())] = SN;
+				}
 			}
 		}
 	}
@@ -117,37 +135,39 @@ void DotSceneInterpreter_OgreToDOM::RecursiveNodeTreeWalkthrough(	Ogre::Node* So
 																	HashMap_DOMPointer& WhiteList_STAGE2,
 																	HashMap_DOMPointer& BlackList_STAGE2)
 {
+	// INFO: the litte u... before a variable means "unique name"
+
 	// STEP 1: Convert Ogre::Node to Ogre::SceneNode and get it's (unique) name
-	Ogre::SceneNode* SomeSceneNode = static_cast<Ogre::SceneNode*>(SomeNode);
-	wxString SceneNodeName = ToWxString(SomeSceneNode->getName());
+	Ogre::SceneNode* SN = static_cast<Ogre::SceneNode*>(SomeNode);
+	wxString uSN = ToWxString(SN->getName());
 
 	// STEP 2: If there is a Element with this name in BlackList_STAGE2 do nothing. Else...
-	if (BlackList_STAGE2.count(SceneNodeName) == 0)
+	if (BlackList_STAGE2.count(uSN) == 0)
 	{
 		// STEP 2.1: Create DOM-element "node"
-		DOMElement* New_NodeElement = this->Interpretation_Node(SomeSceneNode);
+		DOMElement* New_NodeElement = this->Interpretation_Node(SN);
 
 		// STEP 2.2: Add new element to BlackList_STAGE2
-		BlackList_STAGE2[SceneNodeName] = New_NodeElement;
+		BlackList_STAGE2[uSN] = New_NodeElement;
 	}
 
 	// STEP 3: FILTERING! Evaluate, if element is a child, is a parent and if it's childs or parent's are already created in DOM-structure
 	//		   Find out, if element has to be added to WhiteList_STAGE2.
-	DOMElement* Evaluate_NodeElement = BlackList_STAGE2[SceneNodeName];
+	DOMElement* Evaluate_NodeElement = BlackList_STAGE2[uSN];
 
-	Ogre::SceneNode* ParentOfSceneNode = SomeSceneNode->getParentSceneNode();
-	if (ParentOfSceneNode != 0)
+	Ogre::SceneNode* ParentSN = SN->getParentSceneNode();
+	if (ParentSN != 0)
 	{
-		wxString ParentNameOfSceneNode(ToWxString(ParentOfSceneNode->getName()));
+		wxString uParentSN(ToWxString(ParentSN->getName()));
 
 		// Is parent in WL_S1?
-		if (WhiteList_STAGE1.count(ParentNameOfSceneNode) == 1)
+		if (WhiteList_STAGE1.count(uParentSN) == 1)
 		{
 			// YES -> parent could be(!) in BL_S2
-			if (BlackList_STAGE2.count(ParentNameOfSceneNode) == 1)
+			if (BlackList_STAGE2.count(uParentSN) == 1)
 			{
 				// YES -> get parent and add to parent
-				DOMElement* Parent = BlackList_STAGE2[ParentNameOfSceneNode];
+				DOMElement* Parent = BlackList_STAGE2[uParentSN];
 				Parent->appendChild(Evaluate_NodeElement);
 			}
 			else
@@ -158,32 +178,32 @@ void DotSceneInterpreter_OgreToDOM::RecursiveNodeTreeWalkthrough(	Ogre::Node* So
 		else
 		{
 			// NO -> add to WL
-			WhiteList_STAGE2[SceneNodeName] = Evaluate_NodeElement;
+			WhiteList_STAGE2[uSN] = Evaluate_NodeElement;
 		}
 	}
 	else
 	{
-		WhiteList_STAGE2[SceneNodeName] = Evaluate_NodeElement;
+		WhiteList_STAGE2[uSN] = Evaluate_NodeElement;
 	}
 
 	// STEP4 : Handle all childnodes...
-	Ogre::SceneNode::ChildNodeIterator ChildIter = SomeSceneNode->getChildIterator();
+	Ogre::SceneNode::ChildNodeIterator ChildIter = SN->getChildIterator();
 
 	while(ChildIter.hasMoreElements())
 	{
-		Ogre::SceneNode* childNode = static_cast<Ogre::SceneNode*>(ChildIter.getNext());
+		Ogre::SceneNode* ChildSN = static_cast<Ogre::SceneNode*>(ChildIter.getNext());
 
 		if (this->Configuration->doExportNotSelectedChildToo)
 		{
-			RecursiveNodeTreeWalkthrough(childNode, WhiteList_STAGE1, WhiteList_STAGE2, BlackList_STAGE2);
+			RecursiveNodeTreeWalkthrough(ChildSN, WhiteList_STAGE1, WhiteList_STAGE2, BlackList_STAGE2);
 		}
 		else
 		{
 			// YES -> if child in BL_S2: stay there, but add child to itself (the parent) too.
 			// At least join actual SceneNode with already handled childs from BL_S2
-			wxString childNodeName(ToWxString(childNode->getName()));
+			wxString uChildSN(ToWxString(ChildSN->getName()));
 
-			if (BlackList_STAGE2.count(childNodeName) == 1)
+			if (BlackList_STAGE2.count(uChildSN) == 1)
 			{
 				// Check if DOMElement alreay added...
 				bool Matching_DOMElement = false;
@@ -200,7 +220,7 @@ void DotSceneInterpreter_OgreToDOM::RecursiveNodeTreeWalkthrough(	Ogre::Node* So
 							if (CurrentElement->hasAttribute(ToXMLString("name")))
 							{
 								wxString tempDOMChildNodeName(ToWxString(CurrentElement->getAttribute(ToXMLString("name"))));
-								if (childNodeName.IsSameAs(tempDOMChildNodeName))  // Check if DOMElement alreay exists...
+								if (uChildSN.IsSameAs(tempDOMChildNodeName))  // Check if DOMElement alreay exists...
 								{
 									Matching_DOMElement = true;
 								}
@@ -211,7 +231,7 @@ void DotSceneInterpreter_OgreToDOM::RecursiveNodeTreeWalkthrough(	Ogre::Node* So
 
 				if (!Matching_DOMElement)
 				{
-					DOMElement* tempChild = BlackList_STAGE2[childNodeName];
+					DOMElement* tempChild = BlackList_STAGE2[uChildSN];
 					Evaluate_NodeElement->appendChild(tempChild);
 				}
 			}

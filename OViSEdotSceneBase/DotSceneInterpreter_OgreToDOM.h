@@ -1,13 +1,36 @@
+/********************************************************************************
+ * Name:      DotSceneInterpreter_OgreToDOM.h									*
+ * Purpose:   Code describes a abstract class, which provides the basic 		*
+ *			  methods for interpretation of content of ogre-engine as a DOM-	*
+ *			  structure. In a inherited	class all methods must be implemented.	*
+ *			  That garants  full compatiblility to dotScene-format.				*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef DOTSCENE_INTERPRETER_OGRE_TO_DOM_H_
 #define DOTSCENE_INTERPRETER_OGRE_TO_DOM_H_
 
+// Include WX
+#include <wx/string.h>
+#include <wx/filename.h>
+#include <wx/arrstr.h>
+#include <wx/hashmap.h>
+
 // Solution's includes
-#include "./DotSceneBaseConfiguration.h"
-#include "./ScenePrototype.h"
+#include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
+#include "../OViSEdotSceneBase/ScenePrototype.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/Logging.h"
-
+#include "../OViSEAux/QualifiedName.h"
+#include "../OViSEAux/QualifiedNameCollectionInterface.h"
+#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OViSEAux/EnumsForABetterWorld.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -21,19 +44,10 @@
 
 XERCES_CPP_NAMESPACE_USE
 
-// Include WX
-#include <wx/string.h>
-#include <wx/filename.h>
-#include <wx/arrstr.h>
-#include <wx/hashmap.h>
-
 // Include STD
 #include <string>
 #include <deque>
 #include <typeinfo>
-
-/// Map containing selected objects.
-typedef std::map<std::string, Ogre::MovableObject*> OViSESelectionMap;
 
 WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, HashMap_OgreSceneNodePointer);
 WX_DECLARE_STRING_HASH_MAP(DOMElement*, HashMap_DOMPointer);
@@ -61,11 +75,10 @@ protected:
 	ScenePrototype* Prototype;
 	Ogre::SceneManager* SceneMgr;
 	DOMImplementation* Implementation;
-	OViSESelectionMap Selection;
+	QualifiedNameCollection Selection;
 
 	wxString VersionString;
-	wxString NotUniquePrototypeName;
-	wxString UniquePrototypeName;
+	QualifiedName qPrototype;
 
 	// Abstract methods
 	virtual void SetVersionString(wxString VersionString) = 0;
@@ -77,15 +90,15 @@ protected:
 										HashMap_OgreSceneNodePointer& WhiteList_STAGE1,
 										HashMap_DOMPointer& WhiteList_STAGE2,
 										HashMap_DOMPointer& BlackList);
-	bool Interpretation_OgreScene(	wxString NotUniquePrototypeName,
-									OViSESelectionMap Selection,
+	bool Interpretation_OgreScene(	wxString PrototypeNativeName,
+									QualifiedNameCollection Selection,
 									DotSceneBaseConfiguration* Configuration);
 public:
 	~DotSceneInterpreter_OgreToDOM(void);
 
 	// Inheritable methods
-	virtual ScenePrototype* Interpretation(	wxString NotUniquePrototypeName,
-											OViSESelectionMap Selection,
+	virtual ScenePrototype* Interpretation(	wxString PrototypeNativeName,
+											QualifiedNameCollection Selection,
 											DotSceneBaseConfiguration* Configuration) = 0;
 };
 
