@@ -169,15 +169,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEXmlErrorReporter.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ScenePrototype.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\ScenePrototypeData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\XmlErrorReporter.cpp"
 				>
 			</File>
 			<File
@@ -203,15 +203,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\OViSEXmlErrorReporter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ScenePrototype.h"
 				>
 			</File>
 			<File
 				RelativePath=".\ScenePrototypeData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\XmlErrorReporter.h"
 				>
 			</File>
 			<File

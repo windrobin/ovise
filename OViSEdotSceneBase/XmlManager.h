@@ -1,3 +1,5 @@
+
+
 #pragma once
 
 #ifndef XML_MANAGER_H_
@@ -6,7 +8,7 @@
 // Solution's includes
 #include "../OViSEAux/OViSEException.h"
 #include "../OViSEAux/StringConverter.h"
-#include "./OViSEXmlErrorReporter.h"
+#include "./XmlErrorReporter.h"
 #include "./ScenePrototype.h"
 #include "./DotSceneBaseConfiguration.h"
 

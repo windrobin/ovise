@@ -291,7 +291,7 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
 	this->mParser->setExternalNoNamespaceSchemaLocation(ToXMLString(this->mURLofXSD.GetFullPath()));
 
 	// STEP 4: Setup error-reporter. OViSEXercesXMLErrorReporter inherits from "xercesc::ErrorHandler" and redirects parsing-errors into Ogre::LogManager
-	this->mErrHandler = (xercesc::ErrorHandler*) new OViSEXmlErrorReporter();
+	this->mErrHandler = (xercesc::ErrorHandler*) new XmlErrorReporter();
 	this->mParser->setErrorHandler(this->mErrHandler);
 
 	bool ErrorsOccured = false;
@@ -359,7 +359,7 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
     
 	// Returns pointer to DOMDocument, if no errors occured while validation.
 	// REMEMBER: These errors are no exceptions like in those cases below.
-    if (((OViSEXmlErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
+    if (((XmlErrorReporter*) this->mErrHandler)->HasValidationErrors()) ErrorsOccured = true;
 	
 	if (ErrorsOccured)
 	{
