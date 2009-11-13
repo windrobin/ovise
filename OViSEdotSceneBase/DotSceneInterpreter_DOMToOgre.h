@@ -1,4 +1,18 @@
+/********************************************************************************
+ * Name:      DotSceneInterpreter_DOMToOgre.h									*
+ * Purpose:   Code describes a abstract class, which provides the basic 		*
+ *			  methods for interpretation of a DOM structure. In a inherited		*
+ *			  class all methods must be implemented. That garants full			*
+ *			  compatiblility to dotScene-format.								*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 #define DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 
@@ -7,8 +21,7 @@
 #include <wx/filename.h>
 
 // Solution's includes
-#include "./DotSceneBaseConfiguration.h"
-#include "../OViSEAux/UniqueNameManager.h"
+#include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 #include "../OViSEAux/Logging.h"
@@ -31,7 +44,7 @@ class DotSceneInterpreter_DOMToOgre
 	// IMPORTANT: This class and it's children are not thread-safe! (Because of XML-stuff)
 private:
 	// All abstract methods
-	virtual void Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene) = 0;
+	virtual void Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup) = 0;
 	virtual void Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes) = 0;
 	virtual void Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode) = 0;
 	virtual void Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode) = 0;
@@ -49,7 +62,7 @@ protected:
 
 	// Methods
 	bool Interpretation_DOMScene(	xercesc::DOMDocument* DOMRepresentationOfScene,
-									wxString AttachToNodeWithThisName,
+									QualifiedName* qAnchorNodeName,
 									DotSceneBaseConfiguration* Configuration);
 
 	// Static methods
@@ -63,7 +76,7 @@ public:
 
 	// Inheritable methods
 	virtual bool Interpretation(xercesc::DOMDocument* DOMRepresentationOfScene,
-								wxString AnchorNodeName,
+								QualifiedName* qAnchorNodeName,
 								DotSceneBaseConfiguration* Configuration) = 0;
 };
 
