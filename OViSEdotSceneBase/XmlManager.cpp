@@ -1,4 +1,16 @@
-#include "XmlManager.h"
+/********************************************************************************
+ * Name:      XmlManager.cpp													*
+ * Purpose:   Code implements a class, which encapsulate the complete xml-		*
+ *			  access. Including operations like read and write prototypes or 	*
+ *			  complete object-collections.										*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
+#include "../OViSEdotSceneBase/XmlManager.h"
 
 XmlManager::XmlManager(DotSceneBaseConfiguration* Configuration) : mInitialized(true)
 {
@@ -15,11 +27,13 @@ XmlManager::~XmlManager(void)
 	{
 		delete this->mImplementation;
 	}
+
 	if (this->mDocType != 0)
 	{
 		this->mDocType->release();
 		if (this->mDocType != 0) delete this->mDocType;
 	}
+
 	if (this->mDocument != 0)
 	{
 		this->mDocument->release();
@@ -39,13 +53,13 @@ bool XmlManager::InitXML()
 		XMLPlatformUtils::Initialize();
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: *** XERCES initialized. ***");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Normal);
 	}
 	catch (const XMLException& e) 
 	{
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: *** Error, while initializing XERCES! Exception message is: ") << ToWxString(e.getMessage());
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 		return false;
 	}
 	
@@ -62,13 +76,13 @@ bool XmlManager::TerminateXML()
     	XMLPlatformUtils::Terminate();  
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString(": *** XERCES terminated. ***");
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_NORMAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Normal);
    	}
    	catch( xercesc::XMLException& e )
    	{
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: *** Error, while terminating XERCES! Exception message is: ") << ToWxString(e.getMessage());
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(ParsingMsg), Ogre::LML_CRITICAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 		return false;
 	}
 
@@ -116,7 +130,7 @@ bool XmlManager::SetURLofXSD(wxString URLofXSD)
 	}
 	catch(OViSEException e)
 	{
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_CRITICAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(LogMessage, Logging::Critical);
 		this->mReadyToImport = false;
 	}
 	return this->mReadyToImport;
@@ -150,7 +164,7 @@ bool XmlManager::SetURLofExportPath(wxString URLofExportPath)
 	}
 	catch(OViSEException e)
 	{
-		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_CRITICAL);
+		Logging::GetSingletonPtr()->WriteToOgreLog(LogMessage, Logging::Critical);
 		this->mReadyToExport = false;
 	}
 	return this->mReadyToExport;
@@ -160,7 +174,6 @@ bool XmlManager::SetURLofExportPath(wxString URLofExportPath)
 wxString XmlManager::GetURLofXSD() { return this->mURLofXSD.GetFullPath(); }
 wxString XmlManager::GetURLofExportPath() { return this->mURLofExportPath.GetPath(); }
 DotSceneBaseConfiguration* XmlManager::GetConfiguration() { return this->mConfiguration; }
-
 bool XmlManager::ExportScenePrototype(ScenePrototype* Prototype, wxFileName DestinationURL)
 {
 	// STEP 1: Check, if XmlManager is ready...
@@ -170,33 +183,13 @@ bool XmlManager::ExportScenePrototype(ScenePrototype* Prototype, wxFileName Dest
 	// STEP 2: Check, if DestinationURL is valid...
 	wxFileName Destination(DestinationURL);
 	
-	if (!wxFileName::DirExists(Destination.GetPath()))
-	{
-		return false;
-	}
-	else
-	{
-		wxString debugstop = Destination.GetPath(); // DEBUG LINE
-		bool debugbool = wxFileName::DirExists(debugstop); // DEBUG LINE
-	}
-	if (!wxFileName::IsDirWritable(Destination.GetPath()))
-	{
-		return false;
-	}
-	else
-	{
-		wxString debugstop = Destination.GetPath(); // DEBUG LINE
-		bool debugbool = wxFileName::IsDirWritable(debugstop); // DEBUG LINE
-	}
-	if (!Destination.GetExt().IsSameAs(ToWxString("xml")))
-	{
-		wxString debug_test = Destination.GetExt(); // DEBUG LINE
-		return false;
-	}
+	if (!wxFileName::DirExists(Destination.GetPath())) return false;
+	if (!wxFileName::IsDirWritable(Destination.GetPath())) return false;
+	if (!Destination.GetExt().IsSameAs(ToWxString("xml"))) return false;
 
 	// STEP 3: Check Prototype...
 	if (Prototype == 0) return false; // Return false, when UniqueName doesn't exist!
-	wxString UniquePrototypeName = Prototype->GetUniqueName();
+	QualifiedName qPrototypeName = Prototype->GetName();
 
 	// STEP 4: Write DOM-structure to *.xml file!
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));
@@ -305,54 +298,54 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
         this->mParser->parse(ToXMLString(TempURLofXML.GetFullPath()));
 
 		ParsingMsg << ToWxString("done!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Normal);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Normal);
     }
     catch (const XMLException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
     catch (const DOMException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+        Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (const SAXException& e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.getMessage());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+        Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
     }
 	catch (std::exception e) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
 		ParsingMsg << ToWxString("XML Manager: XERCES's exception message is: ") << ToWxString(e.what());
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+        Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }
     catch (...) 
     {
 		ParsingMsg << ToWxString("failed!");
-		this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+		Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
         ParsingMsg.Clear();
         ParsingMsg << ToWxString("XML Manager: Unexpected Exception occured, while pharsing with XERCES!");
-        this->GetConfiguration()->Log->WriteToOgreLog(ParsingMsg, Logging::Critical);
+        Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 		ErrorsOccured = true;
     }
@@ -372,8 +365,7 @@ ScenePrototype* XmlManager::ImportScenePrototype(wxFileName URLofXML)
 		xercesc::DOMNode* tempDOMWrapperNode = this->mParser->getDocument()->cloneNode(true);
 		xercesc::DOMDocument* tempDOMRepesentation = static_cast<xercesc::DOMDocument*>(tempDOMWrapperNode);
 
-		wxString UniquePrototypeName = this->GetConfiguration()->PrototypeNameMgr->AllocateUniqueName(TempURLofXML.GetName());
-		ScenePrototype* NewPrototype = new ScenePrototype(UniquePrototypeName, TempURLofXML.GetName(), tempDOMRepesentation);
+		ScenePrototype* NewPrototype = new ScenePrototype(TempURLofXML.GetName(), tempDOMRepesentation);
 
 		ScenePrototypeData PrototypeData;
 		PrototypeData.ResourceBaseDir = URLofXML.GetPath();
