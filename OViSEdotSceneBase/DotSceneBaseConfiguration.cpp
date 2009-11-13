@@ -1,34 +1,38 @@
+/********************************************************************************
+ * Name:      DotSceneBaseConfiguration.cpp										*
+ * Purpose:   This class holds parameters, which are neccessary for im- & export*
+ *			  dotScene-files(prototypes.										*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 
-DotSceneBaseConfiguration::DotSceneBaseConfiguration(	Logging *Log,
-														UniqueNameManager *PrototypeNameMgr,
-														wxString SceneManagerName,
-														wxString UniqueNameOfDotSceneManager,
-														wxString UniqueNameOfAssociatedResourceGroup )
+DotSceneBaseConfiguration::DotSceneBaseConfiguration(	QualifiedName qSceneManager,
+														QualifiedName qDotSceneManager,
+														QualifiedName qResourceGroup )
 {
-	// Implicit initialisation (no check)
-	// DOM -> Ogre
+	// Attributes, import (DOM -> Ogre)
 	this->doAttachExternals = true;
 	this->doAttachNodes = true;
 	this->doAttachEnvironment = true;
+	SceneNodeOffset SceneOffset;
 
-	this->LocationOfMeshFiles = wxFileName(wxFileName::GetCwd());
-	this->LocationOfMeshFiles.SetName(wxString());
-	this->LocationOfMeshFiles.SetEmptyExt();
-
-	// Ogre -> DOM
+	// Attributes, export (Ogre -> DOM)
 	this->doExportNotSelectedChildToo = true;
 	this->doExportMeshFiles = true;
 	this->doOverwriteWhileExport = true;
 
-	// Explicit initialisation // TODO: integrity-check, range-check
-	this->Log = Log;
-	
-	this->PrototypeNameMgr = PrototypeNameMgr;
+	// Attributes, both
+	this->qSceneManager = qSceneManager;
+	this->qDotSceneManager = qDotSceneManager;
+	this->qResourceGroup = qResourceGroup;
 
-	this->SceneManagerName = SceneManagerName;
-	this->UniqueNameOfDotSceneManager = UniqueNameOfDotSceneManager,
-	this->UniqueNameOfAssociatedResourceGroup = UniqueNameOfAssociatedResourceGroup;
+	this->LocationOfMeshFiles = wxFileName(wxFileName::GetCwd());
+	this->LocationOfMeshFiles.SetName(wxString());
+	this->LocationOfMeshFiles.SetEmptyExt();
 }
-
 DotSceneBaseConfiguration::~DotSceneBaseConfiguration(void) { }

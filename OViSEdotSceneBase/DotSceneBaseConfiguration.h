@@ -1,4 +1,16 @@
+/********************************************************************************
+ * Name:      DotSceneBaseConfiguration.h										*
+ * Purpose:   This class holds parameters, which are neccessary for im- & export*
+ *			  dotScene-files(prototypes.										*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef DOTSCENE_BASE_CONFIGURATION_H_
 #define DOTSCENE_BASE_CONFIGURATION_H_
 
@@ -8,7 +20,6 @@
 
 // Solution's includes
 #include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/Logging.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 
 // Include Ogre
@@ -17,29 +28,27 @@
 class DotSceneBaseConfiguration
 {
 public:
-	DotSceneBaseConfiguration(	wxString SceneManagerName,
-								wxString UniqueNameOfDotSceneManager,
-								wxString UniqueNameOfAssociatedResourceGroup);
+	DotSceneBaseConfiguration(	QualifiedName qSceneManager,
+								QualifiedName qDotSceneManager,
+								QualifiedName qResourceGroup);
 	~DotSceneBaseConfiguration(void);
 
-	bool doAttachNodes; // <--
-	bool doAttachExternals; // <--
-	bool doAttachEnvironment; // <--
+	// Attributes, import
+	bool doAttachNodes;
+	bool doAttachExternals;
+	bool doAttachEnvironment;
+	SceneNodeOffset SceneOffset;
 
-	wxFileName LocationOfMeshFiles; // <--
+	// Attributes, export
+	bool doExportNotSelectedChildToo;
+	bool doExportMeshFiles;
+	bool doOverwriteWhileExport;
 
-	bool doExportNotSelectedChildToo; // <--
-	bool doExportMeshFiles; // <--
-	bool doOverwriteWhileExport; // <--
-
-	wxString SceneManagerName; // <--
-	wxString UniqueNameOfDotSceneManager; // <--
-	wxString UniqueNameOfAssociatedResourceGroup; // <--
-
-	SceneNodeOffset SceneOffset; // <--
-
-	void SetUniqueName(wxString UniqueNameOfDotSceneManager); // <--
-	void SetUniqueNameOfOwnedResourceGroup(wxString UniqueNameOfOwnedResourceGroup); // <--
+	// Attributes, both
+	QualifiedName qSceneManager;
+	QualifiedName qDotSceneManager;
+	QualifiedName qResourceGroup;
+	wxFileName LocationOfMeshFiles;
 };
 
 #endif /*DOTSCENE_BASE_CONFIGURATION_H_*/

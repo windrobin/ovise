@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef XML_MANAGER_H_
 #define XML_MANAGER_H_
 
