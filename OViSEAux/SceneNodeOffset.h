@@ -1,4 +1,18 @@
+/********************************************************************************
+ * Name:      SceneNodeOffset.h													*
+ * Purpose:   This class defines a offset-collection, which is used, when a 	*
+ *			  prototype is placed into ogre-engine. The collection includes		*
+ *			  offsets for position (x,y,z), rotation (r,p,y) and scale(x,y,z).	*
+ *			  Simple global operators on Ogre::SceneNode are supported too.		*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef SCENENODE_OFFSET_H_
 #define SCENENODE_OFFSET_H_
 
@@ -9,27 +23,37 @@ class SceneNodeOffset
 {
 private:
 	// Offset-properties
-	double ScaleOffset;
+	Ogre::Vector3 ScaleOffset;
 	Ogre::Vector3 PositionOffset;
 	Ogre::Degree RollOffset , PitchOffset, YawOffset;
+	Ogre::Node::TransformSpace TS;
 
 public:
 	// De- & Constructors
-	SceneNodeOffset(void);
+	SceneNodeOffset();
 	~SceneNodeOffset(void);
 
-	// Acessors of offset-properies
-	double GetScaleOffset() const;
+	// Acessors, offset-properies
+	Ogre::Vector3 GetScaleOffset() const;
 	Ogre::Vector3 GetPositionOffset() const;
 	Ogre::Degree GetRollOffset() const;
 	Ogre::Degree GetPitchOffset() const;
 	Ogre::Degree GetYawOffset() const;
 
-	void SetScaleOffset(double);
-	void SetPositionOffset(Ogre::Vector3);
-	void SetRollOffset(Ogre::Degree);
-	void SetPitchOffset(Ogre::Degree);
-	void SetYawOffset(Ogre::Degree);
+	void SetScaleOffset(Ogre::Vector3 ScaleOffset);
+	void SetPositionOffset(Ogre::Vector3 PositionOffset);
+	void SetRollOffset(Ogre::Degree value);
+	void SetPitchOffset(Ogre::Degree value);
+	void SetYawOffset(Ogre::Degree value);
+
+	// Accessors, Transforming Space, default is TS_PARENT
+	Ogre::Node::TransformSpace GetTransformSpace();
+	void SetTransformSpace(Ogre::Node::TransformSpace TS);
 };
+
+// Operators
+Ogre::SceneNode* operator+(SceneNodeOffset OS, Ogre::SceneNode* pSN);
+Ogre::SceneNode* operator+(Ogre::SceneNode* pSN, SceneNodeOffset OS);
+Ogre::SceneNode* operator-(Ogre::SceneNode* pSN, SceneNodeOffset OS);
 
 #endif /*SCENENODE_OFFSET_H_*/

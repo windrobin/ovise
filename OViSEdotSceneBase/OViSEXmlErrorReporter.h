@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef OVISE_XML_ERRORREPORTER_H_
 #define OVISE_XML_ERRORREPORTER_H_
 
