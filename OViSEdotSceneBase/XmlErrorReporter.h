@@ -1,3 +1,14 @@
+/********************************************************************************
+ * Name:      XmlErrorReporter.h												*
+ * Purpose:   Code describes a class, handling validation-, read- and write-	*
+ *			  error. Any error will be send to log.								*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
 
 #ifndef OVISE_XML_ERRORREPORTER_H_
@@ -17,14 +28,14 @@
 // Include STD
 #include <string>
 
-class OViSEXmlErrorReporter : xercesc::ErrorHandler
+class XmlErrorReporter : xercesc::ErrorHandler
 {
 private:
 	bool mFoundErrors;
-	Logging* mLog;
+
 public:
-	OViSEXmlErrorReporter();
-	~OViSEXmlErrorReporter();
+	XmlErrorReporter();
+	~XmlErrorReporter();
 
 	void fatalError(const xercesc::SAXParseException& fatalE);
     void error(const xercesc::SAXParseException& defaultE);

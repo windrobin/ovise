@@ -1,8 +1,19 @@
-#include "OViSEXmlErrorReporter.h"
+/********************************************************************************
+ * Name:      XmlErrorReporter.cpp												*
+ * Purpose:   Code implements a class, handling validation-, read- and write-	*
+ *			  error. Any error will be send to log.								*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-13														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
 
-OViSEXmlErrorReporter::OViSEXmlErrorReporter() : mFoundErrors(false) { this->mLog = new Logging(); }
-OViSEXmlErrorReporter::~OViSEXmlErrorReporter() { delete this->mLog; }
-void OViSEXmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
+#include "../OViSEdotSceneBase/XmlErrorReporter.h"
+
+XmlErrorReporter::XmlErrorReporter() : mFoundErrors(false) { }
+XmlErrorReporter::~XmlErrorReporter() { }
+void XmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 {
 	this->mFoundErrors = true;
 
@@ -30,16 +41,16 @@ void OViSEXmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Critical);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Critical);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Critical);
 }
 
-void OViSEXmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
+void XmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
 {
 	this->mFoundErrors = true;
 
@@ -67,16 +78,16 @@ void OViSEXmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Normal);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Normal);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Normal);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Normal);
 }
 
-void OViSEXmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
+void XmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
 {
 	this->mFoundErrors = true;
 
@@ -104,21 +115,21 @@ void OViSEXmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
 				<< ToWxString(", column ")
 				<< tColumnNumber
 				<< ToWxString("!");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Trivial);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Trivial);
 
 	ParsingMsg.Clear();
 	ParsingMsg	<< ToWxString("Xerces3.0 Message: \"")
 				<< tMessage
 				<< ToWxString("\"");
-	this->mLog->WriteToOgreLog(ParsingMsg, Logging::Trivial);
+	Logging::GetSingletonPtr()->WriteToOgreLog(ParsingMsg, Logging::Trivial);
 }
 
-void OViSEXmlErrorReporter::resetErrors()
+void XmlErrorReporter::resetErrors()
 {
 	this->mFoundErrors = false;
 }
 
-bool OViSEXmlErrorReporter::HasValidationErrors() const
+bool XmlErrorReporter::HasValidationErrors() const
 {
 	return this->mFoundErrors;
 }
