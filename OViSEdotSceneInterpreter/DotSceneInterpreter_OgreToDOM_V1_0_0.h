@@ -1,4 +1,18 @@
+/********************************************************************************
+ * Name:      DotSceneInterpreter_OgreToDOM_V1_0_0.h							*
+ * Purpose:   This interpreter inherits from abstract class						*
+ *			  DotSceneInterpreter_OgreToDOM. It redefines all abstract methods  *
+ *			  of its partent, according to the (modified and repaired)			*
+ *			  dotScene1.0.0 standard.											*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-16														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
 #pragma once
+
 #ifndef DOTSCENE_INTERPRETER_OGRE_TO_DOM_V1_0_0_H_
 #define DOTSCENE_INTERPRETER_OGRE_TO_DOM_V1_0_0_H_
 
@@ -32,7 +46,7 @@ public:
 
 	// Inherited methods
 	virtual ScenePrototype* Interpretation(	wxString NotUniquePrototypeName,
-											OViSESelectionMap Selection,
+											QualifiedNameCollection Selection,
 											DotSceneBaseConfiguration* Configuration);
 };
 
