@@ -39,6 +39,7 @@ OViSESceneHandling::OViSESceneHandling()
 //ID#0002//
 void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 {
+	/*
 	// Create default grid
 	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->addEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
 
@@ -56,6 +57,7 @@ void OViSESceneHandling::createDefaultScene(wxString sceneManagerName)
 	globalLight->setDirection(0, -1, 0);
 
 	OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
+	*/
 }
 
 //ID#0001//already implemented in OgreAPIMediator
@@ -219,6 +221,7 @@ void OViSESceneHandling::clearObjectSelection(std::string sceneManagerName)
 //ID#0001//outdated
 void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection, std::string sceneManagerName)
 {
+	/*
 	try
 	{
 		mObjectSelectionsMap[sceneManagerName][movObj->getName()] = movObj;
@@ -240,6 +243,7 @@ void OViSESceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool 
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't add object to object selection!");
 	}
+	*/
 }
 
 //ID#0001//outdated
@@ -605,7 +609,7 @@ void OViSESceneHandling::release()
 //ID#0001//outdated
 wxArrayString OViSESceneHandling::GetAvailablePrototypesOfDotSceneManager()
 {
-	return wxArrayString(); //this->mDotSceneMgr->GetImportedScenePrototypes();
+	return wxArrayString(); //this->mDotSceneMgr->GetImportedmPrototypes();
 }
 
 
