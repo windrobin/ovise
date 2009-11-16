@@ -1,13 +1,24 @@
-#include "DotSceneInterpreter_DOMToOgre_V1_0_0.h"
+/********************************************************************************
+ * Name:      DotSceneInterpreter_DOMToOgre_V1_0_0.cpp							*
+ * Purpose:   This interpreter inherits from abstract class						*
+ *			  DotSceneInterpreter_DOMToOgre. It implements all redefined		*
+ *			  abstract methods of its partent, according to the (modified 		*
+ *			  and repaired) dotScene1.0.0 standard.								*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-16														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
+#include "../OViSEdotSceneInterpreter/DotSceneInterpreter_DOMToOgre_V1_0_0.h"
 
 DotSceneInterpreter_DOMToOgre_V1_0_0::DotSceneInterpreter_DOMToOgre_V1_0_0() { }
 DotSceneInterpreter_DOMToOgre_V1_0_0::~DotSceneInterpreter_DOMToOgre_V1_0_0() { }
-
-void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, wxString UniqueNameOfScene)
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup)
 {
 
 }
-
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
 {
 	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
@@ -61,7 +72,6 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Nodes(xercesc::DOMElem
 
 	this->mSceneRootNode->setVisible(Visible, CascadeVisibility);*/
 }
-
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElement* DOMElement_node,
 																Ogre::SceneNode* ParentNode)
 {
@@ -143,7 +153,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->addSceneNode(NewNode_name, ParentNode);
+	QualifiedName* qSN = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(NewNode_name, ParentNode);
+	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qSN);
 
 	if (NewNode != 0)
 	{
@@ -209,7 +220,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	xercesc::DOMNodeList *AnimationsElements = 0, *animationStatesElements = 0;
 	xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_meshLODBias = 0, *DOMElement_materialLODBias = 0, *DOMElement_userDataReference = 0;
 
-	// STEP 2: Create all possible attributes... 
+	// STEP 2: Create all possible attributes... // "robot.mesh" as dummy ;-)
 	wxString NewEntity_name, NewEntity_id, NewEntity_meshFile = ToWxString("robot.mesh") , NewEntity_materialName, NewEntity_softwareAnimationRequests, NewEntity_softwareAnimationRequestsNormalsAlso;
 	bool NewEntity_displaySkeleton = false, NewEntity_polygonModeOverrideable = false, NewEntity_vertexBufferUseShadow = false, NewEntity_indexBufferUseShadow = false;
 	wxString NewEntity_vertexBufferUsage = ToWxString("staticWriteOnly"), NewEntity_indexBufferUsage = ToWxString("staticWriteOnly"); // <- enum
@@ -275,27 +286,23 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	// STEP 4: Create unique new Ogre::Entity
 	LogMsg.Clear();
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
-	this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
+	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 
-	//Ogre::Entity* NewEntity = this->AttachEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->addEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	QualifiedName* qE = OgreAPIMediator::GetSingletonPtr()->CreateEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->GetEntityPtr(*qE);
 
 	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << ToWxString(NewEntity->getName()) << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
-	this->Configuration->Log->WriteToOgreLog(LogMsg, Logging::Normal);
+	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE->UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
+	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 }
-
-
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
 {
 
 }
-
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Environment(xercesc::DOMElement* DOMElement_environment)
 {
 
 }
-
 Ogre::Vector3 DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector3 * * * * * * * * *
@@ -316,7 +323,6 @@ Ogre::Vector3 DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Vector3(xerce
 
 	return Ogre::Vector3(fX, fY, fZ);
 }
-
 Ogre::Vector4 DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4)
 {
 	// * * * * * * * * Interpretation of different elements, representing a Ogre::Vector4 * * * * * * * * *
@@ -341,8 +347,6 @@ Ogre::Vector4 DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Vector4(xerce
 
 	return Ogre::Vector4(fX, fY, fZ, fW);
 }
-
-
 Ogre::Quaternion DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Quaternion(xercesc::DOMElement* DOMElement_Quaternion)
 {
 	// * * * * * * * * Interpretation of  a Ogre::Quaternion * * * * * * * * *
@@ -367,21 +371,19 @@ Ogre::Quaternion DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Quaternion
 
 	return Ogre::Quaternion(fX, fY, fZ, fW);
 }
-
-
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(xercesc::DOMDocument* DOMRepresentationOfScene)
 {
 	return DotSceneInterpreter_DOMToOgre::GetVersionString(DOMRepresentationOfScene).IsSameAs(ToWxString("1.0.0"));
 }
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument* DOMRepresentationOfScene,
-															wxString AnchorNodeName,
+															QualifiedName* qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration)
 {
 	// Check format version (!)
 	if ( !this->IsValidFormatVersion(DOMRepresentationOfScene) ) return false;
 	
 	// Call of inherided method. Provides a basic setup and calls inplicid sub-methods for necessary interpretations...
-	bool ReturnValue =  this->Interpretation_DOMScene(DOMRepresentationOfScene, AnchorNodeName, Configuration);
+	bool ReturnValue =  this->Interpretation_DOMScene(DOMRepresentationOfScene, qAnchorNodeName, Configuration);
 
 	if ( ReturnValue ) OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
 	return ReturnValue;

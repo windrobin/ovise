@@ -1,4 +1,17 @@
-#include "DotSceneInterpreter_OgreToDOM_V1_0_0.h"
+/********************************************************************************
+ * Name:      DotSceneInterpreter_OgreToDOM_V1_0_0.cpp							*
+ * Purpose:   This interpreter inherits from abstract class						*
+ *			  DotSceneInterpreter_OgreToDOM. It implements all redefined		*
+ *			  abstract methods of its partent, according to the (modified 		*
+ *			  and repaired) dotScene1.0.0 standard.								*
+ * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Created:   2009-11-16														*
+ * Copyright: Henning Renartz,													*
+ *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+ * License:																		*
+ ********************************************************************************/
+
+#include "../OViSEdotSceneInterpreter/DotSceneInterpreter_OgreToDOM_V1_0_0.h"
 
 void DotSceneInterpreter_OgreToDOM_V1_0_0::SetVersionString(wxString VersionString) { this->VersionString = VersionString; }
 DotSceneInterpreter_OgreToDOM_V1_0_0::DotSceneInterpreter_OgreToDOM_V1_0_0(void)
@@ -99,7 +112,7 @@ xercesc::DOMElement* DotSceneInterpreter_OgreToDOM_V1_0_0::Interpretation_Entity
 			Ogre::MaterialPtr MatPtr = SubEnt->getMaterial();
 			wxString MatName;
 			MatName << ToWxString("ENTITY-MATERIAL-NAME (FILE?)") << ToWxString(MatPtr->getName());
-			this->Configuration->Log->WriteToOgreLog(MatName, Logging::Normal);
+			Logging::GetSingletonPtr()->WriteToOgreLog(MatName, Logging::Normal);
 
 		}
 	}
@@ -187,7 +200,7 @@ bool DotSceneInterpreter_OgreToDOM_V1_0_0::IsValidFormatVersion(wxString Version
 	return VersionStringForExport.IsSameAs(ToWxString("1.0.0"));
 }
 ScenePrototype* DotSceneInterpreter_OgreToDOM_V1_0_0::Interpretation(	wxString NotUniquePrototypeName,
-																		OViSESelectionMap Selection,
+																		QualifiedNameCollection Selection,
 																		DotSceneBaseConfiguration* Configuration)
 {
 	if (this->Interpretation_OgreScene(NotUniquePrototypeName, Selection, Configuration)) return this->Prototype;

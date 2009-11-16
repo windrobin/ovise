@@ -71,18 +71,18 @@ public:
 	bool IsValid();
 
 	// DELETE OLD ----------------------------------------------------------------------
-
+/*
 	// Get & Set properies
 	Ogre::SceneManager* GetSceneManagerByRef();
 	wxString GetSceneManagerByName();
 	bool SetSceneManagerByRef(Ogre::SceneManager* SceneMgr);
 	bool SetSceneManagerByName(wxString SceneMgrName);
-
+*/
 	// wxEvent handling
 	void SendSelectionChanged();
 	void SendOgreChanged();
 	void OnOgreChanged(wxCommandEvent& event);
-
+/*
 	// API to Ogre
 	// Get...
 	wxArrayString getSceneManagerNames();
@@ -115,7 +115,7 @@ public:
 	bool removeEntity(wxString UniqueName);
 	bool removeLight(wxString UniqueName);
 	bool removeSceneNode(wxString UniqueName, bool RemoveRecursive = true);
-	
+	*/
 	// DELETE OLD ----------------------------------------------------------------------
 
 	// NEW // Attributes, public
