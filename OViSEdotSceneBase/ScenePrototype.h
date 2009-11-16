@@ -46,6 +46,8 @@ public:
 	QualifiedName			GetName();
 	xercesc::DOMDocument*	GetDOMRepresentation();
 
+	bool Rename(wxString NewNativeName);
+
 	ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation);
 	ScenePrototype(QualifiedName qName, xercesc::DOMDocument* DOMRepresentation);
 	ScenePrototype(const ScenePrototype& ToCopy);

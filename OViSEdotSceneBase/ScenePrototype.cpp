@@ -17,6 +17,15 @@
 void ScenePrototype::SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation) { this->DOMRepresentation = DOMRepresentation; }
 QualifiedName ScenePrototype::GetName() { return this->qName; }
 xercesc::DOMDocument* ScenePrototype::GetDOMRepresentation() { return this->DOMRepresentation; }
+bool ScenePrototype::Rename(wxString NewNativeName)
+{
+	if ( !this->qName.IsValid() ) return false;
+	
+	this->qName.Destroy();
+
+	this->qName = QualifiedName::Create(NewNativeName, ToWxString("Prototype"));
+	return true;
+}
 ScenePrototype::ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation)
 {
 	this->qName = QualifiedName::Create(NativeName, ToWxString("Prototype"));

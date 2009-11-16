@@ -12,8 +12,16 @@ PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, OViSEDot
 
 	this->setupPrototypeProperties();
 	this->mPrototypeList->Clear();
-	this->mPrototypeList->Append(this->mDotSceneMgr->GetImportedScenePrototypes());
 
+	if (this->mDotSceneMgr->GetImportedPrototypes().GetCount() > 0)
+	{
+		wxArrayString AS;
+		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+		{
+			AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
+		}
+		this->mPrototypeList->Append(AS);
+	}
 	this->Update();
 }
 
@@ -25,11 +33,11 @@ void PrototypeManagementDialog::setupPrototypeProperties()
 	this->mPrototypeProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
 
 	this->mPrototypeProperties->Append(new wxPropertyCategory(ToWxString("Prototype Names")));
-	this->mPrototypeProperties->Append(new wxStringProperty(ToWxString("Unique"), ToWxString("UniqueName")));
-	this->mPrototypeProperties->SetPropertyValidator(ToWxString("UniqueName"), wxTextValidator(wxFILTER_ASCII));
-	this->mPrototypeProperties->DisableProperty(ToWxString("UniqueName"));
-	this->mPrototypeProperties->Append(new wxStringProperty(ToWxString("Original"), ToWxString("OriginalName")));
-	this->mPrototypeProperties->SetPropertyValidator(ToWxString("OriginalName"), wxTextValidator(wxFILTER_ASCII));
+	this->mPrototypeProperties->Append(new wxStringProperty(ToWxString("Qualified"), ToWxString("QualifiedName")));
+	this->mPrototypeProperties->SetPropertyValidator(ToWxString("QualifiedName"), wxTextValidator(wxFILTER_ASCII));
+	this->mPrototypeProperties->DisableProperty(ToWxString("QualifiedName"));
+	this->mPrototypeProperties->Append(new wxStringProperty(ToWxString("Native"), ToWxString("NativeName")));
+	this->mPrototypeProperties->SetPropertyValidator(ToWxString("NativeName"), wxTextValidator(wxFILTER_ASCII));
 
 	this->mPrototypeProperties->Append(new wxPropertyCategory(ToWxString("Prototype Data")));
 	this->mPrototypeProperties->Append(new wxDirProperty(ToWxString("Path"), ToWxString("ResourceBaseDir")));
@@ -44,16 +52,16 @@ void PrototypeManagementDialog::setupPrototypeProperties()
 	this->mPrototypeProperties->SetPropertyValidator(ToWxString("MaterialFiles"), wxTextValidator(wxFILTER_ASCII));
 }
 
-void PrototypeManagementDialog::setPrototypeProperties(wxString UniquePrototypeName)
+void PrototypeManagementDialog::setPrototypeProperties(QualifiedName qPrototype)
 {
-	this->mSelectedUniquePrototypeName = UniquePrototypeName;
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("UniqueName"), this->mSelectedUniquePrototypeName);
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("OriginalName"), this->mDotSceneMgr->GetPrototypeOriginalName(this->mSelectedUniquePrototypeName));
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("ResourceBaseDir"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).ResourceBaseDir);
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("AllFiles"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).Files);
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("XMLFiles"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).XMLFiles);
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("MeshFiles"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).MeshFiles);
-	this->mPrototypeProperties->SetPropertyValue(ToWxString("MaterialFiles"), this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName).MaterialFiles);
+	this->qSelectedPrototype = qPrototype;
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("QualifiedName"), qPrototype.UniqueName());
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("NativeName"), qPrototype.NativeName());
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("ResourceBaseDir"), this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype).ResourceBaseDir);
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("AllFiles"), this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype).Files);
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("XMLFiles"), this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype).XMLFiles);
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("MeshFiles"), this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype).MeshFiles);
+	this->mPrototypeProperties->SetPropertyValue(ToWxString("MaterialFiles"), this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype).MaterialFiles);
 }
 
 void PrototypeManagementDialog::clearPrototypeProperties()
@@ -69,17 +77,29 @@ void PrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
 	if ( ID > -1 )
 	{
 		wxString LabelEqualsUniquePrototypeName = this->mPrototypeList->GetString(ID);
-		if ( this->mDotSceneMgr->RemoveScenePrototype(LabelEqualsUniquePrototypeName) )
+		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
+		if (QNames.GetCount() == 1)
 		{
-			this->clearPrototypeProperties();
-			this->mSelectedUniquePrototypeName.Clear();
+			if ( this->mDotSceneMgr->RemoveScenePrototype(QNames[0]) )
+			{
+				this->clearPrototypeProperties();
+				this->qSelectedPrototype = QualifiedName();
 
-			this->mPrototypeList->Clear();
-			this->mPrototypeList->Append( this->mDotSceneMgr->GetImportedScenePrototypes() );
+				this->mPrototypeList->Clear();
+				if (this->mDotSceneMgr->GetImportedPrototypes().GetCount() > 0)
+				{
+					wxArrayString AS;
+					for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+					{
+						AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
+					}
+					this->mPrototypeList->Append(AS);
+				}
 
-			this->mRemoveButton->Disable();
-			this->mExportButton->Disable();
-			this->mAttachButton->Disable();
+				this->mRemoveButton->Disable();
+				this->mExportButton->Disable();
+				this->mAttachButton->Disable();
+			}
 		}
 	}
 }
@@ -98,12 +118,12 @@ void PrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 		wxFileName CurrentFullPath(ResultingFullPaths[iter]);
 		if ( CurrentFullPath.GetExt().IsSameAs(ToWxString("xml")) )
 		{
-			wxString UniquePrototypeName = this->mDotSceneMgr->ImportScenePrototype(CurrentFullPath);
-			if ( !UniquePrototypeName.IsEmpty() )
+			QualifiedName qPrototype = this->mDotSceneMgr->ImportScenePrototype(CurrentFullPath);
+			if ( !qPrototype.IsValid() )
 			{
-				int newItemID = this->mPrototypeList->Append(UniquePrototypeName);
+				int newItemID = this->mPrototypeList->Append(qPrototype.UniqueName());
 				this->mPrototypeList->Select(newItemID);
-				this->setPrototypeProperties(UniquePrototypeName);
+				this->setPrototypeProperties(qPrototype);
 
 				this->mRemoveButton->Enable();
 				this->mExportButton->Enable();
@@ -114,9 +134,9 @@ void PrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 }
 void PrototypeManagementDialog::OnClickExport( wxCommandEvent& event )
 {
-	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
+	if ( this->qSelectedPrototype.IsValid() )
 	{
-		wxFileDialog* FDlg = new wxFileDialog( this, ToWxString("Select dotScene-XML file to export"), wxFileName::GetCwd(), this->mDotSceneMgr->GetPrototypeOriginalName(this->mSelectedUniquePrototypeName), ToWxString("*.xml"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
+		wxFileDialog* FDlg = new wxFileDialog( this, ToWxString("Select dotScene-XML file to export"), wxFileName::GetCwd(), this->qSelectedPrototype.NativeName(), ToWxString("*.xml"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT );
 		int ReturnCode = FDlg->ShowModal();
 
 		wxArrayString ResultingFullPaths;
@@ -129,7 +149,7 @@ void PrototypeManagementDialog::OnClickExport( wxCommandEvent& event )
 			if ( ResultingFullPaths.Count() > 0 )
 			{
 				wxFileName DestinationURL(ResultingFullPaths[0]);
-				this->mDotSceneMgr->ExportScenePrototype(this->mSelectedUniquePrototypeName, DestinationURL);
+				this->mDotSceneMgr->ExportScenePrototype(this->qSelectedPrototype, DestinationURL);
 			}
 		}
 	}
@@ -140,12 +160,12 @@ void PrototypeManagementDialog::OnClickBuild( wxCommandEvent& event )
 	wxString VersionString = ToWxString("1.0.0");
 	wxString NotUniquePrototypeName = ToWxString("Unnamend");
 	
-	wxString UniquePrototypeName = this->mDotSceneMgr->MakePrototypeFromOgreScene(NotUniquePrototypeName, SelectionManager::getSingletonPtr()->Selection, VersionString);
-	if ( !UniquePrototypeName.IsEmpty() )
+	QualifiedName qPrototype = this->mDotSceneMgr->MakePrototypeFromOgreScene(NotUniquePrototypeName, SelectionManager::getSingletonPtr()->Selection, VersionString);
+	if ( qPrototype.IsValid() )
 	{
-		int newItemID = this->mPrototypeList->Append(UniquePrototypeName);
+		int newItemID = this->mPrototypeList->Append(qPrototype.UniqueName());
 		this->mPrototypeList->Select(newItemID);
-		this->setPrototypeProperties(UniquePrototypeName);
+		this->setPrototypeProperties(qPrototype);
 
 		this->mRemoveButton->Enable();
 		this->mExportButton->Enable();
@@ -166,11 +186,17 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 		}
 		else AnchorNode = MO->getParentSceneNode();
 	}
-	else AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
-
-	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
+	else
 	{
-		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->mSelectedUniquePrototypeName, ToWxString(AnchorNode->getName()));
+		AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
+	}
+
+	if ( this->qSelectedPrototype.IsValid() )
+	{
+		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(ToWxString(AnchorNode->getName()));
+		QualifiedName* qAnchorSN = 0; 
+		if ( QNames.GetCount() == 1 ) qAnchorSN = new QualifiedName(QNames[0]);
+		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->qSelectedPrototype, qAnchorSN);
 	}
 
 	// OLD
@@ -200,21 +226,23 @@ void PrototypeManagementDialog::OnClickClose( wxCommandEvent& event ) { this->De
 void PrototypeManagementDialog::OnCloseDialog( wxCloseEvent& event ) {	this->Destroy(); }
 void PrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
 {
+	this->mRemoveButton->Disable();
+	this->mExportButton->Disable();
+	this->mAttachButton->Disable();
+
 	int ID = this->mPrototypeList->GetSelection();
 	if ( ID > -1 )
 	{
 		wxString LabelEqualsUniquePrototypeName = this->mPrototypeList->GetString(ID);
-		this->setPrototypeProperties(LabelEqualsUniquePrototypeName);
+		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
+		if (QNames.GetCount() == 1)
+		{
+			this->setPrototypeProperties(QNames[0]);
 
-		this->mRemoveButton->Enable();
-		this->mExportButton->Enable();
-		this->mAttachButton->Enable();
-	}
-	else
-	{
-		this->mRemoveButton->Disable();
-		this->mExportButton->Disable();
-		this->mAttachButton->Disable();
+			this->mRemoveButton->Enable();
+			this->mExportButton->Enable();
+			this->mAttachButton->Enable();
+		}
 	}
 }
 
@@ -231,61 +259,68 @@ void PrototypeManagementDialog::OnPropertyChange(wxPropertyGridEvent& event)
 	// REMEMBER: Associated prototype in containers can still be accessed by "this->mSelectedUniquePrototypeName"
 
 	bool Match = false;
-	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("UniqueName")) ) )
+	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("QualifiedName")) ) )
 	{
 		// User changed UniqueName, that not allowed
 		Match = true;
 	}
-	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("OriginalName")) ) )
+	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("NativeName")) ) )
 	{
 		// User changed OriginalName
-		wxString NewOriginalPrototypeName = this->mPrototypeProperties->GetPropertyValueAsString(ToWxString("OriginalName"));
-		this->setPrototypeProperties(this->mDotSceneMgr->RenameScenePrototype(this->mSelectedUniquePrototypeName, NewOriginalPrototypeName));
+		wxString NewNativePrototypeName = this->mPrototypeProperties->GetPropertyValueAsString(ToWxString("NativeName"));
+		this->setPrototypeProperties(this->mDotSceneMgr->RenameScenePrototype(this->qSelectedPrototype, NewNativePrototypeName));
 		this->mPrototypeList->Clear();
-		this->mPrototypeList->Append(this->mDotSceneMgr->GetImportedScenePrototypes());
+
+		wxArrayString AS;
+		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+		{
+			AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
+		}
+
+		this->mPrototypeList->Append(AS);
 	}
 	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("ResourceBaseDir")) ) )
 	{
 		// User changed ResourceBaseDir
-		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName);
+		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype);
 		Data.ResourceBaseDir = this->mPrototypeProperties->GetPropertyValueAsString(ToWxString("ResourceBaseDir"));
-		this->mDotSceneMgr->SetPrototypeData(this->mSelectedUniquePrototypeName, Data);
+		this->mDotSceneMgr->SetPrototypeData(this->qSelectedPrototype, Data);
 		Match = true;
 	}
 	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("AllFiles")) ) )
 	{
 		// User changed AllFiles
-		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName);
+		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype);
 		Data.Files.Clear();
 		Data.Files = wxArrayString(this->mPrototypeProperties->GetPropertyValueAsArrayString(ToWxString("AllFiles")));
-		this->mDotSceneMgr->SetPrototypeData(this->mSelectedUniquePrototypeName, Data);
+		this->mDotSceneMgr->SetPrototypeData(this->qSelectedPrototype, Data);
 		Match = true;
 	}
 	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("XMLFiles")) ) )
 	{
 		// User changed XMLFiles
-		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName);
+		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype);
 		Data.XMLFiles.Clear();
 		Data.XMLFiles = wxArrayString(this->mPrototypeProperties->GetPropertyValueAsArrayString(ToWxString("XMLFiles")));
-		this->mDotSceneMgr->SetPrototypeData(this->mSelectedUniquePrototypeName, Data);
+		this->mDotSceneMgr->SetPrototypeData(this->qSelectedPrototype, Data);
 		Match = true;
 	}
 	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("MeshFiles")) ) )
 	{
 		// User changed MeshFiles
-		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName);
+		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype);
 		Data.MeshFiles.Clear();
 		Data.MeshFiles = wxArrayString(this->mPrototypeProperties->GetPropertyValueAsArrayString(ToWxString("MeshFiles")));
-		this->mDotSceneMgr->SetPrototypeData(this->mSelectedUniquePrototypeName, Data);
+		this->mDotSceneMgr->SetPrototypeData(this->qSelectedPrototype, Data);
 		Match = true;
 	}
 	if ( (!Match) && ( ChangedPropertyName.IsSameAs(ToWxString("MaterialFiles")) ) )
 	{
 		// User changed MaterialFiles
-		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->mSelectedUniquePrototypeName);
+		ScenePrototypeData Data = this->mDotSceneMgr->GetPrototypeData(this->qSelectedPrototype);
 		Data.MaterialFiles.Clear();
 		Data.MaterialFiles = wxArrayString(this->mPrototypeProperties->GetPropertyValueAsArrayString(ToWxString("MaterialFiles")));
-		this->mDotSceneMgr->SetPrototypeData(this->mSelectedUniquePrototypeName, Data);
+		this->mDotSceneMgr->SetPrototypeData(this->qSelectedPrototype, Data);
 		Match = true;
 	}
 

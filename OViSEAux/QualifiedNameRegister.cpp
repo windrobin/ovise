@@ -15,6 +15,8 @@
 QualifiedNameRegister* QualifiedNameRegister::instance = 0;
 QualifiedNameRegister::QualifiedNameRegister(void)
 {
+	this->AllocatedGenericNames = HashMap_wxString();
+	this->StoredGenericHints = HashMap_wxString();
 }
 
 QualifiedNameRegister::~QualifiedNameRegister(void)

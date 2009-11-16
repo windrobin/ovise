@@ -1,4 +1,4 @@
-#include "OViSEDotSceneManager.h"
+#include "../OViSE/OViSEDotSceneManager.h"
 
 // De- & Constructors
 OViSEDotSceneManager::OViSEDotSceneManager(DotSceneBaseConfiguration *Configuration)
@@ -6,36 +6,41 @@ OViSEDotSceneManager::OViSEDotSceneManager(DotSceneBaseConfiguration *Configurat
 	this->mValid = true;
 
 	// Store factory's configuration...
-	this->SetConfiguration(Configuration);
+	if ( Configuration == 0 ) this->SetConfiguration(OViSEDotSceneManager::CreateDefaultConfiguration());
+	else this->SetConfiguration(Configuration);
 	
-	// Create data-structures in ogre's engine for this factory... // TODO: check, if already exists!!!
-	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(ToOgreString(this->GetUniqueNameOfAssociatedResourceGroup()));
+	// Create data-structures in ogre's engine for this factory... // TODO: MOVE TO OgreAPIMediator
+	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(ToOgreString(this->GetAssociatedResourceGroup().UniqueName()));
 	
 	// Setup managers for delegated functions...
-	this->Log = this->GetConfiguration()->Log;
 	this->mXmlMgr = new XmlManager(this->GetConfiguration());
 }
 OViSEDotSceneManager::~OViSEDotSceneManager()
 {
-	// TODO: Scenes löschen?
+	// TODO: delete Scenes?
 	delete this->mXmlMgr;
 }
 
 // Accessors of general properies
 void OViSEDotSceneManager::SetConfiguration(DotSceneBaseConfiguration* Configuration) { if (Configuration != 0) this->mConfiguration = Configuration; }
 DotSceneBaseConfiguration* OViSEDotSceneManager::GetConfiguration() { return this->mConfiguration; }
-wxString OViSEDotSceneManager::GetUniqueName() { return this->GetConfiguration()->UniqueNameOfDotSceneManager; }
-wxString OViSEDotSceneManager::GetUniqueNameOfAssociatedResourceGroup() { return this->GetConfiguration()->UniqueNameOfAssociatedResourceGroup; }
+QualifiedName OViSEDotSceneManager::GetSceneManager() { return this->GetConfiguration()->qSceneManager; }
+QualifiedName OViSEDotSceneManager::GetName() { return this->GetConfiguration()->qDotSceneManager; }
+QualifiedName OViSEDotSceneManager::GetAssociatedResourceGroup() { return this->GetConfiguration()->qResourceGroup; }
+QualifiedNameCollection	OViSEDotSceneManager::GetImportedPrototypes() { return this->mQPrototypes; }
 // Static methods
-DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration(wxString UniqueDotSceneManagerName, wxString SceneManagerName)
+DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration()
 {
-	DotSceneBaseConfiguration *DefaultConfiguration = new DotSceneBaseConfiguration(
-			new Logging(),
-			new UniqueNameManager(ToWxString("Prototype")),
-			SceneManagerName,
-			UniqueDotSceneManagerName,
-			UniqueDotSceneManagerName); // Name of DotSceneManager == name of ogre-resourcegroup
+	// Create default values
+	wxString NativeName = ToWxString("DEFAULT_DOTSCENEMANAGER");
+	QualifiedName qSceneManager = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
+	QualifiedName qDotSceneManager = QualifiedName::Create(NativeName, ToWxString("DotSceneManager"));
+	QualifiedName qResourceGroup = QualifiedName::Create(NativeName, ToWxString("ResourceGroup"));
 
+	// Create configuration
+	DotSceneBaseConfiguration *DefaultConfiguration = new DotSceneBaseConfiguration(qSceneManager, qDotSceneManager, qResourceGroup);
+
+	// Set minimal interpretation
 	DefaultConfiguration->doAttachEnvironment = false;
 	DefaultConfiguration->doAttachExternals = false;
 	DefaultConfiguration->doAttachNodes = true;
@@ -49,67 +54,70 @@ wxString OViSEDotSceneManager::GetURLofDotSceneXSD() { return this->mXmlMgr->Get
 wxString OViSEDotSceneManager::GetURLofExportPath() { return this->mXmlMgr->GetURLofExportPath(); }
 bool OViSEDotSceneManager::IsReadyToExport() { return this->mXmlMgr->IsReadyToExport(); }
 bool OViSEDotSceneManager::IsReadyToImport() { return this->mXmlMgr->IsReadyToImport(); }
-
-wxArrayString OViSEDotSceneManager::GetImportedScenePrototypes()
-{ 
-	wxArrayString KeyCollection;
-
-	for ( HashMap_ScenePrototypes::iterator iter = this->ScenePrototypes.begin(); iter != this->ScenePrototypes.end(); ++iter )
-	{
-		wxString Key = iter->first;
-		KeyCollection.Add(Key);
-	}
-
-	return KeyCollection;
-}
-
-bool OViSEDotSceneManager::SetPrototypeData(wxString UniquePrototypeName, ScenePrototypeData NewData)
+bool OViSEDotSceneManager::SetPrototypeData(QualifiedName qPrototype, ScenePrototypeData NewData)
 {
-	ScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
+	// Validate parameters
+	if ( !qPrototype.IsValid() ) return false;
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return false;
+	
+	// Get and validate ScenePrototype
+	ScenePrototype* Prototype = this->mPrototypes[qPrototype.UniqueName()];
 	if (Prototype == 0) return false;
-	else
-	{
-		Prototype->Data = NewData;
-		return true;
-	}
+
+	// Set data
+	Prototype->Data = NewData;
+	return true;
 }
 
-ScenePrototypeData OViSEDotSceneManager::GetPrototypeData(wxString UniquePrototypeName)
+ScenePrototypeData OViSEDotSceneManager::GetPrototypeData(QualifiedName qPrototype)
 {
-	ScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
+	// Validate parameters
+	if ( !qPrototype.IsValid() ) return ScenePrototypeData();
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return ScenePrototypeData();
+	
+	// Get and validate ScenePrototype
+	ScenePrototype* Prototype = this->mPrototypes[qPrototype.UniqueName()];
 	if (Prototype == 0) return ScenePrototypeData();
-	else return Prototype->Data;
+	
+	// Get data
+	return Prototype->Data;
 }
-
-
-wxString OViSEDotSceneManager::GetPrototypeOriginalName(wxString UniquePrototypeName)
-{
-	ScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
-	if (Prototype == 0) return wxString();
-	else return Prototype->GetOriginalName();
-}
-bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(wxString UniquePrototypeName, wxString AnchorNodeName)
+bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName* qAnchorNode)
 {
 	bool Match = false;
 	bool ReturnValue = false;
 
-	ScenePrototype* Prototype = this->ScenePrototypes[UniquePrototypeName];
+	// Validate parameter (valid?)
+	if ( !qPrototype.IsValid() ) return false;
+
+	// Validate parameter (correct type?)
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return false;
+
+	// Validate parameter (valid?)
+	if ( qAnchorNode != 0 )
+	{
+		if ( !qAnchorNode->IsValid() ) return false;
+
+		// Validate parameter (correct type?)
+		if ( !OgreAPIMediator::GetSingletonPtr()->HasSceneNode(*qAnchorNode) ) return false;
+	}
+
+	ScenePrototype* Prototype = this->mPrototypes[qPrototype.UniqueName()];
 	if (Prototype == 0) return false;
 
 	if ((!Match) && DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(Prototype->GetDOMRepresentation()))
 	{
 		DotSceneInterpreter_DOMToOgre_V1_0_0 Interpreter;
-		ReturnValue = Interpreter.Interpretation(Prototype->GetDOMRepresentation(), AnchorNodeName, this->GetConfiguration());
+		ReturnValue = Interpreter.Interpretation(Prototype->GetDOMRepresentation(), qAnchorNode, this->GetConfiguration());
 	}
 	
 	// <---- TODO: Implement priority-list-selcetion!
 	// while(!Match) { Nimm nächsten interpreter von liste; Match = prüfe version interpreter; wenn Match -> interpreter erzeugen + interpretation starten; }
 
-	if (ReturnValue) return true;
-	else return false;
+	return ReturnValue;
 }
 
-wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport)
+QualifiedName OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport)
 {
 	/*bool Match = false;
 	ScenePrototype* NewPrototype = 0;
@@ -132,53 +140,73 @@ wxString OViSEDotSceneManager::MakePrototypeFromOgreScene(wxString NotUniqueProt
 
 	if (Match) return NewPrototype->GetUniqueName();
 	else */
-	return wxString();
+	return QualifiedName();
 }
 
-bool OViSEDotSceneManager::ExportScenePrototype(wxString UniquePrototypeName, wxFileName DestinationURL)
+bool OViSEDotSceneManager::ExportScenePrototype(QualifiedName qPrototype, wxFileName DestinationURL)
 {
-	ScenePrototype* TempPrototype = this->ScenePrototypes[UniquePrototypeName];
-	if (TempPrototype == 0) return false;
-	else return this->mXmlMgr->ExportScenePrototype(TempPrototype, DestinationURL);
-}
+	// Validate parameters (valid?)
+	if ( !qPrototype.IsValid() ) return false;
 
-wxString OViSEDotSceneManager::ImportScenePrototype(wxFileName URLofXML)
+	// Validate parameters (correct type?)
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return false;
+
+	ScenePrototype* pPrototype = this->mPrototypes[qPrototype.UniqueName()];
+	if (pPrototype == 0) return false;
+	else return this->mXmlMgr->ExportScenePrototype(pPrototype, DestinationURL);
+}
+QualifiedName OViSEDotSceneManager::ImportScenePrototype(wxFileName URLofXML)
 {
-	ScenePrototype* TempPrototype = this->mXmlMgr->ImportScenePrototype(URLofXML);
-	if (TempPrototype == 0) return wxString();
+	ScenePrototype* pPrototype = this->mXmlMgr->ImportScenePrototype(URLofXML);
+	if (pPrototype == 0) return QualifiedName();
 	else
 	{
-		this->ScenePrototypes[TempPrototype->GetUniqueName()] = TempPrototype;
-		return TempPrototype->GetUniqueName();
+		this->mPrototypes[pPrototype->GetName().UniqueName()] = pPrototype;
+		this->mQPrototypes.Add(pPrototype->GetName());
+		return pPrototype->GetName();
 	}
 }
 
-bool OViSEDotSceneManager::RemoveScenePrototype(wxString UniquePrototypeName)
+bool OViSEDotSceneManager::RemoveScenePrototype(QualifiedName qPrototype)
 {
-	ScenePrototype* TempPrototype = this->ScenePrototypes[UniquePrototypeName];
-	if (TempPrototype == 0) return false;
+	// Validate parameters (valid?)
+	if ( !qPrototype.IsValid() ) return false;
+
+	// Validate parameters (correct type?)
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return false;
+
+	ScenePrototype* pPrototype = this->mPrototypes[qPrototype.UniqueName()];
+	if (pPrototype == 0) return false;
 	else
 	{
-		this->ScenePrototypes.erase(UniquePrototypeName);
-		delete TempPrototype;
-		this->GetConfiguration()->PrototypeNameMgr->DeallocateUniqueName(UniquePrototypeName);
+		this->mPrototypes.erase(qPrototype.UniqueName());
+		QualifiedNameCollectionInterface::CollectionRemove(this->mQPrototypes, qPrototype, false);
+		qPrototype.Destroy();
+		delete pPrototype;
 		return true;
 	}
 }
 
-wxString OViSEDotSceneManager::RenameScenePrototype(wxString OldUniquePrototypeName, wxString OriginalPrototypeName)
+QualifiedName OViSEDotSceneManager::RenameScenePrototype(QualifiedName qPrototype, wxString NewNativePrototypeName)
 {
-	ScenePrototype* TempPrototype = this->ScenePrototypes[OldUniquePrototypeName];
-	if (TempPrototype == 0) return wxEmptyString;
+	// Validate parameters (valid?)
+	if ( !qPrototype.IsValid() ) return QualifiedName();
+
+	// Validate parameters (correct type?)
+	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return QualifiedName();
+
+	ScenePrototype* pPrototype = this->mPrototypes[qPrototype.UniqueName()];
+	if (pPrototype == 0) return QualifiedName();
 	else
 	{
-		this->ScenePrototypes.erase(OldUniquePrototypeName);
-		this->GetConfiguration()->PrototypeNameMgr->DeallocateUniqueName(OldUniquePrototypeName);
-		wxString NewUniquePrototypeName = this->GetConfiguration()->PrototypeNameMgr->AllocateUniqueName(OriginalPrototypeName);
-		TempPrototype->SetUniqueName(NewUniquePrototypeName);
-		TempPrototype->SetOriginalName(OriginalPrototypeName); 
-		this->ScenePrototypes[TempPrototype->GetUniqueName()] = TempPrototype;
-		return NewUniquePrototypeName;
+		this->mPrototypes.erase(pPrototype->GetName().UniqueName());
+		QualifiedNameCollectionInterface::CollectionRemove(this->mQPrototypes, qPrototype, false);
+		
+		pPrototype->Rename(NewNativePrototypeName);
+
+		this->mPrototypes[pPrototype->GetName().UniqueName()] = pPrototype;
+		this->mQPrototypes.Add(pPrototype->GetName());
+		return pPrototype->GetName();
 	}
 }
 

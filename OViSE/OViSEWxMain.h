@@ -96,9 +96,6 @@ class OViSEWxFrame: public GUIFrame
 		void UnselectObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
 		void RemoveAllSelectedObjects();
 
-
-		Logging Log;
-
 		// NEW // DotSceneManager
 		/// Standard factory for dotScene loading
 		OViSEDotSceneManager *mDotSceneMgr;

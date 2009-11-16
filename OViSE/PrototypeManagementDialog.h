@@ -37,10 +37,10 @@ private:
 	bool mValid;
 	wxString mResultingUniqueNameOfPrototype;
 
-	wxString mSelectedUniquePrototypeName;
+	QualifiedName qSelectedPrototype;
 
 
-	void setPrototypeProperties(wxString UniquePrototypeName);
+	void setPrototypeProperties(QualifiedName qPrototype);
 	void clearPrototypeProperties();
 
 protected:

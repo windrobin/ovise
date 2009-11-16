@@ -31,6 +31,7 @@ OgreAPIMediator::~OgreAPIMediator(void) { this->DestroySceneManager(); }
 // General
 bool OgreAPIMediator::IsValid() { return this->Valid; }
 // Get & Set properies
+/*
 Ogre::SceneManager* OgreAPIMediator::GetSceneManagerByRef() { return this->SceneMgr; }
 wxString OgreAPIMediator::GetSceneManagerByName() { return this->SceneMgrName; }
 bool OgreAPIMediator::SetSceneManagerByRef(Ogre::SceneManager* SceneMgr)
@@ -68,6 +69,7 @@ bool OgreAPIMediator::SetSceneManagerByName(wxString SceneMgrName)
 
 	return this->Valid;
 }
+*/
 void OgreAPIMediator::SendSelectionChanged()
 {
 	/*
@@ -94,6 +96,7 @@ void OgreAPIMediator::OnOgreChanged(wxCommandEvent& event)
 }
 // API to Ogre
 // Get names of...
+/*
 wxArrayString OgreAPIMediator::getSceneManagerNames()
 {
 	wxArrayString AS;
@@ -260,6 +263,7 @@ Ogre::SceneNode* OgreAPIMediator::addSceneNode(wxString NotUniqueName, Ogre::Sce
 	this->OgreChanged = true;
 	return NewSN;
 }
+*/
 // Handling
 bool OgreAPIMediator::SetActiveSceneManager(QualifiedName qSceneManager)
 {
@@ -1063,6 +1067,7 @@ bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
 }
 
 // Remove objects
+/*
 bool OgreAPIMediator::removeCamera(wxString UniqueName)
 {
 	if (!this->Valid) return false;
@@ -1121,6 +1126,7 @@ bool OgreAPIMediator::removeSceneNode(wxString UniqueName, bool RemoveRecursive)
 	this->OgreChanged = true;
 	return true;
 }
+*/
 /*
 bool OViSESelection::AddMovableObject(Ogre::MovableObject* pMovableObject)
 {

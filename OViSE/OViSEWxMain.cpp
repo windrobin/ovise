@@ -87,7 +87,7 @@ OViSEWxFrame::OViSEWxFrame(wxFrame *frame, Ogre::Root *ogreRoot)
 
 	// Parking call here for a short time whil REFACTORING. H.R.
 	// Initialize DotSceneManager
-	this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName()));
+	this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration());
 }
 
 OViSEWxFrame::~OViSEWxFrame()
@@ -378,7 +378,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	// REACTORING of "OViSESceneHandling" takes affect here! //
 
 	Ogre::Camera *cam = win->GetCamera();
-	Ogre::MovableObject *selectedObject = mSceneHdlr->getSelectedObject(sx, sy, d, cam, cam->getSceneManager()->getName());
+	//Ogre::MovableObject *selectedObject = mSceneHdlr->getSelectedObject(sx, sy, d, cam, cam->getSceneManager()->getName());
 	QualifiedNameCollection QNames = OgreAPIMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, cam, OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
 	
 	if(!QNames.IsEmpty())
@@ -721,19 +721,19 @@ void OViSEWxFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 			wxString ItemLabel = this->mSceneTree->GetItemText(SelectedItems[IT]);
 			Msg << ToWxString(" '") << ItemLabel << ("' ");
 			
-			//OViSEOgreEnums::MovableObject::MovableType Type = OViSESelectionManager::getSingletonPtr()->Selection.SelectedObjects[ItemLabel];
-			Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->getMovableObjectPtr(
-				SceneManagerName,
-				ItemLabel);
-
-			if(SelectedObject != NULL)
+			QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(ItemLabel);
+			if (QNames.GetCount() == 1)
 			{
-				this->AddSelectedObject(SelectedObject, ToWxString(this->mMainRenderWin->GetCamera()->getSceneManager()->getName()));
+				Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(QNames[0]);
+				if(SelectedObject != NULL)
+				{
+					this->AddSelectedObject(SelectedObject, ToWxString(this->mMainRenderWin->GetCamera()->getSceneManager()->getName()));
+				}
 			}
 		}
 	}
 
-	this->Log.WriteToOgreLog(Msg, Log.Normal);
+	Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
 	/*
 	{
 		
