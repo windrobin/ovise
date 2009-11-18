@@ -398,7 +398,16 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wx
 		if (StrTok.HasMoreTokens()) Match = this->HandlePositionChanged(SN, StrTok.GetNextToken(), value);
 		else
 		{
-			//TODO: go futher here
+			wxVariant V;
+			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
+			
+			V = SemiSeperator.GetNextToken();
+			this->HandlePositionChanged(SN, ToWxString("px"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandlePositionChanged(SN, ToWxString("py"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandlePositionChanged(SN, ToWxString("pz"), V);
+
 			Match = true;
 		}
 	}
@@ -408,7 +417,16 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wx
 		if (StrTok.HasMoreTokens()) Match = this->HandleRotationChanged(SN, StrTok.GetNextToken(), value);
 		else
 		{
-			//TODO: go futher here
+			wxVariant V;
+			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
+			
+			V = SemiSeperator.GetNextToken();
+			this->HandleRotationChanged(SN, ToWxString("rx"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandleRotationChanged(SN, ToWxString("ry"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandleRotationChanged(SN, ToWxString("rz"), V);
+
 			Match = true;
 		}
 	}
@@ -418,7 +436,16 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wx
 		if (StrTok.HasMoreTokens()) Match = this->HandleScaleChanged(SN, StrTok.GetNextToken(), value);
 		else
 		{
-			//TODO: go futher here
+			wxVariant V;
+			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
+			
+			V = SemiSeperator.GetNextToken();
+			this->HandleScaleChanged(SN, ToWxString("sx"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandleScaleChanged(SN, ToWxString("sy"), V);
+			V = SemiSeperator.GetNextToken();
+			this->HandleScaleChanged(SN, ToWxString("sz"), V);
+
 			Match = true;
 		}
 	}
