@@ -506,14 +506,8 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 
 void OViSEWxFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 {
-	if(event.IsChecked())
-	{
-		mSceneHdlr->dynamicShadows(true);
-	}
-	else
-	{
-		mSceneHdlr->dynamicShadows(false);
-	}
+	if(event.IsChecked()) OgreAPIMediator::GetSingletonPtr()->DynamicShadows(true);
+	else OgreAPIMediator::GetSingletonPtr()->DynamicShadows(false);
 }
 
 void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
@@ -692,19 +686,84 @@ void OViSEWxFrame::OnLoadPointCloud(wxCommandEvent& event)
 
 void OViSEWxFrame::OnShowSceneStructure(wxCommandEvent &event)
 {
-	mSceneHdlr->showSceneGraphStructure();
+	bool update = false;
+	Ogre::SceneManager* SM = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
+
+	// Let's see if we're already displaying a structure
+	if(SM->hasManualObject("SceneGraphStructure"))
+	{
+		// yes, delete old structure
+		SM->destroyManualObject("SceneGraphStructure");
+		// kill all object titles
+		for(OViSEObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
+			delete *iter;
+		mObjectTitlesVector.clear();
+		// if we're not requesting an update, return
+		if(!update)	return;
+	}
+	else  // no structure found
+	{
+		if(update) return;
+			// misguided update request, there's nothing to update so don't do anything
+	}
+
+	// either we need to update an existing structure or show a new one
+
+	Ogre::ManualObject *sgs = SM->createManualObject("SceneGraphStructure");
+	// set flags, so it cannot be selected
+	sgs->setQueryFlags(0x01);
+
+	if(!Ogre::MaterialManager::getSingletonPtr()->resourceExists("SceneStructureMaterial"))
+	{
+		Ogre::MaterialPtr sgsMaterial = Ogre::MaterialManager::getSingleton().create("SceneStructureMaterial", "General");
+		sgsMaterial->setReceiveShadows(false);
+		sgsMaterial->getTechnique(0)->setLightingEnabled(true);
+		sgsMaterial->getTechnique(0)->getPass(0)->setDiffuse(1,0,0,0);
+		sgsMaterial->getTechnique(0)->getPass(0)->setAmbient(1,0,0);
+	}
+
+	Ogre::SceneManager::MovableObjectIterator iter = SM->getMovableObjectIterator("Entity");
+	while(iter.hasMoreElements())
+	{
+		Ogre::MovableObject *mobj = iter.getNext();
+		OViSEObjectTitle *tmp = new OViSEObjectTitle(mobj->getName(), mobj, SM->getCurrentViewport()->getCamera(), mobj->getName(), "BlueHighway");
+		mObjectTitlesVector.push_back(tmp);
+	}
+
+	sgs->begin("SceneStructureMaterial", Ogre::RenderOperation::OT_LINE_LIST);
+	std::list<Ogre::Node*> nodeQueue;
+	nodeQueue.push_back(SM->getRootSceneNode());
+	for(std::list<Ogre::Node*>::iterator it = nodeQueue.begin(); it != nodeQueue.end(); it++)
+	{
+		if((*it)->getName() == Ogre::String("mainCamFocusNode")) continue;
+		Ogre::Node::ChildNodeIterator iter = (*it)->getChildIterator();
+		while(iter.hasMoreElements())
+		{
+			Ogre::Node *tmp = iter.getNext();
+			if(tmp->getName() == Ogre::String("mainCamFocusNode")) continue;
+			sgs->position((*it)->_getDerivedPosition());
+			sgs->position(tmp->_getDerivedPosition());
+			nodeQueue.push_back(tmp);
+		}
+	}
+	sgs->end();
+	nodeQueue.clear();
+	SM->getRootSceneNode()->attachObject(sgs);
 }
 
 
 void OViSEWxFrame::OnTestStuff( wxCommandEvent& event )
 {
-	mSceneHdlr->testStuff();
+	this->GetHandle(); // This line is a debug-dummy
 }
 
 void OViSEWxFrame::OnStartStopFrameListeners(wxCommandEvent& event)
 {
+	/*
 	if(event.IsChecked())
 		mSceneHdlr->startStopFrameListeners(true);
 	else
 		mSceneHdlr->startStopFrameListeners(false);
+		*/
+	this->GetHandle(); // This line is a debug-dummy
 }
