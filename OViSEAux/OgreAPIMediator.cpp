@@ -1066,6 +1066,13 @@ bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
 	return true;
 }
 
+// General
+void OgreAPIMediator::DynamicShadows(bool state)
+{
+	if(state) this->mActiveSceneManagerPtr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	else this->mActiveSceneManagerPtr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+}
+
 // Remove objects
 /*
 bool OgreAPIMediator::removeCamera(wxString UniqueName)

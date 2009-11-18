@@ -176,7 +176,9 @@ public:
 	bool				DestroySceneNode(QualifiedName qSceneNode);
 
 
-	// NEW - from OViSESceneHandling // Get selected object
+	// NEW // from OViSESceneHandling // General
+	void DynamicShadows(bool state);
+
 
 };
 

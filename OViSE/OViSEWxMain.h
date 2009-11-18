@@ -26,7 +26,7 @@
 
 #include "GUIFrame.h"
 #include "wxOgreRenderWindow.h"
-#include "OViSESceneHandling.h"
+//#include "OViSESceneHandling.h"
 #include "OViSELogListener.h"
 #include "OViSESceneTree.h"
 
@@ -58,6 +58,9 @@ enum
 	PGID,
 	SCENETREE
 };
+
+/// Map containing object title instances (for updating in the frame listener)
+typedef std::vector<OViSEObjectTitle*> OViSEObjectTitleVector;
 
 /** Mainwindow of the application.
  * @todo Documentation!
@@ -127,11 +130,14 @@ class OViSEWxFrame: public GUIFrame
 		std::map<std::string, Ogre::Camera*> mAdditionalCameras;
 		std::map<std::string, wxFrame*> mViewWindows;
 
-        OViSESceneHandling *mSceneHdlr;
+        //OViSESceneHandling *mSceneHdlr;
 
 		OViSELogListener *mLogBoxListener;
 
 		//OViSEAddMeshDialog *mAddMeshDialog;
+
+		/// Map of all object titles
+		OViSEObjectTitleVector mObjectTitlesVector;
 };
 
 #endif // OVISEWXMAIN_H
