@@ -119,7 +119,7 @@ void PrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 		if ( CurrentFullPath.GetExt().IsSameAs(ToWxString("xml")) )
 		{
 			QualifiedName qPrototype = this->mDotSceneMgr->ImportScenePrototype(CurrentFullPath);
-			if ( !qPrototype.IsValid() )
+			if ( qPrototype.IsValid() )
 			{
 				int newItemID = this->mPrototypeList->Append(qPrototype.UniqueName());
 				this->mPrototypeList->Select(newItemID);

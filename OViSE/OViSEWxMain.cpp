@@ -97,7 +97,6 @@ OViSEWxFrame::~OViSEWxFrame()
 
 void OViSEWxFrame::finishOgreInitialization()
 {
-	// NEW
 	QualifiedName* qCamFokusSceneNode = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(ToWxString("mainCamFocusNode"));
 	if (qCamFokusSceneNode == 0 ) return;
 	Ogre::SceneNode *camFocusNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamFokusSceneNode);
@@ -123,7 +122,7 @@ void OViSEWxFrame::finishOgreInitialization()
     this->mCam->setFixedYawAxis(true);
 	this->mCam->setQueryFlags(0x01);
 
-	// UNCHANGED
+	// OLD // UNCHANGED
     Ogre::Viewport *mVp = mMainRenderWin->GetRenderWindow()->addViewport(mCam);
 	mMainRenderWin->SetCamera(mCam, camFocusNode);
 
@@ -174,7 +173,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mWindowManager->AddPane(mObjectProperties, wxRIGHT, wxT("Properties"));
 	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(OViSEWxFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
-	
+	/*
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Node Properties")));
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("NodeName")));
 	mObjectProperties->SetPropertyValidator(wxT("NodeName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
@@ -208,7 +207,7 @@ void OViSEWxFrame::setupObjectProperties()
 	mObjectProperties->SetPropertyValidator(wxT("MeshName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 	mObjectProperties->Append(new wxStringProperty(wxT("Material"), wxT("MeshMaterial")));
 	mObjectProperties->SetPropertyValidator(wxT("MeshMaterial"), wxTextValidator(wxFILTER_ALPHANUMERIC));
-
+	*/
 	mObjectProperties->SetSplitterLeft(true);
 }
 
@@ -365,6 +364,7 @@ void OViSEWxFrame::OnAddMeshDialogClose(wxCloseEvent& event)
 
 void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 {
+	// Collect basic information
 	wxOgreRenderWindow *win = dynamic_cast<wxOgreRenderWindow*>(event.GetEventObject());
 	wxPoint p = event.GetPosition();
 	wxPoint t = win->GetScreenPosition();
@@ -374,14 +374,18 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 	float sx = (float)s.x / (float)width;
 	float sy = (float)s.y / (float)height;
 	float d = -1;
-
-	// REACTORING of "OViSESceneHandling" takes affect here! //
-
 	Ogre::Camera *cam = win->GetCamera();
-	//Ogre::MovableObject *selectedObject = mSceneHdlr->getSelectedObject(sx, sy, d, cam, cam->getSceneManager()->getName());
+	
+	// Get QualifiedNameCollection from scene-query
 	QualifiedNameCollection QNames = OgreAPIMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, cam, OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
 	
-	if(!QNames.IsEmpty())
+	// Handle selection
+	if(QNames.IsEmpty())
+	{
+		// Nothing selected
+		this->mSceneTree->UnselectAll();
+	}
+	else
 	{
 		// CASE:				ACTION:
 		// 1:	-			->	Unselect all, Select one or nothing
@@ -400,16 +404,15 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 					if (UnselectedQNames.GetCount() > 0)
 					{
 						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollectionInterface::CollectionUnion(SelectionManager::getSingletonPtr()->Selection, UnselectedQNames);
-						for (unsigned long IT = 0; IT < UnselectedQNames.GetCount(); IT++)
+						for (unsigned long IT = 0; IT < QNames.GetCount(); IT++)
 						{
 							// Select in SceneTree-View
-							wxTreeItemId Item = this->mSceneTree->Items[UnselectedQNames[IT].UniqueName()]; // TODO: Upgrade
+							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
 							this->mSceneTree->SelectItem(Item);
 						}
 					}
 					else
 					{
-						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollectionInterface::CollectionDifference(SelectionManager::getSingletonPtr()->Selection, QNames);
 						for (unsigned long IT = 0; IT < QNames.GetCount(); IT++)
 						{
 							// Select in SceneTree-View
@@ -427,16 +430,14 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
 					if (QualifiedNameCollectionInterface::CollectionContains(SelectionManager::getSingletonPtr()->Selection, QNames[0]))
 					{
-						QualifiedNameCollectionInterface::CollectionRemove(SelectionManager::getSingletonPtr()->Selection, QNames[0], true);
-	
 						// Unelect in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 						this->mSceneTree->UnselectItem(Item);
 					}
 					else
 					{
 						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 						this->mSceneTree->SelectItem(Item);
 					}
 				}
@@ -447,16 +448,12 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 			if (event.ShiftDown())
 			{
 				// CASE 3: Unselect all, Add complete Query
-				SelectionManager::getSingletonPtr()->Selection.Clear();
 				this->mSceneTree->UnselectAll();
 
 				if (QNames.GetCount() > 0)
 				{
 					for (unsigned long IT = 0; IT < QNames.GetCount(); IT++)
 					{
-						// Add to all selection // Selection is clear, so it's not neccessary to test, if QName is already in there
-						SelectionManager::getSingletonPtr()->Selection.Add(QNames[IT]);
-						
 						// Select in SceneTree-View
 						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()]; // TODO: Upgrade
 						this->mSceneTree->SelectItem(Item);
@@ -466,14 +463,10 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 			else
 			{
 				// CASE 1: Unselect all, Select one or nothing
-				SelectionManager::getSingletonPtr()->Selection.Clear();
 				this->mSceneTree->UnselectAll();
-
+				
 				if (QNames.GetCount() > 0)
 				{
-					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
-					SelectionManager::getSingletonPtr()->Selection.Add(QNames[0]);
-
 					// Select in SceneTree-View
 					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
 					this->mSceneTree->SelectItem(Item);
@@ -481,6 +474,7 @@ void OViSEWxFrame::OnViewClick(wxMouseEvent& event)
 			}
 		}
 	}
+
 	/*
 
 		//if(!event.ControlDown()) this->RemoveAllSelectedObjects(); // ????
@@ -526,116 +520,6 @@ void OViSEWxFrame::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *prop = event.GetProperty();
 	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop);
-	/*
-    // It may be NULL
-    if ( !prop )
-        return;
-
-    // Get name of changed property
-    const wxString& name = prop->GetName();
-	std::string objname = (const char*)mObjectProperties->GetPropertyValueAsString(wxT("MeshName")).ToAscii();
-
-	OViSESelectionMap selObjs = OViSESceneHandling::getSingletonPtr()->getSelectedObjects();
-	if(selObjs.empty())
-		return;
-	Ogre::SceneNode *snode = selObjs[objname]->getParentSceneNode();
-	if(!snode)
-		return;
-	Ogre::Vector3 pos = snode->getPosition();
-	Ogre::Vector3 scale = snode->getScale();
-	Ogre::Quaternion tmprot = snode->getOrientation();
-
-	wxVariant tmp = prop->GetValue();
-	wxString tmpstr = tmp.GetString();
-
-	double vals[3];
-
-	wxStringTokenizer checker(tmpstr, wxT(";"));
-
-	if(name == wxString(wxT("Translation")))
-	{
-		for(int i=0; i<3; i++)
-		{
-			checker.GetNextToken().ToDouble(&vals[i]);
-		}
-		pos = Ogre::Vector3(vals[0], vals[1], vals[2]);
-	}
-	if(name == wxString(wxT("Translation.tx")))
-	{
-		float tx = tmp.GetDouble();
-		pos.x = tx;
-	}
-	if(name == wxString(wxT("Translation.ty")))
-	{
-		float ty = tmp.GetDouble();
-		pos.y = ty;
-	}
-	if(name == wxString(wxT("Translation.tz")))
-	{
-		float tz = tmp.GetDouble();
-		pos.z = tz;
-	}
-
-	snode->setPosition(pos);
-
-	if(name == wxString(wxT("Rotation")))
-	{
-		for(int i=0; i<3; i++)
-		{
-			checker.GetNextToken().ToDouble(&vals[i]);
-		}
-		Ogre::Radian p = Ogre::Radian(Ogre::Degree(vals[0])) - tmprot.getPitch();
-		Ogre::Radian r = Ogre::Radian(Ogre::Degree(vals[1])) - tmprot.getRoll();
-		Ogre::Radian y = Ogre::Radian(Ogre::Degree(vals[2])) - tmprot.getYaw();
-		snode->pitch(p);
-		snode->roll(r);
-		snode->yaw(y);
-	}
-	if(name == wxString(wxT("Rotation.rx")))
-	{
-		float rx = tmp.GetDouble();
-		snode->pitch(Ogre::Radian(Ogre::Degree(rx)) - tmprot.getPitch());
-	}
-	if(name == wxString(wxT("Rotation.ry")))
-	{
-		float ry = tmp.GetDouble();
-		snode->pitch(Ogre::Radian(Ogre::Degree(ry)) - tmprot.getRoll());
-	}
-	if(name == wxString(wxT("Rotation.rz")))
-	{
-		float rz = tmp.GetDouble();
-		snode->pitch(Ogre::Radian(Ogre::Degree(rz)) - tmprot.getYaw());
-	}
-
-	if(name == wxString(wxT("Scale")))
-	{
-		for(int i=0; i<3; i++)
-		{
-			checker.GetNextToken().ToDouble(&vals[i]);
-		}
-		scale = Ogre::Vector3(vals[0], vals[1], vals[2]);
-	}
-	if(name == wxString(wxT("Scale.sx")))
-	{
-		float sx = tmp.GetDouble();
-		scale.x = sx;
-	}
-	if(name == wxString(wxT("Scale.sy")))
-	{
-		float sy = tmp.GetDouble();
-		scale.y = sy;
-	}
-	if(name == wxString(wxT("Scale.sz")))
-	{
-		float sz = tmp.GetDouble();
-		scale.z = sz;
-	}
-
-	snode->setScale(scale);
-
-	*/
-	// call update for scene structure
-	mSceneHdlr->showSceneGraphStructure(true);
 }
 
 void OViSEWxFrame::setObjectProperties(Ogre::MovableObject *object)
@@ -697,117 +581,69 @@ void OViSEWxFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 
 	wxString Msg = ToWxString("SELECTED ITEMS:");
 
-	if (!Item.IsOk()) // case : UnselectAll()
-	{
-		this->RemoveAllSelectedObjects();
-	}
-	else // case : UnselectItem(...)
+	if (!Item.IsOk()) this->RemoveAllSelectedObjects();
+	else
 	{
 		wxString TreeItemLabel = this->mSceneTree->GetItemText(Item);
-
-		Ogre::MovableObject* selectedObject = this->mSceneHdlr->getSelectedObject(TreeItemLabel, this->mSceneMgr);
-
-		this->RemoveAllSelectedObjects();
-
-		wxArrayTreeItemIds SelectedItems;
-		this->mSceneTree->GetSelections(SelectedItems);
-
-		wxString SceneManagerName;// = SelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-
-		
-		int count = SelectedItems.Count();
-		for(unsigned int IT = 0; IT < SelectedItems.Count(); IT++)
+		QualifiedName* pqName = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(TreeItemLabel);
+		if (pqName != 0)
 		{
-			wxString ItemLabel = this->mSceneTree->GetItemText(SelectedItems[IT]);
-			Msg << ToWxString(" '") << ItemLabel << ("' ");
-			
-			QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(ItemLabel);
-			if (QNames.GetCount() == 1)
-			{
-				Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(QNames[0]);
-				if(SelectedObject != NULL)
-				{
-					this->AddSelectedObject(SelectedObject, ToWxString(this->mMainRenderWin->GetCamera()->getSceneManager()->getName()));
-				}
-			}
+			if (this->mSceneTree->IsSelected(Item)) this->AddSelectedObject(*pqName);
+			else this->RemoveSelectedObject(*pqName);
 		}
 	}
-
 	Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
-	/*
-	{
-		
-
-		//this->ToogleSelectedObject(selectedObject, ToWxString(this->mMainRenderWin->GetCamera()->getSceneManager()->getName()));
-		
-		
-	}*/
 }
 
-void OViSEWxFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName)
+void OViSEWxFrame::AddSelectedObject(QualifiedName qSelectedObject)
 {
-	/*
-	//mSceneHdlr->addObjectToSelection(selectedObject, true, ToStdString(SceneManagerName));
-	//setObjectProperties(selectedObject);
-
-	// #Mark:NewSelection#
-
-	wxString ObjectName = ToWxString(selectedObject->getName());
-
-	/SelectionManager::getSingletonPtr()->Selection.setSceneManagerName(SceneManagerName);
-	/*if (OViSESelectionManager::getSingletonPtr()->Selection.hasMovableObject(ObjectName))
+	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	if (MO != 0)
 	{
-		// Remove from selection
-		OViSESelectionManager::getSingletonPtr()->Selection.removeMovableObject(ObjectName); // Toggle item
-		
-		// Hide bounding box
-		selectedObject->getParentSceneNode()->showBoundingBox(false);
+		if (!QualifiedNameCollectionInterface::CollectionContains(SelectionManager::getSingletonPtr()->Selection, qSelectedObject))
+			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);
+		MO->getParentSceneNode()->showBoundingBox(true);
+		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
 	}
-	else
-	{*//*
-		// Add to selection
-		OgreEnums::MovableObject::MovableType Type = OViSEOgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getStringAsEnum(ToWxString(selectedObject->getMovableType()));
-		SelectionManager::getSingletonPtr()->Selection.addMovableObject(ObjectName, Type);
-		
-		// Show bounding box
-		selectedObject->getParentSceneNode()->showBoundingBox(true);
-	//}
+}
 
-	SelectionManager::getSingletonPtr()->generatePropertyGridContentFromSelection(this->mObjectProperties);
-	*/
+void OViSEWxFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
+{
+	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	if (MO != 0)
+	{
+		QualifiedNameCollectionInterface::CollectionRemove(SelectionManager::getSingletonPtr()->Selection, qSelectedObject, false);
+		MO->getParentSceneNode()->showBoundingBox(false);
+		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+	}
 }
 
 void OViSEWxFrame::RemoveAllSelectedObjects()
 {
-	//this->mSceneHdlr->clearObjectSelection(/*cam->getSceneManager()->getName()*/);
-	//clearObjectProperties();
-	/*
-	wxArrayString Keys = SelectionManager::getSingletonPtr()->Selection.getAllMovableObjectNames();
-	wxString NameOfSceneManager = OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-	for (int IT = 0; IT < Keys.Count(); IT++)
+	// Remove all BoundingBoxes
+	if (SelectionManager::getSingletonPtr()->Selection.GetCount() != 0)
 	{
-		wxString SceneManagerName = OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-		OViSEOgreEnums::MovableObject::MovableType Type = OViSESelectionManager::getSingletonPtr()->Selection.SelectedObjects[Keys[IT]];
-
-		Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->getMovableObjectPtr(
-			OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName(),
-			Keys[IT],
-			Type);
-
-		if(SelectedObject != NULL) SelectedObject->getParentSceneNode()->showBoundingBox(false);
+		for (unsigned long IT = 0; IT < SelectionManager::getSingletonPtr()->Selection.GetCount(); IT++)
+		{
+			QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
+			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+			if (MO != 0)
+			{
+				MO->getParentSceneNode()->showBoundingBox(false);
+			}
+		}
 	}
-	// #Mark:NewSelection#
-	OViSESelectionManager::getSingletonPtr()->Selection.removeAll();
 
+	// Clear selection
+	SelectionManager::getSingletonPtr()->Selection.Empty();
+
+	// Clear propertygrid
 	this->mObjectProperties->Clear();
-	*/
 }
 void OViSEWxFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {
 	PrototypeManagementDialog *PrototypeManagementDlg = new PrototypeManagementDialog(this, this->mDotSceneMgr);
-	//PrototypeManagementDlg->SetAvailablePrototypes(this->mSceneHdlr->GetAvailablePrototypesOfDotSceneManager());
 	PrototypeManagementDlg->ShowModal();
-	//this->mSceneHdlr->AttachNewScene(AttachSceneDlg->GetResultingUniqueNameOfPrototype());
 	delete PrototypeManagementDlg;
 }
 

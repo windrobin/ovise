@@ -92,8 +92,8 @@ class OViSEWxFrame: public GUIFrame
 
 		void OnTreeSelectionChanged( wxTreeEvent& event );
 
-		void AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
-		void UnselectObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
+		void AddSelectedObject(QualifiedName qSelectedObject);
+		void RemoveSelectedObject(QualifiedName qSelectedObject);
 		void RemoveAllSelectedObjects();
 
 		// NEW // DotSceneManager
