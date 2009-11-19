@@ -13,7 +13,9 @@
 #pragma once
 
 // Include WX
+#include <wx/string.h>
 #include <wx/hashmap.h>
+#include <wx/arrstr.h> 
 
 // WX container declarations (Attention: use of makros)
 WX_DECLARE_STRING_HASH_MAP(wxString, HashMap_wxString);
@@ -27,6 +29,11 @@ private:
 	// Singleton
 	static QualifiedNameRegister* instance;
 
+	// Attributes // HashMaps allow access in O(1)
+	wxArrayString AllocatedGenericNames;
+	HashMap_wxString StoredNativeNames;
+	HashMap_wxString StoredGenericHints;
+
 public:
 	// De- & Constructors
 	~QualifiedNameRegister(void);
@@ -34,7 +41,7 @@ public:
 	// Singleton
 	static QualifiedNameRegister* GetSingletonPtr();
 
-	// Attributes // HashMaps allow access in O(1)
-	HashMap_wxString AllocatedGenericNames;
-	HashMap_wxString StoredGenericHints;
+	// Methods, generic name
+	wxString	AllocateQualifiedName(wxString NativeName, wxString GenericHint);
+	bool		DeallocateQualifiedName(wxString GenericName);	
 };
