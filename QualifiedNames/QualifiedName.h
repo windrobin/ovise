@@ -49,11 +49,8 @@
 
 #pragma once
 
-// Include WX
-#include <wx/arrstr.h> 
-
 // Solution's includes
-#include "../QualifiedNames/QualifiedNameRegister.h"
+#include "../QualifiedNames/QualifiedNameManager.h"
 
 class QualifiedName
 {
@@ -61,12 +58,7 @@ private:
 	// Attributes, data
 	// String will be part of generic name. Users can add an additional part to generic name.
 	// For example, if users want to differentiate between special classifications.
-	wxString mGenericName, mNativeName;
-	wxString mGenericHint;
-
-	// Methods, managing generic name
-	wxString AllocateGenericName();
-	bool DeallocateGenericName();
+	wxString mGenericName;
 
 public:
 	// De- & Constructors, standard and copy ctor only for handling qualified names
@@ -85,50 +77,28 @@ public:
 	bool Destroy();
 	bool IsValid();
 
-	// Methods, access to names
-	wxString GenericHint();
+	// Methods, access to names // If you don't know what first and second is: use this human-readable methods ;-)
+	wxString GenericHint();	// Get generic hint
+	wxString GenericName(); // Get generic name. Format is like this: "_<generic hint>_<generic tail>"
+	wxString NativeName();	// Get native name
+	wxString UniqueName();	// Get the unique combination of generic and native name. Format is like this: "<native name>_<generic hint>_<generic tail>"
 
-	// If you don't know what first and second is: use this human-readable methods ;-)
-	wxString GenericName();
-	wxString NativeName();
+	// Methods, comparision
+	bool Equals(QualifiedName QName);			// Check, if QualifiedName-objects are equal in native and generic part
+	bool EqualsNative(QualifiedName QName);		// Check, if QualifiedName-objects are equal in native part
+	bool EqualsGeneric(QualifiedName QName);	// Check, if QualifiedName-objects are equal in generic part
+	bool EqualsHint(QualifiedName QName);		// Check, if QualifiedName-objects have same generic hint
+	bool operator==(QualifiedName QName);		// Overload operator== , behavior like bool Equals(QualifiedName QName)
+	bool operator!=(QualifiedName QName);		// Overload operator!= , behavior like NOT(bool Equals(QualifiedName QName))
+	bool ContainsSubString(wxString SubString); // Check, if QualifiedName.Unique() contains substring
 
-	// Get the unique combination of generic and native name. Format is this: "<native name>_<generic hint>_<generic tail>"
-	wxString UniqueName();
+	// Methods, get, static
+	static QualifiedName GetQualifiedNameByGeneric(wxString GenericName);	// Get QualifiedName by generic name
+	static QualifiedName GetQualifiedNameByUnique(wxString UniqueName);		// Get QualifiedName by unique name
 
-	// Check, if QualifiedName-objects are equal in native and generic part
-	bool Equals(QualifiedName QName);
-	
-	// Check, if QualifiedName-objects are equal in native part
-	bool EqualsNative(QualifiedName QName);
-	
-	// Check, if QualifiedName-objects are equal in generic part
-	bool EqualsGeneric(QualifiedName QName);
-	
-	// Check, if QualifiedName-objects have same generic hint
-	bool EqualsHint(QualifiedName QName);
-	
-	// Overload operator== and operator!= ,behavior like bool Equals(QualifiedName QName)
-	bool operator==(QualifiedName QName);
-	bool operator!=(QualifiedName QName);
-
-	// Methods, static
-	// Get QualifiedName by generic name (that's unique, so only a wxString is returned)
-	static QualifiedName* GetQualifiedNameByGeneric(wxString GenericName);
-
-	// Get generic names by native names (returns a wxStringArray of generic names)
-	static wxArrayString GetGenericByNative(wxString NativeName);
-
-	// Get generic names by generic hint (returns a wxStringArray of generic names)
-	static wxArrayString GetGenericByHint(wxString GenericHint);
-
-	// Get generic names by substring of unique name (returns a wxStringArray of generic names)
-	static wxArrayString GetGenericBySubString(wxString SubString);
-
-	// Get all generic names (returns a wxStringArray of generic names)
-	static wxArrayString GetGenericNames();
-
-	// Check, if a QualifiedName with a given generic name exists.
-	static bool HasQualifiedNameWithGenericName(wxString GenericName);
+	// Methods, has, static
+	static bool HasQualifiedNameWithGeneric(wxString GenericName);	// Get QualifiedName by generic name
+	static bool HasQualifiedNameWithUnique(wxString UniqueName);		// Get QualifiedName by unique name
 };
 
 
