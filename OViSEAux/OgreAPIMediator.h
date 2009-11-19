@@ -18,8 +18,7 @@
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/EnumsForABetterWorld.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
-#include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/QualifiedNameCollectionInterface.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/ObjectManager.h"
 //#include "../OViSE/OViSEDotSceneManager.h"
 
@@ -140,11 +139,11 @@ public:
 	bool				HasSceneNode(QualifiedName qSceneNode);
 
 	// NEW // Get QualifiedName by pointer
-	QualifiedName*		GetQualifiedName(Ogre::Camera* pCamera);
-	QualifiedName*		GetQualifiedName(Ogre::Entity* pEntity);
-	QualifiedName*		GetQualifiedName(Ogre::Light* pLight);
-	QualifiedName*		GetQualifiedName(Ogre::SceneManager* pSceneManager);
-	QualifiedName*		GetQualifiedName(Ogre::SceneNode* pSceneNode);
+	QualifiedName		GetQualifiedName(Ogre::Camera* pCamera);
+	QualifiedName		GetQualifiedName(Ogre::Entity* pEntity);
+	QualifiedName		GetQualifiedName(Ogre::Light* pLight);
+	QualifiedName		GetQualifiedName(Ogre::SceneManager* pSceneManager);
+	QualifiedName		GetQualifiedName(Ogre::SceneNode* pSceneNode);
 
 	// NEW // Get pointer by QualifiedName
 	Ogre::Camera*		GetCameraPtr(QualifiedName qCamera);

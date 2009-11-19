@@ -5,8 +5,7 @@
 
 // Solution's includes
 #include "../OViSEAux/StringConverter.h"
-#include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/QualifiedNameCollectionInterface.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 
 #include "../OViSEAux/EnumsForABetterWorld.h"
 #include "../OViSEAux/MovableTypeTranslator.h"

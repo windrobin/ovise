@@ -344,7 +344,7 @@ QualifiedNameCollection OgreAPIMediator::GetQueryObjects(float screenx, float sc
 	Ogre::RaySceneQueryResult &RayScanResult = Q->execute();
 	if(RayScanResult.size() != 0)
 	{
-		for(int IT = 0; IT < RayScanResult.size(); IT++)
+		for(unsigned long IT = 0; IT < RayScanResult.size(); IT++)
 		{
 			Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[IT];
 			Ogre::MovableObject* MO = RayScanResultEntry.movable;
@@ -423,95 +423,59 @@ QualifiedName* OgreAPIMediator::GetQueryBackObject(float screenx, float screeny,
 bool OgreAPIMediator::HasCamera(QualifiedName qCamera)
 {
 	if (this->GetCameraPtr(qCamera) != 0) return true;
-	else false;
+	else return false;
 }
 bool OgreAPIMediator::HasEntity(QualifiedName qEntity)
 {
 	if (this->GetEntityPtr(qEntity) != 0) return true;
-	else false;
+	else return false;
 }
 bool OgreAPIMediator::HasLight(QualifiedName qLight)
 {
 	if (this->GetLightPtr(qLight) != 0) return true;
-	else false;
+	else return false;
 }
 bool OgreAPIMediator::HasSceneManager(QualifiedName qSceneManager)
 {
 	if (this->GetSceneManagerPtr(qSceneManager) != 0) return true;
-	else false;
+	else return false;
 }
 bool OgreAPIMediator::HasSceneNode(QualifiedName qSceneNode)
 {
 	if (this->GetSceneNodePtr(qSceneNode) != 0) return true;
-	else false;
+	else return false;
 }
 // Get QualifiedName by pointer
-QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Camera* pCamera)
+QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Camera* pCamera)
 {
-	QualifiedName* qCamera = 0;
-
 	wxString UniqueName = ToWxString(pCamera->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		qCamera = new QualifiedName(QNames[0]);
-	}
-
-	return qCamera;
+	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	return qName;
 }
-QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Entity* pEntity)
+QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Entity* pEntity)
 {
-	QualifiedName* qEntity = 0;
-
 	wxString UniqueName = ToWxString(pEntity->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		qEntity = new QualifiedName(QNames[0]);
-	}
-
-	return qEntity;
+	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	return qName;
 }
-QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::Light* pLight)
+QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Light* pLight)
 {
-	QualifiedName* qLight = 0;
-
 	wxString UniqueName = ToWxString(pLight->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		qLight = new QualifiedName(QNames[0]);
-	}
-
-	return qLight;
+	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	return qName;
 }
-QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::SceneManager* pSceneManager)
+QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::SceneManager* pSceneManager)
 {
-	QualifiedName* qSceneManager = 0;
-
 	wxString UniqueName = ToWxString(pSceneManager->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		qSceneManager = new QualifiedName(QNames[0]);
-	}
-
-	return qSceneManager;
+	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	return qName;
 }
-QualifiedName* OgreAPIMediator::GetQualifiedName(Ogre::SceneNode* pSceneNode)
+QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::SceneNode* pSceneNode)
 {
-	QualifiedName* qSceneNode = 0;
-
 	wxString UniqueName = ToWxString(pSceneNode->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		qSceneNode = new QualifiedName(QNames[0]);
-	}
-
-	return qSceneNode;
+	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	return qName;
 }
-
 // Get pointer by QualifiedName
 Ogre::Camera*		OgreAPIMediator::GetCameraPtr(QualifiedName qCamera)
 {
@@ -969,12 +933,8 @@ bool OgreAPIMediator::DestroySceneManager(QualifiedName qSceneManager)
 	// Destroy recusive: childnodes
 	Ogre::SceneNode* RSN = SM->getRootSceneNode();
 	wxString UniqueName = ToWxString(RSN->getName());
-	QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-	if (QNames.Count() > 0)
-	{
-		QualifiedName qRootSceneNode = QNames[0];
-		this->DestroySceneNode(qRootSceneNode);
-	}
+	QualifiedName qRootSceneNode = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+	if (qRootSceneNode.IsValid()) this->DestroySceneNode(qRootSceneNode);
 
 	// Movable objects are destroy implicit!
 
@@ -1022,12 +982,8 @@ bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
 	{
 		Ogre::SceneNode* SN_Child = (Ogre::SceneNode*)IT_ChildSN.getNext();
 		wxString UniqueName = ToWxString(SN_Child->getName());
-		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-		if (QNames.Count() > 0)
-		{
-			QualifiedName qChildSceneNode = QNames[0];
-			this->DestroySceneNode(qChildSceneNode);
-		}
+		QualifiedName qChildSceneNode = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+		if (qChildSceneNode.IsValid()) this->DestroySceneNode(qChildSceneNode);
 	}
 
 	// Destroy recusive: movable objects
@@ -1036,10 +992,9 @@ bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
 	{
 		Ogre::MovableObject* MO = IT_MobObj.getNext();
 		wxString UniqueName = ToWxString(MO->getName());
-		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(UniqueName);
-		if (QNames.Count() > 0)
+		QualifiedName qMovableObject = QualifiedName::GetQualifiedNameByUnique(UniqueName);
+		if (qMovableObject.IsValid())
 		{
-			QualifiedName qMovableObject = QNames[0];
 			SM->destroyMovableObject(MO);
 
 			// Remove QualifiedName from ObjectManager

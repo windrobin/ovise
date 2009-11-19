@@ -19,7 +19,7 @@
 #include <wx/filename.h>
 
 // Solution's includes
-#include "../OViSEAux/QualifiedName.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 
 // Include Ogre

@@ -18,8 +18,9 @@
 #define SCENE_PROTOTYPE_H_
 
 // Solutuion's inludes
+#include "../QualifiedNames/QualifiedNameCollection.h"
+#include "../OViSEAux/StringConverter.h"
 #include "../OViSEdotSceneBase/ScenePrototypeData.h"
-#include "../OViSEAux/QualifiedName.h"
 
 // Include Xerces
 #include <xercesc/util/XMLString.hpp>
