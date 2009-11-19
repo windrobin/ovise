@@ -177,18 +177,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\QualifiedName.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\QualifiedNameCollectionInterface.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\QualifiedNameRegister.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\SceneNodeOffset.cpp"
 				>
 			</File>
@@ -228,22 +216,6 @@
 			</File>
 			<File
 				RelativePath=".\OgreAPIMediator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\OViSEException.h"
-				>
-			</File>
-			<File
-				RelativePath=".\QualifiedName.h"
-				>
-			</File>
-			<File
-				RelativePath=".\QualifiedNameCollectionInterface.h"
-				>
-			</File>
-			<File
-				RelativePath=".\QualifiedNameRegister.h"
 				>
 			</File>
 			<File

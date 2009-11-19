@@ -23,12 +23,11 @@
 #include <wx/hashmap.h>
 
 // Solution's includes
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 #include "../OViSEdotSceneBase/ScenePrototype.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/Logging.h"
-#include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/QualifiedNameCollectionInterface.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 #include "../OViSEAux/EnumsForABetterWorld.h"
 

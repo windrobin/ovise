@@ -72,9 +72,9 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 	HashMap_DOMPointer BlackList_STAGE2; // List of already created nodes/DOMElements
 	
 	// STEP 1: Generate Stage 2 WhiteList == Selected SceneNodes (WhilteList_STAGE1)
-	if (this->Selection.GetCount() > 0)
+	if (!this->Selection.IsEmpty())
 	{
-		for (unsigned long IT = 0; IT < this->Selection.GetCount(); IT++)
+		for (unsigned long IT = 0; IT < this->Selection.Count(); IT++)
 		{
 			// OLD: OViSESelectionMap uses objects of Ogre::MovableObject and not Ogre::Node or Ogre::SceneNode.
 			// OLD: First get these nodes, then find out if a Ogre::Node is a Ogre::SceneNode
