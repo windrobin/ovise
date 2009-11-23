@@ -13,10 +13,10 @@ PrototypeManagementDialog::PrototypeManagementDialog( wxWindow* parent, OViSEDot
 	this->setupPrototypeProperties();
 	this->mPrototypeList->Clear();
 
-	if (this->mDotSceneMgr->GetImportedPrototypes().GetCount() > 0)
+	if (this->mDotSceneMgr->GetImportedPrototypes().Count() > 0)
 	{
 		wxArrayString AS;
-		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().Count(); IT++)
 		{
 			AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
 		}
@@ -77,19 +77,19 @@ void PrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
 	if ( ID > -1 )
 	{
 		wxString LabelEqualsUniquePrototypeName = this->mPrototypeList->GetString(ID);
-		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
-		if (QNames.GetCount() == 1)
+		QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
+		if (qName.IsValid())
 		{
-			if ( this->mDotSceneMgr->RemoveScenePrototype(QNames[0]) )
+			if ( this->mDotSceneMgr->RemoveScenePrototype(qName) )
 			{
 				this->clearPrototypeProperties();
 				this->qSelectedPrototype = QualifiedName();
 
 				this->mPrototypeList->Clear();
-				if (this->mDotSceneMgr->GetImportedPrototypes().GetCount() > 0)
+				if (this->mDotSceneMgr->GetImportedPrototypes().Count() > 0)
 				{
 					wxArrayString AS;
-					for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+					for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().Count(); IT++)
 					{
 						AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
 					}
@@ -176,7 +176,7 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 {
 	Ogre::SceneNode* AnchorNode;
 
-	if (SelectionManager::getSingletonPtr()->Selection.GetCount() > 0)
+	if (SelectionManager::getSingletonPtr()->Selection.Count() > 0)
 	{
 		QualifiedName qNameOfFirst = SelectionManager::getSingletonPtr()->Selection[0];
 		Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qNameOfFirst);
@@ -193,9 +193,7 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 
 	if ( this->qSelectedPrototype.IsValid() )
 	{
-		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(ToWxString(AnchorNode->getName()));
-		QualifiedName* qAnchorSN = 0; 
-		if ( QNames.GetCount() == 1 ) qAnchorSN = new QualifiedName(QNames[0]);
+		QualifiedName qAnchorSN = QualifiedName::GetQualifiedNameByUnique(ToWxString(AnchorNode->getName()));
 		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->qSelectedPrototype, qAnchorSN);
 	}
 
@@ -234,10 +232,10 @@ void PrototypeManagementDialog::OnProtoTypeListSelect( wxCommandEvent& event )
 	if ( ID > -1 )
 	{
 		wxString LabelEqualsUniquePrototypeName = this->mPrototypeList->GetString(ID);
-		QualifiedNameCollection QNames = QualifiedNameCollectionInterface::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
-		if (QNames.GetCount() == 1)
+		QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(LabelEqualsUniquePrototypeName);
+		if (qName.IsValid())
 		{
-			this->setPrototypeProperties(QNames[0]);
+			this->setPrototypeProperties(qName);
 
 			this->mRemoveButton->Enable();
 			this->mExportButton->Enable();
@@ -272,7 +270,7 @@ void PrototypeManagementDialog::OnPropertyChange(wxPropertyGridEvent& event)
 		this->mPrototypeList->Clear();
 
 		wxArrayString AS;
-		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().GetCount(); IT++)
+		for (unsigned long IT = 0; IT  < this->mDotSceneMgr->GetImportedPrototypes().Count(); IT++)
 		{
 			AS.Add(this->mDotSceneMgr->GetImportedPrototypes()[IT].UniqueName());
 		}

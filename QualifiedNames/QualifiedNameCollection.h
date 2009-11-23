@@ -15,13 +15,13 @@
 // Solution's includes
 #include "../QualifiedNames/QualifiedName.h"
 
-WX_DECLARE_STRING_HASH_MAP(QualifiedName, QualifiedNameHashMap);
-
 class QualifiedNameCollection
 {
 private:
 	//static QualifiedNameCollection CreateQualifiedNameCollectionFromGenericNames(wxArrayString GenericNames);
 	QualifiedNameHashMap mQNHashMap;
+	QualifiedNameArray mQNArray;
+	bool mFlag_QNHashMap_modified;
 
 public:
 	// De- & Constructors
@@ -39,8 +39,8 @@ public:
 	bool			Add(QualifiedName qName);
 	bool			Remove(QualifiedName qName);
 	
-
-	// Methods, get, add & remove
+	// Methods, indexed access
+	QualifiedName	operator[](unsigned long Index);
 
 	// Static Methods
 	// Get QualifiedNameCollection by wxArray of generic names
@@ -86,4 +86,6 @@ public:
 	static QualifiedNameCollection CollectionIntersection(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
 	static QualifiedNameCollection CollectionDifference(QualifiedNameCollection& Minuend, QualifiedNameCollection& Subtrahend);
 	static QualifiedNameCollection CollectionSymmetricDifference(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
+
+	static QualifiedNameArray ArrayToHashMap(QualifiedNameHashMap QNameHashMap);
 };

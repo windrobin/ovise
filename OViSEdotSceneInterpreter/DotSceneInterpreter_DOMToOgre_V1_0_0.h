@@ -47,7 +47,7 @@ public:
 
 	// Inherited methods
 	virtual bool Interpretation(xercesc::DOMDocument* DOMRepresentationOfScene,
-								QualifiedName* qAnchorNodeName,
+								QualifiedName qAnchorNodeName,
 								DotSceneBaseConfiguration* Configuration);
 };
 

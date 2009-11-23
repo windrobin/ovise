@@ -62,7 +62,7 @@ protected:
 
 	// Methods
 	bool Interpretation_DOMScene(	xercesc::DOMDocument* DOMRepresentationOfScene,
-									QualifiedName* qAnchorNodeName,
+									QualifiedName qAnchorNodeName,
 									DotSceneBaseConfiguration* Configuration);
 
 	// Static methods
@@ -76,7 +76,7 @@ public:
 
 	// Inheritable methods
 	virtual bool Interpretation(xercesc::DOMDocument* DOMRepresentationOfScene,
-								QualifiedName* qAnchorNodeName,
+								QualifiedName qAnchorNodeName,
 								DotSceneBaseConfiguration* Configuration) = 0;
 };
 

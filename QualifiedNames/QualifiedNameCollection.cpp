@@ -12,8 +12,16 @@
 #include "../QualifiedNames/QualifiedNameCollection.h"
 
 // De- & Constructors
-QualifiedNameCollection::QualifiedNameCollection(void) { this->mQNHashMap = QualifiedNameHashMap(); }
-QualifiedNameCollection::QualifiedNameCollection(const QualifiedNameCollection& ToCopy) { this->mQNHashMap = ToCopy.mQNHashMap; }
+QualifiedNameCollection::QualifiedNameCollection(void)
+{
+	this->mQNHashMap = QualifiedNameHashMap();
+	this->mFlag_QNHashMap_modified = false;
+}
+QualifiedNameCollection::QualifiedNameCollection(const QualifiedNameCollection& ToCopy)
+{
+	this->mQNHashMap = ToCopy.mQNHashMap;
+	this->mFlag_QNHashMap_modified = true;
+}
 QualifiedNameCollection::~QualifiedNameCollection(void) { this->Clear(); }
 // Management, basic
 unsigned long QualifiedNameCollection::Count() { return this->mQNHashMap.size(); }
@@ -31,6 +39,7 @@ bool QualifiedNameCollection::Add(QualifiedName qName)
 	if (!this->Contains(qName))
 	{
 		this->mQNHashMap[qName.UniqueName()] = qName;
+		this->mFlag_QNHashMap_modified = true;
 		return true;
 	}
 	else return false;
@@ -41,9 +50,21 @@ bool QualifiedNameCollection::Remove(QualifiedName qName)
 	if (this->Contains(qName))
 	{
 		this->mQNHashMap.erase(qName.UniqueName());
+		this->mFlag_QNHashMap_modified = true;
 		return true;
 	}
 	else return false;
+}
+QualifiedName QualifiedNameCollection::operator[](unsigned long Index)
+{
+	if (this->mFlag_QNHashMap_modified)
+	{
+		this->mQNArray.Clear();
+		this->mQNArray = QualifiedNameCollection::ArrayToHashMap(this->mQNHashMap);
+		this->mFlag_QNHashMap_modified = false;
+	}
+	
+	return this->mQNArray[Index];
 }
 QualifiedNameCollection QualifiedNameCollection::CreateQualifiedNameCollectionFromGenericNames(wxArrayString GenericNames)
 {
@@ -174,4 +195,20 @@ QualifiedNameCollection QualifiedNameCollection::CollectionSymmetricDifference(Q
 		QualifiedNameCollection::CollectionDifference(QCollection_2, QCollection_1));
 
 	return Result;
+}
+
+QualifiedNameArray QualifiedNameCollection::ArrayToHashMap(QualifiedNameHashMap QNameHashMap)
+{
+	QualifiedNameArray QNameArray;
+
+	if (QNameHashMap.size() > 0)
+	{
+		for (QualifiedNameHashMap::iterator IT = QNameHashMap.begin(); IT != QNameHashMap.end(); IT++)
+		{
+			QualifiedName qName = IT->second;
+			QNameArray.Add(qName);
+		}
+	}
+
+	return QNameArray;
 }

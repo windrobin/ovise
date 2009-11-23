@@ -10,10 +10,9 @@
 #include <wx/valtext.h>
 
 #include "../OViSEAux/MovableTypeTranslator.h"
-#include "../OViSEAux/UniqueNameManagerCollection.h"
 //#include "../OViSEAux/OViSESelection.h"
-#include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/QualifiedNameCollectionInterface.h"
+#include "../QualifiedNames/QualifiedName.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 
 // Include Ogre
