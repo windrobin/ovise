@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(OGRE_HOME)\include&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\QualifiedNames&quot;;&quot;$(OGRE_HOME)\include&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -59,7 +59,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalLibraryDirectories="&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)$(ConfigurationName)&quot;;&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -184,14 +184,6 @@
 				RelativePath=".\StringConverter.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\UniqueNameManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\UniqueNameManagerCollection.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -224,14 +216,6 @@
 			</File>
 			<File
 				RelativePath=".\StringConverter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UniqueNameManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\UniqueNameManagerCollection.h"
 				>
 			</File>
 		</Filter>

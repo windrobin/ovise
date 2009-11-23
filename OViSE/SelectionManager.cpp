@@ -16,7 +16,7 @@ bool SelectionManager::IsValid() { return this->Valid; }
 bool SelectionManager::IsSelected(QualifiedName qName)
 {
 	if (this->Selection.IsEmpty()) return false;
-	for(unsigned long IT = 0; IT < this->Selection.GetCount(); IT++)
+	for(unsigned long IT = 0; IT < this->Selection.Count(); IT++)
 	{
 		if (this->Selection[IT].UniqueName().IsSameAs(qName.UniqueName())) return true;
 	}
@@ -289,12 +289,11 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
 	PCSceneManager->SetExpanded(false);
 
-	if (Selection.GetCount())
+	if (!Selection.IsEmpty())
 	{
-		for ( unsigned long IT = 0; IT < Selection.GetCount(); IT++ )
+		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
 		{
-			QualifiedName qName = Selection[IT];
-			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qName);
+			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
 			this->AddMovableObjectToPG(PG, MO);
 		}
 	}

@@ -82,7 +82,7 @@ ScenePrototypeData OViSEDotSceneManager::GetPrototypeData(QualifiedName qPrototy
 	// Get data
 	return Prototype->Data;
 }
-bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName* qAnchorNode)
+bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName qAnchorNode)
 {
 	bool Match = false;
 	bool ReturnValue = false;
@@ -92,15 +92,6 @@ bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(QualifiedName qPrototype, 
 
 	// Validate parameter (correct type?)
 	if ( this->mPrototypes.count(qPrototype.UniqueName()) == 0 ) return false;
-
-	// Validate parameter (valid?)
-	if ( qAnchorNode != 0 )
-	{
-		if ( !qAnchorNode->IsValid() ) return false;
-
-		// Validate parameter (correct type?)
-		if ( !OgreAPIMediator::GetSingletonPtr()->HasSceneNode(*qAnchorNode) ) return false;
-	}
 
 	ScenePrototype* Prototype = this->mPrototypes[qPrototype.UniqueName()];
 	if (Prototype == 0) return false;
@@ -180,7 +171,7 @@ bool OViSEDotSceneManager::RemoveScenePrototype(QualifiedName qPrototype)
 	else
 	{
 		this->mPrototypes.erase(qPrototype.UniqueName());
-		QualifiedNameCollectionInterface::CollectionRemove(this->mQPrototypes, qPrototype, false);
+		this->mQPrototypes.Remove(qPrototype);
 		qPrototype.Destroy();
 		delete pPrototype;
 		return true;
@@ -200,7 +191,7 @@ QualifiedName OViSEDotSceneManager::RenameScenePrototype(QualifiedName qPrototyp
 	else
 	{
 		this->mPrototypes.erase(pPrototype->GetName().UniqueName());
-		QualifiedNameCollectionInterface::CollectionRemove(this->mQPrototypes, qPrototype, false);
+		this->mQPrototypes.Remove(qPrototype);
 		
 		pPrototype->Rename(NewNativePrototypeName);
 

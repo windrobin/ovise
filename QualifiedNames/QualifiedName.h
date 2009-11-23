@@ -101,4 +101,7 @@ public:
 	static bool HasQualifiedNameWithUnique(wxString UniqueName);		// Get QualifiedName by unique name
 };
 
-
+// Container declarations
+#include <wx/dynarray.h>
+WX_DECLARE_OBJARRAY(QualifiedName, QualifiedNameArray);
+WX_DECLARE_STRING_HASH_MAP(QualifiedName, QualifiedNameHashMap);

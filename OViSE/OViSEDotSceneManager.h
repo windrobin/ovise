@@ -10,7 +10,6 @@
 #include <wx/hashmap.h>
 
 // Solution's includes
-#include "../OViSEAux/UniqueNameManager.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEdotSceneBase/XmlManager.h"
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
@@ -87,7 +86,7 @@ public:
 
 
 	// Management of DOMDocuments
-	bool			MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName* qAnchorNode);
+	bool			MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName qAnchorNode);
 	QualifiedName	MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport); // Returns UniquePrototypeName
 	
 	bool			ExportScenePrototype(QualifiedName qPrototype, wxFileName DestinationURL);

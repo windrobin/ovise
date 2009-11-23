@@ -376,7 +376,7 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(xercesc::DOMDocu
 	return DotSceneInterpreter_DOMToOgre::GetVersionString(DOMRepresentationOfScene).IsSameAs(ToWxString("1.0.0"));
 }
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument* DOMRepresentationOfScene,
-															QualifiedName* qAnchorNodeName,
+															QualifiedName qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration)
 {
 	// Check format version (!)

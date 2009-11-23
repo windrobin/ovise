@@ -14,7 +14,6 @@
 #include <wx/valtext.h>
 
 // Solution's includes
-#include "../OViSEAux/UniqueNameManagerCollection.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/EnumsForABetterWorld.h"
 #include "../OViSEAux/MovableTypeTranslator.h"

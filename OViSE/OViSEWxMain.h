@@ -30,8 +30,8 @@
 #include "OViSELogListener.h"
 #include "OViSESceneTree.h"
 
-#include "../OViSEAux/QualifiedName.h"
-#include "../OViSEAux/QualifiedNameCollectionInterface.h"
+#include "../QualifiedNames/QualifiedName.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 #include "../OViSE/SelectionManager.h"
 #include "../OViSEAux/MovableTypeTranslator.h"

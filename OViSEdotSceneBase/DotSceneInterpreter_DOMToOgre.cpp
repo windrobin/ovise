@@ -28,7 +28,7 @@ wxString DotSceneInterpreter_DOMToOgre::GetVersionString( xercesc::DOMDocument* 
 }
 
 bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument* DOMRepresentationOfScene,
-															QualifiedName* qAnchorNodeName,
+															QualifiedName qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration )
 {
 	wxString LogMsg;
@@ -40,42 +40,31 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	if (SceneMgr == 0) return false; // "Configuration" is invalid!
 	
 	// Store external anchor node...
-	if (qAnchorNodeName == 0)
+	if (!qAnchorNodeName.IsValid())
 	{
 		this->AnchorNode = SceneMgr->getRootSceneNode();
 
 		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Parameter 'qAnchorNodeName' is (null). Using RootSceneNode!");
+		LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Parameter 'qAnchorNodeName' is INVALID. Using RootSceneNode!");
 		Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 	}
 	else
 	{
-		if (!qAnchorNodeName->IsValid())
+		if (!OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qAnchorNodeName))
 		{
 			this->AnchorNode = SceneMgr->getRootSceneNode();
 
 			LogMsg.Clear();
-			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Parameter 'qAnchorNodeName' is INVALID. Using RootSceneNode!");
+			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): 'qAnchorNodeName' with value \"") << qAnchorNodeName.UniqueName() << ToWxString("\" is not a qualified name of a Ogre::SceneNode. Using RootSceneNode instead!");
 			Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 		}
 		else
 		{
-			if (!OgreAPIMediator::GetSingletonPtr()->HasSceneNode(*qAnchorNodeName))
-			{
-				this->AnchorNode = SceneMgr->getRootSceneNode();
+			this->AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(qAnchorNodeName);
 
-				LogMsg.Clear();
-				LogMsg << ToWxString("OViSE DOM Interpretation (abstract): 'qAnchorNodeName' with value \"") << qAnchorNodeName->UniqueName() << ToWxString("\" is not a qualified name of a Ogre::SceneNode. Using RootSceneNode instead!");
-				Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-			}
-			else
-			{
-				this->AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qAnchorNodeName);
-
-				LogMsg.Clear();
-				LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Using given paramter 'qAnchorNodeName' with value \"") << qAnchorNodeName->UniqueName() << ToWxString("\".");
-				Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-			}
+			LogMsg.Clear();
+			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Using given paramter 'qAnchorNodeName' with value \"") << qAnchorNodeName.UniqueName() << ToWxString("\".");
+			Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 		}
 	}
 
@@ -118,13 +107,13 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	// STEP 2: Optional add nodes, if "doAttachNodes" is true:
 	if (DotSceneInterpreter_DOMToOgre::Configuration->doAttachNodes && (DOMElement_nodes != 0))
     {
-			this->Interpretation_Nodes(DOMElement_nodes);
+		this->Interpretation_Nodes(DOMElement_nodes);
     }
 
 	// STEP 3: Optional add environment, if "doAttachEnvironment" is true:
 	if (DotSceneInterpreter_DOMToOgre::Configuration->doAttachEnvironment && (DOMElement_environment != 0))
     {
-			this->Interpretation_Environment(DOMElement_environment);
+		this->Interpretation_Environment(DOMElement_environment);
     }
 
 	// STEP 4: Apply offset-settings to anchornode (with new operator)

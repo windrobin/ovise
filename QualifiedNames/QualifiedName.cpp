@@ -66,3 +66,7 @@ QualifiedName QualifiedName::GetQualifiedNameByUnique(wxString UniqueName)
 // Methods, has, static
 bool QualifiedName::HasQualifiedNameWithGeneric(wxString GenericName) { return QualifiedName::GetQualifiedNameByGeneric(GenericName).IsValid(); }
 bool QualifiedName::HasQualifiedNameWithUnique(wxString UniqueName) { return QualifiedName::GetQualifiedNameByUnique(UniqueName).IsValid(); }
+
+// Container declarations
+#include <wx/arrimpl.cpp>
+WX_DEFINE_OBJARRAY(QualifiedNameArray);
