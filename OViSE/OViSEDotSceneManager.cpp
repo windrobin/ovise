@@ -96,6 +96,12 @@ bool OViSEDotSceneManager::MakeOgreSceneFromPrototype(QualifiedName qPrototype, 
 	ScenePrototype* Prototype = this->mPrototypes[qPrototype.UniqueName()];
 	if (Prototype == 0) return false;
 
+	// Add location of files to resourcegroup.
+	Ogre::ResourceGroupManager::getSingleton().addResourceLocation(ToOgreString(Prototype->Data.ResourceBaseDir), Ogre::String("FileSystem"), ToOgreString(this->GetAssociatedResourceGroup().UniqueName()), false);
+	
+	// Again, initialise ResourceGroup
+	Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup(ToOgreString(this->GetAssociatedResourceGroup().UniqueName()));
+	
 	if ((!Match) && DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(Prototype->GetDOMRepresentation()))
 	{
 		DotSceneInterpreter_DOMToOgre_V1_0_0 Interpreter;

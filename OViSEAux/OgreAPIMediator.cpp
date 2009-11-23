@@ -626,6 +626,7 @@ QualifiedName* OgreAPIMediator::CreateEntity(QualifiedName qSceneManager, wxStri
 	}
 
 	// Create new Ogre::Entity
+	wxString Debug = qEntity.UniqueName();
 	Ogre::Entity* E = SM->createEntity(ToOgreString(qEntity.UniqueName()), ToOgreString(MeshFile));
 
 	// Abort if Ogre::Entity is null

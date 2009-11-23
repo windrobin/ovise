@@ -40,6 +40,24 @@
 <!--(S|#7) Reorder sequences in XSD. Every violation of the sequences has to be repaired for well working exports from Blender.-->
 <!--       Attention: not every wrong sequence has been found yet.-->
 
+<!--(D|#8) Element "camera": The order of childs of element "camera" in new blender-exports don't fit to this XSD.-->
+<!--(S|#8) Modified the "sequence"-elemente with a "choise"-element-->
+<!--       Attention: not every wrong sequence has been found yet.-->
+
+<!--(D|#9) Element "camera": It seems like the attribute name "FOVy" has changed in new blender-exports to "fov".-->
+<!--(S|#9) Renamed the attribute to "fov"-->
+
+<!--(D|#10) Element "camera": Missing an boolean attribute named "castShadows", which occures in new blender-exports. -->
+<!--(S|#10) Added new attribute "castShadows" to "camera"-->
+
+<!--(D|#11) Element "spotLightTange" has another name in new blender-exports:  "lightRange".-->
+<!--(S|#11) Renamed element to "lightRange".-->
+
+<!--(D|#12) Element "light": In new blender-exports a child "normal" cann occure, which is missed here."-->
+<!--(S|#12) Added existing element "normal" as child-element.-->
+
+<!-- Last edit: 23.11.2009 by H.R. -->
+
 <!--(#6)-->
 <!--ORIGINAL NAMESPACE-DEFINITIONS: <xs:schema xmlns="http://tempuri.org/dotScene" elementFormDefault="qualified" targetNamespace="http://tempuri.org/dotScene" xmlns:xs="http://www.w3.org/2001/XMLSchema">-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -378,21 +396,24 @@
   <xs:element name="node">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" ref="position" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
-        <!--(#5)-->
-        <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="scale" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="lookTarget" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="trackTarget" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="node" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="entity" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="light" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="camera" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="particleSystem" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="billboardSet" />
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="plane" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="userDataReference" />
+        <!--(#8)-->
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element minOccurs="0" maxOccurs="1" ref="position" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="orientation" />
+          <!--(#5)-->
+          <xs:element minOccurs="0" maxOccurs="1" ref="quaternion" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="scale" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="lookTarget" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="trackTarget" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="node" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="entity" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="light" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="camera" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="particleSystem" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="billboardSet" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="plane" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="userDataReference" />
+        </xs:choice>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" />
       <xs:attribute name="id" type="xs:ID" />
@@ -437,12 +458,15 @@
   <xs:element name="light">
     <xs:complexType>
       <xs:sequence>
+        <!--(#12)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="normal" />
         <xs:element minOccurs="0" maxOccurs="1" ref="commonMovableObjectParams" />
         <xs:element minOccurs="0" maxOccurs="1" ref="position" />
         <xs:element minOccurs="0" maxOccurs="1" ref="direction" />
         <xs:element minOccurs="0" maxOccurs="1" ref="colourDiffuse" />
         <xs:element minOccurs="0" maxOccurs="1" ref="colourSpecular" />
-        <xs:element minOccurs="0" maxOccurs="1" ref="spotLightRange" />
+        <!--(#11)-->
+        <xs:element minOccurs="0" maxOccurs="1" ref="lightRange" />
         <xs:element minOccurs="0" maxOccurs="1" ref="lightAttenuation" />
         <xs:element minOccurs="0" maxOccurs="1" ref="userDataReference" />
       </xs:sequence>
@@ -457,8 +481,18 @@
             <xs:enumeration value="radPoint" />
           </xs:restriction>
         </xs:simpleType>
+       
       </xs:attribute>
       <xs:attribute default="1.0" name="powerScale" type="xs:string" />
+      <!--(#10)-->
+      <xs:attribute default="false" name="castShadows">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="true" />
+            <xs:enumeration value="false" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   <xs:element name="camera">
@@ -476,7 +510,8 @@
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" />
       <xs:attribute name="id" type="xs:ID" />
-      <xs:attribute default="45" name="FOVy" type="xs:string" />
+      <!--(#9)-->
+      <xs:attribute name="fov" default="45" type="xs:string" />
       <xs:attribute default="1.3333333" name="aspectRatio" type="xs:string" />
       <xs:attribute default="perspective" name="projectionType">
         <xs:simpleType>
@@ -541,7 +576,8 @@
       <xs:attribute name="quadratic" type="xs:string" use="required" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="spotLightRange">
+  <!--(#11)-->
+  <xs:element name="lightRange">
     <xs:complexType>
       <xs:attribute name="inner" type="xs:string" use="required" />
       <xs:attribute name="outer" type="xs:string" use="required" />
