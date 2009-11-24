@@ -21,21 +21,22 @@ IMPLEMENT_APP(OViSEApplication);
 bool OViSEApplication::OnInit()
 {
 	wxImage::AddHandler( new wxPNGHandler );
-	/*wxBitmap bitmap;
+	wxBitmap bitmap;
 	wxSplashScreen *splash = NULL;
-	if (bitmap.LoadFile(wxT("OViSESplash.png"), wxBITMAP_TYPE_PNG))
+	if (bitmap.LoadFile(wxT("../OViSESplash.png"), wxBITMAP_TYPE_PNG))
 	{
 		splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
 			wxDefaultSize, wxBORDER_NONE | wxSTAY_ON_TOP);
-	}*/
+	}
 
     MainFrame* frame = new MainFrame(NULL);
 
     frame->Show();
 	SetTopWindow(frame);
-	frame->InitOgre();
+	if(!frame->InitOgre())
+		return false;
 
-	//splash->Destroy();
+	splash->Destroy();
 
     return true;
 }
