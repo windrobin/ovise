@@ -97,7 +97,7 @@ bool MainFrame::InitOgre()
 	
 	// Load resources
 	Ogre::ConfigFile cf;
-	cf.load("resources.cfg");
+	cf.load("../resources.cfg");
 	Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 	Ogre::String secName, typeName, archName;
 	while(seci.hasMoreElements())
@@ -130,7 +130,7 @@ bool MainFrame::InitOgre()
 		mRoot->loadPlugin("Plugin_CgProgramManager");
 #endif
 #else
-        mRoot->loadPlugin("RenderSystem_GL");
+		mRoot->loadPlugin("RenderSystem_GL");
 		mRoot->loadPlugin("Plugin_ParticleFX");
 		mRoot->loadPlugin("Plugin_BSPSceneManager");
 		mRoot->loadPlugin("Plugin_OctreeSceneManager");
