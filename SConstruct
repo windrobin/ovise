@@ -1,22 +1,11 @@
 # -*- python -*-
-
 import os
 import platform
 
 myplatform = platform.system()
 
 ### Setting up environment
-
-env = Environment()
-if ARGUMENTS.get('verbose') != "1":
-    env['CCCOMSTR'] = "Compiling $TARGET"
-    env['LINKCOMSTR'] = "Linking $TARGET"
-
-mode = ARGUMENTS.get('mode', "debug")
-
-Help("""\nUsage:
-        'scons' or 'scons mode=debug' to build debug configuration.\n
-        'scons mode=release' to build release configuration.\n""")
+env = Environment(ENV = os.environ)
 
 conf = Configure(env)
 if not env.GetOption('clean'):
@@ -30,13 +19,18 @@ env = conf.Finish()
 ## wxWidgets
 # command for include flags
 if(myplatform == 'Linux'):
-    wxflags_cmd = '/usr/bin/wx-config --cxxflags --libs'
+    wxconfigcmd = '/usr/local/bin/wx-config'
+    wxconfigcxx = wxconfigcmd + ' --cxxflags'
+    wxconfiglibs = wxconfigcmd + ' --libs'
+    wxconfigoplibs = wxconfigcmd + ' --optional-libs propgrid aui'
 elif(myplatform == 'Darwin'):
     wxflags_cmd = '/Users/martinloesch/Source/local/bin/wx-config --cxxflags --libs'
 else:
     print 'Platform not yet supported.'
     Exit(1)
-env.ParseConfig(wxflags_cmd)
+env.ParseConfig(wxconfigcxx)
+env.ParseConfig(wxconfiglibs)
+env.ParseConfig(wxconfigoplibs)
 
 ## Ogre3D
 if(myplatform == 'Linux'):
@@ -55,34 +49,39 @@ else:
 xerces_lib = {'LIBS':['xerces-c']}
 env.MergeFlags(xerces_lib)
 
-## PropertyGrid
+## System
 if(myplatform == 'Linux'):
-    property_grid_lib = {'LIBS':['wxcode_gtk2u_propgrid-2.8']}
+    linux_project_cc_flags = {'CCFLAGS':Split('''-c
+                                                -Wno-non-virtual-dtor
+                                                -Wno-reorder
+                                                -MD
+                                                -fno-common''')}
+    env.MergeFlags(linux_project_cc_flags)
+
+    linux_platform_include_paths = {'CPPPATH': Split('''/usr/include/gtk-2.0
+                                                        /usr/lib/gtk-2.0/include
+                                                        /usr/include/cairo
+                                                        /usr/include/glib-2.0
+                                                        /usr/lib/glib-2.0/include
+                                                        /usr/include/pango-1.0
+                                                        /usr/include/atk-1.0
+                                                        /usr/lib/atk-1.0/include''')}
+    env.MergeFlags(linux_platform_include_paths)
+
+    linux_platform_libraries = {'LIBS':['gcc', 'GL']}
+    env.MergeFlags(linux_platform_libraries)
 elif(myplatform == 'Darwin'):
-    property_grid_lib = {'LIBS':['']}
+    mac_platform_include_paths = {'CPPPATH':['']}
+    env.MergeFlags(mac_platform_include_paths)
+
+    mac_platform_libraries = {'LIBS':['gcc', 'System', 'stdc++', 'SystemStubs']}
+    env.MergeFlags(mac_platform_libraries)
 else:
     print 'Platform not yet supported.'
     Exit(1)
-env.MergeFlags(property_grid_lib)
 
-Export('env', 'myplatform')
-
-SConscript('OViSEAux/SConscript', export='env')
-SConscript('OViSE/SConscript', export='env')
-
-
-### Debug and optimised environments
-#optenv = env.Clone(CCFLAGS = '-O2')
-#dbgenv = env.Clone(CCFLAGS = '-g')
-
-### Build
-#if mode == "debug":
- #   print "Building in debug configuration..."
-   # OViSEDbg = dbgenv.Program('OViSE-dbg', input_files)
-#elif mode == "release":
-   # print "Building in release configuration..."
-    #OViSEOpt = optenv.Program('/OViSE-opt', input_files)
-
-
-
-
+# Debug builds
+SConscript('OViSEdotSceneInterpreter/SConscript', variant_dir='build/OViSEdotSceneInterpreter/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSEdotSceneBase/SConscript', variant_dir='build/OViSEdotSceneBase/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSEAux/SConscript', variant_dir='build/OViSEAux/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSE/SConscript', variant_dir='build/OViSE/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
