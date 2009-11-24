@@ -15,6 +15,6 @@
 
 
 // TODO-List:
-// IN: OViSESelectionManager
+// IN: SelectionManager
 // WHAT: Actually only TS_World is used for Rotation.
 // GOAL: Used combobox for selection between different transformspaces

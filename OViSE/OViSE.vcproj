@@ -18,10 +18,11 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)\build\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
 			CharacterSet="1"
+			BuildLogFile="$(IntDir)\BuildLog.htm"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -61,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib rpcrt4.lib winmm.lib wsock32.lib wxmsw29ud_core.lib wxbase29ud.lib wxmsw29ud_adv.lib OgreMain_d.lib wxmsw29ud_propgrid.lib xerces-c_3D.lib QualifiedNames.lib OViSEAux.lib OViSEdotSceneBase.lib OViSEdotSceneInterpreter.lib"
+				AdditionalDependencies="comctl32.lib rpcrt4.lib winmm.lib wsock32.lib wxmsw29ud_core.lib wxbase29ud.lib wxmsw29ud_adv.lib OgreMain_d.lib wxmsw29ud_propgrid.lib xerces-c_3D.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)$(ConfigurationName)&quot;;&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;;&quot;$(WX_PROPGRID)\lib\vc_lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -174,6 +175,18 @@
 			ReferencedProjectIdentifier="{253BC70A-6F3F-413A-9590-BE90CF8C167B}"
 			RelativePathToProject=".\OViSEAux\OViSEAux.vcproj"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{5E86EB80-C67B-42DF-9FE2-3E1074220D53}"
+			RelativePathToProject=".\OViSEdotSceneBase\OViSEdotSceneBase.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{EA82355B-C0DB-4EB7-A036-160B2B8E6027}"
+			RelativePathToProject=".\OViSEdotSceneInterpreter\OViSEdotSceneInterpreter.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{109ADAF4-CF07-47EF-9A44-A324283A1933}"
+			RelativePathToProject=".\QualifiedNames\QualifiedNames.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -181,27 +194,35 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
+			<File
+				RelativePath=".\DotSceneManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Messenger.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PathProvider.cpp"
+				>
+			</File>
 			<Filter
 				Name="wx"
 				>
 				<File
-					RelativePath=".\GUIFrame.cpp"
+					RelativePath=".\Application.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEMessenger.cpp"
+					RelativePath=".\ExportMeshesDialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESceneTree.cpp"
+					RelativePath=".\MainFrame.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEWxApp.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEWxMain.cpp"
+					RelativePath=".\MainFrameBase.cpp"
 					>
 				</File>
 				<File
@@ -213,43 +234,39 @@
 				Name="Ogre"
 				>
 				<File
-					RelativePath=".\OViSECallbackObject.cpp"
+					RelativePath=".\CallbackObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSECallbackTester.cpp"
+					RelativePath=".\CallbackTester.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEExportMeshesDialog.cpp"
+					RelativePath=".\FrameListener.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEFrameListener.cpp"
+					RelativePath=".\LogListener.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSELogListener.cpp"
+					RelativePath=".\ObjectTitle.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEObjectTitle.cpp"
+					RelativePath=".\Pointcloud.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEPointcloud.cpp"
+					RelativePath=".\SceneHandling.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESceneHandling.cpp"
+					RelativePath=".\SceneTree.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\SelectionManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\wxOgreRenderWindow.cpp"
 					>
 				</File>
 			</Filter>
@@ -257,15 +274,7 @@
 				Name="Interaction"
 				>
 				<File
-					RelativePath=".\OViSEDotSceneManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEInputHandler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEPathProvider.cpp"
+					RelativePath=".\InputHandler.cpp"
 					>
 				</File>
 			</Filter>
@@ -279,27 +288,35 @@
 				RelativePath=".\DevelpomentMarkup.h"
 				>
 			</File>
+			<File
+				RelativePath=".\DotSceneManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Messenger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PathProvider.h"
+				>
+			</File>
 			<Filter
 				Name="wx"
 				>
 				<File
-					RelativePath=".\GUIFrame.h"
+					RelativePath=".\Application.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEMessenger.h"
+					RelativePath=".\ExportMeshesDialog.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESceneTree.h"
+					RelativePath=".\MainFrame.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEWxApp.h"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEWxMain.h"
+					RelativePath=".\MainFrameBase.h"
 					>
 				</File>
 				<File
@@ -311,43 +328,39 @@
 				Name="Ogre"
 				>
 				<File
-					RelativePath=".\OViSECallbackObject.h"
+					RelativePath=".\CallbackObject.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSECallbackTester.h"
+					RelativePath=".\CallbackTester.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEExportMeshesDialog.h"
+					RelativePath=".\FrameListener.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEFrameListener.h"
+					RelativePath=".\LogListener.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSELogListener.h"
+					RelativePath=".\ObjectTitle.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEObjectTitle.h"
+					RelativePath=".\Pointcloud.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSEPointcloud.h"
+					RelativePath=".\SceneHandling.h"
 					>
 				</File>
 				<File
-					RelativePath=".\OViSESceneHandling.h"
+					RelativePath=".\SceneTree.h"
 					>
 				</File>
 				<File
 					RelativePath=".\SelectionManager.h"
-					>
-				</File>
-				<File
-					RelativePath=".\wxOgreRenderWindow.h"
 					>
 				</File>
 			</Filter>
@@ -355,15 +368,7 @@
 				Name="Interaction"
 				>
 				<File
-					RelativePath=".\OViSEDotSceneManager.h"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEInputHandler.h"
-					>
-				</File>
-				<File
-					RelativePath=".\OViSEPathProvider.h"
+					RelativePath=".\InputHandler.h"
 					>
 				</File>
 			</Filter>
