@@ -81,7 +81,8 @@ else:
     Exit(1)
 
 # Debug builds
-SConscript('OViSEdotSceneInterpreter/SConscript', variant_dir='build/OViSEdotSceneInterpreter/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
-SConscript('OViSEdotSceneBase/SConscript', variant_dir='build/OViSEdotSceneBase/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
-SConscript('OViSEAux/SConscript', variant_dir='build/OViSEAux/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
-SConscript('OViSE/SConscript', variant_dir='build/OViSE/debug', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('QualifiedNames/SConscript', variant_dir='build/Debug/QualifiedNames', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSEdotSceneInterpreter/SConscript', variant_dir='build/Debug/OViSEdotSceneInterpreter', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSEdotSceneBase/SConscript', variant_dir='build/Debug/OViSEdotSceneBase', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSEAux/SConscript', variant_dir='build/Debug/OViSEAux', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OViSE/SConscript', variant_dir='build/Debug/OViSE', duplicate=0, exports={'MODE':'debug', 'env':env})

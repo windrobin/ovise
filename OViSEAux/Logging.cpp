@@ -27,13 +27,13 @@ bool Logging::WriteToOgreLog(wxString LogMessage, Logging::Priority PriorityLeve
 {
 	switch(PriorityLevel)
 	{
-	case this->Trivial:
+	case Trivial:
 		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_TRIVIAL);
 		break;
-	case this->Normal:
+	case Normal:
 		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_NORMAL);
 		break;
-	case this->Critical:
+	case Critical:
 		Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMessage), Ogre::LML_CRITICAL);
 		break;
 
