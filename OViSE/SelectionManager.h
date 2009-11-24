@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef SELECTION_MANAGER_H_
 #define SELECTION_MANAGER_H_
 
