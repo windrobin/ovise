@@ -1,0 +1,13 @@
+# -*- python -*-
+Import('MODE', 'env')
+LocalEnv = env.Clone()
+
+### Setting up environment
+if MODE == 'debug':
+    LocalEnv.MergeFlags({'CCFLAGS':['-g','-Wall']})
+
+## Input files
+input_files = Glob('*.cpp')
+
+if MODE == 'debug':
+    env.Library(target='#lib/Debug/OViSEdotSceneBase', source=input_files)

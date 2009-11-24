@@ -188,11 +188,11 @@ QualifiedNameCollection QualifiedNameCollection::CollectionDifference(QualifiedN
 }
 QualifiedNameCollection QualifiedNameCollection::CollectionSymmetricDifference(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2)
 {
-	QualifiedNameCollection Result;
+  QualifiedNameCollection Result;
+  QualifiedNameCollection Q1 = QualifiedNameCollection::CollectionDifference(QCollection_1, QCollection_2);
+  QualifiedNameCollection Q2 = QualifiedNameCollection::CollectionDifference(QCollection_2, QCollection_1);
 
-	Result = QualifiedNameCollection::CollectionUnion(
-		QualifiedNameCollection::CollectionDifference(QCollection_1, QCollection_2),
-		QualifiedNameCollection::CollectionDifference(QCollection_2, QCollection_1));
+  Result = QualifiedNameCollection::CollectionUnion(Q1, Q2);
 
 	return Result;
 }

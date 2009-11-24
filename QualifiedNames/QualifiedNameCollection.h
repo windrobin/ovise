@@ -44,10 +44,10 @@ public:
 
 	// Static Methods
 	// Get QualifiedNameCollection by wxArray of generic names
-	static QualifiedNameCollection QualifiedNameCollection::CreateQualifiedNameCollectionFromGenericNames(wxArrayString GenericNames);
+	static QualifiedNameCollection CreateQualifiedNameCollectionFromGenericNames(wxArrayString GenericNames);
 
 	// Get QualifiedName by generic name (returns a collection of QualifiedNames, which contains only one QualifiedName)
-	static QualifiedNameCollection QualifiedNameCollection::GetQualifiedNameByGeneric(wxString GenericName);
+	static QualifiedNameCollection GetQualifiedNameByGeneric(wxString GenericName);
 
 	// Get QualifiedName by native name (returns a collection of QualifiedNames)
 	static QualifiedNameCollection GetQualifiedNameByNative(wxString NativeName);

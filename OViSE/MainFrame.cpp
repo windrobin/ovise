@@ -9,6 +9,13 @@
 
 #include "MainFrame.h"
 
+#ifdef __WXGTK__
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <GL/glx.h>
+#endif
+
 //helper functions
 enum wxbuildinfoformat {
     short_f, long_f };
@@ -175,7 +182,7 @@ bool MainFrame::InitOgre()
 	Ogre::NameValuePairList params;
 #ifdef __WXMSW__
 	params["externalWindowHandle"] = GetOgreHandle();
-#elif defined(_WXGTK_)
+#elif defined(__WXGTK__)
 	params["parentWindowHandle"] = GetOgreHandle();
 #endif
 	int width;
@@ -252,20 +259,22 @@ Ogre::String MainFrame::GetOgreHandle()
 	// Handle for Windows systems
 	handle = Ogre::StringConverter::toString((size_t)((HWND)mMainRenderWin->GetHandle()));
 #elif defined(__WXGTK__)
-	// Handle for GTK-based systems
-	GtkWidget *widget = mMainRenderWindow->GetHandle();
-	gtk_widget_realize( widget );
+	GtkWidget* widget = mMainRenderWin->GetHandle();
+	gtk_widget_realize( widget );	// Mandatory. Otherwise, a segfault happens.
 	if(!GTK_WIDGET_REALIZED(widget))
-		printf("Error, GtkWidget not realized!\n");
-
-	std::stringstream str;
+	  printf("Error, GtkWidget not realized!\n");
+	
+	std::stringstream handleStream;
 	Display* display = GDK_WINDOW_XDISPLAY( widget->window );
 	Window wid = GDK_WINDOW_XWINDOW( widget->window );
-	str << (unsigned long)display << ':';
-	std::string displayStr = DisplayString(display);
-	displayStr = displayStr.substr(1, (displayStr.find(".", 0) - 1 ));
-	str << displayStr << ':' << DefaultScreen( display ) << ':' << wid;
-	handle = str.str();
+	
+	// Get the right display (DisplayString() returns ":display.screen")
+	std::string displayStr = DisplayString( display );
+	displayStr = displayStr.substr( 1, ( displayStr.find( ".", 0 ) - 1 ) );
+	
+	// Put all together
+	handleStream << displayStr << ':' << DefaultScreen( display ) << ':' << wid;
+	handle = handleStream.str();
 #else
 	// Any other unsupported system
 	#error Not supported on this platform.
