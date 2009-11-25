@@ -16,8 +16,8 @@ XmlManager::XmlManager(DotSceneBaseConfiguration* Configuration) : mInitialized(
 {
 	this->mConfiguration = Configuration;
 
-	this->SetURLofXSD(ToWxString("../Media/data/dotScene.xsd"));
-	this->SetURLofExportPath(ToWxString("../Media/SceneExport/"));
+	this->SetURLofXSD(ToWxString("../../Media/data/dotScene.xsd"));
+	this->SetURLofExportPath(ToWxString("../../Media/SceneExport/"));
 	this->mInitialized = this->InitXML();
 }
 
