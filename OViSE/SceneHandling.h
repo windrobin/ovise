@@ -27,14 +27,10 @@
 
 #define __HenningsActualWork__
 
-/// Map containing all scene managers.
-typedef std::map<std::string, Ogre::SceneManager*> ScnMgrMap;
-/// Map containing all ray scene querys for object selection.
-typedef std::map<std::string, Ogre::RaySceneQuery*> RayQueryMap;
-/// Map containing selected objects.
+/// Map containing all object selection maps
 typedef std::map<std::string, Ogre::MovableObject*> SelectionMap;
-/// Map containing all object selection maps.
-typedef std::map<std::string, SelectionMap> Selections;
+/// Map containing all ray scene querys
+typedef std::map<std::string, Ogre::RaySceneQuery*> RayQueryMap;
 /// Map containing object title instances (for updating in the frame listener)
 typedef std::vector<ObjectTitle*> ObjectTitleVector;
 
@@ -58,33 +54,6 @@ public:
 	 * @param sceneManagerName Name of the scenemanager where the default scene contents should be added
 	 */
 	void createDefaultScene(wxString sceneManagerName = wxT("BaseSceneManager"));
-
-	/** Adds a new scenemanager to the list.
-	 * Creates a new scenemanager with the given name and adds it to the accessible list of scenemanagers.
-	 */
-	void addSceneManager(std::string sceneManagerName);
-
-	/// Get a named scenemanager from the list
-	Ogre::SceneManager* getSceneManager(std::string sceneManagerName = "BaseSceneManager");
-
-	/// Removes a scene manager from the list and deletes it
-	void removeSceneManager(std::string sceneManagerName);
-
-	/// Retrieves the object selection query for the given scene manager
-	Ogre::RaySceneQuery* getObjectSelectionQuery(std::string sceneManagerName);
-
-	/// Add movable to object selection
-	void addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection = true, std::string sceneManagerName = "BaseSceneManager");
-
-	/// Remove movable object from object selection
-	void removeObjectFromSelection(Ogre::MovableObject *movObj, bool hideSelection = true, std::string sceneManagerName = "BaseSceneManager");
-	void removeObjectFromSelection(std::string name, bool hideSelection = true, std::string sceneManagerName = "BaseSceneManager");
-
-	/// Retrieve list of selected objects
-	SelectionMap getSelectedObjects(std::string sceneManagerName = "BaseSceneManager");
-
-	/// Check if any objects are selected
-	bool hasSelectedObjects(std::string sceneManagerName = "BaseSceneManager");
 
 	/** Returns list of meshes available in loaded resources.
 	 * Retrieves a list of all meshes in the given resource group. One can then load a mesh using the given filename.
@@ -142,6 +111,8 @@ public:
 
 
 	Ogre::MovableObject* getSelectedObject(wxString ObjectName, Ogre::SceneManager* ScnMgr);
+
+	Ogre::RaySceneQuery* getObjectSelectionQuery(std::string sceneManagerName);
 	
 
 	/// Removes all selected objects from the selection list and hides bounding boxes
@@ -177,9 +148,6 @@ public:
 	/// Turn dynamic shadows (stencil) on or off
 	void dynamicShadows(bool state);
 
-	/// Turn execution of listeners' commands on or off
-	void startStopFrameListeners(bool on = true);
-
 	/// debug function for testing
 	void testStuff();
 
@@ -205,22 +173,11 @@ private:
 	/// Singleton instance
 	static SceneHandling *mInstance;
 
-	/// Scene managers this SceneHandler works on.
-	ScnMgrMap mSceneManagers;
-
 	/// Ray scene querys for object selection
 	RayQueryMap mObjectSelectionQuerys;
 
-	/// Map of maps of selected scene nodes
-	Selections mObjectSelectionsMap;
-
 	/// Map of all object titles
 	ObjectTitleVector mObjectTitlesVector;
-
-	/// FrameListener
-	CustomFrameListener *mFrameListener;
-
-	
 
 	/// Messenger for signaling to wx
 	Messenger *mMessenger;

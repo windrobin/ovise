@@ -28,8 +28,8 @@ SceneHandling::SceneHandling()
 		//ID#0003//mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
 		//ID#0000//mObjectSelectionsMap["BaseSceneManager"] = SelectionMap();
 
-		mFrameListener = new CustomFrameListener();//ID#0002 = observe//
-		Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);//ID#0002 = observe//
+		//mFrameListener = new CustomFrameListener();//ID#0002 = observe//
+		//Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);//ID#0002 = observe//
 		
 		//ID#0003//OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
 		//ID#0003//this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreAPIMediator
@@ -60,53 +60,6 @@ void SceneHandling::createDefaultScene(wxString sceneManagerName)
 	*/
 }
 
-//ID#0001//already implemented in OgreAPIMediator
-void SceneHandling::addSceneManager(std::string sceneManagerName)
-{
-	for(ScnMgrMap::iterator it = mSceneManagers.begin(); it != mSceneManagers.end(); it++)
-	{
-		if(it->first.compare(sceneManagerName) == 0)
-		{
-			std::string logMsg = "Scene Manager with name: " + sceneManagerName + " already exists!";
-			throw OViSEException(logMsg.c_str());
-		}
-	}
-
-	Ogre::SceneManager *tmp = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, sceneManagerName);
-	mSceneManagers[sceneManagerName] = tmp;
-	mObjectSelectionQuerys[sceneManagerName] = tmp->createRayQuery(Ogre::Ray());
-	mObjectSelectionsMap[sceneManagerName] = SelectionMap();
-}
-
-//ID#0001//already implemented in OgreAPIMediator
-Ogre::SceneManager* SceneHandling::getSceneManager(std::string sceneManagerName)
-{
-	ScnMgrMap::iterator it = mSceneManagers.find(sceneManagerName);
-	if(it == mSceneManagers.end())
-	{
-		std::string logMsg = "Couldn't find scene manager with name " + sceneManagerName;
-		throw OViSEException(logMsg.c_str());
-	}
-	else return it->second;
-}
-
-//ID#0001//already implemented in OgreAPIMediator
-void SceneHandling::removeSceneManager(std::string sceneManagerName)
-{
-	ScnMgrMap::iterator it = mSceneManagers.find(sceneManagerName);
-	if(it == mSceneManagers.end())
-	{
-		std::string logMsg = "Couldn't find scene manager with name " + sceneManagerName;
-		Ogre::LogManager::getSingletonPtr()->logMessage(logMsg);
-		return;
-	}
-	Ogre::Root::getSingletonPtr()->destroySceneManager(it->second);
-	mSceneManagers.erase(sceneManagerName);
-	mObjectSelectionQuerys.erase(sceneManagerName);
-	mObjectSelectionsMap[sceneManagerName].clear();
-	mObjectSelectionsMap.erase(sceneManagerName);
-}
-
 //ID#0001//move to OgreAPIMediator
 Ogre::RaySceneQuery* SceneHandling::getObjectSelectionQuery(std::string sceneManagerName)
 {
@@ -120,7 +73,7 @@ Ogre::RaySceneQuery* SceneHandling::getObjectSelectionQuery(std::string sceneMan
 }
 
 //ID#0001//move to OgreAPIMediator
-Ogre::MovableObject* SceneHandling::getSelectedObject(float screenx, float screeny, float& dist, Ogre::Camera *cam, std::string sceneManagerName)
+/*Ogre::MovableObject* SceneHandling::getSelectedObject(float screenx, float screeny, float& dist, Ogre::Camera *cam, std::string sceneManagerName)
 {
 	try
 	{
@@ -154,7 +107,7 @@ Ogre::MovableObject* SceneHandling::getSelectedObject(float screenx, float scree
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
 		return NULL;
 	}
-}
+}*/
 
 //ID#0001//outdated
 Ogre::MovableObject* SceneHandling::getSelectedObject(wxString ObjectName, Ogre::SceneManager* ScnMgr)
@@ -200,119 +153,10 @@ Ogre::MovableObject* SceneHandling::getSelectedObject(wxString ObjectName, Ogre:
 	}
 }
 
-//ID#0001//outdated
-void SceneHandling::clearObjectSelection(std::string sceneManagerName)
-{
-	try
-	{
-		SelectionMap map = mObjectSelectionsMap[sceneManagerName];
-		for(SelectionMap::iterator it = map.begin(); it != map.end(); it++)
-		{
-			it->second->getParentSceneNode()->showBoundingBox(false);
-		}
-		mObjectSelectionsMap[sceneManagerName].clear();
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't clear object selection!");
-	}
-}
-
-//ID#0001//outdated
-void SceneHandling::addObjectToSelection(Ogre::MovableObject *movObj, bool showSelection, std::string sceneManagerName)
-{
-	/*
-	try
-	{
-		mObjectSelectionsMap[sceneManagerName][movObj->getName()] = movObj;
-		
-		if(showSelection)
-			movObj->getParentSceneNode()->showBoundingBox(true);
-
-		Logging* TempLog = new Logging();
-		wxString LogMsg;
-		LogMsg << ToWxString("USER selected MovableObject: '");
-		LogMsg << ToWxString(movObj->getName());
-		LogMsg << ToWxString("'. It belongs to SceneNode: '");
-		LogMsg << ToWxString(movObj->getParentSceneNode()->getName());
-		LogMsg << ToWxString("'.");
-		TempLog->WriteToOgreLog(LogMsg, Logging::Normal);
-		delete TempLog;
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't add object to object selection!");
-	}
-	*/
-}
-
-//ID#0001//outdated
-void SceneHandling::removeObjectFromSelection(Ogre::MovableObject *movObj, bool hideSelection, std::string sceneManagerName)
-{
-	try
-	{
-		if(movObj)
-			mObjectSelectionsMap[sceneManagerName].erase(movObj->getName());
-		if(movObj && hideSelection)
-			movObj->getParentSceneNode()->showBoundingBox(false);
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't remove object from object selection!");
-	}
-}
-
-//ID#0001//outdated
-void SceneHandling::removeObjectFromSelection(std::string name, bool hideSelection, std::string sceneManagerName)
-{
-	try
-	{
-		Ogre::MovableObject *tmp = mObjectSelectionsMap[sceneManagerName][name];
-		if(tmp && hideSelection)
-			tmp->getParentSceneNode()->showBoundingBox(false);
-		mObjectSelectionsMap[sceneManagerName].erase(name);
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't remove object from object selection!");
-	}
-}
-
-//ID#0001//outdated
-SelectionMap SceneHandling::getSelectedObjects(std::string sceneManagerName)
-{
-	try
-	{
-		return mObjectSelectionsMap[sceneManagerName];
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't get object selection!");
-		return SelectionMap();
-	}
-}
-
-//ID#0001//outdated
-bool SceneHandling::hasSelectedObjects(std::string sceneManagerName)
-{
-	try
-	{
-		SelectionMap tmp = mObjectSelectionsMap[sceneManagerName];
-		if(tmp.size() > 0)
-			return true;
-		else return false;
-	}
-	catch (...)
-	{
-		Ogre::LogManager::getSingletonPtr()->logMessage("Warning: Couldn't get object selection!");
-		return false;
-	}
-}
-
 //ID#0001//move to OgreAPIMediator
 void SceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 col, std::string sceneManagerName, Ogre::SceneNode *node)
 {
-	try
+	/*try
 	{
 		Ogre::SceneManager *tmp = getSceneManager(sceneManagerName);
 		Ogre::ManualObject* gridObject = tmp->createManualObject("grid");
@@ -354,13 +198,13 @@ void SceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 co
 	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
-	}
+	}*/
 }
 
 //ID#0001//move to OgreAPIMediator
 void SceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
-	try
+	/*try
 	{
 		Ogre::SceneManager* tmp = this->getSceneManager(ToOgreString(sceneManagerName));
 		if(node == NULL) node = tmp->getRootSceneNode();
@@ -387,7 +231,7 @@ void SceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerN
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(e.what());
 	}
-	catch (...) {}
+	catch (...) {}*/
 }
 
 //ID#0002//
@@ -411,7 +255,7 @@ std::vector<std::string> SceneHandling::getAvailableResourceGroupNames()
 //ID#0002//
 void SceneHandling::addMesh(std::string meshName, std::string meshFileName, std::string sceneManagerName, Ogre::SceneNode *node)
 {
-	try
+	/*try
 	{
 		Ogre::SceneManager *scnMgr = getSceneManager(sceneManagerName);
 		Ogre::Entity *ent = scnMgr->createEntity(meshName, meshFileName);
@@ -433,13 +277,13 @@ void SceneHandling::addMesh(std::string meshName, std::string meshFileName, std:
 	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
-	}
+	}*/
 }
 
 //ID#0002//
 void SceneHandling::deleteMesh(std::string meshName, std::string sceneManagerName)
 {
-	try
+	/*try
 	{
 		Ogre::SceneManager *scnMgr = getSceneManager(sceneManagerName);
 		if(scnMgr->hasEntity(meshName))
@@ -456,14 +300,14 @@ void SceneHandling::deleteMesh(std::string meshName, std::string sceneManagerNam
 	catch (OViSEException e)
 	{
 		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
-	}
+	}*/
 }
 
 
 //ID#0002//
 void SceneHandling::showSceneGraphStructure(bool update, std::string sceneManagerName)
 {
-	Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
+	/*Ogre::SceneManager *scnMgr = mSceneManagers[sceneManagerName];
 	if(!scnMgr) throw OViSEException("Scene manager not found!");
 
 	// Let's see if we're already displaying a structure
@@ -525,7 +369,7 @@ void SceneHandling::showSceneGraphStructure(bool update, std::string sceneManage
 	}
 	sgs->end();
 	nodeQueue.clear();
-	scnMgr->getRootSceneNode()->attachObject(sgs);
+	scnMgr->getRootSceneNode()->attachObject(sgs);*/
 }
 
 //ID#0002//
@@ -540,26 +384,15 @@ void SceneHandling::updateObjectTitles()
 //ID#0002//
 void SceneHandling::dynamicShadows(bool state)
 {
-	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
+	/*Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 	if(state) scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-	else scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+	else scnMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);*/
 }
 
 //ID#0001//outdated
 void SceneHandling::testStuff()
 {
-	Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
-}
-
-//ID#0001//outdated
-void SceneHandling::startStopFrameListeners(bool on)
-{
-	/*
-	if(on)
-		mFrameListener->setFrameEventsProcessed(true);
-	else
-		mFrameListener->setFrameEventsProcessed(false);
-		*/
+	//Ogre::SceneManager *scnMgr = mSceneManagers["BaseSceneManager"];
 }
 
 //ID#0001//outdated
@@ -577,10 +410,10 @@ void SceneHandling::ImportPrototypeFromXML(wxString URLofXML)
 //ID#0001//outdated
 void SceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString NameOfHostingSceneManager, Ogre::SceneNode *node, bool doExportMeshFiles)
 {
-	/* Export depending on selection */
-	if (this->hasSelectedObjects())
+	// Export depending on selection
+	/*if (this->hasSelectedObjects())
 	{
-		;/*this->mDotSceneMgr->ExportPrototype(this->getSelectedObjects(), DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true*/
+		;//this->mDotSceneMgr->ExportPrototype(this->getSelectedObjects(), DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true
 	}
 	else
 	{
@@ -588,7 +421,7 @@ void SceneHandling::ExportPrototypeToXML(wxString DestinationFileName, wxString 
 		SelectionMap tempSimpleSelection;
 		tempSimpleSelection[this->getSceneManager()->getRootSceneNode()->getName()] = (Ogre::MovableObject*)this->getSceneManager()->getRootSceneNode();
 		/*this->mDotSceneMgr->ExportPrototype(tempSimpleSelection, DestinationFileName, true, doExportMeshFiles); // TODO: modify "doExportNotSelectedChildNodesToo" = true*/
-	}
+	//}*/
 }
 
 //ID#0001//outdated
