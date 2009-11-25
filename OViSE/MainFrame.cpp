@@ -58,6 +58,9 @@ MainFrame::MainFrame(wxWindow* parent)
 	mMainRenderWin = new wxWindow(this, WINDOW_MainRender);
 	mWindowManager.AddPane(mMainRenderWin, wxCENTER, wxT("RenderWindow"));
 
+	// Connect window events
+	mMainRenderWin->Bind(wxEVT_SIZE, &MainFrame::OnRenderWindowResize, this);
+	Bind(wxEVT_IDLE, &MainFrame::OnIdle, this);
 	mMainRenderWin->Bind(wxEVT_LEFT_DCLICK, &MainFrame::OnViewClick, this);
 	
 	mLogBox = new wxListBox(this, wxID_ANY);
@@ -225,12 +228,21 @@ bool MainFrame::InitOgre()
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	// DBG: Testscene
-	OgreAPIMediator::GetSingletonPtr()->CreateEntity(ToWxString("Plane"), ToWxString("Plane.mesh"));
+	OgreAPIMediator* Mediator = OgreAPIMediator::GetSingletonPtr();
+	Mediator->CreateEntity(ToWxString("Plane"), ToWxString("Plane.mesh"));
+	Mediator->CreateEntity(ToWxString("CoS"), ToWxString("CoS.mesh"));
+
+	QualifiedName* qSunLight = Mediator->CreateLight(ToWxString("Sun"));
+	Ogre::Light* SunLight = Mediator->GetLightPtr(*qSunLight);
+	SunLight->setCastShadows(true);
+	SunLight->setDirection(-1,-1,-1);
+	SunLight->setPosition(100, 100, 100);
 
 	// Create scene tree
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
 	loadSceneTreeImageList(sceneTreeImageList);
-	mSceneTree = new SceneTree(OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager()), this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	mSceneMgr = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
+	mSceneTree = new SceneTree(mSceneMgr, this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
 	mWindowManager.AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
 	mSceneTree->SetImageList(sceneTreeImageList);
 	mSceneTree->initTree();
@@ -246,10 +258,6 @@ bool MainFrame::InitOgre()
 
 	// Create input handler
 	mInputHandler = new InputHandler(mCam, camFocusNode, mMainRenderWin);
-
-	// Connect window events
-	mMainRenderWin->Bind(wxEVT_SIZE, &MainFrame::OnRenderWindowResize, this);
-	Bind(wxEVT_IDLE, &MainFrame::OnIdle, this);
 
 	mOgreInitialized = true;
 	return true;
@@ -428,15 +436,15 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 
 void MainFrame::OnSaveScreenToFile(wxCommandEvent &event)
 {
-	wxFileDialog *fDialog = new wxFileDialog(this, wxT("Save screen to file"), wxGetHomeDir(), wxT("OViSEScreenshot.png"),
+	wxFileDialog fDialog(this, wxT("Save screen to file"), wxGetHomeDir(), wxT("OViSEScreenshot.png"),
 		wxT("PNG files (*.png)|*.png"), wxFD_SAVE);
-	int rval = fDialog->ShowModal();
+	int rval = fDialog.ShowModal();
+	wxSafeYield();
 	if(rval == wxID_OK)
 	{
-		wxString fullPath = fDialog->GetPath();
+		wxString fullPath = fDialog.GetPath();
 		mRenderWin->writeContentsToFile(Ogre::String(fullPath.ToAscii()));
 	}
-	fDialog->Destroy();
 }
 
 void MainFrame::OnSceneAddMesh(wxCommandEvent &event)
@@ -576,14 +584,14 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 
 void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 {
-	/*if(event.IsChecked())
+	if(event.IsChecked())
 	{
-		mSceneHdlr->dynamicShadows(true);
+		mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 	}
 	else
 	{
-		mSceneHdlr->dynamicShadows(false);
-	}*/
+		mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+	}
 }
 
 void MainFrame::OnPropertyChange(wxPropertyGridEvent& event)
@@ -736,7 +744,7 @@ void MainFrame::clearObjectProperties()
 
 void MainFrame::deleteMeshes()
 {
-	SelectionMap so = SceneHandling::getSingletonPtr()->getSelectedObjects();
+/*	SelectionMap so = SceneHandling::getSingletonPtr()->getSelectedObjects();
 	if(so.empty())
 	{
 		wxMessageDialog dlg(this, wxT("No meshes selected"), wxT("Error"), wxOK | wxCENTRE | wxICON_ERROR);
@@ -751,7 +759,7 @@ void MainFrame::deleteMeshes()
 		{
 			SceneHandling::getSingletonPtr()->deleteMesh(it->first);
 		}
-	}
+	}*/
 }
 
 
@@ -907,11 +915,9 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 
 		Pointcloud *pc = new Pointcloud(std::string(pcName.mb_str()), "General", counter, pointlist, NULL);
 
-		Ogre::SceneManager *scnMgr = SceneHandling::getSingletonPtr()->getSceneManager();
-
-		Ogre::Entity *pcEnt = scnMgr->createEntity(std::string(pcEntName.mb_str()), std::string(pcName.mb_str()));
+		Ogre::Entity *pcEnt = mSceneMgr->createEntity(std::string(pcEntName.mb_str()), std::string(pcName.mb_str()));
 		pcEnt->setMaterialName("Pointcloud");
-		scnMgr->getRootSceneNode()->attachObject(pcEnt);
+		mSceneMgr->getRootSceneNode()->attachObject(pcEnt);
 	}
 }
 
