@@ -29,6 +29,7 @@
 #include "InputHandler.h"
 
 #include "../QualifiedNames/QualifiedName.h"
+#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/OgreAPIMediator.h"
 #include "../OViSE/SelectionManager.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
