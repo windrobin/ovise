@@ -222,6 +222,7 @@ bool MainFrame::InitOgre()
 	wxYield();
 	// Create viewport for camera
     Ogre::Viewport *mVp = mRenderWin->addViewport(mCam);
+	mVp->setBackgroundColour(Ogre::ColourValue(0.9, 0.9, 0.9));
 
 	// Initialize resources
     Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
