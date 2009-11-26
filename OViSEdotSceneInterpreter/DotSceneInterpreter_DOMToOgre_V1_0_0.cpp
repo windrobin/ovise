@@ -405,7 +405,7 @@ Ogre::Quaternion DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Quaternion
 		fW = (float)xercesc::XMLFloat(DOMElement_Quaternion->getAttribute(ToXMLString("w"))).getValue();
 	}
 
-	return Ogre::Quaternion(fX, fY, fZ, fW);
+	return Ogre::Quaternion(fW, fX, fY, fZ);
 }
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(xercesc::DOMDocument* DOMRepresentationOfScene)
 {
