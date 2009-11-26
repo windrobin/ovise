@@ -208,13 +208,13 @@ bool MainFrame::InitOgre()
 	if (qCamSceneNode == 0 ) return false;
 	Ogre::SceneNode *camNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamSceneNode);
 	camNode->setFixedYawAxis(true);
-	camNode->setPosition(0, 10, 20);
+	camNode->setPosition(0, 1, 2);
 	QualifiedName* qCamera = OgreAPIMediator::GetSingletonPtr()->CreateCamera(ToWxString("MainCam"), camNode);
 	if (qCamera == 0 ) return false;
 	mCam = OgreAPIMediator::GetSingletonPtr()->GetCameraPtr(*qCamera);
-	mCam->setPosition(Ogre::Vector3(0,0,20));
+	//mCam->setPosition(Ogre::Vector3(0,0,20));
 	mCam->lookAt(Ogre::Vector3::ZERO);
-    mCam->setNearClipDistance(5);
+    mCam->setNearClipDistance(0.1);
     mCam->setFixedYawAxis(true);
 	mCam->setAutoAspectRatio(true);
 	mCam->setQueryFlags(0x01);
