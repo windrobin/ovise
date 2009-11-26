@@ -127,8 +127,8 @@ public:
 	Ogre::RaySceneQuery*	CreateRaySceneQuery(QualifiedName qSceneManager);
 	Ogre::RaySceneQuery*	GetRaySceneQuery(QualifiedName qSceneManager);
 	QualifiedNameCollection	GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
-	QualifiedName*			GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
-	QualifiedName*			GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
+	QualifiedName			GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
+	QualifiedName			GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
 
 	// NEW // Has objects?
 	bool				HasCamera(QualifiedName qCamera);
