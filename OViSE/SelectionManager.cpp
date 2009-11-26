@@ -78,35 +78,34 @@ bool SelectionManager::AddEntityToPGCategory(wxPropertyCategory* PC, Ogre::Entit
 	if ( E == 0 ) return false;
 
 	wxString UniqueName = ToWxString(E->getName());
-	QualifiedName* qEntity = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
-	if ( qEntity == 0 ) return false;
-	if ( !qEntity->IsValid() ) return false;
+	QualifiedName qEntity = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
+	if ( !qEntity.IsValid() ) return false;
 
-	wxString EntityNameAndPoint = qEntity->UniqueName() + ToWxString(".");
+	wxString EntityNameAndPoint = qEntity.UniqueName() + ToWxString(".");
 	wxString Label;
 
 	// Name
 	Label = ToWxString("Name");
 	wxPGProperty* PName = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PName, qEntity->UniqueName());
+	PG->SetPropertyValue(PName, qEntity.UniqueName());
 	PG->DisableProperty(PName);
 
 	// Native name
 	Label = ToWxString("Native");
 	wxPGProperty* PNameNative = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameNative, qEntity->NativeName());
+	PG->SetPropertyValue(PNameNative, qEntity.NativeName());
 	PG->DisableProperty(PNameNative);
 
 	// Generic hint
 	Label = ToWxString("Hint");
 	wxPGProperty* PNameHint = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameHint, qEntity->GenericHint());
+	PG->SetPropertyValue(PNameHint, qEntity.GenericHint());
 	PG->DisableProperty(PNameHint);
 
 	// Generic name
 	Label = ToWxString("Generic");
 	wxPGProperty* PNameGeneric = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameGeneric, qEntity->GenericName());
+	PG->SetPropertyValue(PNameGeneric, qEntity.GenericName());
 	PG->DisableProperty(PNameGeneric);
 
 	// Meshfile
@@ -199,12 +198,11 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObj
 	if ( MO == 0 ) return false;
 	
 	// Get QualifiedName
-	QualifiedName* qMovableObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
-	if ( qMovableObject == 0 ) return false;
-	if ( !qMovableObject->IsValid() ) return false;
+	QualifiedName qMovableObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	if ( !qMovableObject.IsValid() ) return false;
 
 	// Get Ogre::MovableObject-Type
-	OgreEnums::MovableObject::MovableType MT_Enum = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(*qMovableObject);
+	OgreEnums::MovableObject::MovableType MT_Enum = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
 
 	// Setup category
 	wxString CategoryHeadline;
@@ -225,14 +223,14 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObj
 		case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	CategoryHeadline << ToWxString("StaticGeometry.Region : '");break;
 
 		default:
-			CategoryHeadline << ToWxString("MovableObject : '") << qMovableObject->UniqueName() << ToWxString("'");
+			CategoryHeadline << ToWxString("MovableObject : '") << qMovableObject.UniqueName() << ToWxString("'");
 			return false;
 			break;
 	}
-	CategoryHeadline << qMovableObject->UniqueName() << ToWxString("'");
+	CategoryHeadline << qMovableObject.UniqueName() << ToWxString("'");
 
 	// Setup properties of category
-	wxPropertyCategory* PC = new wxPropertyCategory(CategoryHeadline, qMovableObject->UniqueName());
+	wxPropertyCategory* PC = new wxPropertyCategory(CategoryHeadline, qMovableObject.UniqueName());
 	PG->Append(PC);
 
 	// ...Ogre::MovableObject-part
@@ -255,7 +253,7 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObj
 	}
 
 	// ...Ogre::SceneNode-part
-	this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), *qMovableObject);
+	this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), qMovableObject);
 
 	PC->SetExpanded(false);
 	return true;
@@ -325,9 +323,8 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 		}
 		
 		// STAGE 2: Get QualifiedNames by UniqueName
-		QualifiedName* qPtr = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
-		if ( qPtr == 0 ) return false;
-		QualifiedName qName(*qPtr);
+		QualifiedName qName = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
+		if ( !qName.IsValid() ) return false;
 
 		// STAGE 3: Get Type by indentified QualifiedName
 		OgreEnums::MovableObject::MovableType Type = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qName);

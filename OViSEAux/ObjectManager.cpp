@@ -14,13 +14,13 @@ ObjectManager::~ObjectManager(void)
 	this->mSceneNodes.clear();
 }
 // General
-QualifiedName* ObjectManager::GetQualifiedNameOfObject(wxString UniqueName)
+QualifiedName ObjectManager::GetQualifiedNameOfObject(wxString UniqueName)
 {
-	QualifiedName* QName = 0;
+	QualifiedName QName;
 
 	if (this->mQNames.count(UniqueName) != 0)
 	{
-		QName = new QualifiedName(this->mQNames[UniqueName]);
+		QName = this->mQNames[UniqueName];
 	}
 	return QName;
 }

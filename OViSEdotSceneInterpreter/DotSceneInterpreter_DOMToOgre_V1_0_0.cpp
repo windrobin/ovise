@@ -180,7 +180,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	{
 		NewNode->translate(TempPositionOffset, Ogre::Node::TS_PARENT);
 		NewNode->scale(TempScaleOffset);
-		NewNode->rotate(TempRotationOffset, Ogre::Node::TS_LOCAL);
+		NewNode->rotate(TempRotationOffset, Ogre::Node::TS_PARENT);
 
 		// LogMsg.Clear();
 		// LogMsg << ToWxString("OViSE dotScene Manager: Created and added new Ogre::SceneNode \"") << ToWxString(NewNode->getName()) << ToWxString("\"");

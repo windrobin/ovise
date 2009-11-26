@@ -348,30 +348,28 @@ QualifiedNameCollection OgreAPIMediator::GetQueryObjects(float screenx, float sc
 		{
 			Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[IT];
 			Ogre::MovableObject* MO = RayScanResultEntry.movable;
-			QualifiedName*	qMO = this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
-			if (qMO != 0) QNames.Add(*qMO);
+			QualifiedName qMO = this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+			if (qMO.IsValid()) QNames.Add(qMO);
 		}
 	}
 	
 	return QNames;
 }
-
-
-QualifiedName* OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+QualifiedName OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
 {
 	// Verify OgreAPIMediator
-	if (!this->Valid) return 0;
+	if (!this->Valid) return QualifiedName();
 
 	// Verify qSceneManager
-	if (!qSceneManager.IsValid()) return 0;
+	if (!qSceneManager.IsValid()) return QualifiedName();
 
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
-	if (SM == 0) return 0;
+	if (SM == 0) return QualifiedName();
 
 	// Get Query
 	Ogre::RaySceneQuery* Q = this->GetRaySceneQuery(qSceneManager);
-	if (Q == 0) return 0;
+	if (Q == 0) return QualifiedName();
 
 	// Prepare RayScan
 	Q->setRay(cam->getCameraToViewportRay(screenx, screeny));
@@ -386,23 +384,23 @@ QualifiedName* OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny
 		Ogre::MovableObject* MO = RayScanResultEntry.movable;
 		return this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
 	}
-	else return 0;
+	else return QualifiedName();
 }
-QualifiedName* OgreAPIMediator::GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+QualifiedName OgreAPIMediator::GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
 {
 	// Verify OgreAPIMediator
-	if (!this->Valid) return 0;
+	if (!this->Valid) return QualifiedName();
 
 	// Verify qSceneManager
-	if (!qSceneManager.IsValid()) return 0;
+	if (!qSceneManager.IsValid()) return QualifiedName();
 
 	// Get SceneManager
 	Ogre::SceneManager* SM = this->QuickObjectAccess.GetSceneManager(qSceneManager);
-	if (SM == 0) return 0;
+	if (SM == 0) return QualifiedName();
 
 	// Get Query
 	Ogre::RaySceneQuery* Q = this->GetRaySceneQuery(qSceneManager);
-	if (Q == 0) return 0;
+	if (Q == 0) return QualifiedName();
 
 	// Prepare RayScan
 	Q->setRay(cam->getCameraToViewportRay(screenx, screeny));
@@ -417,7 +415,7 @@ QualifiedName* OgreAPIMediator::GetQueryBackObject(float screenx, float screeny,
 		Ogre::MovableObject* MO = RayScanResultEntry.movable;
 		return this->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
 	}
-	else return 0;
+	else return QualifiedName();
 }
 // Has objects?
 bool OgreAPIMediator::HasCamera(QualifiedName qCamera)

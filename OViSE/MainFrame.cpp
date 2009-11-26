@@ -477,11 +477,15 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 	float sy = (float)s.y / (float)height;
 	float d = -1;
 
-	// REACTORING of "OViSESceneHandling" takes affect here! //
-
 	QualifiedNameCollection QNames = OgreAPIMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, mCam, OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
 	
-	if(!QNames.IsEmpty())
+	// Handle selection
+	if(QNames.IsEmpty())
+	{
+		// Nothing selected
+		this->mSceneTree->UnselectAll();
+	}
+	else
 	{
 		// CASE:				ACTION:
 		// 1:	-			->	Unselect all, Select one or nothing
@@ -500,20 +504,19 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 					if (UnselectedQNames.Count() > 0)
 					{
 						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollection::CollectionUnion(SelectionManager::getSingletonPtr()->Selection, UnselectedQNames);
-						for (unsigned long IT = 0; IT < UnselectedQNames.Count(); IT++)
+						for (unsigned long IT = 0; IT < QNames.Count(); IT++)
 						{
 							// Select in SceneTree-View
-							wxTreeItemId Item = this->mSceneTree->Items[UnselectedQNames[IT].UniqueName()]; // TODO: Upgrade
+							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
 							this->mSceneTree->SelectItem(Item);
 						}
 					}
 					else
 					{
-						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollection::CollectionDifference(SelectionManager::getSingletonPtr()->Selection, QNames);
 						for (unsigned long IT = 0; IT < QNames.Count(); IT++)
 						{
 							// Select in SceneTree-View
-							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()]; // TODO: Upgrade
+							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
 							this->mSceneTree->UnselectItem(Item);
 						}
 					}
@@ -527,16 +530,14 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
 					if (SelectionManager::getSingletonPtr()->Selection.Contains(QNames[0]))
 					{
-						SelectionManager::getSingletonPtr()->Selection.Remove( QNames[0] );
-	
 						// Unelect in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 						this->mSceneTree->UnselectItem(Item);
 					}
 					else
 					{
 						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 						this->mSceneTree->SelectItem(Item);
 					}
 				}
@@ -547,18 +548,13 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 			if (event.ShiftDown())
 			{
 				// CASE 3: Unselect all, Add complete Query
-				SelectionManager::getSingletonPtr()->Selection.Clear();
 				this->mSceneTree->UnselectAll();
-
 				if (QNames.Count() > 0)
 				{
-					for (unsigned long IT = 0; IT < QNames.Count(); IT++)
+					for (unsigned long IT = 0; IT < (unsigned long)QNames.Count(); IT++)
 					{
-						// Add to all selection // Selection is clear, so it's not neccessary to test, if QName is already in there
-						SelectionManager::getSingletonPtr()->Selection.Add(QNames[IT]);
-						
 						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()]; // TODO: Upgrade
+						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
 						this->mSceneTree->SelectItem(Item);
 					}
 				}
@@ -566,21 +562,18 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 			else
 			{
 				// CASE 1: Unselect all, Select one or nothing
-				SelectionManager::getSingletonPtr()->Selection.Clear();
 				this->mSceneTree->UnselectAll();
-
 				if (QNames.Count() > 0)
 				{
-					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
-					SelectionManager::getSingletonPtr()->Selection.Add(QNames[0]);
-
 					// Select in SceneTree-View
-					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()]; // TODO: Upgrade
+					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 					this->mSceneTree->SelectItem(Item);
 				}
 			}
 		}
 	}
+
+	
 }
 
 void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
@@ -766,63 +759,64 @@ void MainFrame::deleteMeshes()
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 {
-	wxString Msg = ToWxString("SELECTED ITEMS:");
-	this->RemoveAllSelectedObjects();
+	wxTreeItemId Item = event.GetItem();
 
-	if (!event.GetItem().IsOk()) this->RemoveAllSelectedObjects();
+	wxString Msg = ToWxString("SELECTED ITEMS:");
+
+	if (!Item.IsOk()) this->RemoveAllSelectedObjects();
 	else
 	{
-		wxString TreeItemLabel = this->mSceneTree->GetItemText(event.GetItem());
-		wxArrayTreeItemIds SelectedItems;
-		this->mSceneTree->GetSelections(SelectedItems);
-
-		for(unsigned int IT = 0; IT < SelectedItems.Count(); IT++)
+		wxString TreeItemLabel = this->mSceneTree->GetItemText(Item);
+		QualifiedName qName = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(TreeItemLabel);
+		if (qName.IsValid())
 		{
-			wxString ItemLabel = this->mSceneTree->GetItemText(SelectedItems[IT]);
-			Msg << ToWxString(" '") << ItemLabel << ("' ");
-			
-			QualifiedName qSelectedObject = QualifiedName::GetQualifiedNameByUnique(ItemLabel);
-			QualifiedName qSceneManager = QualifiedName::GetQualifiedNameByUnique(ToWxString(mCam->getSceneManager()->getName()));
-			
-			if (qSelectedObject.IsValid() && qSceneManager.IsValid()) this->AddSelectedObject(qSelectedObject, qSceneManager);
+			if (this->mSceneTree->IsSelected(Item)) this->AddSelectedObject(qName);
+			else this->RemoveSelectedObject(qName);
 		}
 	}
-
 	Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
 }
 
-void MainFrame::AddSelectedObject(QualifiedName qSelectedObject, QualifiedName qSceneManager)
+void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
-	if (pMO != 0)
+	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	if (MO != 0)
 	{
-		if (SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
-		{
-			// Remove from selection & hide bounding box
-			SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject); // Toggle item
-			pMO->getParentSceneNode()->showBoundingBox(false);
-		}
-		else
-		{
-			// Add to selection & show bounding box
+		if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
 			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);
-			pMO->getParentSceneNode()->showBoundingBox(true);
-		}
+		MO->getParentSceneNode()->showBoundingBox(true);
+		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+	}
+}
 
-		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties, SelectionManager::getSingletonPtr()->Selection);
+void MainFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
+{
+	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	if (MO != 0)
+	{
+		SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
+		MO->getParentSceneNode()->showBoundingBox(false);
+		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
 	}
 }
 
 void MainFrame::RemoveAllSelectedObjects()
 {
-	for (int IT = 0; IT < (unsigned long)SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
+	// Remove all BoundingBoxes
+	if (SelectionManager::getSingletonPtr()->Selection.Count() != 0)
 	{
-		QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
-		Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
-		if(pMO != 0) pMO->getParentSceneNode()->showBoundingBox(false);
+		for (unsigned long IT = 0; IT < SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
+		{
+			QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
+			Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+			if (pMO != 0) pMO->getParentSceneNode()->showBoundingBox(false);
+		}
 	}
 
+	// Clear selection
 	SelectionManager::getSingletonPtr()->Selection.Clear();
+
+	// Clear propertygrid
 	this->mObjectProperties->Clear();
 }
 void MainFrame::OnOpenPrototypeManagement( wxCommandEvent& event )

@@ -39,7 +39,7 @@ public:
 	~ObjectManager(void);
 
 	// General
-	QualifiedName*			GetQualifiedNameOfObject(wxString UniqueName);
+	QualifiedName			GetQualifiedNameOfObject(wxString UniqueName);
 	bool					RemoveUnidentifiedObject(QualifiedName QName);
 
 	// Accociadted SceneManager // Delivers quick access to a Ogre-objects hosting/associated Ogre::SceneManager
