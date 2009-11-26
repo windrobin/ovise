@@ -765,86 +765,51 @@ void MainFrame::deleteMeshes()
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 {
-	wxTreeItemId Item = event.GetItem();
-
 	wxString Msg = ToWxString("SELECTED ITEMS:");
+	this->RemoveAllSelectedObjects();
 
-	if (!Item.IsOk()) // case : UnselectAll()
+	if (!event.GetItem().IsOk()) this->RemoveAllSelectedObjects();
+	else
 	{
-		this->RemoveAllSelectedObjects();
-	}
-	else // case : UnselectItem(...)
-	{
-		wxString TreeItemLabel = this->mSceneTree->GetItemText(Item);
-
-		Ogre::MovableObject* selectedObject = SceneHandling::getSingletonPtr()->getSelectedObject(TreeItemLabel, this->mSceneMgr);
-
-		this->RemoveAllSelectedObjects();
-
+		wxString TreeItemLabel = this->mSceneTree->GetItemText(event.GetItem());
 		wxArrayTreeItemIds SelectedItems;
 		this->mSceneTree->GetSelections(SelectedItems);
 
-		wxString SceneManagerName;// = SelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-
-		
-		int count = SelectedItems.Count();
 		for(unsigned int IT = 0; IT < SelectedItems.Count(); IT++)
 		{
 			wxString ItemLabel = this->mSceneTree->GetItemText(SelectedItems[IT]);
 			Msg << ToWxString(" '") << ItemLabel << ("' ");
 			
-			QualifiedNameCollection QNames = QualifiedNameCollection::GetQualifiedNameByUnique(ItemLabel);
-			if (QNames.Count() == 1)
-			{
-				Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(QNames[0]);
-				if(SelectedObject != NULL)
-				{
-					this->AddSelectedObject(SelectedObject, ToWxString(mCam->getSceneManager()->getName()));
-				}
-			}
+			QualifiedName qSelectedObject = QualifiedName::GetQualifiedNameByUnique(ItemLabel);
+			QualifiedName qSceneManager = QualifiedName::GetQualifiedNameByUnique(ToWxString(mCam->getSceneManager()->getName()));
+			
+			if (qSelectedObject.IsValid() && qSceneManager.IsValid()) this->AddSelectedObject(qSelectedObject, qSceneManager);
 		}
 	}
 
 	Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
-	/*
-	{
-		
-
-		//this->ToogleSelectedObject(selectedObject, ToWxString(this->mMainRenderWin->GetCamera()->getSceneManager()->getName()));
-		
-		
-	}*/
 }
 
-void MainFrame::AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName)
+void MainFrame::AddSelectedObject(QualifiedName qSelectedObject, QualifiedName qSceneManager)
 {
-	//mSceneHdlr->addObjectToSelection(selectedObject, true, ToStdString(SceneManagerName));
-	//setObjectProperties(selectedObject);
-
-	// #Mark:NewSelection#
-
-	/*wxString ObjectName = ToWxString(selectedObject->getName());
-
-	SelectionManager::getSingletonPtr()->Selection.setSceneManagerName(SceneManagerName);
-	if (SelectionManager::getSingletonPtr()->Selection.hasMovableObject(ObjectName))
+	Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	if (pMO != 0)
 	{
-		// Remove from selection
-		SelectionManager::getSingletonPtr()->Selection.removeMovableObject(ObjectName); // Toggle item
-		
-		// Hide bounding box
-		selectedObject->getParentSceneNode()->showBoundingBox(false);
+		if (SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
+		{
+			// Remove from selection & hide bounding box
+			SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject); // Toggle item
+			pMO->getParentSceneNode()->showBoundingBox(false);
+		}
+		else
+		{
+			// Add to selection & show bounding box
+			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);
+			pMO->getParentSceneNode()->showBoundingBox(true);
+		}
+
+		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties, SelectionManager::getSingletonPtr()->Selection);
 	}
-	else
-	{
-		// Add to selection
-		OgreEnums::MovableObject::MovableType Type = OgreEnums::EnumTranslator_MovableType::GetSingletonPtr()->getStringAsEnum(ToWxString(selectedObject->getMovableType()));
-		SelectionManager::getSingletonPtr()->Selection.addMovableObject(ObjectName, Type);
-		
-		// Show bounding box
-		selectedObject->getParentSceneNode()->showBoundingBox(true);
-	//}
-
-	SelectionManager::getSingletonPtr()->generatePropertyGridContentFromSelection(this->mObjectProperties);*/
 }
 
 void MainFrame::RemoveAllSelectedObjects()

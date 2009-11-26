@@ -82,7 +82,7 @@ class MainFrame: public MainFrameBase
 
 		void OnTreeSelectionChanged( wxTreeEvent& event );
 
-		void AddSelectedObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
+		void AddSelectedObject(QualifiedName qSelectedObject, QualifiedName qSceneManager);
 		void UnselectObject(Ogre::MovableObject* selectedObject, wxString SceneManagerName);
 		void RemoveAllSelectedObjects();
 
