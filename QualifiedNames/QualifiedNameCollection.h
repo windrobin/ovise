@@ -87,5 +87,5 @@ public:
 	static QualifiedNameCollection CollectionDifference(QualifiedNameCollection& Minuend, QualifiedNameCollection& Subtrahend);
 	static QualifiedNameCollection CollectionSymmetricDifference(QualifiedNameCollection& QCollection_1, QualifiedNameCollection& QCollection_2);
 
-	static QualifiedNameArray ArrayToHashMap(QualifiedNameHashMap QNameHashMap);
+	static QualifiedNameArray HashMapToArray(QualifiedNameHashMap QNameHashMap);
 };

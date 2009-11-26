@@ -815,27 +815,15 @@ void MainFrame::AddSelectedObject(QualifiedName qSelectedObject, QualifiedName q
 
 void MainFrame::RemoveAllSelectedObjects()
 {
-	//this->mSceneHdlr->clearObjectSelection(/*cam->getSceneManager()->getName()*/);
-	//clearObjectProperties();
-	
-	/*wxArrayString Keys = SelectionManager::getSingletonPtr()->Selection.getAllMovableObjectNames();
-	wxString NameOfSceneManager = SelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-	for (int IT = 0; IT < Keys.Count(); IT++)
+	for (int IT = 0; IT < (unsigned long)SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
 	{
-		wxString SceneManagerName = OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName();
-		OgreEnums::MovableObject::MovableType Type = SelectionManager::getSingletonPtr()->Selection.SelectedObjects[Keys[IT]];
-
-		Ogre::MovableObject* SelectedObject = OgreAPIMediator::GetSingletonPtr()->getMovableObjectPtr(
-			OViSESelectionManager::getSingletonPtr()->Selection.getSceneManagerName(),
-			Keys[IT],
-			Type);
-
-		if(SelectedObject != NULL) SelectedObject->getParentSceneNode()->showBoundingBox(false);
+		QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
+		Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+		if(pMO != 0) pMO->getParentSceneNode()->showBoundingBox(false);
 	}
-	// #Mark:NewSelection#
-	SelectionManager::getSingletonPtr()->Selection.removeAll();
 
-	this->mObjectProperties->Clear();*/
+	SelectionManager::getSingletonPtr()->Selection.Clear();
+	this->mObjectProperties->Clear();
 }
 void MainFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {

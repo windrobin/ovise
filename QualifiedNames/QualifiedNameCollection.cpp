@@ -25,7 +25,11 @@ QualifiedNameCollection::QualifiedNameCollection(const QualifiedNameCollection& 
 QualifiedNameCollection::~QualifiedNameCollection(void) { this->Clear(); }
 // Management, basic
 unsigned long QualifiedNameCollection::Count() { return this->mQNHashMap.size(); }
-void QualifiedNameCollection::Clear() { this->mQNHashMap.clear(); }
+void QualifiedNameCollection::Clear()
+{
+	this->mQNHashMap.clear();
+	this->mFlag_QNHashMap_modified = true;
+}
 bool QualifiedNameCollection::IsEmpty() { return this->mQNHashMap.empty(); }
 bool QualifiedNameCollection::Contains(QualifiedName qName)
 {
@@ -60,7 +64,7 @@ QualifiedName QualifiedNameCollection::operator[](unsigned long Index)
 	if (this->mFlag_QNHashMap_modified)
 	{
 		this->mQNArray.Clear();
-		this->mQNArray = QualifiedNameCollection::ArrayToHashMap(this->mQNHashMap);
+		this->mQNArray = QualifiedNameCollection::HashMapToArray(this->mQNHashMap);
 		this->mFlag_QNHashMap_modified = false;
 	}
 	
@@ -197,7 +201,7 @@ QualifiedNameCollection QualifiedNameCollection::CollectionSymmetricDifference(Q
 	return Result;
 }
 
-QualifiedNameArray QualifiedNameCollection::ArrayToHashMap(QualifiedNameHashMap QNameHashMap)
+QualifiedNameArray QualifiedNameCollection::HashMapToArray(QualifiedNameHashMap QNameHashMap)
 {
 	QualifiedNameArray QNameArray;
 
