@@ -10,7 +10,7 @@
  * License:																		*
  ********************************************************************************/
 
-#include "../QualifiedNames/QualifiedNameManager.h"
+#include "QualifiedNameManager.h"
 
 QualifiedNameManager* QualifiedNameManager::instance = 0;
 QualifiedNameManager::QualifiedNameManager(void)
