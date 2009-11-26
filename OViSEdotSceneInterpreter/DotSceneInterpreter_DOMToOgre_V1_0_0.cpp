@@ -34,11 +34,31 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Nodes(xercesc::DOMElem
 
 	/// STEP 4.1: Handle childnodes...
 	NodeElements = DOMElement_nodes->getElementsByTagName(ToXMLString("node"));
+
+	/*
 	if (NodeElements->getLength() > 0)
 	{
 		for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
 		{
 			this->Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), this->AnchorNode);
+		}
+	}
+	*/
+
+	if (DOMElement_nodes != 0)
+	{
+		for(xercesc::DOMNode* ChildNode = DOMElement_nodes->getFirstChild(); ChildNode != 0; ChildNode = ChildNode->getNextSibling())
+		{
+			switch(ChildNode->getNodeType())
+			{
+			case xercesc::DOMNode::ELEMENT_NODE:
+				this->Interpretation_Node((xercesc::DOMElement*) ChildNode, this->AnchorNode);
+				break;
+			default:
+				// Else ignore it!
+				break;
+
+			}
 		}
 	}
 
@@ -175,16 +195,32 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 		#endif
 
 		// STEP 5: Look for existing elements, leading to deeper recusivity (!)
-		// STEP 5.1: Handle childnodes...
-		NodeElements = DOMElement_node->getElementsByTagName(ToXMLString("node"));
-		if (NodeElements->getLength() > 0)
+		if (DOMElement_node != 0)
 		{
-			for(XMLSize_t ChildNodeIterator = 0; ChildNodeIterator < NodeElements->getLength(); ChildNodeIterator++)
+			for(xercesc::DOMNode* ChildNode = DOMElement_node->getFirstChild(); ChildNode != 0; ChildNode = ChildNode->getNextSibling())
 			{
-				this->Interpretation_Node((xercesc::DOMElement*) NodeElements->item(ChildNodeIterator), NewNode);
+				switch(ChildNode->getNodeType())
+				{
+				case xercesc::DOMNode::ELEMENT_NODE:
+					// STEP 5.1: Handle childnodes...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("node")))
+					{
+						this->Interpretation_Node((xercesc::DOMElement*) ChildNode, NewNode);
+					}
+					// STEP 5.2: Handle entities...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("entity")))
+					{
+						this->Interpretation_Entity((xercesc::DOMElement*) ChildNode, NewNode);
+					}
+					break;
+				default:
+					// Else ignore it!
+					break;
+
+				}
 			}
 		}
-
+/*
 		// STEP 5.2: Handle entities...
 		EntityElements = DOMElement_node->getElementsByTagName(ToXMLString("entity"));
 		if (EntityElements->getLength() > 0)
@@ -194,7 +230,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 				this->Interpretation_Entity((xercesc::DOMElement*) EntityElements->item(EntityIterator), NewNode);
 			}
 		}
-
+*/
 		// Step 5.3: Handle cameras... TODO
 		// Step 5.4: Handle lights... TODO
 		// STEP 5.5: Handle particleSystems... TODO
