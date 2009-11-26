@@ -6,7 +6,7 @@ InputHandler::InputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow
 	mCameraNode = camnode;
 	mParent = parent;
 	mRotateSpeed = 1.0;
-	mMoveSpeed = 1.0;
+	mMoveSpeed = 0.05;
 	mMouseCaptured = false;
 
 	parent->Bind(wxEVT_KEY_DOWN, &InputHandler::handleKeyboardInput, this);
@@ -35,9 +35,9 @@ void InputHandler::handleMouseInput(wxMouseEvent &evt)
 				yawCamera(Ogre::Radian(Ogre::Degree(mRotateSpeed)));
 
 			if(newY > mY)
-				pitchCamera(Ogre::Radian(Ogre::Degree(-mRotateSpeed)));
-			else if(newY < mY)
 				pitchCamera(Ogre::Radian(Ogre::Degree(mRotateSpeed)));
+			else if(newY < mY)
+				pitchCamera(Ogre::Radian(Ogre::Degree(-mRotateSpeed)));
 	
 			mX = newX;
 			mY = newY;
@@ -80,11 +80,11 @@ void InputHandler::handleKeyboardInput(wxKeyEvent &evt)
 	{
 	case 'a':
 	case 'A':
-		translateCameraHorizontal(-mMoveSpeed);
+		translateCameraHorizontal(mMoveSpeed);
 		break;
 	case 'd':
 	case 'D':
-		translateCameraHorizontal(mMoveSpeed);
+		translateCameraHorizontal(-mMoveSpeed);
 		break;
 	case 'w':
 	case 'W':
@@ -134,7 +134,7 @@ void InputHandler::translateCamera(Ogre::Vector3 trans)
 void InputHandler::translateCameraVertical(double moveSpeed)
 {
 	Ogre::Matrix3 localAxes = mCameraNode->getLocalAxes();
-	Ogre::Vector3 vertical = localAxes.GetColumn(1);
+	Ogre::Vector3 vertical = localAxes.GetColumn(2);
 	vertical.normalise();
 
 	translateCamera(moveSpeed * vertical);
@@ -152,7 +152,7 @@ void InputHandler::translateCameraHorizontal(double moveSpeed)
 void InputHandler::translateCameraDirectional(double moveSpeed)
 {
 	Ogre::Matrix3 localAxes = mCameraNode->getLocalAxes();
-	Ogre::Vector3 directional = localAxes.GetColumn(2);	
+	Ogre::Vector3 directional = localAxes.GetColumn(1);	
 	directional.normalise();
 
 	translateCamera(moveSpeed * directional);
@@ -162,7 +162,7 @@ void InputHandler::zoomCamera(double amount)
 {
 	if(mCameraNode != NULL)
 	{
-		mCamera->getParentSceneNode()->translate(0, 0, amount, Ogre::Node::TS_LOCAL);
+		mCamera->getParentSceneNode()->translate(0, amount, 0, Ogre::Node::TS_PARENT);
 		Ogre::Vector3 pos = mCamera->getParentSceneNode()->getPosition();
 		if (pos.z < mCamera->getNearClipDistance())
 		{

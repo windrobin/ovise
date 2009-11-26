@@ -199,40 +199,40 @@ bool MainFrame::InitOgre()
 		width, height, false, &params);
 	mRenderWin->setActive (true);
 
+	OgreAPIMediator* Mediator = OgreAPIMediator::GetSingletonPtr();
+
 	// Create camera setup
-	QualifiedName* qCamFokusSceneNode = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(ToWxString("mainCamFocusNode"));
+	QualifiedName* qCamFokusSceneNode = Mediator->CreateSceneNode(ToWxString("mainCamFocusNode"));
 	if (qCamFokusSceneNode == 0 ) return false;
-	Ogre::SceneNode *camFocusNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamFokusSceneNode);
-	camFocusNode->setFixedYawAxis(true);
-	QualifiedName* qCamSceneNode = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(ToWxString("CamNode"), camFocusNode);
+	Ogre::SceneNode *camFocusNode = Mediator->GetSceneNodePtr(*qCamFokusSceneNode);
+	camFocusNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Z);
+	QualifiedName* qCamSceneNode = Mediator->CreateSceneNode(ToWxString("CamNode"), camFocusNode);
 	if (qCamSceneNode == 0 ) return false;
-	Ogre::SceneNode *camNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qCamSceneNode);
-	camNode->setFixedYawAxis(true);
-	camNode->setPosition(0, 1, 2);
-	QualifiedName* qCamera = OgreAPIMediator::GetSingletonPtr()->CreateCamera(ToWxString("MainCam"), camNode);
+	Ogre::SceneNode *camNode = Mediator->GetSceneNodePtr(*qCamSceneNode);
+	camNode->setPosition(0, 2, 0);
+	Ogre::Quaternion q(Ogre::Degree(180), Ogre::Vector3::UNIT_Z);
+	Ogre::Quaternion p(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
+	camNode->setOrientation(p*q);
+	QualifiedName* qCamera = Mediator->CreateCamera(ToWxString("MainCam"), camNode);
 	if (qCamera == 0 ) return false;
-	mCam = OgreAPIMediator::GetSingletonPtr()->GetCameraPtr(*qCamera);
-	//mCam->setPosition(Ogre::Vector3(0,0,20));
-	mCam->lookAt(Ogre::Vector3::ZERO);
-    mCam->setNearClipDistance(0.1);
-    mCam->setFixedYawAxis(true);
-	mCam->setAutoAspectRatio(true);
+	mCam = Mediator->GetCameraPtr(*qCamera);
+	mCam->setNearClipDistance(0.01);
+    mCam->setAutoAspectRatio(true);
 	mCam->setQueryFlags(0x01);
 
 	wxYield();
 	// Create viewport for camera
     Ogre::Viewport *mVp = mRenderWin->addViewport(mCam);
 	mVp->setBackgroundColour(Ogre::ColourValue(0.9, 0.9, 0.9));
-
+	
 	// Initialize resources
     Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	// DBG: Testscene
-	OgreAPIMediator* Mediator = OgreAPIMediator::GetSingletonPtr();
-	Mediator->CreateEntity(ToWxString("Plane"), ToWxString("Plane.mesh"));
+	Mediator->CreateEntity(ToWxString("GridPlane"), ToWxString("GridPlane.mesh"));
 	Mediator->CreateEntity(ToWxString("CoS"), ToWxString("CoS.mesh"));
-
+	
 	QualifiedName* qSunLight = Mediator->CreateLight(ToWxString("Sun"));
 	Ogre::Light* SunLight = Mediator->GetLightPtr(*qSunLight);
 	SunLight->setCastShadows(true);
@@ -803,7 +803,7 @@ void MainFrame::RemoveAllSelectedObjects()
 	// Remove all BoundingBoxes
 	if (SelectionManager::getSingletonPtr()->Selection.Count() != 0)
 	{
-		for (unsigned long IT = 0; IT < SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
+		for (unsigned long IT = 0; IT < (unsigned long)SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
 		{
 			QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
 			Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
