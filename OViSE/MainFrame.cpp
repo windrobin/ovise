@@ -572,8 +572,6 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 			}
 		}
 	}
-
-	
 }
 
 void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
