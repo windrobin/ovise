@@ -169,6 +169,8 @@ bool SelectionManager::AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::Sc
 	PG->SetPropertyValidator(Prz, wxTextValidator(wxFILTER_NUMERIC));
 	Pr->SetExpanded(false);
 
+	Ogre::Quaternion DEBUG_quaternion = SN->getOrientation();
+
 	// Set values
 	PG->SetPropertyValue(Prx, (float)SN->getOrientation().getPitch().valueDegrees());
 	PG->SetPropertyValue(Pry, (float)SN->getOrientation().getRoll().valueDegrees());
