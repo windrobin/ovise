@@ -1,78 +1,78 @@
 <scene formatVersion="1.0.0">
   <nodes>
     <node name="Cylinder">
-      <position x="1.000000" y="5.000000" z="-5.000000"/>
-      <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+      <position x="1.000000" y="5.000000" z="5.000000"/>
+      <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <entity name="Cylinder" meshFile="Cylinder.mesh"/>
       <node name="Cylinder.001">
-        <position x="-2.365926" y="0.000000" z="-0.000000"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="-2.365926" y="0.000000" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Cylinder.001" meshFile="Cylinder.001.mesh"/>
       </node>
       <node name="Cylinder.002">
-        <position x="0.000000" y="0.000000" z="-2.995621"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="0.000000" y="2.995621" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Cylinder.002" meshFile="Cylinder.002.mesh"/>
       </node>
     </node>
     <node name="Cube">
-      <position x="0.000000" y="0.000000" z="-0.000000"/>
-      <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+      <position x="0.000000" y="0.000000" z="0.000000"/>
+      <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <entity name="Cube" meshFile="Cube.mesh"/>
       <node name="Cube.001">
-        <position x="0.000000" y="0.000000" z="2.939500"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="0.000000" y="-2.939500" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Cube.001" meshFile="Cube.001.mesh"/>
       </node>
       <node name="Cube.002">
-        <position x="-3.757195" y="0.000000" z="-0.000000"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="-3.757195" y="0.000000" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Cube.002" meshFile="Cube.002.mesh"/>
       </node>
     </node>
     <node name="Camera">
-      <position x="13.901046" y="14.986376" z="17.695627"/>
-      <quaternion x="-0.250143" y="0.284015" z="0.076645" w="0.922437"/>
+      <position x="13.901046" y="-17.695627" z="14.986376"/>
+      <quaternion x="0.475384" y="0.146633" z="0.255025" w="0.829139"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <camera name="Camera" fov="37.849289" projectionType="perspective">
         <clipping nearPlaneDist="0.100000" farPlaneDist="100.000000"/>
       </camera>
     </node>
     <node name="Camera.001">
-      <position x="13.901046" y="14.986376" z="-7.841816"/>
-      <quaternion x="-0.115476" y="0.866645" z="0.234758" w="0.424830"/>
+      <position x="13.901046" y="7.841816" z="14.986376"/>
+      <quaternion x="0.218746" y="0.446812" z="0.778809" w="0.382054"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <camera name="Camera.001" fov="37.849289" projectionType="perspective">
         <clipping nearPlaneDist="0.100000" farPlaneDist="100.000000"/>
       </camera>
     </node>
     <node name="Sphere">
-      <position x="5.000000" y="0.000000" z="-0.000000"/>
-      <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+      <position x="5.000000" y="0.000000" z="0.000000"/>
+      <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <entity name="Sphere" meshFile="Sphere.mesh"/>
       <node name="Sphere.002">
-        <position x="0.000000" y="0.000000" z="-2.876989"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="0.000000" y="2.876989" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Sphere.002" meshFile="Sphere.002.mesh"/>
       </node>
       <node name="Sphere.001">
-        <position x="2.378836" y="0.000000" z="-0.000000"/>
-        <quaternion x="0.000000" y="0.000000" z="-0.000000" w="1.000000"/>
+        <position x="2.378836" y="0.000000" z="0.000000"/>
+        <quaternion x="0.000000" y="0.000000" z="0.000000" w="1.000000"/>
         <scale x="1.000000" y="1.000000" z="1.000000"/>
         <entity name="Sphere.001" meshFile="Sphere.001.mesh"/>
       </node>
     </node>
     <node name="Lamp">
-      <position x="2.463778" y="2.311102" z="-1.005454"/>
-      <quaternion x="-0.284166" y="0.726942" z="0.342034" w="0.523275"/>
+      <position x="2.463778" y="1.005454" z="2.311102"/>
+      <quaternion x="0.169076" y="0.272171" z="0.755880" w="0.570947"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <light name="Lamp" type="point">
         <colourDiffuse r="1.000000" g="1.000000" b="1.000000"/>
@@ -81,8 +81,8 @@
       </light>
     </node>
     <node name="Lamp.001">
-      <position x="5.390290" y="9.416460" z="-10.144905"/>
-      <quaternion x="-0.284166" y="0.726942" z="0.342034" w="0.523275"/>
+      <position x="5.390290" y="10.144905" z="9.416460"/>
+      <quaternion x="0.169076" y="0.272171" z="0.755880" w="0.570947"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <light name="Spot" type="spotLight" castShadows="false">
         <normal x="0.0" y="0.0" z="-1.0"/>
@@ -93,8 +93,8 @@
       </light>
     </node>
     <node name="Lamp.002">
-      <position x="2.463778" y="9.828486" z="6.848905"/>
-      <quaternion x="-0.289343" y="0.476515" z="0.451004" w="0.697001"/>
+      <position x="2.463778" y="-6.848905" z="9.828486"/>
+      <quaternion x="0.288258" y="0.018039" z="0.655855" w="0.697450"/>
       <scale x="1.000000" y="1.000000" z="1.000000"/>
       <light name="Sun" type="directional">
         <normal x="0.0" y="0.0" z="-1.0"/>
