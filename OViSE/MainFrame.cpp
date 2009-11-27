@@ -16,6 +16,9 @@
 #include <GL/glx.h>
 #endif
 
+#include <wx/textfile.h>
+#include <wx/tokenzr.h>
+
 //helper functions
 enum wxbuildinfoformat {
     short_f, long_f };
@@ -834,36 +837,89 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 		wxString pcName = pcFileDialog.GetFilename();
 		pcName.Truncate(pcName.Length() - 4);
 		wxString pcEntName = pcName + wxT("Entity");
-		wxFileInputStream input(pcFileDialog.GetDirectory() + wxT("\\") + pcFileDialog.GetFilename());
-		wxTextInputStream text(input);
+		wxTextFile PCFile;
+		PCFile.Open(pcFileDialog.GetPath());
+		double curr;
+		float* pointlist = NULL;
+		float* colourlist = NULL;
+		bool HasColours = false;
 		wxString line;
-		float t;
 
 		std::vector<float> pointvector;
-		int counter = 0, cc = 0;
-		while(!input.Eof())
+		std::vector<float> colourvector;
+		int numPoints = 0;
+		for(line = PCFile.GetFirstLine(); !PCFile.Eof(); line = PCFile.GetNextLine())
 		{
-			text >> t;
-			pointvector.push_back(t);
-			cc++;
-			if(cc == 3)
+			if( !line.StartsWith(wxT("#")) )
 			{
-				counter++;
-				cc = 0;
+				if( line.Matches(wxT("*,*")) )
+				{
+					HasColours = true;
+					wxString points = line.BeforeFirst(',');
+					wxString colours = line.AfterFirst(',');
+
+					wxStringTokenizer p(points, wxT(" "));
+					if(int(p.CountTokens()) != 3)
+						continue;
+					while( p.HasMoreTokens() )
+					{
+						p.GetNextToken().ToDouble(&curr);
+						pointvector.push_back(float(curr));
+					}
+					wxStringTokenizer c(colours, wxT(" "));
+					if(int(c.CountTokens()) != 3)
+						continue;
+					while( c.HasMoreTokens() )
+					{
+						c.GetNextToken().ToDouble(&curr);
+						colourvector.push_back(float(curr));
+					}
+				}
+				else
+				{
+					wxStringTokenizer p(line, wxT(" "));
+					if(int(p.CountTokens()) != 3)
+						continue;
+					while (p.HasMoreTokens() )
+					{
+						p.GetNextToken().ToDouble(&curr);
+						pointvector.push_back(float(curr));
+					}
+				}
+				numPoints++;
 			}
 		}
 		
-		float *pointlist = new float[counter*3-1];
-		for(int i = 0; i<counter*3-1; i++)
+		pointlist = new float[numPoints*3];
+		if(HasColours)
+			colourlist = new float[numPoints*3];
+		for(int i = 0; i<numPoints*3; i++)
 		{
-			pointlist[i] = pointvector.at(i);
+			pointlist[i] = pointvector.at(i)/100;
+			if(HasColours)
+			{
+				float c = colourvector.at(i);
+				if(c > 1.0f)
+					c = c/255;
+				colourlist[i] = c;
+			}
 		}
 
-		Pointcloud *pc = new Pointcloud(std::string(pcName.mb_str()), "General", counter, pointlist, NULL);
 
-		Ogre::Entity *pcEnt = mSceneMgr->createEntity(std::string(pcEntName.mb_str()), std::string(pcName.mb_str()));
+		Pointcloud* pc = new Pointcloud(std::string(pcName.mb_str()), "General", numPoints, pointlist, colourlist);
+		if( pointlist != NULL )
+			delete pointlist;
+		if( colourlist != NULL )
+			delete colourlist;
+		
+		OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
+		QualifiedName* qPCNode = Med->CreateSceneNode(pcName + wxT("Node"));
+		Ogre::SceneNode* PCNode = Med->GetSceneNodePtr(*qPCNode);
+		QualifiedName* qPC = Med->CreateEntity(pcEntName, pcName, PCNode);
+		Ogre::Entity *pcEnt = Med->GetEntityPtr(*qPC);
 		pcEnt->setMaterialName("Pointcloud");
-		mSceneMgr->getRootSceneNode()->attachObject(pcEnt);
+
+		delete pc;
 	}
 }
 
@@ -875,5 +931,7 @@ void MainFrame::OnShowSceneStructure(wxCommandEvent &event)
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
 {
-	//mSceneHdlr->testStuff();
+	OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
+	QualifiedName* qNode = Med->CreateSceneNode(wxT("MyNode"));
+	Med->CreateEntity(wxT("Barrel"), wxT("Barrel.mesh"), Med->GetSceneNodePtr(*qNode));
 }

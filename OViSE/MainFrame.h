@@ -17,9 +17,6 @@
 #include <wx/treectrl.h>
 
 #include <wx/treebase.h>
-
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
 #include <wx/imaglist.h>
 
 #include "MainFrameBase.h"
