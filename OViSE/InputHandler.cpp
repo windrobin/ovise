@@ -1,5 +1,7 @@
 #include "InputHandler.h"
 
+#include "SelectionManager.h"
+
 InputHandler::InputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow *parent)
 {
 	mCamera = cam;
@@ -204,23 +206,33 @@ void InputHandler::pitchCamera(Ogre::Radian angle)
 	}
 }
 
+void InputHandler::setDistance(float dist)
+{
+	if(mCameraNode == NULL)
+		return;
+	mCamera->getParentSceneNode()->setPosition(Ogre::Vector3(0, dist, 0));
+	Ogre::Vector3 pos = mCamera->getParentSceneNode()->getPosition();
+	if (pos.z < mCamera->getNearClipDistance())
+	{
+		mCamera->getParentSceneNode()->setPosition(pos.x, pos.y, mCamera->getNearClipDistance());
+	}
+}
+
 void InputHandler::focusCamera()
 {
 	// FIXME: replace with new selection functionality
-	/*std::string scnMgrName = mCamera->getSceneManager()->getName();
-	OViSESceneHandling *sceneHandler = OViSESceneHandling::getSingletonPtr();
-	if(sceneHandler->hasSelectedObjects(scnMgrName))
+	SelectionManager* SelMgr = SelectionManager::getSingletonPtr();
+	if(SelMgr->Selection.Count() != 0)
 	{
-		OViSESelectionMap selObjs = sceneHandler->getSelectedObjects(scnMgrName);
+		Ogre::AxisAlignedBox ObjectsBox = Ogre::AxisAlignedBox::BOX_NULL;
 		Ogre::Vector3 avgPos = Ogre::Vector3::ZERO;
-		int count = 0;
-		for(OViSESelectionMap::iterator it = selObjs.begin(); it != selObjs.end(); it++)
+		for(unsigned long i = 0; i < SelMgr->Selection.Count(); i++)
 		{
-			avgPos += it->second->getParentSceneNode()->getPosition();
-			count++;
+			Ogre::AxisAlignedBox temp = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(SelMgr->Selection[i])->getWorldBoundingBox();
+			ObjectsBox.merge(temp);
 		}
-		avgPos /= count;
-
+		avgPos = ObjectsBox.getCenter();
+		
 		if(mCameraNode == NULL)
 		{
 			mCamera->setPosition(avgPos);
@@ -228,8 +240,12 @@ void InputHandler::focusCamera()
 		else
 		{
 			mCameraNode->setPosition(avgPos);
+
+			float distance = (ObjectsBox.getSize().length() / 2.0) / (Ogre::Math::Tan(mCamera->getFOVy() * 0.5));
+
+			setDistance(distance);
 		}
-	}*/
+	}
 }
 
 void InputHandler::showHelpOverlay()

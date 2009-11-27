@@ -51,6 +51,8 @@ protected:
 	void yawCamera(Ogre::Radian angle);
 	/// Pitch camera.
 	void pitchCamera(Ogre::Radian angle);
+	/// Set distance between camera node and camera focus node
+	void setDistance(float dist);
 
 	/// Show the help overlay
 	void showHelpOverlay();

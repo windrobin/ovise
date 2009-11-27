@@ -212,7 +212,7 @@ bool MainFrame::InitOgre()
 	QualifiedName* qCamSceneNode = Mediator->CreateSceneNode(ToWxString("CamNode"), camFocusNode);
 	if (qCamSceneNode == 0 ) return false;
 	Ogre::SceneNode *camNode = Mediator->GetSceneNodePtr(*qCamSceneNode);
-	camNode->setPosition(0, 2, 0);
+	camNode->setPosition(0, 5, 0);
 	Ogre::Quaternion q(Ogre::Degree(180), Ogre::Vector3::UNIT_Z);
 	Ogre::Quaternion p(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
 	camNode->setOrientation(p*q);
@@ -220,8 +220,12 @@ bool MainFrame::InitOgre()
 	if (qCamera == 0 ) return false;
 	mCam = Mediator->GetCameraPtr(*qCamera);
 	mCam->setNearClipDistance(0.01);
+	mCam->setFarClipDistance(1000);
     mCam->setAutoAspectRatio(true);
 	mCam->setQueryFlags(0x01);
+
+	camFocusNode->yaw(Ogre::Degree(-45), Ogre::Node::TS_WORLD);
+	camFocusNode->pitch(Ogre::Degree(45), Ogre::Node::TS_LOCAL);
 
 	wxYield();
 	// Create viewport for camera
@@ -233,7 +237,8 @@ bool MainFrame::InitOgre()
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	// DBG: Testscene
-	Mediator->CreateEntity(ToWxString("GridPlane"), ToWxString("GridPlane.mesh"));
+	QualifiedName* qGridPlane = Mediator->CreateEntity(ToWxString("GridPlane"), ToWxString("GridPlane.mesh"));
+	Mediator->GetEntityPtr(*qGridPlane)->setQueryFlags(0x01);
 	Mediator->CreateEntity(ToWxString("CoS"), ToWxString("CoS.mesh"));
 	
 	QualifiedName* qSunLight = Mediator->CreateLight(ToWxString("Sun"));
@@ -895,7 +900,7 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 			colourlist = new float[numPoints*3];
 		for(int i = 0; i<numPoints*3; i++)
 		{
-			pointlist[i] = pointvector.at(i)/100;
+			pointlist[i] = pointvector.at(i);
 			if(HasColours)
 			{
 				float c = colourvector.at(i);
@@ -907,10 +912,10 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 
 
 		Pointcloud* pc = new Pointcloud(std::string(pcName.mb_str()), "General", numPoints, pointlist, colourlist);
-		if( pointlist != NULL )
+		/*if( pointlist != NULL )
 			delete pointlist;
 		if( colourlist != NULL )
-			delete colourlist;
+			delete colourlist;*/
 		
 		OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
 		QualifiedName* qPCNode = Med->CreateSceneNode(pcName + wxT("Node"));
@@ -919,7 +924,9 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 		Ogre::Entity *pcEnt = Med->GetEntityPtr(*qPC);
 		pcEnt->setMaterialName("Pointcloud");
 
-		delete pc;
+		Med->SendOgreChanged();
+
+		//delete pc;
 	}
 }
 
@@ -934,4 +941,5 @@ void MainFrame::OnTestStuff( wxCommandEvent& event )
 	OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
 	QualifiedName* qNode = Med->CreateSceneNode(wxT("MyNode"));
 	Med->CreateEntity(wxT("Barrel"), wxT("Barrel.mesh"), Med->GetSceneNodePtr(*qNode));
+	Med->SendOgreChanged();
 }
