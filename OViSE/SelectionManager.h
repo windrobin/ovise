@@ -8,10 +8,10 @@
 #include <wx/valtext.h>
 
 #include "../OViSEAux/MovableTypeTranslator.h"
-//#include "../OViSEAux/OViSESelection.h"
 #include "../QualifiedNames/QualifiedName.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/OgreAPIMediator.h"
+#include "../OViSEAux/Logging.h"
 
 // Include Ogre
 #include "Ogre.h"

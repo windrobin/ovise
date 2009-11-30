@@ -412,7 +412,10 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wx
 	if ((!Match) && AttributeID.IsSameAs(ToWxString("Rotation")))
 	{
 		Ogre::SceneNode* SN = E->getParentSceneNode();
-		if (StrTok.HasMoreTokens()) Match = this->HandleRotationChanged(SN, StrTok.GetNextToken(), value);
+		if (StrTok.HasMoreTokens())
+		{
+			Match = this->HandleRotationChanged(SN, StrTok.GetNextToken(), value);
+		}
 		else
 		{
 			wxVariant V;
@@ -532,30 +535,54 @@ bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN, wxString subPG
 	// It may be NULL
 	if ( SN == 0 ) return false;
 
+	// Prepare values
 	Ogre::Quaternion Q = SN->getOrientation();
-	Ogre::Degree OldP = Q.getPitch();
-	Ogre::Degree OldR = Q.getRoll();
-	Ogre::Degree OldY = Q.getYaw();
 
-	Ogre::Degree NewDegree = Ogre::Degree(value.GetDouble());
+	Ogre::Radian OldP = Q.getPitch();
+	Ogre::Radian OldR = Q.getRoll();
+	Ogre::Radian OldY = Q.getYaw();
+
+	wxString DEBUG_MSG;
+	DEBUG_MSG = "Pitch (old): ";
+	DEBUG_MSG << (double)Ogre::Degree(OldP).valueDegrees();
+	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
+
+	DEBUG_MSG = "Roll (old): ";
+	DEBUG_MSG << (double)Ogre::Degree(OldR).valueDegrees();
+	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
+
+	DEBUG_MSG = "Yaw (old): ";
+	DEBUG_MSG << (double)Ogre::Degree(OldY).valueDegrees();
+	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
+	
+	Ogre::Radian NewRadian = Ogre::Radian(Ogre::Degree(value.GetDouble()));
+
+	DEBUG_MSG = "New value: ";
+	DEBUG_MSG << (double)Ogre::Degree(NewRadian).valueDegrees();
+	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
+
+	SN->setOrientation(Ogre::Quaternion::IDENTITY);
 
 	bool Match = false;
 	if ((!Match) && subPGID.IsSameAs(ToWxString("rx"))) // X -> Pitch
 	{
-		Ogre::Degree NewP = NewDegree - OldP;
-		SN->pitch(Ogre::Radian(NewP), Ogre::Node::TS_WORLD);
+		SN->pitch(NewRadian, Ogre::Node::TS_PARENT);
+		SN->roll(OldR, Ogre::Node::TS_PARENT);
+		SN->yaw(OldY, Ogre::Node::TS_PARENT);
 		Match = true;
 	}
 	if ((!Match) && subPGID.IsSameAs(ToWxString("ry"))) // Y -> Roll
 	{
-		Ogre::Degree NewR = NewDegree - OldR;
-		SN->roll(Ogre::Radian(NewR), Ogre::Node::TS_WORLD);
+		SN->pitch(OldP, Ogre::Node::TS_PARENT);
+		SN->roll(NewRadian, Ogre::Node::TS_PARENT);
+		SN->yaw(OldY, Ogre::Node::TS_PARENT);
 		Match = true;
 	}
 	if ((!Match) && subPGID.IsSameAs(ToWxString("rz"))) // Z -> Yaw
 	{
-		Ogre::Degree NewY = NewDegree - OldY;
-		SN->yaw(Ogre::Radian(NewY), Ogre::Node::TS_WORLD);
+		SN->pitch(OldP, Ogre::Node::TS_PARENT);
+		SN->roll(OldR, Ogre::Node::TS_PARENT);
+		SN->yaw(NewRadian, Ogre::Node::TS_PARENT);
 		Match = true;
 	}
 
