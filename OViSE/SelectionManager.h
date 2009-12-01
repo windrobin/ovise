@@ -10,7 +10,7 @@
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../QualifiedNames/QualifiedName.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 #include "../OViSEAux/Logging.h"
 
 // Include Ogre

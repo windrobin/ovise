@@ -9,7 +9,7 @@ OViSEDotSceneManager::OViSEDotSceneManager(DotSceneBaseConfiguration *Configurat
 	if ( Configuration == 0 ) this->SetConfiguration(OViSEDotSceneManager::CreateDefaultConfiguration());
 	else this->SetConfiguration(Configuration);
 	
-	// Create data-structures in ogre's engine for this factory... // TODO: MOVE TO OgreAPIMediator
+	// Create data-structures in ogre's engine for this factory... // TODO: MOVE TO OgreMediator
 	Ogre::ResourceGroupManager::getSingleton().createResourceGroup(ToOgreString(this->GetAssociatedResourceGroup().UniqueName()));
 	
 	// Setup managers for delegated functions...
@@ -33,7 +33,7 @@ DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration()
 {
 	// Create default values
 	wxString NativeName = ToWxString("DEFAULT_DOTSCENEMANAGER");
-	QualifiedName qSceneManager = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
+	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
 	QualifiedName qDotSceneManager = QualifiedName::Create(NativeName, ToWxString("DotSceneManager"));
 	QualifiedName qResourceGroup = QualifiedName::Create(NativeName, ToWxString("ResourceGroup"));
 

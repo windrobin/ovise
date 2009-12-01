@@ -27,7 +27,7 @@
 #include "../OViSEAux/OViSEException.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/Logging.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 #include "../OViSEdotSceneBase/XmlErrorReporter.h"
 #include "../OViSEdotSceneBase/ScenePrototype.h"
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"

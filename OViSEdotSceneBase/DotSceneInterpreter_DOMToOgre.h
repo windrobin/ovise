@@ -25,7 +25,7 @@
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 #include "../OViSEAux/Logging.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 
 // Include Ogre
 #include "Ogre.h"

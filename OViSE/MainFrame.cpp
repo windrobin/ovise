@@ -202,7 +202,7 @@ bool MainFrame::InitOgre()
 		width, height, false, &params);
 	mRenderWin->setActive (true);
 
-	OgreAPIMediator* Mediator = OgreAPIMediator::GetSingletonPtr();
+	OgreMediator* Mediator = OgreMediator::GetSingletonPtr();
 
 	// Create camera setup
 	QualifiedName* qCamFokusSceneNode = Mediator->CreateSceneNode(ToWxString("mainCamFocusNode"));
@@ -250,7 +250,7 @@ bool MainFrame::InitOgre()
 	// Create scene tree
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
 	loadSceneTreeImageList(sceneTreeImageList);
-	mSceneMgr = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
+	mSceneMgr = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreMediator::GetSingletonPtr()->GetActiveSceneManager());
 	mSceneTree = new SceneTree(mSceneMgr, this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
 	mWindowManager.AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
 	mSceneTree->SetImageList(sceneTreeImageList);
@@ -485,7 +485,7 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 	float sy = (float)s.y / (float)height;
 	float d = -1;
 
-	QualifiedNameCollection QNames = OgreAPIMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, mCam, OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager());
+	QualifiedNameCollection QNames = OgreMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, mCam, OgreMediator::GetSingletonPtr()->GetActiveSceneManager());
 	
 	// Handle selection
 	if(QNames.IsEmpty())
@@ -773,7 +773,7 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 	else
 	{
 		wxString TreeItemLabel = this->mSceneTree->GetItemText(Item);
-		QualifiedName qName = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(TreeItemLabel);
+		QualifiedName qName = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(TreeItemLabel);
 		if (qName.IsValid())
 		{
 			if (this->mSceneTree->IsSelected(Item)) this->AddSelectedObject(qName);
@@ -785,7 +785,7 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 
 void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
 	if (MO != 0)
 	{
 		if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
@@ -797,7 +797,7 @@ void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 
 void MainFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
 	if (MO != 0)
 	{
 		SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
@@ -814,7 +814,7 @@ void MainFrame::RemoveAllSelectedObjects()
 		for (unsigned long IT = 0; IT < (unsigned long)SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
 		{
 			QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
-			Ogre::MovableObject* pMO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+			Ogre::MovableObject* pMO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
 			if (pMO != 0) pMO->getParentSceneNode()->showBoundingBox(false);
 		}
 	}
@@ -917,7 +917,7 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 		if( colourlist != NULL )
 			delete colourlist;*/
 		
-		OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
+		OgreMediator* Med = OgreMediator::GetSingletonPtr();
 		QualifiedName* qPCNode = Med->CreateSceneNode(pcName + wxT("Node"));
 		Ogre::SceneNode* PCNode = Med->GetSceneNodePtr(*qPCNode);
 		QualifiedName* qPC = Med->CreateEntity(pcEntName, pcName, PCNode);
@@ -938,7 +938,7 @@ void MainFrame::OnShowSceneStructure(wxCommandEvent &event)
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
 {
-	OgreAPIMediator* Med = OgreAPIMediator::GetSingletonPtr();
+	OgreMediator* Med = OgreMediator::GetSingletonPtr();
 	QualifiedName* qNode = Med->CreateSceneNode(wxT("MyNode"));
 	Med->CreateEntity(wxT("Barrel"), wxT("Barrel.mesh"), Med->GetSceneNodePtr(*qNode));
 	Med->SendOgreChanged();

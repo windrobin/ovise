@@ -228,7 +228,7 @@ void InputHandler::focusCamera()
 		Ogre::Vector3 avgPos = Ogre::Vector3::ZERO;
 		for(unsigned long i = 0; i < SelMgr->Selection.Count(); i++)
 		{
-			Ogre::AxisAlignedBox temp = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(SelMgr->Selection[i])->getWorldBoundingBox();
+			Ogre::AxisAlignedBox temp = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(SelMgr->Selection[i])->getWorldBoundingBox();
 			ObjectsBox.merge(temp);
 		}
 		avgPos = ObjectsBox.getCenter();

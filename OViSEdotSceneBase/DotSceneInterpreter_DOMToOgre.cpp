@@ -36,7 +36,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	this->Configuration = Configuration;
 
 	// Get and check Ogre::SceneManager...
-	SceneMgr = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(this->Configuration->qSceneManager);
+	SceneMgr = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(this->Configuration->qSceneManager);
 	if (SceneMgr == 0) return false; // "Configuration" is invalid!
 	
 	// Store external anchor node...
@@ -50,7 +50,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	}
 	else
 	{
-		if (!OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qAnchorNodeName))
+		if (!OgreMediator::GetSingletonPtr()->HasSceneNode(qAnchorNodeName))
 		{
 			this->AnchorNode = SceneMgr->getRootSceneNode();
 
@@ -60,7 +60,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 		}
 		else
 		{
-			this->AnchorNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(qAnchorNodeName);
+			this->AnchorNode = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(qAnchorNodeName);
 
 			LogMsg.Clear();
 			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Using given paramter 'qAnchorNodeName' with value \"") << qAnchorNodeName.UniqueName() << ToWxString("\".");

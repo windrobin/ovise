@@ -12,7 +12,7 @@
 #include "CallbackTester.h"
 #include "Messenger.h"
 #include "../OViSEAux/Logging.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 
 // Include Ogre
 #ifdef __APPLE__
