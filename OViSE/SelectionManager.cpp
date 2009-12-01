@@ -448,7 +448,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	
 	return false;*/
 }
-bool SelectionManager::GeneratePropertyGridContentFromSelection2(wxPropertyGrid* PG, QualifiedNameCollection Selection)
+bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection)
 {
 	// Validate parameters...
 	if ( PG == 0 ) return false;
@@ -487,39 +487,6 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection2(wxPropertyGrid*
 		}
 	}
 
-	return true;
-}
-bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection)
-{
-	return GeneratePropertyGridContentFromSelection2(PG, Selection);
-	// Validate parameters...
-	if ( PG == 0 ) return false;
-
-	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
-	this->PG = PG;
-
-	// Clear wxPropertryGrid
-	this->PG->Clear();
-
-	// Get Ogre::SceneManager
-	Ogre::SceneManager* SM = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName()));
-	
-	// Create main-cathegory
-	wxPropertyCategory* PCSceneManager = new wxPropertyCategory(ToWxString("SceneManager"));
-	PG->Append(PCSceneManager);
-	PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
-	PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
-	PCSceneManager->SetExpanded(false);
-
-	// Create (sub-)cathegories for selected objects
-	if (!Selection.IsEmpty())
-	{
-		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
-		{
-			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
-			this->AddMovableObjectToPG(PCSceneManager, MO);
-		}
-	}
 	return true;
 }
 // Handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
