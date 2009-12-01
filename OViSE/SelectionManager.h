@@ -28,6 +28,10 @@ private:
 	// General
 	bool Valid;
 
+	// Handle property changing
+	wxPGProperty* ChangedProperty;
+	wxPropertyGrid* PG;
+
 public:
 	// De- & Constructors
 	~SelectionManager(void);
@@ -47,23 +51,26 @@ public:
 	// wxPropertyGrid-Handling
 	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);
 	bool AddCameraToPGCategory(wxPropertyCategory* PC, Ogre::Camera* C);
-	bool AddEntityToPGCategory(wxPropertyCategory* PC, Ogre::Entity* E);
+	bool AddEntityToPGCategory(Ogre::Entity* E);
 	bool AddLightToPGCategory(wxPropertyCategory* PC, Ogre::Light* L);
-	bool AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::SceneNode* SN, QualifiedName qMovableObject);
-	bool AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObject* MO);
+	wxPropertyCategory* AddSceneNodeToPGCategory(Ogre::SceneNode* SN);
+	bool AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO);
 	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG);
 	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, wxString SelectionUniqueName);
 	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection);
+	bool GeneratePropertyGridContentFromSelection2(wxPropertyGrid* PG, QualifiedNameCollection Selection);
 
 	HashMap_wxString PGIDRegister;
 
 	// Handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
 	bool HandlePropertyChanged(wxPGProperty* ChangedProperty);
-	bool HandleEntityChanged(QualifiedName qEntity, wxString subPGID, wxVariant value);
-	bool HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wxVariant value);
-	bool HandlePositionChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value);
-	bool HandleScaleChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value);
-	bool HandleRotationChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value);
+	bool HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID);
+	bool HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID);
+	bool HandleEntityChanged(QualifiedName qEntity, wxString subPGID);
+	bool HandleEntityChanged(Ogre::Entity* E, wxString subPGID);
+	bool HandlePositionChanged(Ogre::SceneNode* SN);
+	bool HandleScaleChanged(Ogre::SceneNode* SN);
+	bool HandleRotationChanged(Ogre::SceneNode* SN);
 };
 
 #endif // SELECTION_MANAGER_H_

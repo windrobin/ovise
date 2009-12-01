@@ -69,60 +69,86 @@ bool SelectionManager::AddCameraToPGCategory(wxPropertyCategory* PC, Ogre::Camer
 
 	return true;
 }
-bool SelectionManager::AddEntityToPGCategory(wxPropertyCategory* PC, Ogre::Entity* E)
+bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 {
 	// Validate parameters
-	if ( PC == 0 ) return false;
-	wxPropertyGrid* PG = PC->GetGrid();
-	if ( PG == 0 ) return false;
 	if ( E == 0 ) return false;
 
-	wxString UniqueName = ToWxString(E->getName());
-	QualifiedName qEntity = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
+	// Validate members
+	if ( this->PG == 0 ) return false;
+	
+	// Get QualifiedName
+	QualifiedName qEntity = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(E->getName()));
 	if ( !qEntity.IsValid() ) return false;
 
-	wxString EntityNameAndPoint = qEntity.UniqueName() + ToWxString(".");
-	wxString Label;
+	// Handle recusive processing of SceneNode
+	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)E->getParentNode());
+	if (PCParent == 0) return false;
+
+	// Perpare ID and Label
+	wxString Label, CategoryID, PropertyID;
+	CategoryID = ToWxString(E->getName());
+
+	// Add cathergory to grid
+	Label = ToWxString("Entity: '");
+	Label << ToWxString(E->getName());
+	Label << ToWxString("'");
+	
+	wxPropertyCategory* PCEntity = new wxPropertyCategory(Label, CategoryID);
+	this->PG->AppendIn(PCParent, PCEntity);
+	PCEntity->SetExpanded(false);
 
 	// Name
 	Label = ToWxString("Name");
-	wxPGProperty* PName = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PName, qEntity.UniqueName());
-	PG->DisableProperty(PName);
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qEntity.UniqueName());
+	this->PG->DisableProperty(PropertyID);
 
 	// Native name
 	Label = ToWxString("Native");
-	wxPGProperty* PNameNative = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameNative, qEntity.NativeName());
-	PG->DisableProperty(PNameNative);
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qEntity.NativeName());
+	this->PG->DisableProperty(PropertyID);
 
 	// Generic hint
 	Label = ToWxString("Hint");
-	wxPGProperty* PNameHint = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameHint, qEntity.GenericHint());
-	PG->DisableProperty(PNameHint);
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qEntity.GenericHint());
+	this->PG->DisableProperty(PropertyID);
 
 	// Generic name
 	Label = ToWxString("Generic");
-	wxPGProperty* PNameGeneric = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PNameGeneric, qEntity.GenericName());
-	PG->DisableProperty(PNameGeneric);
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qEntity.GenericName());
+	this->PG->DisableProperty(PropertyID);
 
 	// Meshfile
 	Label = ToWxString("Mesh");
-	wxPGProperty* PMesh = PG->AppendIn(PC, new wxStringProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PMesh, E->getMesh()->getName());
-	PG->DisableProperty(PMesh);
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, E->getMesh()->getName());
+	this->PG->DisableProperty(PropertyID);
 
 	// CastShadows
 	Label = ToWxString("CastShadows");
-	wxPGProperty* PCastShadows = PG->AppendIn(PC, new wxBoolProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PCastShadows, E->getCastShadows());
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxBoolProperty(Label, PropertyID, E->getCastShadows()));
 
 	// DisplaySkeleton
 	Label = ToWxString("DisplaySkeleton");
-	wxPGProperty* PDisplaySkeleton = PG->AppendIn(PC, new wxBoolProperty(Label, EntityNameAndPoint + Label));
-	PG->SetPropertyValue(PDisplaySkeleton, E->getDisplaySkeleton());
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCEntity, new wxBoolProperty(Label, PropertyID, E->getDisplaySkeleton()));
 
 	return true;
 }
@@ -130,15 +156,156 @@ bool SelectionManager::AddLightToPGCategory(wxPropertyCategory* PC, Ogre::Light*
 {
 	return true;
 }
-bool SelectionManager::AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::SceneNode* SN, QualifiedName qMovableObject)
+wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* SN)
 {
 	// Validate parameters
-	if ( PC == 0 ) return false;
-	wxPropertyGrid* PG = PC->GetGrid();
-	if ( PG == 0 ) return false;
-	if ( SN == 0 ) return false;
-	if ( !qMovableObject.IsValid() ) return false;
+	if ( SN == 0 ) return 0;
 
+	// Validate members
+	if ( this->PG == 0 ) return false;
+
+	// Get Ogre::SceneManager
+	QualifiedName qSceneManager = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(qSceneManager);
+	if ( SM == 0 ) return 0;
+
+	// Select PCParent by condition: is Ogre::SceneNode the RootSceneNode?
+	wxPropertyCategory* PCParent = 0;
+	QualifiedName qSceneNode;
+	bool isRoot = false;
+	if (SN == SM->getRootSceneNode())
+	{
+		// Select SceneManager-category as PCParent
+		PCParent = (wxPropertyCategory*)this->PG->GetProperty(ToWxString("SceneManager"));
+		isRoot = true;
+	}
+	else
+	{
+		// Get QualifiedName
+		QualifiedName qSceneNode = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(SN->getName()));
+		if ( !qSceneNode.IsValid() ) return 0;
+
+		// Handle recusive processing of SceneNode
+		PCParent = this->AddSceneNodeToPGCategory(SN->getParentSceneNode());
+	}
+
+	// Stop, if PCParent is NULL
+	if (PCParent == 0) return 0;
+
+	// Perpare ID and Label
+	wxString Label, CategoryID, PropertyID;
+	CategoryID = ToWxString(SN->getName());
+	wxPropertyCategory* PCSceneNode = 0;
+	
+	// Stop, if category already exists and return it
+	PCSceneNode = (wxPropertyCategory*)this->PG->GetProperty(CategoryID);
+	if (PCSceneNode != 0) return PCSceneNode;
+
+	// Add cathergory to grid
+	Label = ToWxString("SceneNode: '");
+	Label << ToWxString(SN->getName());
+	Label << ToWxString("'");
+	
+	PCSceneNode = new wxPropertyCategory(Label, CategoryID);
+	this->PG->AppendIn(PCParent, PCSceneNode);
+	PCSceneNode->SetExpanded(false);
+
+	// Name
+	Label = ToWxString("Name");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, ToWxString(SN->getName()));
+	this->PG->DisableProperty(PropertyID);
+
+	// Native name
+	Label = ToWxString("Native");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID));
+	if (isRoot) this->PG->SetPropertyValue(PropertyID, ToWxString(""));
+	else this->PG->SetPropertyValue(PropertyID, qSceneManager.NativeName());
+	this->PG->DisableProperty(PropertyID);
+
+	// Generic hint
+	Label = ToWxString("Hint");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID));
+	if (isRoot) this->PG->SetPropertyValue(PropertyID, ToWxString(""));
+	else this->PG->SetPropertyValue(PropertyID, qSceneManager.GenericHint());
+	this->PG->DisableProperty(PropertyID);
+
+	// Generic name
+	Label = ToWxString("Generic");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID));
+	if (isRoot) this->PG->SetPropertyValue(PropertyID, ToWxString(""));
+	else this->PG->SetPropertyValue(PropertyID, qSceneManager.GenericName());
+	this->PG->DisableProperty(PropertyID);
+
+	// BoundingBox
+	Label = ToWxString("Show BoundingBox");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PShowBoundingBox = PG->AppendIn(PCSceneNode, new wxBoolProperty(Label, PropertyID, SN->getShowBoundingBox()));
+
+	// Position
+	Label = ToWxString("Position");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PPosition = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PPositionX = PG->AppendIn(PPosition, new wxFloatProperty(wxT("x"), wxT("px")));
+	this->PG->SetPropertyValidator(PPositionX, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PPositionY = PG->AppendIn(PPosition, new wxFloatProperty(wxT("y"), wxT("py")));
+	this->PG->SetPropertyValidator(PPositionY, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PPositionZ = PG->AppendIn(PPosition, new wxFloatProperty(wxT("z"), wxT("pz")));
+	this->PG->SetPropertyValidator(PPositionZ, wxTextValidator(wxFILTER_NUMERIC));
+	PPosition->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PPositionX, (double)SN->getPosition().x);
+	this->PG->SetPropertyValue(PPositionY, (double)SN->getPosition().y);
+	this->PG->SetPropertyValue(PPositionZ, (double)SN->getPosition().z);
+
+	// Rotation
+	Label = ToWxString("Rotation");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PRotation = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PRotationRoll = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(x-Axis) Roll"), wxT("roll")));
+	this->PG->SetPropertyValidator(PRotationRoll, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PRotationPitch = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(y-Axis) Pitch"), wxT("pitch")));
+	this->PG->SetPropertyValidator(PRotationPitch, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PRotationYaw = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(z-Axis) Yaw"), wxT("yaw")));
+	this->PG->SetPropertyValidator(PRotationYaw, wxTextValidator(wxFILTER_NUMERIC));
+	PRotation->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PRotationRoll, (double)SN->getOrientation().getPitch().valueDegrees());
+	this->PG->SetPropertyValue(PRotationPitch, (double)SN->getOrientation().getRoll().valueDegrees());
+	this->PG->SetPropertyValue(PRotationYaw, (double)SN->getOrientation().getYaw().valueDegrees());
+
+	// Scale
+	Label = ToWxString("Scale");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PScale = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PScaleX = PG->AppendIn(PScale, new wxFloatProperty(wxT("x"), wxT("sx")));
+	this->PG->SetPropertyValidator(PScaleX, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PScaleY = PG->AppendIn(PScale, new wxFloatProperty(wxT("y"), wxT("sy")));
+	this->PG->SetPropertyValidator(PScaleY, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PScaleZ = PG->AppendIn(PScale, new wxFloatProperty(wxT("z"), wxT("sz")));
+	this->PG->SetPropertyValidator(PScaleZ, wxTextValidator(wxFILTER_NUMERIC));
+	PScale->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PScaleX, (double)SN->getScale().x);
+	this->PG->SetPropertyValue(PScaleY, (double)SN->getScale().y);
+	this->PG->SetPropertyValue(PScaleZ, (double)SN->getScale().z);
+
+	/*
 	wxString MONameAndPoint = qMovableObject.UniqueName() + ToWxString(".");
 	wxString Label;
 
@@ -154,9 +321,9 @@ bool SelectionManager::AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::Sc
 	Pp->SetExpanded(false);
 
 	// Set values
-	PG->SetPropertyValue(Ppx, (float)SN->getPosition().x);
-	PG->SetPropertyValue(Ppy, (float)SN->getPosition().y);
-	PG->SetPropertyValue(Ppz, (float)SN->getPosition().z);
+	PG->SetPropertyValue(Ppx, (double)SN->getPosition().x);
+	PG->SetPropertyValue(Ppy, (double)SN->getPosition().y);
+	PG->SetPropertyValue(Ppz, (double)SN->getPosition().z);
 
 	// Rotation
 	Label = ToWxString("Rotation");
@@ -172,9 +339,9 @@ bool SelectionManager::AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::Sc
 	Ogre::Quaternion DEBUG_quaternion = SN->getOrientation();
 
 	// Set values
-	PG->SetPropertyValue(Prx, (float)SN->getOrientation().getPitch().valueDegrees());
-	PG->SetPropertyValue(Pry, (float)SN->getOrientation().getRoll().valueDegrees());
-	PG->SetPropertyValue(Prz, (float)SN->getOrientation().getYaw().valueDegrees());
+	PG->SetPropertyValue(Prx, (double)SN->getOrientation().getPitch().valueDegrees());
+	PG->SetPropertyValue(Pry, (double)SN->getOrientation().getRoll().valueDegrees());
+	PG->SetPropertyValue(Prz, (double)SN->getOrientation().getYaw().valueDegrees());
 
 	// Scale
 	Label = ToWxString("Scale");
@@ -188,27 +355,32 @@ bool SelectionManager::AddSceneNodeToPGCategory(wxPropertyCategory* PC, Ogre::Sc
 	Ps->SetExpanded(false);
 
 	// Set values
-	PG->SetPropertyValue(Psx, (float)SN->getScale().x);
-	PG->SetPropertyValue(Psy, (float)SN->getScale().y);
-	PG->SetPropertyValue(Psz, (float)SN->getScale().z);
+	PG->SetPropertyValue(Psx, (double)SN->getScale().x);
+	PG->SetPropertyValue(Psy, (double)SN->getScale().y);
+	PG->SetPropertyValue(Psz, (double)SN->getScale().z);
+	*/
 	
-	return true;
+	return PCSceneNode;
 }
-bool SelectionManager::AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObject* MO)
+bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO)
 {
-	if ( PG == 0 ) return false;
+	// Validate parameters...
+	if ( PCParent == 0 ) return false;
 	if ( MO == 0 ) return false;
-	
+
+	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
+	this->PG = PG;
+
 	// Get QualifiedName
-	QualifiedName qMovableObject = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	QualifiedName qMovableObject = QualifiedName::GetQualifiedNameByUnique(ToWxString(MO->getName()));
 	if ( !qMovableObject.IsValid() ) return false;
 
 	// Get Ogre::MovableObject-Type
-	OgreEnums::MovableObject::MovableType MT_Enum = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
+	OgreEnums::MovableObject::MovableType EnumMT = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
 
 	// Setup category
 	wxString CategoryHeadline;
-	switch(MT_Enum)
+	switch(EnumMT)
 	{
 		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			CategoryHeadline << ToWxString("BillBoardChain : '");		break;
 		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			CategoryHeadline << ToWxString("BillboardSet : '");			break;
@@ -232,32 +404,32 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyGrid* PG, Ogre::MovableObj
 	CategoryHeadline << qMovableObject.UniqueName() << ToWxString("'");
 
 	// Setup properties of category
-	wxPropertyCategory* PC = new wxPropertyCategory(CategoryHeadline, qMovableObject.UniqueName());
-	PG->Append(PC);
+	//wxPropertyCategory* PCMovableObject = new wxPropertyCategory(CategoryHeadline, ToWxString(MO->getName()));
+	//this->PG->AppendIn(PCParent, PCMovableObject);
 
 	// ...Ogre::MovableObject-part
-	switch(MT_Enum)
+	switch(EnumMT)
 	{
-		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Entity:					this->AddEntityToPGCategory(PC, (Ogre::Entity*)MO); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_RibbonTrail:				this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable:		this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	this->AddNOTIMPLEMENTEDToPGCategory(PC); break;
-		default: this->AddNOTIMPLEMENTEDToPGCategory(PC); return false; break;
+		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Entity:					this->AddEntityToPGCategory((Ogre::Entity*)MO); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_RibbonTrail:				this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable:		this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		default: this->AddNOTIMPLEMENTEDToPGCategory(PCParent); return false; break;
 	}
 
 	// ...Ogre::SceneNode-part
-	this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), qMovableObject);
+	//this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), qMovableObject);
 
-	PC->SetExpanded(false);
+	PCParent->SetExpanded(false);
 	return true;
 }
 bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG) { return this->GeneratePropertyGridContentFromSelection(PG, this->Selection); }
@@ -276,25 +448,76 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	
 	return false;*/
 }
-bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection)
+bool SelectionManager::GeneratePropertyGridContentFromSelection2(wxPropertyGrid* PG, QualifiedNameCollection Selection)
 {
+	// Validate parameters...
 	if ( PG == 0 ) return false;
 
-	Ogre::SceneManager* SM = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName()));
-	PG->Clear();
+	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
+	this->PG = PG;
 
+	// Clear wxPropertryGrid
+	this->PG->Clear();
+
+	// Get Ogre::SceneManager
+	QualifiedName qSM = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetSceneManager(qSM);
+	
+	// Validate Ogre::SceneManager...
+	if (SM == 0) return false;
+
+	// Add head-cathegory for Ogre::SceneManeger
+	wxPropertyCategory* PCSceneManager = new wxPropertyCategory(ToWxString("SceneManager"));
+	this->PG->Append(PCSceneManager);
+	this->PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
+	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
+	this->PG->DisableProperty(ToWxString("SceneManagerName"));
+	PCSceneManager->SetExpanded(true);
+
+	// Add cathergory "SceneNode: Root"
+	this->AddSceneNodeToPGCategory(SM->getRootSceneNode());
+
+	// Create (sub-)cathegories for selected objects (recursiv walktrought)
+	if (!Selection.IsEmpty())
+	{
+		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
+		{
+			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
+			this->AddMovableObjectToPG(PCSceneManager, MO);
+		}
+	}
+
+	return true;
+}
+bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection)
+{
+	return GeneratePropertyGridContentFromSelection2(PG, Selection);
+	// Validate parameters...
+	if ( PG == 0 ) return false;
+
+	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
+	this->PG = PG;
+
+	// Clear wxPropertryGrid
+	this->PG->Clear();
+
+	// Get Ogre::SceneManager
+	Ogre::SceneManager* SM = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName()));
+	
+	// Create main-cathegory
 	wxPropertyCategory* PCSceneManager = new wxPropertyCategory(ToWxString("SceneManager"));
 	PG->Append(PCSceneManager);
 	PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
 	PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
 	PCSceneManager->SetExpanded(false);
 
+	// Create (sub-)cathegories for selected objects
 	if (!Selection.IsEmpty())
 	{
 		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
 		{
 			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
-			this->AddMovableObjectToPG(PG, MO);
+			this->AddMovableObjectToPG(PCSceneManager, MO);
 		}
 	}
 	return true;
@@ -305,7 +528,10 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 	// It may be NULL
     if ( ChangedProperty == 0 ) return false;
 
-    // Get name of changed property
+    // New property change
+	this->ChangedProperty = ChangedProperty;
+	
+	// Get name of changed property
 	wxString PName = ChangedProperty->GetName();//zAxis_Entity_0.Rotation.rz
 	wxStringTokenizer StrTok(PName, ToWxString("."));
 
@@ -347,7 +573,7 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 			if ((!Match) && OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qName))
 			{
 				// Got Ogre::SceneNode
-				this->IsValid(); // DEBUG: Handling of that type not implemented yet !!!
+				this->HandleSceneNodeChanged(qName, subPGID);
 				Match = false;
 			}	
 			break;
@@ -356,7 +582,7 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 			Match = false; // DEBUG: Handling of that type not implemented yet !!!
 			break;
 
-		case OgreEnums::MovableObject::MOVABLETYPE_Entity:	ReturnValue = this->HandleEntityChanged(qName, subPGID, ChangedProperty->GetValue()); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Entity:	ReturnValue = this->HandleEntityChanged(qName, subPGID); break;
 
 		case OgreEnums::MovableObject::MOVABLETYPE_Light:
 			Match = false; // DEBUG: Handling of that type not implemented yet !!!
@@ -371,17 +597,21 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 
 	return ReturnValue;
 }
-bool SelectionManager::HandleEntityChanged(QualifiedName qEntity, wxString subPGID, wxVariant value)
+bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID)
 {
-	// Verify qEntity
-	if (!OgreAPIMediator::GetSingletonPtr()->HasEntity(qEntity)) return false;
-	Ogre::Entity* E = OgreAPIMediator::GetSingletonPtr()->GetEntityPtr(qEntity);
-	return this->HandleEntityChanged(E, subPGID, value);
+	// Verify qSceneNode
+	if (!OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qSceneNode)) return false;
+	Ogre::SceneNode* SN = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(qSceneNode);
+	return this->HandleSceneNodeChanged(SN, subPGID);
 }
-bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wxVariant value)
+bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID)
 {
+	// INFO: Don't worry. Change parts of composed-types will be propagated :-)
+
 	// It may be NULL
-	if ( E == 0 ) return false;
+	if ( SN == 0 ) return false;
+
+	wxVariant value = this->ChangedProperty->GetValue();  // TODO: obsolete because it's now accessible in object-member
 
 	// Get name of changed property
 	wxStringTokenizer StrTok(subPGID, ToWxString("."));
@@ -389,204 +619,295 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID, wx
 	// STAGE 2: Handle attribute
 	wxString AttributeID = StrTok.GetNextToken();
 
-	bool Match = false;
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("Position")))
+	if (AttributeID.IsSameAs(ToWxString("Position")))
 	{
-		Ogre::SceneNode* SN = E->getParentSceneNode();
-		if (StrTok.HasMoreTokens()) Match = this->HandlePositionChanged(SN, StrTok.GetNextToken(), value);
-		else
-		{
-			wxVariant V;
-			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
-			
-			V = SemiSeperator.GetNextToken();
-			this->HandlePositionChanged(SN, ToWxString("px"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandlePositionChanged(SN, ToWxString("py"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandlePositionChanged(SN, ToWxString("pz"), V);
+		if (!StrTok.HasMoreTokens()) this->HandlePositionChanged(SN);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Rotation")))
+	{
+		if (!StrTok.HasMoreTokens()) this->HandleRotationChanged(SN);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Scale")))
+	{
+		if (!StrTok.HasMoreTokens()) this->HandleScaleChanged(SN);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Name"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Native"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Hint"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Generic"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Show BoundingBox")))
+	{
+		SN->showBoundingBox(value.GetBool());
+		return true;
+	}
 
-			Match = true;
-		}
-	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("Rotation")))
-	{
-		Ogre::SceneNode* SN = E->getParentSceneNode();
-		if (StrTok.HasMoreTokens())
-		{
-			Match = this->HandleRotationChanged(SN, StrTok.GetNextToken(), value);
-		}
-		else
-		{
-			wxVariant V;
-			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
-			
-			V = SemiSeperator.GetNextToken();
-			this->HandleRotationChanged(SN, ToWxString("rx"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandleRotationChanged(SN, ToWxString("ry"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandleRotationChanged(SN, ToWxString("rz"), V);
+	return false;
+}
+bool SelectionManager::HandleEntityChanged(QualifiedName qEntity, wxString subPGID)
+{
+	// Verify qEntity
+	if (!OgreAPIMediator::GetSingletonPtr()->HasEntity(qEntity)) return false;
+	Ogre::Entity* E = OgreAPIMediator::GetSingletonPtr()->GetEntityPtr(qEntity);
+	return this->HandleEntityChanged(E, subPGID);
+}
+bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID)
+{
+	// INFO: Don't worry. Change parts of composed-types will be propagated :-)
 
-			Match = true;
-		}
-	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("Scale")))
-	{
-		Ogre::SceneNode* SN = E->getParentSceneNode();
-		if (StrTok.HasMoreTokens()) Match = this->HandleScaleChanged(SN, StrTok.GetNextToken(), value);
-		else
-		{
-			wxVariant V;
-			wxStringTokenizer SemiSeperator(value.GetString(), wxT(";"));
-			
-			V = SemiSeperator.GetNextToken();
-			this->HandleScaleChanged(SN, ToWxString("sx"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandleScaleChanged(SN, ToWxString("sy"), V);
-			V = SemiSeperator.GetNextToken();
-			this->HandleScaleChanged(SN, ToWxString("sz"), V);
+	// It may be NULL
+	if ( E == 0 ) return false;
 
-			Match = true;
-		}
-	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("Name"))) // not editable
+	wxVariant value = this->ChangedProperty->GetValue();  // TODO: obsolete because it's now accessible in object-member
+
+	// Get name of changed property
+	wxStringTokenizer StrTok(subPGID, ToWxString("."));
+	
+	// STAGE 2: Handle attribute
+	wxString AttributeID = StrTok.GetNextToken();
+
+	if (AttributeID.IsSameAs(ToWxString("Name"))) // not editable
 	{
-		Match = true;
+		return false;
 	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("Mesh"))) // not editable
+	if (AttributeID.IsSameAs(ToWxString("Native"))) // not editable
 	{
-		Match = true;
+		return false;
 	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("CastShadows")))
+	if (AttributeID.IsSameAs(ToWxString("Hint"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Generic"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Mesh"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("CastShadows")))
 	{
 		E->setCastShadows(value.GetBool());
-		Match = true;
+		return true;
 	}
-	if ((!Match) && AttributeID.IsSameAs(ToWxString("DisplaySkeleton")))
+	if (AttributeID.IsSameAs(ToWxString("DisplaySkeleton")))
 	{
 		E->setDisplaySkeleton(value.GetBool());
-		Match = true;
+		return true;
 	}
 
-	return Match;
+	return false;
 }
 
-bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value)
+bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
 	if ( SN == 0 ) return false;
 
+	// Perpare logging
+	wxString MSG;
+
+	MSG = ToWxString("Changing position of Ogre::SceneNode '");
+	MSG << ToWxString(SN->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Degree(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewX = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewY = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewZ = Ogre::Real(V.GetDouble());
+
+	// Prepare values
 	Ogre::Vector3 P = SN->getPosition();
+	Ogre::Real X = P.x;
+	Ogre::Real Y = P.y;
+	Ogre::Real Z = P.z;
 
-	bool Match = false;
-	if ((!Match) && subPGID.IsSameAs(ToWxString("px")))
-	{
-		P.x = value.GetDouble();
-		SN->setPosition(P);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("py")))
-	{
-		P.y = value.GetDouble();
-		SN->setPosition(P);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("pz")))
-	{
-		P.z = value.GetDouble();
-		SN->setPosition(P);
-		Match = true;
-	}
+	// Log before
+	MSG = ToWxString("From: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
 
-	return Match;
+	// Apply change
+	SN->setPosition(NewX, NewY, NewZ);
+	
+	// Reflect values
+	P = SN->getPosition();
+	X = P.x;
+	Y = P.y;
+	Z = P.z;
+
+	// Log after
+	MSG = ToWxString("To: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("px"));
+	this->PG->SetPropertyValue(ChildProperty, (double)X);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("py"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Y);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("pz"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Z);
+
+	return true;
 }
-bool SelectionManager::HandleScaleChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value)
+bool SelectionManager::HandleScaleChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
 	if ( SN == 0 ) return false;
 
-	Ogre::Vector3 S = SN->getScale();
+	// Perpare logging
+	wxString MSG;
 
-	bool Match = false;
-	if ((!Match) && subPGID.IsSameAs(ToWxString("sx")))
-	{
-		S.x = value.GetDouble();
-		SN->setScale(S);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("sy")))
-	{
-		S.y = value.GetDouble();
-		SN->setScale(S);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("sz")))
-	{
-		S.z = value.GetDouble();
-		SN->setScale(S);
-		Match = true;
-	}
+	MSG = ToWxString("Changing scale of Ogre::SceneNode '");
+	MSG << ToWxString(SN->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
 
-	return Match;
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Degree(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewX = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewY = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewZ = Ogre::Real(V.GetDouble());
+
+	// Prepare values
+	Ogre::Vector3 P = SN->getScale();
+	Ogre::Real X = P.x;
+	Ogre::Real Y = P.y;
+	Ogre::Real Z = P.z;
+
+	// Log before
+	MSG = ToWxString("From: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Apply change
+	SN->setScale(NewX, NewY, NewZ);
+	
+	// Reflect values
+	P = SN->getScale();
+	X = P.x;
+	Y = P.y;
+	Z = P.z;
+
+	// Log after
+	MSG = ToWxString("To: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("sx"));
+	this->PG->SetPropertyValue(ChildProperty, (double)X);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("sy"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Y);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("sz"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Z);
+
+	return true;
 }
-bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN, wxString subPGID, wxVariant value)
+bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
 	if ( SN == 0 ) return false;
+
+	// Perpare logging
+	wxString MSG;
+
+	MSG = ToWxString("Changing rotation of Ogre::SceneNode '");
+	MSG << ToWxString(SN->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Degree(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Degree NewR = Ogre::Degree(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Degree NewP = Ogre::Degree(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Degree NewY = Ogre::Degree(V.GetDouble());
 
 	// Prepare values
 	Ogre::Quaternion Q = SN->getOrientation();
+	Ogre::Degree R = Ogre::Degree(Q.getRoll(false));
+	Ogre::Degree P = Ogre::Degree(Q.getPitch(false));
+	Ogre::Degree Y = Ogre::Degree(Q.getYaw(false));
 
-	Ogre::Radian OldP = Q.getPitch();
-	Ogre::Radian OldR = Q.getRoll();
-	Ogre::Radian OldY = Q.getYaw();
+	// Log before
+	MSG = ToWxString("From: Roll='");
+	MSG << (double)R.valueDegrees() << ToWxString("' | Pitch='");
+	MSG << (double)P.valueDegrees() << ToWxString("' | Yaw='");
+	MSG << (double)Y.valueDegrees() << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
 
-	wxString DEBUG_MSG;
-	DEBUG_MSG = "Pitch (old): ";
-	DEBUG_MSG << (double)Ogre::Degree(OldP).valueDegrees();
-	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
-
-	DEBUG_MSG = "Roll (old): ";
-	DEBUG_MSG << (double)Ogre::Degree(OldR).valueDegrees();
-	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
-
-	DEBUG_MSG = "Yaw (old): ";
-	DEBUG_MSG << (double)Ogre::Degree(OldY).valueDegrees();
-	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
-	
-	Ogre::Radian NewRadian = Ogre::Radian(Ogre::Degree(value.GetDouble()));
-
-	DEBUG_MSG = "New value: ";
-	DEBUG_MSG << (double)Ogre::Degree(NewRadian).valueDegrees();
-	Logging::GetSingletonPtr()->WriteToOgreLog(DEBUG_MSG, Logging::Normal);
-
+	// Apply change
 	SN->setOrientation(Ogre::Quaternion::IDENTITY);
+	SN->roll(Ogre::Radian(NewR), Ogre::Node::TS_PARENT);
+	SN->pitch(Ogre::Radian(NewP), Ogre::Node::TS_PARENT);
+	SN->yaw(Ogre::Radian(NewY), Ogre::Node::TS_PARENT);
+	
+	// Reflect values
+	Q = SN->getOrientation();
+	R = Ogre::Degree(Q.getRoll(false));
+	P = Ogre::Degree(Q.getPitch(false));
+	Y = Ogre::Degree(Q.getYaw(false));
 
-	bool Match = false;
-	if ((!Match) && subPGID.IsSameAs(ToWxString("rx"))) // X -> Pitch
-	{
-		SN->pitch(NewRadian, Ogre::Node::TS_PARENT);
-		SN->roll(OldR, Ogre::Node::TS_PARENT);
-		SN->yaw(OldY, Ogre::Node::TS_PARENT);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("ry"))) // Y -> Roll
-	{
-		SN->pitch(OldP, Ogre::Node::TS_PARENT);
-		SN->roll(NewRadian, Ogre::Node::TS_PARENT);
-		SN->yaw(OldY, Ogre::Node::TS_PARENT);
-		Match = true;
-	}
-	if ((!Match) && subPGID.IsSameAs(ToWxString("rz"))) // Z -> Yaw
-	{
-		SN->pitch(OldP, Ogre::Node::TS_PARENT);
-		SN->roll(OldR, Ogre::Node::TS_PARENT);
-		SN->yaw(NewRadian, Ogre::Node::TS_PARENT);
-		Match = true;
-	}
+	// Log after
+	MSG = ToWxString("To: Roll='");
+	MSG << (double)R.valueDegrees() << ToWxString("' | Pitch='");
+	MSG << (double)P.valueDegrees() << ToWxString("' | Yaw='");
+	MSG << (double)Y.valueDegrees() << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
 
-	return Match;
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("roll"));
+	this->PG->SetPropertyValue(ChildProperty, (double)P.valueDegrees());
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("pitch"));
+	this->PG->SetPropertyValue(ChildProperty, (double)R.valueDegrees());
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("yaw"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Y.valueDegrees());
+
+	return true;
 }
 
 // OLD code
