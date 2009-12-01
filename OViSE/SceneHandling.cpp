@@ -23,7 +23,7 @@ SceneHandling::SceneHandling()
 {
 	if(mInstance == NULL)
 	{
-		//ID#0003//Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager"); //ID#0001//move to OgreAPIMediator
+		//ID#0003//Ogre::SceneManager *mainSceneManager = Ogre::Root::getSingletonPtr()->createSceneManager(Ogre::ST_GENERIC, "BaseSceneManager"); //ID#0001//move to OgreMediator
 		//ID#0003//mSceneManagers["BaseSceneManager"] = mainSceneManager;
 		//ID#0003//mObjectSelectionQuerys["BaseSceneManager"] = mainSceneManager->createRayQuery(Ogre::Ray());
 		//ID#0000//mObjectSelectionsMap["BaseSceneManager"] = SelectionMap();
@@ -31,8 +31,8 @@ SceneHandling::SceneHandling()
 		//mFrameListener = new CustomFrameListener();//ID#0002 = observe//
 		//Ogre::Root::getSingletonPtr()->addFrameListener(mFrameListener);//ID#0002 = observe//
 		
-		//ID#0003//OgreAPIMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
-		//ID#0003//this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreAPIMediator
+		//ID#0003//OgreMediator::GetSingletonPtr()->SetSceneManagerByRef(mainSceneManager); //ID#0001//delete
+		//ID#0003//this->mDotSceneMgr = new OViSEDotSceneManager(OViSEDotSceneManager::CreateDefaultConfiguration(ToWxString("StandardFactory"), ToWxString(mainSceneManager->getName()))); //ID#0001//move to OgreMediator
 	}
 }
 
@@ -41,14 +41,14 @@ void SceneHandling::createDefaultScene(wxString sceneManagerName)
 {
 	/*
 	// Create default grid
-	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->addEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
+	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->addEntity(ToWxString("BasePlane"), ToWxString("Plane.mesh"));
 
 	// Create KOS-scene
 	wxString UniqueNameoOfKOS = this->mDotSceneMgr->ImportScenePrototype(wxFileName(ToWxString("C:/Dokumente und Einstellungen/renartz.ITEC/Eigene Dateien/OViSE Checkout/KOS/KOS.xml")));
 	this->mDotSceneMgr->MakeOgreSceneFromPrototype(UniqueNameoOfKOS, ToWxString(this->mSceneManagers[ToStdString(sceneManagerName)]->getRootSceneNode()->getName()));
 	
 	// Create light
-	Ogre::Light *globalLight = OgreAPIMediator::GetSingletonPtr()->addLight(ToWxString("GlobalLight"));
+	Ogre::Light *globalLight = OgreMediator::GetSingletonPtr()->addLight(ToWxString("GlobalLight"));
 	globalLight->setType(Ogre::Light::LT_DIRECTIONAL);
 	globalLight->setCastShadows(true);
 	globalLight->setDiffuseColour(0.8, 0.8, 0.8);
@@ -56,11 +56,11 @@ void SceneHandling::createDefaultScene(wxString sceneManagerName)
 	globalLight->setPosition(0, 0, 50);
 	globalLight->setDirection(0, -1, 0);
 
-	OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
+	OgreMediator::GetSingletonPtr()->SendOgreChanged();
 	*/
 }
 
-//ID#0001//move to OgreAPIMediator
+//ID#0001//move to OgreMediator
 Ogre::RaySceneQuery* SceneHandling::getObjectSelectionQuery(std::string sceneManagerName)
 {
 	RayQueryMap::iterator it = mObjectSelectionQuerys.find(sceneManagerName);
@@ -72,7 +72,7 @@ Ogre::RaySceneQuery* SceneHandling::getObjectSelectionQuery(std::string sceneMan
 	return it->second;
 }
 
-//ID#0001//move to OgreAPIMediator
+//ID#0001//move to OgreMediator
 /*Ogre::MovableObject* SceneHandling::getSelectedObject(float screenx, float screeny, float& dist, Ogre::Camera *cam, std::string sceneManagerName)
 {
 	try
@@ -153,7 +153,7 @@ Ogre::MovableObject* SceneHandling::getSelectedObject(wxString ObjectName, Ogre:
 	}
 }
 
-//ID#0001//move to OgreAPIMediator
+//ID#0001//move to OgreMediator
 void SceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 col, std::string sceneManagerName, Ogre::SceneNode *node)
 {
 	/*try
@@ -201,7 +201,7 @@ void SceneHandling::addGrid(int size, int numRows, int numCols, Ogre::Vector3 co
 	}*/
 }
 
-//ID#0001//move to OgreAPIMediator
+//ID#0001//move to OgreMediator
 void SceneHandling::addCOS(float scale, bool castShadows, wxString sceneManagerName, Ogre::SceneNode *node)
 {
 	/*try

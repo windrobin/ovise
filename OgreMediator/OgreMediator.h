@@ -32,14 +32,14 @@ END_DECLARE_EVENT_TYPES()
 WX_DECLARE_STRING_HASH_MAP(Ogre::RaySceneQuery*, RaySceneQueryHashMap);
 
 
-class OgreAPIMediator : public wxControl
+class OgreMediator : public wxControl
 {
 private:
 	// De- & Constructors
-	OgreAPIMediator();
+	OgreMediator();
 
 	// Singleton
-	static OgreAPIMediator* instance;
+	static OgreMediator* instance;
 
 	// General
 	bool Valid;
@@ -60,10 +60,10 @@ private:
 
 public:
 	// De- & Constructors
-	~OgreAPIMediator(void);
+	~OgreMediator(void);
 
 	// Singleton
-	static OgreAPIMediator* GetSingletonPtr();
+	static OgreMediator* GetSingletonPtr();
 	
 	// General
 	bool IsValid();

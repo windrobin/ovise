@@ -5,7 +5,7 @@
 #include <wx/wx.h>
 #include <wx/event.h>
 #include <wx/hashmap.h>
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -57,7 +57,7 @@ public:
 
 	void updateTreeContents();
 
-	void ConnectOgreAPIMediator();
+	void ConnectOgreMediator();
 
 	HashMap_wxTreeItemId Items;
 

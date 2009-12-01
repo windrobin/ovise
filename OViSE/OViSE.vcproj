@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\OViSEdotSceneInterpreter&quot;;&quot;$(SolutionDir)\OViSEdotSceneBase&quot;;&quot;$(SolutionDir)\QualifiedNames&quot;;&quot;$(SolutionDir)\OViSEAux&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(OGRE_HOME)\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\OViSEdotSceneInterpreter&quot;;&quot;$(SolutionDir)\OViSEdotSceneBase&quot;;&quot;$(SolutionDir)\OgreMediator&quot;;&quot;$(SolutionDir)\QualifiedNames&quot;;&quot;$(SolutionDir)\OViSEAux&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(OGRE_HOME)\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -186,6 +186,10 @@
 		<ProjectReference
 			ReferencedProjectIdentifier="{109ADAF4-CF07-47EF-9A44-A324283A1933}"
 			RelativePathToProject=".\QualifiedNames\QualifiedNames.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{709DF291-24DD-46A5-88E9-975A4A08B003}"
+			RelativePathToProject=".\OgreMediator\OgreMediator.vcproj"
 		/>
 	</References>
 	<Files>

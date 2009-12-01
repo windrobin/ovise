@@ -78,7 +78,7 @@ bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 	if ( this->PG == 0 ) return false;
 	
 	// Get QualifiedName
-	QualifiedName qEntity = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(E->getName()));
+	QualifiedName qEntity = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(E->getName()));
 	if ( !qEntity.IsValid() ) return false;
 
 	// Handle recusive processing of SceneNode
@@ -165,8 +165,8 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	if ( this->PG == 0 ) return false;
 
 	// Get Ogre::SceneManager
-	QualifiedName qSceneManager = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
-	Ogre::SceneManager* SM = OgreAPIMediator::GetSingletonPtr()->GetSceneManagerPtr(qSceneManager);
+	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(qSceneManager);
 	if ( SM == 0 ) return 0;
 
 	// Select PCParent by condition: is Ogre::SceneNode the RootSceneNode?
@@ -182,7 +182,7 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	else
 	{
 		// Get QualifiedName
-		QualifiedName qSceneNode = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(SN->getName()));
+		QualifiedName qSceneNode = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(SN->getName()));
 		if ( !qSceneNode.IsValid() ) return 0;
 
 		// Handle recusive processing of SceneNode
@@ -304,61 +304,6 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	this->PG->SetPropertyValue(PScaleX, (double)SN->getScale().x);
 	this->PG->SetPropertyValue(PScaleY, (double)SN->getScale().y);
 	this->PG->SetPropertyValue(PScaleZ, (double)SN->getScale().z);
-
-	/*
-	wxString MONameAndPoint = qMovableObject.UniqueName() + ToWxString(".");
-	wxString Label;
-
-	// Position
-	Label = ToWxString("Position");
-	wxPGProperty* Pp = PG->AppendIn(PC, new wxStringProperty(Label, MONameAndPoint + Label, wxT("<composed>")));
-	wxPGProperty* Ppx = PG->AppendIn(Pp, new wxFloatProperty(wxT("x"), wxT("px")));
-	PG->SetPropertyValidator(Ppx, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Ppy = PG->AppendIn(Pp, new wxFloatProperty(wxT("y"), wxT("py")));
-	PG->SetPropertyValidator(Ppy, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Ppz = PG->AppendIn(Pp, new wxFloatProperty(wxT("z"), wxT("pz")));
-	PG->SetPropertyValidator(Ppz, wxTextValidator(wxFILTER_NUMERIC));
-	Pp->SetExpanded(false);
-
-	// Set values
-	PG->SetPropertyValue(Ppx, (double)SN->getPosition().x);
-	PG->SetPropertyValue(Ppy, (double)SN->getPosition().y);
-	PG->SetPropertyValue(Ppz, (double)SN->getPosition().z);
-
-	// Rotation
-	Label = ToWxString("Rotation");
-	wxPGProperty* Pr = PG->Append(new wxStringProperty(Label, MONameAndPoint + Label, wxT("<composed>")));
-	wxPGProperty* Prx = PG->AppendIn(Pr, new wxFloatProperty(wxT("x"), wxT("rx")));
-	PG->SetPropertyValidator(Prx, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Pry = PG->AppendIn(Pr, new wxFloatProperty(wxT("y"), wxT("ry")));
-	PG->SetPropertyValidator(Pry, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Prz = PG->AppendIn(Pr, new wxFloatProperty(wxT("z"), wxT("rz")));
-	PG->SetPropertyValidator(Prz, wxTextValidator(wxFILTER_NUMERIC));
-	Pr->SetExpanded(false);
-
-	Ogre::Quaternion DEBUG_quaternion = SN->getOrientation();
-
-	// Set values
-	PG->SetPropertyValue(Prx, (double)SN->getOrientation().getPitch().valueDegrees());
-	PG->SetPropertyValue(Pry, (double)SN->getOrientation().getRoll().valueDegrees());
-	PG->SetPropertyValue(Prz, (double)SN->getOrientation().getYaw().valueDegrees());
-
-	// Scale
-	Label = ToWxString("Scale");
-	wxPGProperty* Ps = PG->Append(new wxStringProperty(Label, MONameAndPoint + Label, wxT("<composed>")));
-	wxPGProperty* Psx = PG->AppendIn(Ps, new wxFloatProperty(wxT("x"), wxT("sx")));
-	PG->SetPropertyValidator(Psx, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Psy = PG->AppendIn(Ps, new wxFloatProperty(wxT("y"), wxT("sy")));
-	PG->SetPropertyValidator(Psy, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* Psz = PG->AppendIn(Ps, new wxFloatProperty(wxT("z"), wxT("sz")));
-	PG->SetPropertyValidator(Psz, wxTextValidator(wxFILTER_NUMERIC));
-	Ps->SetExpanded(false);
-
-	// Set values
-	PG->SetPropertyValue(Psx, (double)SN->getScale().x);
-	PG->SetPropertyValue(Psy, (double)SN->getScale().y);
-	PG->SetPropertyValue(Psz, (double)SN->getScale().z);
-	*/
 	
 	return PCSceneNode;
 }
@@ -376,7 +321,7 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	if ( !qMovableObject.IsValid() ) return false;
 
 	// Get Ogre::MovableObject-Type
-	OgreEnums::MovableObject::MovableType EnumMT = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
+	OgreEnums::MovableObject::MovableType EnumMT = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
 
 	// Setup category
 	wxString CategoryHeadline;
@@ -460,8 +405,8 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	this->PG->Clear();
 
 	// Get Ogre::SceneManager
-	QualifiedName qSM = OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager();
-	Ogre::SceneManager* SM = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetSceneManager(qSM);
+	QualifiedName qSM = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetSceneManager(qSM);
 	
 	// Validate Ogre::SceneManager...
 	if (SM == 0) return false;
@@ -470,7 +415,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	wxPropertyCategory* PCSceneManager = new wxPropertyCategory(ToWxString("SceneManager"));
 	this->PG->Append(PCSceneManager);
 	this->PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
-	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreAPIMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
+	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
 	this->PG->DisableProperty(ToWxString("SceneManagerName"));
 	PCSceneManager->SetExpanded(true);
 
@@ -482,7 +427,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	{
 		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
 		{
-			Ogre::MovableObject* MO = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
+			Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
 			this->AddMovableObjectToPG(PCSceneManager, MO);
 		}
 	}
@@ -518,11 +463,11 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 		}
 		
 		// STAGE 2: Get QualifiedNames by UniqueName
-		QualifiedName qName = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
+		QualifiedName qName = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
 		if ( !qName.IsValid() ) return false;
 
 		// STAGE 3: Get Type by indentified QualifiedName
-		OgreEnums::MovableObject::MovableType Type = OgreAPIMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qName);
+		OgreEnums::MovableObject::MovableType Type = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qName);
 
 		// STAGE 4: Futher calls depend on type...
 		bool Match = false;
@@ -531,13 +476,13 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 		case OgreEnums::MovableObject::MOVABLETYPE_Invalid:
 			// STAGE 4.x: Object is no Ogre::MovableObject. Could be Ogre::SceneManager or Ogre::SceneNode
 			
-			if ((!Match) && OgreAPIMediator::GetSingletonPtr()->HasSceneManager(qName))
+			if ((!Match) && OgreMediator::GetSingletonPtr()->HasSceneManager(qName))
 			{
 				// Got Ogre::SceneManager
 				this->IsValid(); // DEBUG: Handling of that type not implemented yet !!!
 				Match = false;
 			}
-			if ((!Match) && OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qName))
+			if ((!Match) && OgreMediator::GetSingletonPtr()->HasSceneNode(qName))
 			{
 				// Got Ogre::SceneNode
 				this->HandleSceneNodeChanged(qName, subPGID);
@@ -567,8 +512,8 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID)
 {
 	// Verify qSceneNode
-	if (!OgreAPIMediator::GetSingletonPtr()->HasSceneNode(qSceneNode)) return false;
-	Ogre::SceneNode* SN = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(qSceneNode);
+	if (!OgreMediator::GetSingletonPtr()->HasSceneNode(qSceneNode)) return false;
+	Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(qSceneNode);
 	return this->HandleSceneNodeChanged(SN, subPGID);
 }
 bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID)
@@ -628,8 +573,8 @@ bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subP
 bool SelectionManager::HandleEntityChanged(QualifiedName qEntity, wxString subPGID)
 {
 	// Verify qEntity
-	if (!OgreAPIMediator::GetSingletonPtr()->HasEntity(qEntity)) return false;
-	Ogre::Entity* E = OgreAPIMediator::GetSingletonPtr()->GetEntityPtr(qEntity);
+	if (!OgreMediator::GetSingletonPtr()->HasEntity(qEntity)) return false;
+	Ogre::Entity* E = OgreMediator::GetSingletonPtr()->GetEntityPtr(qEntity);
 	return this->HandleEntityChanged(E, subPGID);
 }
 bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID)

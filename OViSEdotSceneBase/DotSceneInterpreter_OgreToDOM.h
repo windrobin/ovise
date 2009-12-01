@@ -28,7 +28,7 @@
 #include "../OViSEdotSceneBase/ScenePrototype.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/Logging.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 #include "../OViSEAux/EnumsForABetterWorld.h"
 
 // Include Ogre

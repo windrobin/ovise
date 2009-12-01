@@ -1,18 +1,18 @@
-#include "OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 
 DEFINE_EVENT_TYPE(OViSE_EVT_OGRE_CHANGED)
 
 // Singleton
-OgreAPIMediator* OgreAPIMediator::instance = 0;
+OgreMediator* OgreMediator::instance = 0;
 
-OgreAPIMediator* OgreAPIMediator::GetSingletonPtr()
+OgreMediator* OgreMediator::GetSingletonPtr()
 {
-	if (OgreAPIMediator::instance == 0) OgreAPIMediator::instance = new OgreAPIMediator();
-	return OgreAPIMediator::instance;
+	if (OgreMediator::instance == 0) OgreMediator::instance = new OgreMediator();
+	return OgreMediator::instance;
 }
-OgreAPIMediator::OgreAPIMediator()
+OgreMediator::OgreMediator()
 {
-	this->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OgreAPIMediator::OnOgreChanged ), NULL, this);
+	this->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( OgreMediator::OnOgreChanged ), NULL, this);
 
 	this->Valid = true;
 
@@ -27,14 +27,14 @@ OgreAPIMediator::OgreAPIMediator()
 
 	this->OgreChanged = false;
 }
-OgreAPIMediator::~OgreAPIMediator(void) { this->DestroySceneManager(); }
+OgreMediator::~OgreMediator(void) { this->DestroySceneManager(); }
 // General
-bool OgreAPIMediator::IsValid() { return this->Valid; }
+bool OgreMediator::IsValid() { return this->Valid; }
 // Get & Set properies
 /*
-Ogre::SceneManager* OgreAPIMediator::GetSceneManagerByRef() { return this->SceneMgr; }
-wxString OgreAPIMediator::GetSceneManagerByName() { return this->SceneMgrName; }
-bool OgreAPIMediator::SetSceneManagerByRef(Ogre::SceneManager* SceneMgr)
+Ogre::SceneManager* OgreMediator::GetSceneManagerByRef() { return this->SceneMgr; }
+wxString OgreMediator::GetSceneManagerByName() { return this->SceneMgrName; }
+bool OgreMediator::SetSceneManagerByRef(Ogre::SceneManager* SceneMgr)
 {
 	this->SceneMgr = SceneMgr;
 
@@ -51,7 +51,7 @@ bool OgreAPIMediator::SetSceneManagerByRef(Ogre::SceneManager* SceneMgr)
 
 	return this->Valid;
 }
-bool OgreAPIMediator::SetSceneManagerByName(wxString SceneMgrName)
+bool OgreMediator::SetSceneManagerByName(wxString SceneMgrName)
 {
 	this->SceneMgr = 0;
 	this->SceneMgr = Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(SceneMgrName));
@@ -70,7 +70,7 @@ bool OgreAPIMediator::SetSceneManagerByName(wxString SceneMgrName)
 	return this->Valid;
 }
 */
-void OgreAPIMediator::SendSelectionChanged()
+void OgreMediator::SendSelectionChanged()
 {
 	/*
 	wxCommandEvent event(OViSE_EVT_SELECTION_CHANGED, this->GetId());
@@ -78,7 +78,7 @@ void OgreAPIMediator::SendSelectionChanged()
 	this->GetEventHandler();
 	*/
 }
-void OgreAPIMediator::SendOgreChanged()
+void OgreMediator::SendOgreChanged()
 {
 	if ( this->OgreChanged )
 	{
@@ -87,7 +87,7 @@ void OgreAPIMediator::SendOgreChanged()
 		this->GetEventHandler()->ProcessEvent(event);
 	}
 }
-void OgreAPIMediator::OnOgreChanged(wxCommandEvent& event)
+void OgreMediator::OnOgreChanged(wxCommandEvent& event)
 {
 	if(this->Valid)
 	{
@@ -97,7 +97,7 @@ void OgreAPIMediator::OnOgreChanged(wxCommandEvent& event)
 // API to Ogre
 // Get names of...
 /*
-wxArrayString OgreAPIMediator::getSceneManagerNames()
+wxArrayString OgreMediator::getSceneManagerNames()
 {
 	wxArrayString AS;
 	Ogre::SceneManagerEnumerator::SceneManagerIterator SI = Ogre::Root::getSingletonPtr()->getSceneManagerIterator();
@@ -105,25 +105,25 @@ wxArrayString OgreAPIMediator::getSceneManagerNames()
 	return AS;
 }
 // Get pointer
-Ogre::Camera* OgreAPIMediator::getCameraPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera)
+Ogre::Camera* OgreMediator::getCameraPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	return SM->getCamera(ToOgreString(UniqueNameOfCamera));
 }
-Ogre::Entity* OgreAPIMediator::getEntityPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity)
+Ogre::Entity* OgreMediator::getEntityPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	return SM->getEntity(ToOgreString(UniqueNameOfEntity));
 }
-Ogre::Light* OgreAPIMediator::getLightPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight)
+Ogre::Light* OgreMediator::getLightPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	return SM->getLight(ToOgreString(UniqueNameOfLight));
 }
-Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject)
+Ogre::MovableObject* OgreMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
@@ -135,43 +135,43 @@ Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfS
 		return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 	}
 }
-Ogre::MovableObject* OgreAPIMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
+Ogre::MovableObject* OgreMediator::getMovableObjectPtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	if (Type < 1) return 0; // Baseclass (0) is absract. It doesn't exits, like Type == Invalid (-1). So Type has to be greather than 1 !
 	return SM->getMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 }
-Ogre::SceneNode* OgreAPIMediator::getSceneNodePtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
+Ogre::SceneNode* OgreMediator::getSceneNodePtr(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
 {
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	if (SM == 0) return 0;
 	return SM->getSceneNode(ToOgreString(UniqueNameOfSceneNode));
 }
-Ogre::SceneManager*	OgreAPIMediator::getSceneManagerPtr(wxString UniqueNameOfSceneManager) { return Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(UniqueNameOfSceneManager)); }
+Ogre::SceneManager*	OgreMediator::getSceneManagerPtr(wxString UniqueNameOfSceneManager) { return Ogre::Root::getSingletonPtr()->getSceneManager(ToOgreString(UniqueNameOfSceneManager)); }
 // Has objects
-bool OgreAPIMediator::hasCamera(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera)
+bool OgreMediator::hasCamera(wxString UniqueNameOfSceneManager, wxString UniqueNameOfCamera)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	if (!UniqueNameManagerCollection::getSingletonPtr()->isCameraName(UniqueNameOfCamera)) return false;
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	return SM->hasCamera(ToOgreString(UniqueNameOfCamera));
 }
-bool OgreAPIMediator::hasEntity(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity)
+bool OgreMediator::hasEntity(wxString UniqueNameOfSceneManager, wxString UniqueNameOfEntity)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	if (!UniqueNameManagerCollection::getSingletonPtr()->isEntityName(UniqueNameOfEntity)) return false;
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	return SM->hasEntity(ToOgreString(UniqueNameOfEntity));
 }
-bool OgreAPIMediator::hasLight(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight)
+bool OgreMediator::hasLight(wxString UniqueNameOfSceneManager, wxString UniqueNameOfLight)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	if (!UniqueNameManagerCollection::getSingletonPtr()->isLightName(UniqueNameOfLight)) return false;
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	return SM->hasLight(ToOgreString(UniqueNameOfLight));
 }
-bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
+bool OgreMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxString UniqueNameOfMovableObject, OgreEnums::MovableObject::MovableType Type)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	// check name? //TODO
@@ -197,14 +197,14 @@ bool OgreAPIMediator::hasMovableObject(wxString UniqueNameOfSceneManager, wxStri
 	// Now, ever return true ;-)
 	return SM->hasMovableObject(ToOgreString(UniqueNameOfMovableObject), ToOgreString(OgreEnums::MovableTypeTranslator::GetSingletonPtr()->GetEnumAsString(Type)));
 }
-bool OgreAPIMediator::hasSceneNode(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
+bool OgreMediator::hasSceneNode(wxString UniqueNameOfSceneManager, wxString UniqueNameOfSceneNode)
 {
 	if (!this->hasSceneManager(UniqueNameOfSceneManager)) return false;
 	if (!UniqueNameManagerCollection::getSingletonPtr()->isSceneNodeName(UniqueNameOfSceneNode)) return false;
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
 	return SM->hasSceneNode(ToOgreString(UniqueNameOfSceneNode));
 }
-bool OgreAPIMediator::hasSceneManager(wxString UniqueNameOfSceneManager)
+bool OgreMediator::hasSceneManager(wxString UniqueNameOfSceneManager)
 {
 	//if (!UniqueNameManagerCollection::getSingletonPtr()->isEntityName(UniqueNameOfEntity)) return false; // check scene manager // NOT IMPLEMENTED
 	Ogre::SceneManager* SM = this->getSceneManagerPtr(UniqueNameOfSceneManager);
@@ -212,7 +212,7 @@ bool OgreAPIMediator::hasSceneManager(wxString UniqueNameOfSceneManager)
 	else return true;
 }
 // Add objects
-Ogre::Camera* OgreAPIMediator::addCamera(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode)
+Ogre::Camera* OgreMediator::addCamera(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode)
 {
 	if (!this->Valid) return 0;
 	
@@ -225,7 +225,7 @@ Ogre::Camera* OgreAPIMediator::addCamera(wxString NotUniqueName, Ogre::SceneNode
 	this->OgreChanged = true;
 	return C;
 }
-Ogre::Entity* OgreAPIMediator::addEntity(wxString NotUniqueName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+Ogre::Entity* OgreMediator::addEntity(wxString NotUniqueName, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
 {
 	if (!this->Valid) return 0;
 	
@@ -238,7 +238,7 @@ Ogre::Entity* OgreAPIMediator::addEntity(wxString NotUniqueName, wxString MeshFi
 	this->OgreChanged = true;
 	return E;
 }
-Ogre::Light* OgreAPIMediator::addLight(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode)
+Ogre::Light* OgreMediator::addLight(wxString NotUniqueName, Ogre::SceneNode* AttachToThisNode)
 {
 	if (!this->Valid) return 0;
 	
@@ -251,7 +251,7 @@ Ogre::Light* OgreAPIMediator::addLight(wxString NotUniqueName, Ogre::SceneNode* 
 	this->OgreChanged = true;
 	return L;
 }
-Ogre::SceneNode* OgreAPIMediator::addSceneNode(wxString NotUniqueName, Ogre::SceneNode* ParentNode)
+Ogre::SceneNode* OgreMediator::addSceneNode(wxString NotUniqueName, Ogre::SceneNode* ParentNode)
 {
 	if (!this->Valid) return 0;
 
@@ -265,7 +265,7 @@ Ogre::SceneNode* OgreAPIMediator::addSceneNode(wxString NotUniqueName, Ogre::Sce
 }
 */
 // Handling
-bool OgreAPIMediator::SetActiveSceneManager(QualifiedName qSceneManager)
+bool OgreMediator::SetActiveSceneManager(QualifiedName qSceneManager)
 {
 	if (this->HasSceneManager(qSceneManager))
 	{
@@ -275,10 +275,10 @@ bool OgreAPIMediator::SetActiveSceneManager(QualifiedName qSceneManager)
 	}
 	else return false;
 }
-QualifiedName OgreAPIMediator::GetActiveSceneManager() { return this->mActiveSceneManager; }
-Ogre::RaySceneQuery* OgreAPIMediator::CreateRaySceneQuery(QualifiedName qSceneManager)
+QualifiedName OgreMediator::GetActiveSceneManager() { return this->mActiveSceneManager; }
+Ogre::RaySceneQuery* OgreMediator::CreateRaySceneQuery(QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -297,9 +297,9 @@ Ogre::RaySceneQuery* OgreAPIMediator::CreateRaySceneQuery(QualifiedName qSceneMa
 
 	return RSQ;
 }
-Ogre::RaySceneQuery* OgreAPIMediator::GetRaySceneQuery(QualifiedName qSceneManager)
+Ogre::RaySceneQuery* OgreMediator::GetRaySceneQuery(QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -316,12 +316,12 @@ Ogre::RaySceneQuery* OgreAPIMediator::GetRaySceneQuery(QualifiedName qSceneManag
 
 	return RSQ;
 }
-QualifiedNameCollection OgreAPIMediator::GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+QualifiedNameCollection OgreMediator::GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
 {
 	QualifiedNameCollection QNames;
 	QNames.Clear();
 
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return QNames;
 
 	// Verify qSceneManager
@@ -355,9 +355,9 @@ QualifiedNameCollection OgreAPIMediator::GetQueryObjects(float screenx, float sc
 	
 	return QNames;
 }
-QualifiedName OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+QualifiedName OgreMediator::GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return QualifiedName();
 
 	// Verify qSceneManager
@@ -386,9 +386,9 @@ QualifiedName OgreAPIMediator::GetQueryFrontObject(float screenx, float screeny,
 	}
 	else return QualifiedName();
 }
-QualifiedName OgreAPIMediator::GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
+QualifiedName OgreMediator::GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return QualifiedName();
 
 	// Verify qSceneManager
@@ -418,66 +418,66 @@ QualifiedName OgreAPIMediator::GetQueryBackObject(float screenx, float screeny, 
 	else return QualifiedName();
 }
 // Has objects?
-bool OgreAPIMediator::HasCamera(QualifiedName qCamera)
+bool OgreMediator::HasCamera(QualifiedName qCamera)
 {
 	if (this->GetCameraPtr(qCamera) != 0) return true;
 	else return false;
 }
-bool OgreAPIMediator::HasEntity(QualifiedName qEntity)
+bool OgreMediator::HasEntity(QualifiedName qEntity)
 {
 	if (this->GetEntityPtr(qEntity) != 0) return true;
 	else return false;
 }
-bool OgreAPIMediator::HasLight(QualifiedName qLight)
+bool OgreMediator::HasLight(QualifiedName qLight)
 {
 	if (this->GetLightPtr(qLight) != 0) return true;
 	else return false;
 }
-bool OgreAPIMediator::HasSceneManager(QualifiedName qSceneManager)
+bool OgreMediator::HasSceneManager(QualifiedName qSceneManager)
 {
 	if (this->GetSceneManagerPtr(qSceneManager) != 0) return true;
 	else return false;
 }
-bool OgreAPIMediator::HasSceneNode(QualifiedName qSceneNode)
+bool OgreMediator::HasSceneNode(QualifiedName qSceneNode)
 {
 	if (this->GetSceneNodePtr(qSceneNode) != 0) return true;
 	else return false;
 }
 // Get QualifiedName by pointer
-QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Camera* pCamera)
+QualifiedName OgreMediator::GetQualifiedName(Ogre::Camera* pCamera)
 {
 	wxString UniqueName = ToWxString(pCamera->getName());
 	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	return qName;
 }
-QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Entity* pEntity)
+QualifiedName OgreMediator::GetQualifiedName(Ogre::Entity* pEntity)
 {
 	wxString UniqueName = ToWxString(pEntity->getName());
 	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	return qName;
 }
-QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::Light* pLight)
+QualifiedName OgreMediator::GetQualifiedName(Ogre::Light* pLight)
 {
 	wxString UniqueName = ToWxString(pLight->getName());
 	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	return qName;
 }
-QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::SceneManager* pSceneManager)
+QualifiedName OgreMediator::GetQualifiedName(Ogre::SceneManager* pSceneManager)
 {
 	wxString UniqueName = ToWxString(pSceneManager->getName());
 	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	return qName;
 }
-QualifiedName OgreAPIMediator::GetQualifiedName(Ogre::SceneNode* pSceneNode)
+QualifiedName OgreMediator::GetQualifiedName(Ogre::SceneNode* pSceneNode)
 {
 	wxString UniqueName = ToWxString(pSceneNode->getName());
 	QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	return qName;
 }
 // Get pointer by QualifiedName
-Ogre::Camera*		OgreAPIMediator::GetCameraPtr(QualifiedName qCamera)
+Ogre::Camera*		OgreMediator::GetCameraPtr(QualifiedName qCamera)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qCamera
@@ -486,9 +486,9 @@ Ogre::Camera*		OgreAPIMediator::GetCameraPtr(QualifiedName qCamera)
 	// Get Camera and return it (or null)
 	return this->QuickObjectAccess.GetCamera(qCamera);
 }
-Ogre::Entity*		OgreAPIMediator::GetEntityPtr(QualifiedName qEntity)
+Ogre::Entity*		OgreMediator::GetEntityPtr(QualifiedName qEntity)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qEntity
@@ -497,9 +497,9 @@ Ogre::Entity*		OgreAPIMediator::GetEntityPtr(QualifiedName qEntity)
 	// Get Entity and return it (or null)
 	return this->QuickObjectAccess.GetEntity(qEntity);
 }
-Ogre::Light*		OgreAPIMediator::GetLightPtr(QualifiedName qLight)
+Ogre::Light*		OgreMediator::GetLightPtr(QualifiedName qLight)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qLight
@@ -508,9 +508,9 @@ Ogre::Light*		OgreAPIMediator::GetLightPtr(QualifiedName qLight)
 	// Get Light and return it (or null)
 	return this->QuickObjectAccess.GetLight(qLight);
 }
-Ogre::SceneManager*	OgreAPIMediator::GetSceneManagerPtr(QualifiedName qSceneManager)
+Ogre::SceneManager*	OgreMediator::GetSceneManagerPtr(QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qSceneManager
@@ -519,9 +519,9 @@ Ogre::SceneManager*	OgreAPIMediator::GetSceneManagerPtr(QualifiedName qSceneMana
 	// Get SceneManager and return it (or null)
 	return this->QuickObjectAccess.GetSceneManager(qSceneManager);
 }
-Ogre::SceneNode*	OgreAPIMediator::GetSceneNodePtr(QualifiedName qSceneNode)
+Ogre::SceneNode*	OgreMediator::GetSceneNodePtr(QualifiedName qSceneNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qSceneNode
@@ -531,29 +531,29 @@ Ogre::SceneNode*	OgreAPIMediator::GetSceneNodePtr(QualifiedName qSceneNode)
 	return this->QuickObjectAccess.GetSceneNode(qSceneNode);
 }
 // Create objects
-QualifiedName* OgreAPIMediator::CreateCamera(wxString Name, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateCamera(wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
 	return this->CreateCamera(this->mActiveSceneManager, Name, AttachToThisNode);
 }
-QualifiedName* OgreAPIMediator::CreateEntity(wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateEntity(wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
 {
 	return this->CreateEntity(this->mActiveSceneManager, Name, MeshFile, AttachToThisNode);
 }
-QualifiedName* OgreAPIMediator::CreateLight(wxString Name, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateLight(wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
 	return this->CreateLight(this->mActiveSceneManager, Name, AttachToThisNode);
 }
-QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name)
+QualifiedName* OgreMediator::CreateSceneManager(wxString Name)
 {
 	return this->CreateSceneManager(Name, Ogre::ST_GENERIC);
 }
-QualifiedName* OgreAPIMediator::CreateSceneNode(wxString Name, Ogre::SceneNode* ParentNode)
+QualifiedName* OgreMediator::CreateSceneNode(wxString Name, Ogre::SceneNode* ParentNode)
 {
 	return this->CreateSceneNode(this->mActiveSceneManager, Name, ParentNode);
 }
-QualifiedName* OgreAPIMediator::CreateCamera(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateCamera(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -600,9 +600,9 @@ QualifiedName* OgreAPIMediator::CreateCamera(QualifiedName qSceneManager, wxStri
 	// Return QualifiedName of new Ogre::Camera
 	return new QualifiedName(qCamera);
 }
-QualifiedName* OgreAPIMediator::CreateEntity(QualifiedName qSceneManager, wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateEntity(QualifiedName qSceneManager, wxString Name, wxString MeshFile, Ogre::SceneNode* AttachToThisNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -650,9 +650,9 @@ QualifiedName* OgreAPIMediator::CreateEntity(QualifiedName qSceneManager, wxStri
 	// Return QualifiedName of new Ogre::Entity
 	return new QualifiedName(qEntity);
 }
-QualifiedName* OgreAPIMediator::CreateLight(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
+QualifiedName* OgreMediator::CreateLight(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* AttachToThisNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -699,9 +699,9 @@ QualifiedName* OgreAPIMediator::CreateLight(QualifiedName qSceneManager, wxStrin
 	// Return QualifiedName of new Ogre::Light
 	return new QualifiedName(qLight);
 }
-QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name, Ogre::SceneType pSceneType)
+QualifiedName* OgreMediator::CreateSceneManager(wxString Name, Ogre::SceneType pSceneType)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Create QualifiedName of new Ogre::SceneManager
@@ -736,9 +736,9 @@ QualifiedName* OgreAPIMediator::CreateSceneManager(wxString Name, Ogre::SceneTyp
 	// Return QualifiedName of new Ogre::Camera
 	return new QualifiedName(qSceneManager);
 }
-QualifiedName* OgreAPIMediator::CreateSceneNode(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* ParentNode)
+QualifiedName* OgreMediator::CreateSceneNode(QualifiedName qSceneManager, wxString Name, Ogre::SceneNode* ParentNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return 0;
 
 	// Verify qSceneManager
@@ -784,13 +784,13 @@ QualifiedName* OgreAPIMediator::CreateSceneNode(QualifiedName qSceneManager, wxS
 	return new QualifiedName(qSceneNode);
 }
 // Destroy objects
-bool OgreAPIMediator::DestroySceneManager()
+bool OgreMediator::DestroySceneManager()
 {
 	return this->DestroySceneManager(this->mActiveSceneManager);
 }
-bool OgreAPIMediator::DestroyCamera(QualifiedName qCamera)
+bool OgreMediator::DestroyCamera(QualifiedName qCamera)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qCamera
@@ -831,9 +831,9 @@ bool OgreAPIMediator::DestroyCamera(QualifiedName qCamera)
 
 	return true;
 }
-bool OgreAPIMediator::DestroyEntity(QualifiedName qEntity)
+bool OgreMediator::DestroyEntity(QualifiedName qEntity)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qEntity
@@ -874,9 +874,9 @@ bool OgreAPIMediator::DestroyEntity(QualifiedName qEntity)
 
 	return true;
 }
-bool OgreAPIMediator::DestroyLight(QualifiedName qLight)
+bool OgreMediator::DestroyLight(QualifiedName qLight)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qLight
@@ -917,9 +917,9 @@ bool OgreAPIMediator::DestroyLight(QualifiedName qLight)
 
 	return true;
 }
-bool OgreAPIMediator::DestroySceneManager(QualifiedName qSceneManager)
+bool OgreMediator::DestroySceneManager(QualifiedName qSceneManager)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qSceneManager
@@ -952,9 +952,9 @@ bool OgreAPIMediator::DestroySceneManager(QualifiedName qSceneManager)
 
 	return true;
 }
-bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
+bool OgreMediator::DestroySceneNode(QualifiedName qSceneNode)
 {
-	// Verify OgreAPIMediator
+	// Verify OgreMediator
 	if (!this->Valid) return false;
 
 	// Verify qSceneNode
@@ -1021,7 +1021,7 @@ bool OgreAPIMediator::DestroySceneNode(QualifiedName qSceneNode)
 }
 
 // General
-void OgreAPIMediator::DynamicShadows(bool state)
+void OgreMediator::DynamicShadows(bool state)
 {
 	if(state) this->mActiveSceneManagerPtr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 	else this->mActiveSceneManagerPtr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
@@ -1029,7 +1029,7 @@ void OgreAPIMediator::DynamicShadows(bool state)
 
 // Remove objects
 /*
-bool OgreAPIMediator::removeCamera(wxString UniqueName)
+bool OgreMediator::removeCamera(wxString UniqueName)
 {
 	if (!this->Valid) return false;
 	if (!this->SceneMgr->hasCamera(ToOgreString(UniqueName))) return false;
@@ -1044,7 +1044,7 @@ bool OgreAPIMediator::removeCamera(wxString UniqueName)
 	this->OgreChanged = true;
 	return true;
 }
-bool OgreAPIMediator::removeEntity(wxString UniqueName)
+bool OgreMediator::removeEntity(wxString UniqueName)
 {
 	if (!this->Valid) return false;
 	if (!this->SceneMgr->hasEntity(ToOgreString(UniqueName))) return false;
@@ -1058,7 +1058,7 @@ bool OgreAPIMediator::removeEntity(wxString UniqueName)
 	this->OgreChanged = true;
 	return true;
 }
-bool OgreAPIMediator::removeLight(wxString UniqueName)
+bool OgreMediator::removeLight(wxString UniqueName)
 {
 	if (!this->Valid) return false;
 	if (!this->SceneMgr->hasLight(ToOgreString(UniqueName))) return false;
@@ -1073,7 +1073,7 @@ bool OgreAPIMediator::removeLight(wxString UniqueName)
 	this->OgreChanged = true;
 	return true;
 }
-bool OgreAPIMediator::removeSceneNode(wxString UniqueName, bool RemoveRecursive)
+bool OgreMediator::removeSceneNode(wxString UniqueName, bool RemoveRecursive)
 {
 	if (!this->Valid) return false;
 	if (!this->SceneMgr->hasSceneNode(ToOgreString(UniqueName))) return false;

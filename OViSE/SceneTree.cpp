@@ -30,7 +30,7 @@ SceneTree::SceneTree(Ogre::SceneManager *manager, wxWindow* parent, wxWindowID i
 	mSceneManager = manager;
 	mInitialized = false;
 
-	this->ConnectOgreAPIMediator();
+	this->ConnectOgreMediator();
 }
 
 void SceneTree::setSceneManager(Ogre::SceneManager *manager)
@@ -39,9 +39,9 @@ void SceneTree::setSceneManager(Ogre::SceneManager *manager)
 }
 
 
-void SceneTree::ConnectOgreAPIMediator()
+void SceneTree::ConnectOgreMediator()
 {
-	OgreAPIMediator* test = OgreAPIMediator::GetSingletonPtr();
+	OgreMediator* test = OgreMediator::GetSingletonPtr();
 	test->Connect(OViSE_EVT_OGRE_CHANGED, wxCommandEventHandler( SceneTree::OnOgreChanged ), NULL, this);
 }
 

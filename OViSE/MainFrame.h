@@ -27,7 +27,7 @@
 
 #include "../QualifiedNames/QualifiedName.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
-#include "../OViSEAux/OgreAPIMediator.h"
+#include "../OgreMediator/OgreMediator.h"
 #include "../OViSE/SelectionManager.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../OViSEAux/Logging.h"

@@ -173,8 +173,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	QualifiedName* qSN = OgreAPIMediator::GetSingletonPtr()->CreateSceneNode(NewNode_name, ParentNode);
-	Ogre::SceneNode* NewNode = OgreAPIMediator::GetSingletonPtr()->GetSceneNodePtr(*qSN);
+	QualifiedName* qSN = OgreMediator::GetSingletonPtr()->CreateSceneNode(NewNode_name, ParentNode);
+	Ogre::SceneNode* NewNode = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(*qSN);
 
 	if (NewNode != 0)
 	{
@@ -324,8 +324,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
 	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 
-	QualifiedName* qE = OgreAPIMediator::GetSingletonPtr()->CreateEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	Ogre::Entity* NewEntity = OgreAPIMediator::GetSingletonPtr()->GetEntityPtr(*qE);
+	QualifiedName* qE = OgreMediator::GetSingletonPtr()->CreateEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->GetEntityPtr(*qE);
 
 	LogMsg.Clear();
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE->UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
@@ -421,7 +421,7 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument*
 	// Call of inherided method. Provides a basic setup and calls inplicid sub-methods for necessary interpretations...
 	bool ReturnValue =  this->Interpretation_DOMScene(DOMRepresentationOfScene, qAnchorNodeName, Configuration);
 
-	if ( ReturnValue ) OgreAPIMediator::GetSingletonPtr()->SendOgreChanged();
+	if ( ReturnValue ) OgreMediator::GetSingletonPtr()->SendOgreChanged();
 	return ReturnValue;
 
 	// More individual calls. Not necessary for a correct an full interpretation!
