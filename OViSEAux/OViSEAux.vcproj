@@ -159,10 +159,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ObjectManager.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\OViSEException.cpp"
 				>
 			</File>
@@ -190,10 +186,6 @@
 			</File>
 			<File
 				RelativePath=".\MovableTypeTranslator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ObjectManager.h"
 				>
 			</File>
 			<File
