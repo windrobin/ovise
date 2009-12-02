@@ -14,7 +14,7 @@
 #include "../OViSEAux/EnumsForABetterWorld.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
-#include "../OViSEAux/ObjectManager.h"
+#include "../OgreMediator/ObjectManager.h"
 
 class MediatorInterface
 {

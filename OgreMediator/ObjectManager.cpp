@@ -1,4 +1,4 @@
-#include "../OViSEAux/ObjectManager.h"
+#include "../OgreMediator/ObjectManager.h"
 
 ObjectManager::ObjectManager(void) { }
 ObjectManager::~ObjectManager(void)

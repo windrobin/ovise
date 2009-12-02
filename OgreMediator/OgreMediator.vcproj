@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ObjectManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OgreMediator.cpp"
 				>
 			</File>
@@ -212,6 +216,10 @@
 			</File>
 			<File
 				RelativePath=".\MovableObjectInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ObjectManager.h"
 				>
 			</File>
 			<File
