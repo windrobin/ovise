@@ -59,16 +59,10 @@ bool ObjectManager::RemoveAssociatedSceneManager(QualifiedName qObject)
 		return true;
 	}
 }
-QualifiedName* ObjectManager::GetAssociatedSceneManager(QualifiedName qObject)
+QualifiedName ObjectManager::GetAssociatedSceneManager(QualifiedName qObject)
 {
-	QualifiedName* QName = 0;
-
-	if (this->mAssociatedSceneManagers.count(qObject.UniqueName()) != 0)
-	{
-		QName = new QualifiedName(this->mAssociatedSceneManagers[qObject.UniqueName()]);
-	}
-
-	return QName;
+	if (this->mAssociatedSceneManagers.count(qObject.UniqueName()) == 0) return QualifiedName();
+	else return this->mAssociatedSceneManagers[qObject.UniqueName()];
 }
 // Ogre::Camera
 bool ObjectManager::AddCamera(QualifiedName QName, Ogre::Camera* pCamera)
@@ -390,3 +384,13 @@ OgreEnums::MovableObject::MovableType ObjectManager::GetMovableType(QualifiedNam
 	if (this->mMovableTypeEnums.count(QName.UniqueName()) == 1) return this->mMovableTypeEnums[QName.UniqueName()];
 	else return OgreEnums::MovableObject::MOVABLETYPE_Invalid;
 }
+// NEW
+bool ObjectManager::SetActiveSceneManager(QualifiedName qSceneManager)
+{
+	if ( !qSceneManager.IsValid() ) return false;
+	if ( this->GetSceneManager(qSceneManager) == 0 ) return false;
+
+	this->mActiveSceneManager = qSceneManager;
+	return true;
+}
+QualifiedName ObjectManager::GetActiveSceneManager() { return this->mActiveSceneManager; }

@@ -34,6 +34,9 @@ private:
 
 	OgreEnums::MovableTypeByStringHashMap mMovableTypeEnums;
 
+	// NEW
+	QualifiedName mActiveSceneManager;
+
 public:
 	ObjectManager(void);
 	~ObjectManager(void);
@@ -45,7 +48,7 @@ public:
 	// Accociadted SceneManager // Delivers quick access to a Ogre-objects hosting/associated Ogre::SceneManager
 	bool					AddAssociatedSceneManager(QualifiedName qSceneManager, QualifiedName qObject);
 	bool					RemoveAssociatedSceneManager(QualifiedName qObject);
-	QualifiedName*			GetAssociatedSceneManager(QualifiedName qObject);
+	QualifiedName			GetAssociatedSceneManager(QualifiedName qObject);
 
 	// Ogre::Camera
 	bool					AddCamera(QualifiedName QName, Ogre::Camera* pCamera);
@@ -81,4 +84,8 @@ public:
 	bool									RemoveMovableObject(QualifiedName QName);
 	Ogre::MovableObject*					GetMovableObject(QualifiedName QName);
 	OgreEnums::MovableObject::MovableType	GetMovableType(QualifiedName QName);
+
+	// NEW
+	bool					SetActiveSceneManager(QualifiedName qSceneManager);
+	QualifiedName			GetActiveSceneManager(); // There is anytime one!
 };

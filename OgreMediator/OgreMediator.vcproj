@@ -157,7 +157,35 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CameraInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LightInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MediatorInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MovableObjectInterface.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OgreMediator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SceneManagerInterface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SceneNodeInterface.cpp"
 				>
 			</File>
 		</Filter>
@@ -167,7 +195,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CameraInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LightInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MediatorInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MovableObjectInterface.h"
+				>
+			</File>
+			<File
 				RelativePath=".\OgreMediator.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SceneManagerInterface.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SceneNodeInterface.h"
 				>
 			</File>
 		</Filter>
