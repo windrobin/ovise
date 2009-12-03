@@ -384,6 +384,40 @@ OgreEnums::MovableObject::MovableType ObjectManager::GetMovableType(QualifiedNam
 	if (this->mMovableTypeEnums.count(QName.UniqueName()) == 1) return this->mMovableTypeEnums[QName.UniqueName()];
 	else return OgreEnums::MovableObject::MOVABLETYPE_Invalid;
 }
+// Ogre::SceneQuery
+bool ObjectManager::AddRaySceneQuery(QualifiedName qSceneManager, Ogre::RaySceneQuery* pRaySceneQuery)
+{
+	// Verify Ogre::SceneQuery
+	if ( pRaySceneQuery == 0 ) return false;
+
+	// Verify QualifiedName of SceneManager
+	if ( !qSceneManager.IsValid() ) return false;
+
+	// Verify QualifiedName belongs to a SceneManager
+	if ( this->GetSceneManager(qSceneManager) == 0 ) return false;
+
+	// Everything OK, store Ogre::SceneQuery, override old
+	this->mRaySceneQuery[qSceneManager.UniqueName()] = pRaySceneQuery;
+
+	return true;
+}
+bool ObjectManager::RemoveRaySceneQuery(QualifiedName qSceneManager)
+{
+	// An invalid QualifiedName must be allowed to remove objects anyway!
+
+	// Verify entry for QualifiedName exists
+	if (this->mRaySceneQuery.count(qSceneManager.UniqueName()) != 1) return false;
+
+	// Remove QName from ObjectManager
+	this->mRaySceneQuery.erase(qSceneManager.UniqueName());
+
+	return true;
+}
+Ogre::RaySceneQuery* ObjectManager::GetRaySceneQuery(QualifiedName qSceneManager)
+{
+	if (this->mRaySceneQuery.count(qSceneManager.UniqueName()) == 0) return 0;
+	else return this->mRaySceneQuery[qSceneManager.UniqueName()];
+}
 // NEW
 bool ObjectManager::SetActiveSceneManager(QualifiedName qSceneManager)
 {

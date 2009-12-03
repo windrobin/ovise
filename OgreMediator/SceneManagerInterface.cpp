@@ -19,6 +19,9 @@ bool SceneManagerInterface::Destroy(QualifiedName qName)
 	QualifiedName qRootSceneNode = QualifiedName::GetQualifiedNameByUnique(UniqueName);
 	this->iSceneNode->Destroy(qRootSceneNode);
 
+	// Destroy possible RaySceneQuery
+	this->DestroyRaySceneQuery(qName);
+
 	// Remove QualifiedName from ObjectManager
 	this->mObjectAccess->RemoveAssociatedSceneManager(qName);
 	this->mObjectAccess->RemoveSceneManager(qName);
@@ -100,11 +103,8 @@ QualifiedName SceneManagerInterface::GetName(Ogre::SceneManager* pSceneManager)
 }
 Ogre::SceneManager*	SceneManagerInterface::GetPtr(QualifiedName qSceneManager)
 {
-	// Interface valid?
-	if ( !this->IsValid() ) return 0;
-
-	// Verify qSceneManager
-	if ( !qSceneManager.IsValid() ) return 0;
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return 0;
 
 	// Get SceneManager and return it (or null)
 	return this->mObjectAccess->GetSceneManager(qSceneManager);
@@ -128,4 +128,142 @@ bool SceneManagerInterface::SetSceneNodeInterface(SceneNodeInterface* iSceneNode
 		this->iSceneNode = iSceneNode;
 		return true;
 	}
+}
+
+// Methods, individual, manage RaySceneQuery
+bool SceneManagerInterface::CreateRaySceneQuery(QualifiedName qSceneManager)
+{
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return false;
+	
+	// Get Ogre::SceneManager
+	Ogre::SceneManager* SM = this->mObjectAccess->GetSceneManager(qSceneManager);
+	if ( SM == 0 ) return false;
+
+	// Create RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = SM->createRayQuery(Ogre::Ray());
+
+	// Validate new Ogre::RaySceneQuery
+	if (RSQ == 0) return false;
+
+	// Add new Ogre::RaySceneQuery ObjectManager
+	return this->mObjectAccess->AddRaySceneQuery(qSceneManager, RSQ);
+}
+bool SceneManagerInterface::DestroyRaySceneQuery(QualifiedName qSceneManager)
+{
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return false;
+	
+	// Add new Ogre::RaySceneQuery ObjectManager
+	return this->mObjectAccess->RemoveRaySceneQuery(qSceneManager);
+}
+Ogre::RaySceneQuery* SceneManagerInterface::GetRaySceneQuery(QualifiedName qSceneManager)
+{
+	// Validate paramaters
+	if ( !qSceneManager.IsValid() ) return false;
+	if ( this->mObjectAccess->GetSceneManager(qSceneManager) == 0 ) return false;
+	
+	// Add new Ogre::RaySceneQuery ObjectManager
+	return this->mObjectAccess->GetRaySceneQuery(qSceneManager);
+}
+// Methods, individual, execute RaySceneQuery
+QualifiedNameCollection	SceneManagerInterface::QueryObjectsByRay(Ogre::Ray pRay, QualifiedName qSceneManager)
+{
+	QualifiedNameCollection QNames;
+
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return QNames;
+
+	// Get Ogre::RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = this->mObjectAccess->GetRaySceneQuery(qSceneManager);
+	
+	// Validate Ogre::RaySceneQuery
+	if (RSQ == 0) return QNames;
+
+	// Prepare RayScan
+	RSQ->setRay(pRay);
+	RSQ->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	RSQ->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = RSQ->execute();
+	if(RayScanResult.size() != 0)
+	{
+		for(unsigned long IT = 0; IT < RayScanResult.size(); IT++)
+		{
+			Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[IT];
+			Ogre::MovableObject* MO = RayScanResultEntry.movable;
+			QualifiedName qMO = this->mObjectAccess->GetQualifiedNameOfObject(ToWxString(MO->getName()));
+			if (qMO.IsValid()) QNames.Add(qMO);
+		}
+	}
+	
+	return QNames;
+}
+QualifiedName SceneManagerInterface::QueryFrontObjectByRay(Ogre::Ray pRay, QualifiedName qSceneManager)
+{
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return QualifiedName();
+
+	// Get Ogre::RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = this->mObjectAccess->GetRaySceneQuery(qSceneManager);
+	
+	// Validate Ogre::RaySceneQuery
+	if (RSQ == 0) return QualifiedName();
+
+	// Prepare RayScan
+	RSQ->setRay(pRay);
+	RSQ->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	RSQ->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = RSQ->execute();
+	if(RayScanResult.size() != 0)
+	{
+		Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[0];
+		Ogre::MovableObject* MO = RayScanResultEntry.movable;
+		return this->mObjectAccess->GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	}
+	else return QualifiedName();
+}
+QualifiedName SceneManagerInterface::QueryBackObjectByRay(Ogre::Ray pRay, QualifiedName qSceneManager)
+{
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return QualifiedName();
+
+	// Get Ogre::RaySceneQuery
+	Ogre::RaySceneQuery* RSQ = this->mObjectAccess->GetRaySceneQuery(qSceneManager);
+	
+	// Validate Ogre::RaySceneQuery
+	if (RSQ == 0) return QualifiedName();
+
+	// Prepare RayScan
+	RSQ->setRay(pRay);
+	RSQ->setQueryMask(~0x01); // Exclude cameras and scene structure mesh
+	RSQ->setSortByDistance(true); // Sort
+
+	// Excecute RayScan
+	Ogre::RaySceneQueryResult &RayScanResult = RSQ->execute();
+	if(RayScanResult.size() != 0)
+	{
+		Ogre::RaySceneQueryResultEntry RayScanResultEntry = RayScanResult[RayScanResult.size()-1];
+		Ogre::MovableObject* MO = RayScanResultEntry.movable;
+		return this->mObjectAccess->GetQualifiedNameOfObject(ToWxString(MO->getName()));
+	}
+	else return QualifiedName();
+}
+// Methods, individual, helper-methods
+Ogre::Ray SceneManagerInterface::Assist_GetRayForRaySceneQuery(float screenx, float screeny, Ogre::Camera* cam)
+{
+	if ( cam == 0 ) return Ogre::Ray();
+	return cam->getCameraToViewportRay(screenx, screeny);
+}
+// Methods, individual, manage shadows
+void SceneManagerInterface::DynamicShadows(QualifiedName qSceneManager, bool State)
+{
+	// Validate qSceneManager
+	if ( !this->Exist(qSceneManager) ) return;
+
+	if(State) this->GetPtr(qSceneManager)->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	else this->GetPtr(qSceneManager)->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
 }
