@@ -78,8 +78,8 @@ bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 	if ( this->PG == 0 ) return false;
 	
 	// Get QualifiedName
-	QualifiedName qEntity = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(E->getName()));
-	if ( !qEntity.IsValid() ) return false;
+	QualifiedName qEntity = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(ToWxString(E->getName()));
+	if ( !OgreMediator::GetSingletonPtr()->iEntity.Exist(qEntity) ) return false;
 
 	// Handle recusive processing of SceneNode
 	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)E->getParentNode());
@@ -165,8 +165,8 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	if ( this->PG == 0 ) return false;
 
 	// Get Ogre::SceneManager
-	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
-	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(qSceneManager);
+	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(qSceneManager);
 	if ( SM == 0 ) return 0;
 
 	// Select PCParent by condition: is Ogre::SceneNode the RootSceneNode?
@@ -182,8 +182,8 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	else
 	{
 		// Get QualifiedName
-		QualifiedName qSceneNode = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(ToWxString(SN->getName()));
-		if ( !qSceneNode.IsValid() ) return 0;
+		QualifiedName qSceneNode = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(ToWxString(SN->getName()));
+		if ( !OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qSceneNode) ) return 0;
 
 		// Handle recusive processing of SceneNode
 		PCParent = this->AddSceneNodeToPGCategory(SN->getParentSceneNode());
@@ -321,7 +321,7 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	if ( !qMovableObject.IsValid() ) return false;
 
 	// Get Ogre::MovableObject-Type
-	OgreEnums::MovableObject::MovableType EnumMT = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMovableObject);
+	OgreEnums::MovableObject::MovableType EnumMT = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetMovableType(qMovableObject);
 
 	// Setup category
 	wxString CategoryHeadline;
@@ -405,8 +405,8 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	this->PG->Clear();
 
 	// Get Ogre::SceneManager
-	QualifiedName qSM = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
-	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetSceneManager(qSM);
+	QualifiedName qSM = OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager();
+	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(qSM);
 	
 	// Validate Ogre::SceneManager...
 	if (SM == 0) return false;
@@ -415,7 +415,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	wxPropertyCategory* PCSceneManager = new wxPropertyCategory(ToWxString("SceneManager"));
 	this->PG->Append(PCSceneManager);
 	this->PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
-	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreMediator::GetSingletonPtr()->GetActiveSceneManager().UniqueName());
+	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager().UniqueName());
 	this->PG->DisableProperty(ToWxString("SceneManagerName"));
 	PCSceneManager->SetExpanded(true);
 
@@ -427,7 +427,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	{
 		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
 		{
-			Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(Selection[IT]);
+			Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(Selection[IT]);
 			this->AddMovableObjectToPG(PCSceneManager, MO);
 		}
 	}
@@ -463,11 +463,11 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 		}
 		
 		// STAGE 2: Get QualifiedNames by UniqueName
-		QualifiedName qName = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(UniqueName);
+		QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(UniqueName);
 		if ( !qName.IsValid() ) return false;
 
 		// STAGE 3: Get Type by indentified QualifiedName
-		OgreEnums::MovableObject::MovableType Type = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qName);
+		OgreEnums::MovableObject::MovableType Type = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetMovableType(qName);
 
 		// STAGE 4: Futher calls depend on type...
 		bool Match = false;
@@ -476,13 +476,13 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 		case OgreEnums::MovableObject::MOVABLETYPE_Invalid:
 			// STAGE 4.x: Object is no Ogre::MovableObject. Could be Ogre::SceneManager or Ogre::SceneNode
 			
-			if ((!Match) && OgreMediator::GetSingletonPtr()->HasSceneManager(qName))
+			if ((!Match) && OgreMediator::GetSingletonPtr()->iSceneManager.Exist(qName))
 			{
 				// Got Ogre::SceneManager
 				this->IsValid(); // DEBUG: Handling of that type not implemented yet !!!
 				Match = false;
 			}
-			if ((!Match) && OgreMediator::GetSingletonPtr()->HasSceneNode(qName))
+			if ((!Match) && OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qName))
 			{
 				// Got Ogre::SceneNode
 				this->HandleSceneNodeChanged(qName, subPGID);
@@ -512,8 +512,8 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID)
 {
 	// Verify qSceneNode
-	if (!OgreMediator::GetSingletonPtr()->HasSceneNode(qSceneNode)) return false;
-	Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(qSceneNode);
+	if (!OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qSceneNode)) return false;
+	Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(qSceneNode);
 	return this->HandleSceneNodeChanged(SN, subPGID);
 }
 bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID)
@@ -573,8 +573,8 @@ bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subP
 bool SelectionManager::HandleEntityChanged(QualifiedName qEntity, wxString subPGID)
 {
 	// Verify qEntity
-	if (!OgreMediator::GetSingletonPtr()->HasEntity(qEntity)) return false;
-	Ogre::Entity* E = OgreMediator::GetSingletonPtr()->GetEntityPtr(qEntity);
+	if (!OgreMediator::GetSingletonPtr()->iEntity.Exist(qEntity)) return false;
+	Ogre::Entity* E = OgreMediator::GetSingletonPtr()->iEntity.GetPtr(qEntity);
 	return this->HandleEntityChanged(E, subPGID);
 }
 bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID)

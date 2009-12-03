@@ -33,7 +33,7 @@ DotSceneBaseConfiguration* OViSEDotSceneManager::CreateDefaultConfiguration()
 {
 	// Create default values
 	wxString NativeName = ToWxString("DEFAULT_DOTSCENEMANAGER");
-	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->GetActiveSceneManager();
+	QualifiedName qSceneManager = OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager();
 	QualifiedName qDotSceneManager = QualifiedName::Create(NativeName, ToWxString("DotSceneManager"));
 	QualifiedName qResourceGroup = QualifiedName::Create(NativeName, ToWxString("ResourceGroup"));
 

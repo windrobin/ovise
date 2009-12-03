@@ -205,20 +205,20 @@ bool MainFrame::InitOgre()
 	OgreMediator* Mediator = OgreMediator::GetSingletonPtr();
 
 	// Create camera setup
-	QualifiedName* qCamFokusSceneNode = Mediator->CreateSceneNode(ToWxString("mainCamFocusNode"));
-	if (qCamFokusSceneNode == 0 ) return false;
-	Ogre::SceneNode *camFocusNode = Mediator->GetSceneNodePtr(*qCamFokusSceneNode);
+	QualifiedName qCamFokusSceneNode = Mediator->iSceneNode.Create(ToWxString("mainCamFocusNode"));
+	if ( !qCamFokusSceneNode.IsValid() ) return false;
+	Ogre::SceneNode *camFocusNode = Mediator->iSceneNode.GetPtr(qCamFokusSceneNode);
 	camFocusNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Z);
-	QualifiedName* qCamSceneNode = Mediator->CreateSceneNode(ToWxString("CamNode"), camFocusNode);
-	if (qCamSceneNode == 0 ) return false;
-	Ogre::SceneNode *camNode = Mediator->GetSceneNodePtr(*qCamSceneNode);
+	QualifiedName qCamSceneNode = Mediator->iSceneNode.Create(ToWxString("CamNode"), camFocusNode);
+	if ( !qCamSceneNode.IsValid() ) return false;
+	Ogre::SceneNode *camNode = Mediator->iSceneNode.GetPtr(qCamSceneNode);
 	camNode->setPosition(0, 5, 0);
 	Ogre::Quaternion q(Ogre::Degree(180), Ogre::Vector3::UNIT_Z);
 	Ogre::Quaternion p(Ogre::Degree(-90), Ogre::Vector3::UNIT_X);
 	camNode->setOrientation(p*q);
-	QualifiedName* qCamera = Mediator->CreateCamera(ToWxString("MainCam"), camNode);
-	if (qCamera == 0 ) return false;
-	mCam = Mediator->GetCameraPtr(*qCamera);
+	QualifiedName qCamera = Mediator->iCamera.Create(ToWxString("MainCam"), camNode);
+	if ( !qCamera.IsValid() ) return false;
+	mCam = Mediator->iCamera.GetPtr(qCamera);
 	mCam->setNearClipDistance(0.01);
 	mCam->setFarClipDistance(1000);
     mCam->setAutoAspectRatio(true);
@@ -237,12 +237,12 @@ bool MainFrame::InitOgre()
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	// DBG: Testscene
-	QualifiedName* qGridPlane = Mediator->CreateEntity(ToWxString("GridPlane"), ToWxString("GridPlane.mesh"));
-	Mediator->GetEntityPtr(*qGridPlane)->setQueryFlags(0x01);
-	Mediator->CreateEntity(ToWxString("CoS"), ToWxString("CoS.mesh"));
+	QualifiedName qGridPlane = Mediator->iEntity.Create(ToWxString("GridPlane"), ToWxString("GridPlane.mesh"));
+	Mediator->iEntity.GetPtr(qGridPlane)->setQueryFlags(0x01);
+	Mediator->iEntity.Create(ToWxString("CoS"), ToWxString("CoS.mesh"));
 	
-	QualifiedName* qSunLight = Mediator->CreateLight(ToWxString("Sun"));
-	Ogre::Light* SunLight = Mediator->GetLightPtr(*qSunLight);
+	QualifiedName qSunLight = Mediator->iLight.Create(ToWxString("Sun"));
+	Ogre::Light* SunLight = Mediator->iLight.GetPtr(qSunLight);
 	SunLight->setCastShadows(true);
 	SunLight->setDirection(-1,-1,-1);
 	SunLight->setPosition(100, 100, 100);
@@ -250,7 +250,7 @@ bool MainFrame::InitOgre()
 	// Create scene tree
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
 	loadSceneTreeImageList(sceneTreeImageList);
-	mSceneMgr = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreMediator::GetSingletonPtr()->GetActiveSceneManager());
+	mSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager());
 	mSceneTree = new SceneTree(mSceneMgr, this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
 	mWindowManager.AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
 	mSceneTree->SetImageList(sceneTreeImageList);
@@ -485,7 +485,8 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 	float sy = (float)s.y / (float)height;
 	float d = -1;
 
-	QualifiedNameCollection QNames = OgreMediator::GetSingletonPtr()->GetQueryObjects(sx, sy, mCam, OgreMediator::GetSingletonPtr()->GetActiveSceneManager());
+	Ogre::Ray tRay = OgreMediator::GetSingletonPtr()->iSceneManager.Assist_GetRayForRaySceneQuery(sx, sy, mCam);
+	QualifiedNameCollection QNames = OgreMediator::GetSingletonPtr()->iSceneManager.QueryObjectsByRay(tRay, OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager());
 	
 	// Handle selection
 	if(QNames.IsEmpty())
@@ -773,7 +774,7 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 	else
 	{
 		wxString TreeItemLabel = this->mSceneTree->GetItemText(Item);
-		QualifiedName qName = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetQualifiedNameOfObject(TreeItemLabel);
+		QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(TreeItemLabel);
 		if (qName.IsValid())
 		{
 			if (this->mSceneTree->IsSelected(Item)) this->AddSelectedObject(qName);
@@ -785,7 +786,7 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 
 void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
 	if (MO != 0)
 	{
 		if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
@@ -797,7 +798,7 @@ void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 
 void MainFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qSelectedObject);
+	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
 	if (MO != 0)
 	{
 		SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
@@ -814,7 +815,7 @@ void MainFrame::RemoveAllSelectedObjects()
 		for (unsigned long IT = 0; IT < (unsigned long)SelectionManager::getSingletonPtr()->Selection.Count(); IT++)
 		{
 			QualifiedName qMO = SelectionManager::getSingletonPtr()->Selection[IT];
-			Ogre::MovableObject* pMO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+			Ogre::MovableObject* pMO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qMO);
 			if (pMO != 0) pMO->getParentSceneNode()->showBoundingBox(false);
 		}
 	}
@@ -918,10 +919,9 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 			delete colourlist;*/
 		
 		OgreMediator* Med = OgreMediator::GetSingletonPtr();
-		QualifiedName* qPCNode = Med->CreateSceneNode(pcName + wxT("Node"));
-		Ogre::SceneNode* PCNode = Med->GetSceneNodePtr(*qPCNode);
-		QualifiedName* qPC = Med->CreateEntity(pcEntName, pcName, PCNode);
-		Ogre::Entity *pcEnt = Med->GetEntityPtr(*qPC);
+		QualifiedName qPCNode = Med->iSceneNode.Create(pcName + wxT("Node"));
+		QualifiedName qPC = Med->iEntity.Create(pcEntName, pcName, qPCNode);
+		Ogre::Entity *pcEnt = Med->iEntity.GetPtr(qPC);
 		pcEnt->setMaterialName("Pointcloud");
 
 		Med->SendOgreChanged();
@@ -939,7 +939,7 @@ void MainFrame::OnShowSceneStructure(wxCommandEvent &event)
 void MainFrame::OnTestStuff( wxCommandEvent& event )
 {
 	OgreMediator* Med = OgreMediator::GetSingletonPtr();
-	QualifiedName* qNode = Med->CreateSceneNode(wxT("MyNode"));
-	Med->CreateEntity(wxT("Barrel"), wxT("Barrel.mesh"), Med->GetSceneNodePtr(*qNode));
+	QualifiedName qNode = Med->iSceneNode.Create(wxT("MyNode"));
+	Med->iEntity.Create(wxT("Barrel"), wxT("Barrel.mesh"), qNode);
 	Med->SendOgreChanged();
 }

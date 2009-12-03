@@ -69,12 +69,12 @@ public:
 	LightInterface			iLight;
 
 	// Methods, public: access to "managed" objects
-	const ObjectManager*	GetObjectAccess();
+	ObjectManager*			GetObjectAccess();
 
 	// wxEvent handling
-	void SendSelectionChanged();
-	void SendOgreChanged();
-	void OnOgreChanged(wxCommandEvent& event);
+	void					SendSelectionChanged();
+	void					SendOgreChanged();
+	void					OnOgreChanged(wxCommandEvent& event);
 };
 
 #endif // OGRE_API_MEDIATOR_H_
