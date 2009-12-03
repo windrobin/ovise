@@ -31,7 +31,7 @@ bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString Prototype
 	this->SetVersionString(ToWxString("1.0.0"));
 
 	// Get and check Ogre::SceneManager...
-	this->SceneMgr = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(this->Configuration->qSceneManager);
+	this->SceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(this->Configuration->qSceneManager);
 	if (this->SceneMgr == 0) return false; // "Configuration" is invalid!
 
 	// Create DOMImplementation
@@ -86,7 +86,7 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 			// TODO: Improve to all ogre types (far futhur)
 			bool Match = false;
 			
-			switch(OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableType(qMO))
+			switch(OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetMovableType(qMO))
 			{
 			case OgreEnums::MovableObject::MOVABLETYPE_Camera: Match = false; break;
 			case OgreEnums::MovableObject::MOVABLETYPE_Entity: Match = true; break;
@@ -96,7 +96,7 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 			if (Match)
 			{
 				// Now get Ogre::MovableObject
-				Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qMO);
+				Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qMO);
 				if ( MO != 0 )
 				{
 					Ogre::SceneNode* SN = static_cast<Ogre::SceneNode*>(MO->getParentSceneNode());

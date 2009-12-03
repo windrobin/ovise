@@ -26,17 +26,15 @@ wxString DotSceneInterpreter_DOMToOgre::GetVersionString( xercesc::DOMDocument* 
 	if (DOMElement_scene->hasAttribute(ToXMLString("formatVersion"))) return ToWxString(DOMElement_scene->getAttribute(ToXMLString("formatVersion")));
 	else return wxString(); // Return "" (empty string) when no version-string is found!
 }
-
 bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument* DOMRepresentationOfScene,
 															QualifiedName qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration )
 {
 	wxString LogMsg;
-	Ogre::SceneManager* SceneMgr = 0;
 	this->Configuration = Configuration;
 
 	// Get and check Ogre::SceneManager...
-	SceneMgr = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(this->Configuration->qSceneManager);
+	Ogre::SceneManager* SceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(this->Configuration->qSceneManager);
 	if (SceneMgr == 0) return false; // "Configuration" is invalid!
 	
 	// Store external anchor node...
@@ -50,7 +48,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 	}
 	else
 	{
-		if (!OgreMediator::GetSingletonPtr()->HasSceneNode(qAnchorNodeName))
+		if (!OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qAnchorNodeName))
 		{
 			this->AnchorNode = SceneMgr->getRootSceneNode();
 
@@ -60,7 +58,7 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 		}
 		else
 		{
-			this->AnchorNode = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(qAnchorNodeName);
+			this->AnchorNode = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(qAnchorNodeName);
 
 			LogMsg.Clear();
 			LogMsg << ToWxString("OViSE DOM Interpretation (abstract): Using given paramter 'qAnchorNodeName' with value \"") << qAnchorNodeName.UniqueName() << ToWxString("\".");

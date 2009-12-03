@@ -89,11 +89,11 @@ QualifiedName EntityInterface::Create(wxString Name, wxString MeshFile, Ogre::Sc
 	// Interface valid?
 	if ( !this->IsValid() ) return QualifiedName();
 
-	// Validate parameter MeshFile
-	if ( !wxFileName::FileExists(MeshFile) ) return QualifiedName();
-
 	// Get Ogre::SceneManager
 	Ogre::SceneManager* SM = this->mObjectAccess->GetSceneManager(this->mObjectAccess->GetActiveSceneManager());
+
+	// Validate parameter MeshFile
+	//if ( !wxFileName::FileExists(MeshFile) ) return QualifiedName(); // TODO: H.R. 03.12.09: Don't validate that. No error should occure!
 
 	// Create QualifiedName of new Ogre::Entity
 	QualifiedName qEntity = QualifiedName::Create(Name, "Entity");

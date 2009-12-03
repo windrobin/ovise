@@ -173,8 +173,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	QualifiedName* qSN = OgreMediator::GetSingletonPtr()->CreateSceneNode(NewNode_name, ParentNode);
-	Ogre::SceneNode* NewNode = OgreMediator::GetSingletonPtr()->GetSceneNodePtr(*qSN);
+	QualifiedName qSN = OgreMediator::GetSingletonPtr()->iSceneNode.Create(NewNode_name, ParentNode);
+	Ogre::SceneNode* NewNode = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(qSN);
 
 	if (NewNode != 0)
 	{
@@ -324,11 +324,11 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
 	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 
-	QualifiedName* qE = OgreMediator::GetSingletonPtr()->CreateEntity(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->GetEntityPtr(*qE);
+	QualifiedName qE = OgreMediator::GetSingletonPtr()->iEntity.Create(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->iEntity.GetPtr(qE);
 
 	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE->UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
+	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
 	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 }
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)

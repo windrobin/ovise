@@ -179,16 +179,16 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 	if (SelectionManager::getSingletonPtr()->Selection.Count() > 0)
 	{
 		QualifiedName qNameOfFirst = SelectionManager::getSingletonPtr()->Selection[0];
-		Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->QuickObjectAccess.GetMovableObject(qNameOfFirst);
+		Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qNameOfFirst);
 		if ( MO == 0 )
 		{
-			AnchorNode = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
+			AnchorNode = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager())->getRootSceneNode();
 		}
 		else AnchorNode = MO->getParentSceneNode();
 	}
 	else
 	{
-		AnchorNode = OgreMediator::GetSingletonPtr()->GetSceneManagerPtr(OgreMediator::GetSingletonPtr()->GetActiveSceneManager())->getRootSceneNode();
+		AnchorNode = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager())->getRootSceneNode();
 	}
 
 	if ( this->qSelectedPrototype.IsValid() )

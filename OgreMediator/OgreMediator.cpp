@@ -39,7 +39,7 @@ OgreMediator::OgreMediator()
 OgreMediator::~OgreMediator(void) { this->iSceneManager.Destroy(this->mDefaultSceneManager); }
 // General
 bool OgreMediator::IsValid() { return this->Valid; }
-
+ObjectManager* OgreMediator::GetObjectAccess() { return this->mObjectAccess; }
 void OgreMediator::SendSelectionChanged()
 {
 	/*
