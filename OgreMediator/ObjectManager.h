@@ -18,12 +18,12 @@ WX_DECLARE_STRING_HASH_MAP(Ogre::Entity*, EntityHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::Light*, LightHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::SceneManager*, SceneManagerHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, SceneNodeHashMap);
+WX_DECLARE_STRING_HASH_MAP(Ogre::RaySceneQuery*, RaySceneQueryHashMap);
 
 class ObjectManager
 {
 private:
 	QualifiedNameHashMap mQNames; // Lookup-table: get QualifiedName of an object by its UniqueName
-
 	QualifiedNameHashMap mAssociatedSceneManagers; // Lookup-table: get QualifiedName of an object's SceneManager by object's UniqueName
 
 	CameraHashMap		 mCameras;
@@ -31,6 +31,7 @@ private:
 	LightHashMap		 mLights;
 	SceneManagerHashMap  mSceneManagers;
 	SceneNodeHashMap	 mSceneNodes;
+	RaySceneQueryHashMap mRaySceneQuery;
 
 	OgreEnums::MovableTypeByStringHashMap mMovableTypeEnums;
 
@@ -84,6 +85,11 @@ public:
 	bool									RemoveMovableObject(QualifiedName QName);
 	Ogre::MovableObject*					GetMovableObject(QualifiedName QName);
 	OgreEnums::MovableObject::MovableType	GetMovableType(QualifiedName QName);
+
+	// Ogre::SceneQuery
+	bool					AddRaySceneQuery(QualifiedName qSceneManager, Ogre::RaySceneQuery* pRaySceneQuery);
+	bool					RemoveRaySceneQuery(QualifiedName qSceneManager);
+	Ogre::RaySceneQuery*	GetRaySceneQuery(QualifiedName qSceneManager);
 
 	// NEW
 	bool					SetActiveSceneManager(QualifiedName qSceneManager);

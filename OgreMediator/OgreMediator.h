@@ -33,10 +33,6 @@ BEGIN_DECLARE_EVENT_TYPES()
 	DECLARE_EVENT_TYPE(OViSE_EVT_OGRE_CHANGED, wxNewEventType())
 END_DECLARE_EVENT_TYPES()
 
-// NEW - from OViSESceneHandling
-WX_DECLARE_STRING_HASH_MAP(Ogre::RaySceneQuery*, RaySceneQueryHashMap);
-
-
 class OgreMediator : public wxControl
 {
 private:
@@ -49,23 +45,10 @@ private:
 	// General
 	bool Valid;
 	QualifiedName mDefaultSceneManager;
-
-	// Attributes, used for access to ogre
-	Ogre::SceneManager* SceneMgr;
-	wxString SceneMgrName;
-
-	// CHECK
-	QualifiedName mActiveSceneManager;
-	Ogre::SceneManager* mActiveSceneManagerPtr;
-	RaySceneQueryHashMap mSceneQuerys;
-
-	// NEW
 	ObjectManager*			mObjectAccess;
 
-	// NEW // Attributes, used for update-priority
+	// Attributes, used for update-priority
 	bool mOgreChanged;
-
-	OgreEnums::MovableTypeByStringHashMap MovableObjectVsTypeRegister; // ATTENTION: not working on different scenemanagers !!!! HR!
 
 public:
 	// De- & Constructors
@@ -87,15 +70,6 @@ public:
 
 	// Methods, public: access to "managed" objects
 	const ObjectManager*	GetObjectAccess();
-
-	Ogre::RaySceneQuery*	CreateRaySceneQuery(QualifiedName qSceneManager);
-	Ogre::RaySceneQuery*	GetRaySceneQuery(QualifiedName qSceneManager);
-	QualifiedNameCollection	GetQueryObjects(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
-	QualifiedName			GetQueryFrontObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
-	QualifiedName			GetQueryBackObject(float screenx, float screeny, Ogre::Camera *cam, QualifiedName qSceneManager);
-
-	// NEW // from OViSESceneHandling // General
-	void DynamicShadows(bool state);
 
 	// wxEvent handling
 	void SendSelectionChanged();
