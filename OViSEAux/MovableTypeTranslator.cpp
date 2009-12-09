@@ -26,7 +26,8 @@ void OgreEnums::MovableTypeTranslator::InitStandardAssociations()
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_Camera,				ToWxString("Camera"/* Ogre::Camera::msMovableType // -> protected -> inaccessible */));
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_Entity,				ToWxString(Ogre::EntityFactory::FACTORY_TYPE_NAME));
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_Frustum,				ToWxString("Frustum"/* Ogre::Frustum::msMovableType  // -> protected -> inaccessible */));
-	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance,	ToWxString("InstancedGeometry"/* Ogre::InstancedGeometry::BatchInstance::getMovableType() // -> not instanciated -> inaccessible*/));
+	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_Light,				ToWxString(Ogre::LightFactory::FACTORY_TYPE_NAME));
+	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance,	ToWxString("BatchInstancedGeometry"/* Ogre::InstancedGeometry::BatchInstance::getMovableType() // -> not instanciated -> inaccessible*/));
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_ManualObject,		ToWxString(Ogre::ManualObjectFactory::FACTORY_TYPE_NAME));
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_MovablePlane,		ToWxString("MovablePlane"/* Ogre::MovablePlane::msMovableType  // -> protected -> inaccessible */));
 	this->AddAssociation(OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem,		ToWxString(Ogre::ParticleSystemFactory::FACTORY_TYPE_NAME));

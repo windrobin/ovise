@@ -50,9 +50,9 @@ public:
 
 	// wxPropertyGrid-Handling
 	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);
-	bool AddCameraToPGCategory(wxPropertyCategory* PC, Ogre::Camera* C);
+	bool AddCameraToPGCategory(Ogre::Camera* C);
 	bool AddEntityToPGCategory(Ogre::Entity* E);
-	bool AddLightToPGCategory(wxPropertyCategory* PC, Ogre::Light* L);
+	bool AddLightToPGCategory(Ogre::Light* L);
 	wxPropertyCategory* AddSceneNodeToPGCategory(Ogre::SceneNode* SN);
 	bool AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO);
 	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG);
@@ -66,11 +66,18 @@ public:
 	bool HandlePropertyChanged(wxPGProperty* ChangedProperty);
 	bool HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID);
 	bool HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID);
+	bool HandleCameraChanged(QualifiedName qCamera, wxString subPGID);
+	bool HandleCameraChanged(Ogre::Camera* C, wxString subPGID);
 	bool HandleEntityChanged(QualifiedName qEntity, wxString subPGID);
 	bool HandleEntityChanged(Ogre::Entity* E, wxString subPGID);
+	bool HandleLightChanged(QualifiedName qLight, wxString subPGID);
+	bool HandleLightChanged(Ogre::Light* L, wxString subPGID);
 	bool HandlePositionChanged(Ogre::SceneNode* SN);
 	bool HandleScaleChanged(Ogre::SceneNode* SN);
 	bool HandleRotationChanged(Ogre::SceneNode* SN);
+	bool HandleLightDirectionChanged(Ogre::Light* L);
+	bool HandleLightDiffuseColourChanged(Ogre::Light* L);
+	bool HandleLightSpecularColourChanged(Ogre::Light* L);
 };
 
 #endif // SELECTION_MANAGER_H_

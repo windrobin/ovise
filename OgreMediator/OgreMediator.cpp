@@ -50,7 +50,12 @@ void OgreMediator::SendSelectionChanged()
 }
 void OgreMediator::SendOgreChanged()
 {
-	if ( this->mOgreChanged )
+	if (	this->iCamera.GetOgreChanged()
+		||	this->iEntity.GetOgreChanged()
+		||	this->iLight.GetOgreChanged()
+		||	this->iMovableObject.GetOgreChanged()
+		||	this->iSceneNode.GetOgreChanged()
+		||	this->iSceneManager.GetOgreChanged())
 	{
 		wxCommandEvent event(OViSE_EVT_OGRE_CHANGED, this->GetId());
 		event.SetEventObject(this);
@@ -59,10 +64,12 @@ void OgreMediator::SendOgreChanged()
 }
 void OgreMediator::OnOgreChanged(wxCommandEvent& event)
 {
-	if(this->Valid)
-	{
-		this->mOgreChanged = false;		
-	}
+	this->iCamera.ResetOgreChanged();
+	this->iEntity.ResetOgreChanged();
+	this->iLight.ResetOgreChanged();
+	this->iMovableObject.ResetOgreChanged();
+	this->iSceneNode.ResetOgreChanged();
+	this->iSceneManager.ResetOgreChanged();
 }
 
 

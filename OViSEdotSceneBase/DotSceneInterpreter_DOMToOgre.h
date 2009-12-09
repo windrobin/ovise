@@ -47,12 +47,17 @@ private:
 	virtual void Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup) = 0;
 	virtual void Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes) = 0;
 	virtual void Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode) = 0;
+	virtual void Interpretation_Camera(xercesc::DOMElement* DOMElement_camera, Ogre::SceneNode* AssociateNode) = 0;
 	virtual void Interpretation_Entity(xercesc::DOMElement* DOMElement_entity, Ogre::SceneNode* AssociateNode) = 0;
-	virtual void Interpretation_Camera(xercesc::DOMElement* DOMElement_camera) = 0;
+	virtual void Interpretation_Light(xercesc::DOMElement* DOMElement_light, Ogre::SceneNode* AssociateNode) = 0;
 	virtual void Interpretation_Environment(xercesc::DOMElement* DOMElement_environment) = 0;
 	virtual Ogre::Vector3 Interpretation_Vector3(xercesc::DOMElement* DOMElement_Vector3) = 0;
 	virtual Ogre::Vector4 Interpretation_Vector4(xercesc::DOMElement* DOMElement_Vector4) = 0;
 	virtual Ogre::Quaternion Interpretation_Quaternion(xercesc::DOMElement* DOMElement_Quaternion) = 0;
+	virtual void Interpretation_Clipping(xercesc::DOMElement* DOMElement_Clipping, Ogre::Real& nearPlaneDist, Ogre::Real& farPlaneDist) = 0;
+	virtual Ogre::ColourValue Interpretation_ColourValue(xercesc::DOMElement* DOMElement_colourValue) = 0;
+	virtual void Interpretation_LightAttentuation(xercesc::DOMElement* DOMElement_lightAttentuation, Ogre::Real& range, Ogre::Real& constant, Ogre::Real& linear, Ogre::Real& quadratic) = 0;
+	virtual void Interpretation_LightRange(xercesc::DOMElement* DOMElement_lightRange, Ogre::Real& inner, Ogre::Real& outer, Ogre::Real& falloff) = 0;
 
 protected:
 	// Attributes
