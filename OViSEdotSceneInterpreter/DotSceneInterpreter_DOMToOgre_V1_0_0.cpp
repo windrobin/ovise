@@ -96,8 +96,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 																Ogre::SceneNode* ParentNode)
 {
 	// STEP 1: Declare all possible XML-elements...
-	xercesc::DOMNodeList *NodeElements = 0, *EntityElements = 0;
-	xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
+	//xercesc::DOMElement *DOMElement_position = 0, *DOMElement_orientation = 0, *DOMElement_quaternion = 0, *DOMElement_scale = 0;
 	// Not implemented here: ++ looktarget ++ tracktarget ++ userdatareference
 
 	// ...and necessary objects for Ogre
@@ -182,10 +181,6 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 		NewNode->scale(TempScaleOffset);
 		NewNode->rotate(TempRotationOffset, Ogre::Node::TS_PARENT);
 
-		// LogMsg.Clear();
-		// LogMsg << ToWxString("OViSE dotScene Manager: Created and added new Ogre::SceneNode \"") << ToWxString(NewNode->getName()) << ToWxString("\"");
-		// Ogre::LogManager::getSingletonPtr()->logMessage(ToOgreString(LogMsg), Ogre::LML_NORMAL);
-
 		// STEP 4.1: Set rest of attributes...
 		NewNode->setVisible(NewNode_visible, NewNode_cascadeVisibility);
 
@@ -207,11 +202,28 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 					{
 						this->Interpretation_Node((xercesc::DOMElement*) ChildNode, NewNode);
 					}
-					// STEP 5.2: Handle entities...
+					// STEP 5.2: Handle cameras...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("camera")))
+					{
+						this->Interpretation_Camera((xercesc::DOMElement*) ChildNode, NewNode);
+					}
+					// STEP 5.3: Handle entities...
 					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("entity")))
 					{
 						this->Interpretation_Entity((xercesc::DOMElement*) ChildNode, NewNode);
 					}
+					// STEP 5.4: Handle lights...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("light")))
+					{
+						this->Interpretation_Light((xercesc::DOMElement*) ChildNode, NewNode);
+					}
+					
+					// STEP 5.5: Handle particleSystems... TODO
+					// STEP 5.6: Handle billboardSets... TODO
+					// STEP 5.7: Handle planes... TODO
+					// STEP 5.8: Handle lookTarget... TODO
+					// STEP 5.9: Handle trackTarget... TODO
+					// STEP 5.10: Handle userDataReference... TODO
 					break;
 				default:
 					// Else ignore it!
@@ -220,25 +232,6 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 				}
 			}
 		}
-/*
-		// STEP 5.2: Handle entities...
-		EntityElements = DOMElement_node->getElementsByTagName(ToXMLString("entity"));
-		if (EntityElements->getLength() > 0)
-		{
-			for(XMLSize_t EntityIterator = 0; EntityIterator < EntityElements->getLength(); EntityIterator++)
-			{
-				this->Interpretation_Entity((xercesc::DOMElement*) EntityElements->item(EntityIterator), NewNode);
-			}
-		}
-*/
-		// Step 5.3: Handle cameras... TODO
-		// Step 5.4: Handle lights... TODO
-		// STEP 5.5: Handle particleSystems... TODO
-		// STEP 5.6: Handle billboardSets... TODO
-		// STEP 5.7: Handle planes... TODO
-		// STEP 5.8: Handle lookTarget... TODO
-		// STEP 5.9: Handle trackTarget... TODO
-		// STEP 5.10: Handle userDataReference... TODO
 	}
 	else
 	{
@@ -246,12 +239,123 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 }
 
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(	xercesc::DOMElement* DOMElement_camera,
+																	Ogre::SceneNode* AssociateNode)
+{
+	wxString LogMsg;
+
+	// STEP 1: Declare all possible elements...
+	//xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_clipping = 0, *DOMElement_position = 0, *DOMElement_orientation = 0;
+	//xercesc::DOMElement *DOMElement_quaternion = 0, *DOMElement_lookTarget = 0, *DOMElement_trackTarget = 0, *DOMElement_userDataReference = 0;
+
+	// STEP 2: Create all possible attributes...
+	wxString NewCamera_name, NewCamera_id, NewCamera_lodBiasFactor = ToWxString("1.0"); // <- string
+	float NewCamera_fov = 45.0, NewCamera_aspectRatio = 1.3333333f; //<- float
+	Ogre::ProjectionType NewCamera_projectionType = Ogre::PT_PERSPECTIVE;
+	Ogre::PolygonMode NewCamera_polygonMode = Ogre::PM_SOLID;
+	bool NewCamera_useRenderingDistance = true; //<- bool
+
+	// STEP 3: Get attribute data. If attribute is not used in XML, use default value from XSD...
+	if (DOMElement_camera->hasAttribute(ToXMLString("name")))
+	{
+		NewCamera_name = ToWxString(DOMElement_camera->getAttribute(ToXMLString("name")));
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("id")))
+	{
+		NewCamera_id = ToWxString(DOMElement_camera->getAttribute(ToXMLString("id")));
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("lodBiasFactor")))
+	{
+		NewCamera_lodBiasFactor = ToWxString(DOMElement_camera->getAttribute(ToXMLString("lodBiasFactor")));
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("fov")))
+	{
+		NewCamera_fov = (float)xercesc::XMLFloat(DOMElement_camera->getAttribute(ToXMLString("fov"))).getValue();
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("aspectRatio")))
+	{
+		NewCamera_aspectRatio = (float)xercesc::XMLFloat(DOMElement_camera->getAttribute(ToXMLString("aspectRatio"))).getValue();
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("projectionType")))
+	{
+		wxString tPT = ToWxString(DOMElement_camera->getAttribute(ToXMLString("projectionType")));
+
+		if (tPT.IsSameAs(ToWxString("orthographic"))) NewCamera_projectionType = Ogre::PT_ORTHOGRAPHIC;
+		else if (tPT.IsSameAs(ToWxString("perspective"))) NewCamera_projectionType = Ogre::PT_PERSPECTIVE;
+		else NewCamera_projectionType = Ogre::PT_PERSPECTIVE;
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("polygonMode")))
+	{
+		wxString tPM = ToWxString(DOMElement_camera->getAttribute(ToXMLString("polygonMode")));
+		
+		if (tPM.IsSameAs(ToWxString("points"))) NewCamera_polygonMode = Ogre::PM_POINTS;
+		else if (tPM.IsSameAs(ToWxString("wireframe"))) NewCamera_polygonMode = Ogre::PM_WIREFRAME;
+		else if (tPM.IsSameAs(ToWxString("solid"))) NewCamera_polygonMode = Ogre::PM_SOLID;
+		else NewCamera_polygonMode = Ogre::PM_SOLID;
+	}
+	if (DOMElement_camera->hasAttribute(ToXMLString("useRenderingDistance")))
+	{
+		wxString temp = ToWxString(DOMElement_camera->getAttribute(ToXMLString("useRenderingDistance")));
+		if (temp.IsSameAs(wxT("true"))) NewCamera_useRenderingDistance = true;
+		else NewCamera_useRenderingDistance = false;
+	}
+	
+	// STEP 4: Create unique new Ogre::Camera
+	LogMsg.Clear();
+	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Camera \"") << NewCamera_name << ToWxString("\"");
+	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
+
+	QualifiedName qC = OgreMediator::GetSingletonPtr()->iCamera.Create(NewCamera_name, AssociateNode);
+	Ogre::Camera* NewCamera = OgreMediator::GetSingletonPtr()->iCamera.GetPtr(qC);
+
+	if (NewCamera != 0)
+	{
+		LogMsg.Clear();
+		LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Camera \"") << qC.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
+		Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
+
+		// STEP 4.1: Set rest of attributes...
+		NewCamera->setFOVy(Ogre::Degree(NewCamera_fov));
+		NewCamera->setProjectionType(NewCamera_projectionType);
+		NewCamera->setPolygonMode(NewCamera_polygonMode);
+
+		// STEP 4.2: Apply attributes, which are not commented. These assumptions are highly speculative!!!
+		#ifdef __ALLOW_INTERPRETATION_ASSUMPTIONS__
+			//NewCamera->
+		#endif
+
+		// STEP 5: Look for existing elements, leading to deeper recusivity (!)
+		if (DOMElement_camera != 0)
+		{
+			for(xercesc::DOMNode* ChildNode = DOMElement_camera->getFirstChild(); ChildNode != 0; ChildNode = ChildNode->getNextSibling())
+			{
+				switch(ChildNode->getNodeType())
+				{
+				case xercesc::DOMNode::ELEMENT_NODE:
+					// STEP 5.1: Handle clipping...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("clipping")))
+					{
+						Ogre::Real nearPlaneDist = NewCamera->getNearClipDistance();
+						Ogre::Real farPlaneDist = NewCamera->getFarClipDistance();
+						this->Interpretation_Clipping((xercesc::DOMElement*) ChildNode, nearPlaneDist, farPlaneDist);
+						NewCamera->setNearClipDistance(nearPlaneDist);
+						NewCamera->setFarClipDistance(farPlaneDist);
+					}
+					// Step 5.2: Handle...
+					break;
+				default:
+					// Else ignore it!
+					break;
+				}
+			}
+		}
+	}
+}
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMElement* DOMElement_entity,
 																	Ogre::SceneNode* AssociateNode)
 {
 	wxString LogMsg;
 
-	// * * * * * * * * Interpretation of element "entity" * * * * * * * * *
 	// STEP 1: Declare all possible elements...
 	xercesc::DOMNodeList *AnimationsElements = 0, *animationStatesElements = 0;
 	xercesc::DOMElement *DOMElement_commonMovableObjectParams = 0, *DOMElement_meshLODBias = 0, *DOMElement_materialLODBias = 0, *DOMElement_userDataReference = 0;
@@ -331,9 +435,148 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
 	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 }
-void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
-{
 
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMElement* DOMElement_light,
+																	Ogre::SceneNode* AssociateNode)
+{
+	wxString LogMsg;
+
+	// STEP 1: Declare all possible elements...
+	/* xercesc::DOMElement* 
+		normal,
+		commonMovableObjectParams,
+		position,
+		direction,
+		colourDiffuse,
+		colourSpecular,
+		lightRange,
+		lightAttenuation,
+		userDataReference*/
+
+	// STEP 2: Create all possible attributes...
+	wxString NewLight_name, NewLight_id; // <- string
+	float NewLight_powerScale = 1.0, NewCamera_aspectRatio = 1.3333333f; //<- float
+	Ogre::Light::LightTypes NewLight_type = Ogre::Light::LightTypes::LT_POINT;
+	bool NewLight_castShadows = false; //<- bool
+
+	// STEP 3: Get attribute data. If attribute is not used in XML, use default value from XSD...
+	if (DOMElement_light->hasAttribute(ToXMLString("name")))
+	{
+		NewLight_name = ToWxString(DOMElement_light->getAttribute(ToXMLString("name")));
+	}
+	if (DOMElement_light->hasAttribute(ToXMLString("id")))
+	{
+		NewLight_id = ToWxString(DOMElement_light->getAttribute(ToXMLString("id")));
+	}
+	if (DOMElement_light->hasAttribute(ToXMLString("type")))
+	{
+		wxString tLT = ToWxString(DOMElement_light->getAttribute(ToXMLString("type")));
+		if (tLT.IsSameAs(ToWxString("directional"))) NewLight_type = Ogre::Light::LT_DIRECTIONAL;
+		else if (tLT.IsSameAs(ToWxString("spotLight"))) NewLight_type = Ogre::Light::LT_SPOTLIGHT;
+		else NewLight_type = Ogre::Light::LT_POINT;
+		// The entry of dotScene.xsd "radPoint" doesn't exist in Ogre, so it's ignored and LT_POINT takes affekt.
+	}
+	if (DOMElement_light->hasAttribute(ToXMLString("powerScale")))
+	{
+		NewLight_powerScale = (float)xercesc::XMLFloat(DOMElement_light->getAttribute(ToXMLString("powerScale"))).getValue();
+	}
+	if (DOMElement_light->hasAttribute(ToXMLString("castShadows")))
+	{
+		wxString temp = ToWxString(DOMElement_light->getAttribute(ToXMLString("castShadows")));
+		if (temp.IsSameAs(wxT("true"))) NewLight_castShadows = true;
+		else NewLight_castShadows = false;
+	}
+	
+	// STEP 4: Create unique new Ogre::Light
+	LogMsg.Clear();
+	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Light \"") << NewLight_name << ToWxString("\"");
+	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
+
+	QualifiedName qL = OgreMediator::GetSingletonPtr()->iLight.Create(NewLight_name, AssociateNode);
+	Ogre::Light* NewLight = OgreMediator::GetSingletonPtr()->iLight.GetPtr(qL);
+
+	if (NewLight != 0)
+	{
+		LogMsg.Clear();
+		LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Light \"") << qL.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
+		Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
+
+		// STEP 4.1: Set rest of attributes...
+		NewLight->setType(NewLight_type);
+		NewLight->setPowerScale(NewLight_powerScale);
+
+		// STEP 4.2: Apply attributes, which are not commented. These assumptions are highly speculative!!!
+		#ifdef __ALLOW_INTERPRETATION_ASSUMPTIONS__
+			//NewLight->
+		#endif
+
+		// STEP 5: Look for existing elements, leading to deeper recusivity (!)
+		if (DOMElement_light != 0)
+		{
+			for(xercesc::DOMNode* ChildNode = DOMElement_light->getFirstChild(); ChildNode != 0; ChildNode = ChildNode->getNextSibling())
+			{
+				switch(ChildNode->getNodeType())
+				{
+				case xercesc::DOMNode::ELEMENT_NODE:
+					// STEP 5.1: Handle lightAttenuation...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("lightAttenuation")))
+					{
+						Ogre::Real attenuationRange = NewLight->getAttenuationRange();
+						Ogre::Real attenuationConstant = NewLight->getAttenuationConstant();
+						Ogre::Real attenuationLinear = NewLight->getAttenuationLinear();
+						Ogre::Real attenuationQuadric = NewLight->getAttenuationQuadric();
+						
+						this->Interpretation_LightAttentuation((xercesc::DOMElement*) ChildNode, attenuationRange, attenuationConstant, attenuationLinear, attenuationQuadric);
+						
+						NewLight->setAttenuation(attenuationRange, attenuationConstant, attenuationLinear, attenuationQuadric);
+					}
+					// STEP 5.2: Handle lightRange...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("lightRange")))
+					{
+						Ogre::Radian radSpotlightInnerAngle = NewLight->getSpotlightInnerAngle();
+						Ogre::Radian radSpotlightOuterAngle = NewLight->getSpotlightOuterAngle();
+						Ogre::Real spotlightInnerAngle = radSpotlightInnerAngle.valueDegrees();
+						Ogre::Real spotlightOuterAngle = radSpotlightOuterAngle.valueDegrees();
+						Ogre::Real spotlightFalloff = NewLight->getSpotlightFalloff();
+						
+						this->Interpretation_LightRange((xercesc::DOMElement*) ChildNode, spotlightInnerAngle, spotlightOuterAngle, spotlightFalloff);
+						
+						radSpotlightInnerAngle = Ogre::Radian(Ogre::Degree(spotlightInnerAngle));
+						radSpotlightOuterAngle = Ogre::Radian(Ogre::Degree(spotlightOuterAngle));
+						try
+						{
+							NewLight->setSpotlightRange(radSpotlightInnerAngle, radSpotlightOuterAngle, spotlightFalloff);
+						}
+						catch(std::exception e)
+						{
+							wxString LogMsg = ToWxString(e.what());
+							Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Critical);
+						}
+					}
+					// Step 5.3: Handle colourDiffuse...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("colourDiffuse")))
+					{
+						NewLight->setDiffuseColour(this->Interpretation_ColourValue((xercesc::DOMElement*) ChildNode));
+					}
+					// Step 5.4: Handle colourSpecular...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("colourSpecular")))
+					{
+						NewLight->setSpecularColour(this->Interpretation_ColourValue((xercesc::DOMElement*) ChildNode));
+					}
+					// Step 5.5: Handle normal...
+					if (ToWxString(ChildNode->getNodeName()).IsSameAs(ToWxString("normal")))
+					{
+						NewLight->setDirection(this->Interpretation_Vector3((xercesc::DOMElement*) ChildNode));
+					}
+					// Step 5.6: Handle...
+					break;
+				default:
+					// Else ignore it!
+					break;
+				}
+			}
+		}
+	}
 }
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Environment(xercesc::DOMElement* DOMElement_environment)
 {
@@ -406,6 +649,79 @@ Ogre::Quaternion DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Quaternion
 	}
 
 	return Ogre::Quaternion(fW, fX, fY, fZ);
+}
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Clipping(	xercesc::DOMElement* DOMElement_Clipping,
+																	Ogre::Real& nearPlaneDist,
+																	Ogre::Real& farPlaneDist)
+{
+	// * * * * * * * * Interpretation of clipping-parametes for Ogre::Camera * * * * * * * * *
+	if (DOMElement_Clipping->hasAttribute(ToXMLString("nearPlaneDist")))
+	{
+		nearPlaneDist = (float)xercesc::XMLFloat(DOMElement_Clipping->getAttribute(ToXMLString("nearPlaneDist"))).getValue();
+	}
+	if (DOMElement_Clipping->hasAttribute(ToXMLString("farPlaneDist")))
+	{
+		farPlaneDist = (float)xercesc::XMLFloat(DOMElement_Clipping->getAttribute(ToXMLString("farPlaneDist"))).getValue();
+	}
+}
+Ogre::ColourValue DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_ColourValue(xercesc::DOMElement* DOMElement_colourValue)
+{
+	Ogre::ColourValue NewColour = Ogre::ColourValue();
+
+	if (DOMElement_colourValue->hasAttribute(ToXMLString("r")))
+	{
+		NewColour.r = (float)xercesc::XMLFloat(DOMElement_colourValue->getAttribute(ToXMLString("r"))).getValue();
+	}
+	if (DOMElement_colourValue->hasAttribute(ToXMLString("g")))
+	{
+		NewColour.g = (float)xercesc::XMLFloat(DOMElement_colourValue->getAttribute(ToXMLString("g"))).getValue();
+	}
+	if (DOMElement_colourValue->hasAttribute(ToXMLString("b")))
+	{
+		NewColour.b = (float)xercesc::XMLFloat(DOMElement_colourValue->getAttribute(ToXMLString("b"))).getValue();
+	}
+	if (DOMElement_colourValue->hasAttribute(ToXMLString("a")))
+	{
+		NewColour.a = (float)xercesc::XMLFloat(DOMElement_colourValue->getAttribute(ToXMLString("a"))).getValue();
+	}
+
+	return NewColour;
+}
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_LightAttentuation(xercesc::DOMElement* DOMElement_lightAttentuation, Ogre::Real& range, Ogre::Real& constant, Ogre::Real& linear, Ogre::Real& quadratic)
+{
+	// * * * * * * * * Interpretation of attentuation-parametes for Ogre::Light * * * * * * * * *
+	if (DOMElement_lightAttentuation->hasAttribute(ToXMLString("range")))
+	{
+		range = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightAttentuation->getAttribute(ToXMLString("range"))).getValue());
+	}
+	if (DOMElement_lightAttentuation->hasAttribute(ToXMLString("constant")))
+	{
+		constant = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightAttentuation->getAttribute(ToXMLString("constant"))).getValue());
+	}
+	if (DOMElement_lightAttentuation->hasAttribute(ToXMLString("linear")))
+	{
+		linear = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightAttentuation->getAttribute(ToXMLString("linear"))).getValue());
+	}
+	if (DOMElement_lightAttentuation->hasAttribute(ToXMLString("quadratic")))
+	{
+		quadratic = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightAttentuation->getAttribute(ToXMLString("quadratic"))).getValue());
+	}
+}
+void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_LightRange(xercesc::DOMElement* DOMElement_lightRange, Ogre::Real& inner, Ogre::Real& outer, Ogre::Real& falloff)
+{
+	// * * * * * * * * Interpretation of range-parametes for Ogre::Light * * * * * * * * *
+	if (DOMElement_lightRange->hasAttribute(ToXMLString("inner")))
+	{
+		inner = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightRange->getAttribute(ToXMLString("inner"))).getValue());
+	}
+	if (DOMElement_lightRange->hasAttribute(ToXMLString("outer")))
+	{
+		outer = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightRange->getAttribute(ToXMLString("outer"))).getValue());
+	}
+	if (DOMElement_lightRange->hasAttribute(ToXMLString("falloff")))
+	{
+		falloff = Ogre::Real((float)xercesc::XMLFloat(DOMElement_lightRange->getAttribute(ToXMLString("falloff"))).getValue());
+	}
 }
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(xercesc::DOMDocument* DOMRepresentationOfScene)
 {

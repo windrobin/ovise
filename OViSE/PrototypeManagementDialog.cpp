@@ -197,27 +197,7 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->qSelectedPrototype, qAnchorSN);
 	}
 
-	// OLD
-	/*
-	OViSESelectionMap Selection = this->mSceneHdlr->getSelectedObjects();
-	Ogre::SceneNode* AnchorNode;
-	if ( Selection.size() > 0 )
-	{
-		AnchorNode = Selection.begin()->second->getParentSceneNode();
-		if ( AnchorNode == 0 )
-		{
-			AnchorNode = this->mSceneHdlr->getSceneManager()->getRootSceneNode();
-		}
-	}
-	else
-	{
-		AnchorNode = this->mSceneHdlr->getSceneManager()->getRootSceneNode();
-	}
-
-	if ( !this->mSelectedUniquePrototypeName.IsEmpty() )
-	{
-		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->mSelectedUniquePrototypeName, ToWxString(AnchorNode->getName()));
-	}*/
+	OgreMediator::GetSingletonPtr()->SendOgreChanged();
 }
 
 void PrototypeManagementDialog::OnClickClose( wxCommandEvent& event ) { this->Destroy(); }

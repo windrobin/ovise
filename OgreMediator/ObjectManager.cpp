@@ -360,6 +360,7 @@ Ogre::MovableObject* ObjectManager::GetMovableObject(QualifiedName QName)
 
 	Ogre::MovableObject* MO = 0;
 
+	OgreEnums::MovableObject::MovableType test = this->GetMovableType(QName);
 	switch(this->GetMovableType(QName))
 	{
 	case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			break;

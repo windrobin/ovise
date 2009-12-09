@@ -36,36 +36,98 @@ bool SelectionManager::AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC)
 
 	return true;
 }
-bool SelectionManager::AddCameraToPGCategory(wxPropertyCategory* PC, Ogre::Camera* C)
+bool SelectionManager::AddCameraToPGCategory(Ogre::Camera* C)
 {
-	/*
-	C->setAspectRatio(); //+
-	C->setAutoAspectRatio(); //?
+	// Validate parameters
+	if ( C == 0 ) return false;
 
-	C->setCastShadows();
+	// Validate members
+	if ( this->PG == 0 ) return false;
+	
+	// Get QualifiedName
+	QualifiedName qCamera = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(ToWxString(C->getName()));
+	if ( !OgreMediator::GetSingletonPtr()->iCamera.Exist(qCamera) ) return false;
 
+	// Handle recusive processing of SceneNode
+	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)C->getParentNode());
+	if (PCParent == 0) return false;
 
-	C->setDirection(); //+
-	C->setFarClipDistance(); //+
+	// Perpare ID and Label
+	wxString Label, CategoryID, PropertyID;
+	CategoryID = ToWxString(C->getName());
 
-	C->setFocalLength();
-	C->setFOVy(); //+
+	// Add cathergory to grid
+	Label = ToWxString("Camera: '");
+	Label << ToWxString(C->getName());
+	Label << ToWxString("'");
+	
+	wxPropertyCategory* PCCamera = new wxPropertyCategory(Label, CategoryID);
+	this->PG->AppendIn(PCParent, PCCamera);
+	PCCamera->SetExpanded(false);
 
-	C->setLodBias(); //+
+	// Name
+	Label = ToWxString("Name");
+	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	C->setNearClipDistance();
+	this->PG->AppendIn(PCCamera, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qCamera.UniqueName());
+	this->PG->DisableProperty(PropertyID);
 
-	C->setPolygonMode(); //+
-	C->setPolygonModeOverrideable(); //?
+	// Native name
+	Label = ToWxString("Native");
+	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	C->setProjectionType(); //+
+	this->PG->AppendIn(PCCamera, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qCamera.NativeName());
+	this->PG->DisableProperty(PropertyID);
 
-	C->setRenderingDistance();
+	// Generic hint
+	Label = ToWxString("Hint");
+	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	C->setUseRenderingDistance(); //+
+	this->PG->AppendIn(PCCamera, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qCamera.GenericHint());
+	this->PG->DisableProperty(PropertyID);
 
-	C->setVisible();
-*/
+	// Generic name
+	Label = ToWxString("Generic");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCCamera, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qCamera.GenericName());
+	this->PG->DisableProperty(PropertyID);
+
+	// FOVy
+	Label = ToWxString("FOVy");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCCamera, new wxFloatProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, C->getFOVy().valueDegrees());
+	this->PG->SetPropertyValidator(PropertyID, wxTextValidator(wxFILTER_NUMERIC));
+
+	// AspectRatio
+	Label = ToWxString("AspectRatio");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCCamera, new wxFloatProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, C->getAspectRatio());
+	this->PG->SetPropertyValidator(PropertyID, wxTextValidator(wxFILTER_NUMERIC));
+
+	// ClipDistance (near)
+	Label = ToWxString("ClipDistance (near)");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCCamera, new wxFloatProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, C->getNearClipDistance());
+	this->PG->SetPropertyValidator(PropertyID, wxTextValidator(wxFILTER_NUMERIC));
+
+	// ClipDistance (far)
+	Label = ToWxString("ClipDistance (far)");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCCamera, new wxFloatProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, C->getFarClipDistance());
+	this->PG->SetPropertyValidator(PropertyID, wxTextValidator(wxFILTER_NUMERIC));
 
 	return true;
 }
@@ -152,8 +214,149 @@ bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 
 	return true;
 }
-bool SelectionManager::AddLightToPGCategory(wxPropertyCategory* PC, Ogre::Light* L)
+bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 {
+	// TODO: Presentation should change with specific type of light !!!
+
+	// Validate parameters
+	if ( L == 0 ) return false;
+
+	// Validate members
+	if ( this->PG == 0 ) return false;
+	
+	// Get QualifiedName
+	QualifiedName qLight = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(ToWxString(L->getName()));
+	if ( !OgreMediator::GetSingletonPtr()->iLight.Exist(qLight) ) return false;
+
+	// Handle recusive processing of SceneNode
+	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)L->getParentNode());
+	if (PCParent == 0) return false;
+
+	// Perpare ID and Label
+	wxString Label, CategoryID, PropertyID;
+	CategoryID = ToWxString(L->getName());
+
+	// Add cathergory to grid
+	Label = ToWxString("Light: '");
+	Label << ToWxString(L->getName());
+	Label << ToWxString("'");
+	
+	wxPropertyCategory* PCLight = new wxPropertyCategory(Label, CategoryID);
+	this->PG->AppendIn(PCParent, PCLight);
+	PCLight->SetExpanded(false);
+
+	// Name
+	Label = ToWxString("Name");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qLight.UniqueName());
+	this->PG->DisableProperty(PropertyID);
+
+	// Native name
+	Label = ToWxString("Native");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qLight.NativeName());
+	this->PG->DisableProperty(PropertyID);
+
+	// Generic hint
+	Label = ToWxString("Hint");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qLight.GenericHint());
+	this->PG->DisableProperty(PropertyID);
+
+	// Generic name
+	Label = ToWxString("Generic");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, qLight.GenericName());
+	this->PG->DisableProperty(PropertyID);
+
+	// Type 
+	Label = ToWxString("Type");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxString LightTypeName;
+	switch (L->getType())
+	{
+	case Ogre::Light::LT_DIRECTIONAL:	LightTypeName = ToWxString("LT_DIRECTIONAL");	break;
+	case Ogre::Light::LT_POINT:			LightTypeName = ToWxString("LT_POINT");			break;
+	case Ogre::Light::LT_SPOTLIGHT:		LightTypeName = ToWxString("LT_SPOTLIGHT");		break;
+	default:							LightTypeName = ToWxString("unknown");			break;
+	}
+
+	this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID));
+	this->PG->SetPropertyValue(PropertyID, LightTypeName);
+	this->PG->SetPropertyValidator(PropertyID, wxTextValidator(wxFILTER_NUMERIC));
+	this->PG->DisableProperty(PropertyID);
+
+	// Visible
+	Label = ToWxString("Visible");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+	this->PG->AppendIn(PCLight, new wxBoolProperty(Label, PropertyID, L->getVisible()));
+
+	// Direction
+	Label = ToWxString("Direction");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PDirection = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PDirectionX = PG->AppendIn(PDirection, new wxFloatProperty(wxT("x"), wxT("dx")));
+	this->PG->SetPropertyValidator(PDirectionX, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PDirectionY = PG->AppendIn(PDirection, new wxFloatProperty(wxT("y"), wxT("dy")));
+	this->PG->SetPropertyValidator(PDirectionY, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PDirectionZ = PG->AppendIn(PDirection, new wxFloatProperty(wxT("z"), wxT("dz")));
+	this->PG->SetPropertyValidator(PDirectionZ, wxTextValidator(wxFILTER_NUMERIC));
+	PDirection->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PDirectionX, (double)L->getDirection().x);
+	this->PG->SetPropertyValue(PDirectionY, (double)L->getDirection().y);
+	this->PG->SetPropertyValue(PDirectionZ, (double)L->getDirection().z);
+
+	// DiffuseColour
+	Label = ToWxString("Diffuse Colour");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PDiffuseColour = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PDiffuseColourR = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("r"), wxT("dcr")));
+	this->PG->SetPropertyValidator(PDiffuseColourR, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PDiffuseColourG = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("g"), wxT("dcg")));
+	this->PG->SetPropertyValidator(PDiffuseColourG, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PDiffuseColourB = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("b"), wxT("dcb")));
+	this->PG->SetPropertyValidator(PDiffuseColourB, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PDiffuseColourA = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("a"), wxT("dca")));
+	this->PG->SetPropertyValidator(PDiffuseColourA, wxTextValidator(wxFILTER_NUMERIC));
+	PDiffuseColour->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PDiffuseColourR, (double)L->getDiffuseColour().r);
+	this->PG->SetPropertyValue(PDiffuseColourG, (double)L->getDiffuseColour().g);
+	this->PG->SetPropertyValue(PDiffuseColourB, (double)L->getDiffuseColour().b);
+	this->PG->SetPropertyValue(PDiffuseColourA, (double)L->getDiffuseColour().a);
+
+	// SpecularColour
+	Label = ToWxString("Specular Colour");
+	PropertyID = CategoryID + ToWxString(".") + Label;
+
+	wxPGProperty* PSpecularColour = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PSpecularColourR = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("r"), wxT("scr")));
+	this->PG->SetPropertyValidator(PSpecularColourR, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PSpecularColourG = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("g"), wxT("scg")));
+	this->PG->SetPropertyValidator(PSpecularColourG, wxTextValidator(wxFILTER_NUMERIC));
+	wxPGProperty* PSpecularColourB = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("b"), wxT("scb")));
+	this->PG->SetPropertyValidator(PSpecularColourB, wxTextValidator(wxFILTER_NUMERIC));
+	PSpecularColour->SetExpanded(false);
+
+	// Set values
+	this->PG->SetPropertyValue(PSpecularColourR, (double)L->getSpecularColour().r);
+	this->PG->SetPropertyValue(PSpecularColourG, (double)L->getSpecularColour().g);
+	this->PG->SetPropertyValue(PSpecularColourB, (double)L->getSpecularColour().b);
+
 	return true;
 }
 wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* SN)
@@ -357,11 +560,11 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	{
 		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddCameraToPGCategory((Ogre::Camera*)MO); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_Entity:					this->AddEntityToPGCategory((Ogre::Entity*)MO); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddLightToPGCategory((Ogre::Light*)MO); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
@@ -490,20 +693,10 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 			}	
 			break;
 
-		case OgreEnums::MovableObject::MOVABLETYPE_Camera:
-			Match = false; // DEBUG: Handling of that type not implemented yet !!!
-			break;
-
+		case OgreEnums::MovableObject::MOVABLETYPE_Camera:	ReturnValue = this->HandleCameraChanged(qName, subPGID); break;
 		case OgreEnums::MovableObject::MOVABLETYPE_Entity:	ReturnValue = this->HandleEntityChanged(qName, subPGID); break;
-
-		case OgreEnums::MovableObject::MOVABLETYPE_Light:
-			Match = false; // DEBUG: Handling of that type not implemented yet !!!
-			break;
-
-		default:
-			// DEBUG: Handling of that type not implemented yet !!!
-			Match = false;
-			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Light:	ReturnValue = this->HandleLightChanged(qName, subPGID); break;
+		default:	Match = false;	break; // DEBUG: Handling of that type not implemented yet !!!
 		}
 	}
 
@@ -570,6 +763,68 @@ bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subP
 
 	return false;
 }
+bool SelectionManager::HandleCameraChanged(QualifiedName qCamera, wxString subPGID)
+{
+	// Verify qCamera
+	if (!OgreMediator::GetSingletonPtr()->iCamera.Exist(qCamera)) return false;
+	Ogre::Camera* C = OgreMediator::GetSingletonPtr()->iCamera.GetPtr(qCamera);
+	return this->HandleCameraChanged(C, subPGID);
+}
+bool SelectionManager::HandleCameraChanged(Ogre::Camera* C, wxString subPGID)
+{
+	// It may be NULL
+	if ( C == 0 ) return false;
+
+	// Get changed value...
+	wxVariant V = this->ChangedProperty->GetValue();
+
+	// Get name of changed property
+	wxStringTokenizer StrTok(subPGID, ToWxString("."));
+	
+	// STAGE 2: Handle attribute
+	wxString AttributeID = StrTok.GetNextToken();
+
+	if (AttributeID.IsSameAs(ToWxString("Name"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Native"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Hint"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Generic"))) // not editable
+	{
+		return false;
+	}
+
+	if (AttributeID.IsSameAs(ToWxString("FOVy")))
+	{
+		C->setFOVy(Ogre::Radian(Ogre::Degree(V.GetReal())));
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("AspectRatio")))
+	{
+		C->setAspectRatio(V.GetReal());
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("ClipDistance (near)")))
+	{
+		C->setNearClipDistance(V.GetReal());
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("ClipDistance (far)")))
+	{
+		C->setFarClipDistance(V.GetReal());
+		return true;
+	}
+
+	return false;
+}
+
 bool SelectionManager::HandleEntityChanged(QualifiedName qEntity, wxString subPGID)
 {
 	// Verify qEntity
@@ -626,6 +881,73 @@ bool SelectionManager::HandleEntityChanged(Ogre::Entity* E, wxString subPGID)
 	return false;
 }
 
+bool SelectionManager::HandleLightChanged(QualifiedName qLight, wxString subPGID)
+{
+	// Verify qLight
+	if (!OgreMediator::GetSingletonPtr()->iLight.Exist(qLight)) return false;
+	Ogre::Light* L = OgreMediator::GetSingletonPtr()->iLight.GetPtr(qLight);
+	return this->HandleLightChanged(L, subPGID);
+}
+bool SelectionManager::HandleLightChanged(Ogre::Light* L, wxString subPGID)
+{
+	// INFO: Don't worry. Change parts of composed-types will be propagated :-)
+
+	// It may be NULL
+	if ( L == 0 ) return false;
+
+	// Get changed value...
+	wxVariant V = this->ChangedProperty->GetValue();
+
+	// Get name of changed property
+	wxStringTokenizer StrTok(subPGID, ToWxString("."));
+	
+	// STAGE 2: Handle attribute
+	wxString AttributeID = StrTok.GetNextToken();
+	
+	if (AttributeID.IsSameAs(ToWxString("Name"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Native"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Hint"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Generic"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Type"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Visible")))
+	{
+		L->setVisible(V.GetBool());
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Direction")))
+	{
+		if (!StrTok.HasMoreTokens()) this->HandleLightDirectionChanged(L);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Diffuse Colour")))
+	{
+		if (!StrTok.HasMoreTokens()) this->HandleLightDiffuseColourChanged(L);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Specular Colour")))
+	{
+		if (!StrTok.HasMoreTokens()) this->HandleLightSpecularColourChanged(L);
+		return true;
+	}
+
+	return false;
+}
+
 bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
@@ -641,7 +963,7 @@ bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN)
 	// Use variant as string an tokenize it
 	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
 	
-	// Format subtokens into Ogre::Degree(double) via variant
+	// Format subtokens into Ogre::Real(double) via variant
 	wxVariant V;
 	V = SemiSeperator.GetNextToken();
 	Ogre::Real NewX = Ogre::Real(V.GetDouble());
@@ -822,6 +1144,206 @@ bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN)
 	return true;
 }
 
+bool SelectionManager::HandleLightDirectionChanged(Ogre::Light* L)
+{
+	// It may be NULL
+	if ( L == 0 ) return false;
+
+	// Perpare logging
+	wxString MSG;
+
+	MSG = ToWxString("Changing Direction of Ogre::Light '");
+	MSG << ToWxString(L->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Real(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewX = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewY = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewZ = Ogre::Real(V.GetDouble());
+
+	// Prepare values
+	Ogre::Vector3 N = L->getDirection();
+	Ogre::Real X = N.x;
+	Ogre::Real Y = N.y;
+	Ogre::Real Z = N.z;
+
+	// Log before
+	MSG = ToWxString("From: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Apply change
+	L->setDirection(NewX, NewY, NewZ);
+	
+	// Reflect values
+	N = L->getDirection();
+	X = N.x;
+	Y = N.y;
+	Z = N.z;
+
+	// Log after
+	MSG = ToWxString("To: X='");
+	MSG << (double)X << ToWxString("' | Y='");
+	MSG << (double)Y << ToWxString("' | Z='");
+	MSG << (double)Z << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dx"));
+	this->PG->SetPropertyValue(ChildProperty, (double)X);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dy"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Y);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dz"));
+	this->PG->SetPropertyValue(ChildProperty, (double)Z);
+
+	return true;
+}
+bool SelectionManager::HandleLightDiffuseColourChanged(Ogre::Light* L)
+{
+	// It may be NULL
+	if ( L == 0 ) return false;
+
+	// Perpare logging
+	wxString MSG;
+
+	MSG = ToWxString("Changing diffuse colour of Ogre::Light '");
+	MSG << ToWxString(L->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Real(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewR = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewG = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewB = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewA = Ogre::Real(V.GetDouble());
+
+	// Prepare values
+	Ogre::ColourValue CV = L->getDiffuseColour();
+	Ogre::Real R = CV.r;
+	Ogre::Real G = CV.g;
+	Ogre::Real B = CV.b;
+	Ogre::Real A = CV.a;
+
+	// Log before
+	MSG = ToWxString("From: R='");
+	MSG << (double)R << ToWxString("' | G='");
+	MSG << (double)G << ToWxString("' | B='");
+	MSG << (double)B << ToWxString("' | A='");
+	MSG << (double)A << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Apply change
+	L->setDiffuseColour(Ogre::ColourValue(NewR, NewG, NewB, NewA));
+	
+	// Reflect values
+	CV = L->getDiffuseColour();
+	R = CV.r;
+	G = CV.g;
+	B = CV.b;
+	A = CV.a;
+
+	// Log after
+	MSG = ToWxString("From: R='");
+	MSG << (double)R << ToWxString("' | G='");
+	MSG << (double)G << ToWxString("' | B='");
+	MSG << (double)B << ToWxString("' | A='");
+	MSG << (double)A << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dcr"));
+	this->PG->SetPropertyValue(ChildProperty, (double)R);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dcg"));
+	this->PG->SetPropertyValue(ChildProperty, (double)G);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dcb"));
+	this->PG->SetPropertyValue(ChildProperty, (double)B);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("dca"));
+	this->PG->SetPropertyValue(ChildProperty, (double)A);
+
+	return true;
+}
+bool SelectionManager::HandleLightSpecularColourChanged(Ogre::Light* L)
+{
+	// It may be NULL
+	if ( L == 0 ) return false;
+
+	// Perpare logging
+	wxString MSG;
+
+	MSG = ToWxString("Changing specular colour of Ogre::Light '");
+	MSG << ToWxString(L->getName()) << "':";
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Use variant as string an tokenize it
+	wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+	
+	// Format subtokens into Ogre::Real(double) via variant
+	wxVariant V;
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewR = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewG = Ogre::Real(V.GetDouble());
+	V = SemiSeperator.GetNextToken();
+	Ogre::Real NewB = Ogre::Real(V.GetDouble());
+
+	// Prepare values
+	Ogre::ColourValue CV = L->getDiffuseColour();
+	Ogre::Real R = CV.r;
+	Ogre::Real G = CV.g;
+	Ogre::Real B = CV.b;
+
+	// Log before
+	MSG = ToWxString("From: R='");
+	MSG << (double)R << ToWxString("' | G='");
+	MSG << (double)G << ToWxString("' | B='");
+	MSG << (double)B << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Apply change
+	L->setDiffuseColour(NewR, NewG, NewB);
+	
+	// Reflect values
+	CV = L->getDiffuseColour();
+	R = CV.r;
+	G = CV.g;
+	B = CV.b;
+
+	// Log after
+	MSG = ToWxString("From: R='");
+	MSG << (double)R << ToWxString("' | G='");
+	MSG << (double)G << ToWxString("' | B='");
+	MSG << (double)B << ToWxString("'");
+	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
+
+	// Update related values 
+	wxPGProperty* ChildProperty;
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("scr"));
+	this->PG->SetPropertyValue(ChildProperty, (double)R);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("scg"));
+	this->PG->SetPropertyValue(ChildProperty, (double)G);
+	ChildProperty = this->ChangedProperty->GetPropertyByName(ToWxString("scb"));
+	this->PG->SetPropertyValue(ChildProperty, (double)B);
+
+	return true;
+}
 // OLD code
 	/*
 
