@@ -11,12 +11,13 @@
  * License:																		*
  ********************************************************************************/
 
-#pragma once
-
 #ifndef DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 #define DOTSCENE_INTERPRETER_DOM_TO_OGRE_H_
 
 // Include WX
+#ifdef __WXMSW__
+#include "wx/msw/winundef.h"
+#endif
 #include <wx/string.h>
 #include <wx/filename.h>
 

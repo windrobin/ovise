@@ -11,8 +11,6 @@
  * License:																		*
  ********************************************************************************/
 
-#pragma once
-
 #ifndef DOTSCENE_INTERPRETER_OGRE_TO_DOM_H_
 #define DOTSCENE_INTERPRETER_OGRE_TO_DOM_H_
 

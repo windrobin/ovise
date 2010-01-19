@@ -1,8 +1,10 @@
-#pragma once
 #ifndef STRING_CONVERTER_H_
 #define STRING_CONVERTER_H_
 
 // Include WX
+#ifdef __WXMSW__
+#include "wx/msw/winundef.h"
+#endif
 #include <wx/string.h>
 
 // Include Xerces

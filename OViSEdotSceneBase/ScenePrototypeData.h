@@ -11,8 +11,6 @@
  * License:																		*
  ********************************************************************************/
 
-#pragma once
-
 #ifndef SCENE_PROTOTYPE_DATA_H_
 #define SCENE_PROTOTYPE_DATA_H_
 

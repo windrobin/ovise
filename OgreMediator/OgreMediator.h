@@ -4,6 +4,9 @@
 #define OGRE_API_MEDIATOR_H_
 
 // Include WX
+#ifdef __WXMSW__
+#include "wx/msw/winundef.h"
+#endif
 #include <wx/string.h>
 #include <wx/event.h>
 #include <wx/control.h>

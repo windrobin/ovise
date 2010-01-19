@@ -456,7 +456,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMEle
 	// STEP 2: Create all possible attributes...
 	wxString NewLight_name, NewLight_id; // <- string
 	float NewLight_powerScale = 1.0, NewCamera_aspectRatio = 1.3333333f; //<- float
-	Ogre::Light::LightTypes NewLight_type = Ogre::Light::LightTypes::LT_POINT;
+	Ogre::Light::LightTypes NewLight_type = Ogre::Light::LT_POINT;
 	bool NewLight_castShadows = false; //<- bool
 
 	// STEP 3: Get attribute data. If attribute is not used in XML, use default value from XSD...
