@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef OGRE_ENUMS_H_
 #define OGRE_ENUMS_H_
 

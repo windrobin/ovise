@@ -11,8 +11,6 @@
  * License:																		*
  ********************************************************************************/
 
-#pragma once
-
 #ifndef SCENENODE_OFFSET_H_
 #define SCENENODE_OFFSET_H_
 

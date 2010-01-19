@@ -9,12 +9,13 @@
  * License:																		*
  ********************************************************************************/
 
-#pragma once
-
 #ifndef DOTSCENE_BASE_CONFIGURATION_H_
 #define DOTSCENE_BASE_CONFIGURATION_H_
 
 // Include WX
+#ifdef __WXMSW__
+#include "wx/msw/winundef.h"
+#endif
 #include <wx/string.h>
 #include <wx/filename.h>
 
