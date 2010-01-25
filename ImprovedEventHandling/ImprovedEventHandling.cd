@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EventDispatcher" Collapsed="true">
+    <Position X="1.75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAABAAAAAAAAAEAAAAAAAABAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>EventDispatcher.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EventListener" Collapsed="true">
+    <Position X="6" Y="1.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgBIAAAAAAAAAAAAABAAAAAAAAAAAAEAAAAIA=</HashCode>
+      <FileName>EventListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EventListenerInterface" Collapsed="true">
+    <Position X="6" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>EventListenerInterface.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImprovedEvent" Collapsed="true">
+    <Position X="1.75" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAABAAAAACAAAAAAIgAAAAAAAAABA=</HashCode>
+      <FileName>ImprovedEvent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OgreObjectListener" Collapsed="true">
+    <Position X="6" Y="3.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAUAAQAAIAAAAAAABAAAAAAAAAAAAEAAAIIA=</HashCode>
+      <FileName>OgreObjectListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneNodeListener" Collapsed="true">
+    <Position X="6" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAgCAAUQAAAAIAAAAAAABAAAAAAAAAEAAEAAABIA=</HashCode>
+      <FileName>SceneNodeListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MovableObjectListener" Collapsed="true">
+    <Position X="11.75" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAQUAAAAAIAAAAAAABAAAAAAAAAAAAEAACAIA=</HashCode>
+      <FileName>MovableObjectListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CameraListener" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AQAAAACAAUAAAAAIAAAAAAABAAAAAAAAQAAAEAAAAIA=</HashCode>
+      <FileName>CameraListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EntityListener" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAUAAAAAIAAAAAAABAAAAAAAAAAAAEAAAAII=</HashCode>
+      <FileName>EntityListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LightListener" Collapsed="true">
+    <Position X="9.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAUAAAAAIAAAAEAABAAAAAAAAAAAAEAABAIA=</HashCode>
+      <FileName>LightListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneNodeTreeViewListener" Collapsed="true">
+    <Position X="8.25" Y="6" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAUAAAAAIAAgAAAAFAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SceneNodeTreeViewListener.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneNodeLogging" Collapsed="true">
+    <Position X="4.75" Y="6" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAGAAUAAAAAICAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SceneNodeLogging.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Typedef Name="ImprovedEventFunction" Collapsed="true">
+    <Position X="10.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImprovedEvent.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>
