@@ -13,6 +13,10 @@
 
 #include "../OViSEAux/OViSEException.h"
 
+#include "../OViSE/SelectionManager.h"
+#include "../OgreMediator/OgreMediator.h"
+#include "../ImprovedEventHandling/EventDispatcher.h"
+
 /** Class to handle input from the user for a render widget.
  * This calls handles all the keyboard and mouse input for a render widget. It is
  * mainly used for navigation in 3D and object selection.
@@ -56,6 +60,9 @@ protected:
 
 	/// Show the help overlay
 	void showHelpOverlay();
+
+	/// Delete selected OgreObjects (and its childs)
+	void DeleteSelectedObjects();
 
 	/** Focuses the camera on the currently selected objects. 
 	 * @todo Check that all selected objects are visible

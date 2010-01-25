@@ -19,6 +19,7 @@ void SceneTreeOgreObjectListener::OnConstructed(ImprovedEvent &event)
 }
 void SceneTreeOgreObjectListener::OnDestructed(ImprovedEvent &event)
 {
+	this->mSceneTree->RemoveOgreObject(event.GetContextInfo());
 	event.Skip();
 }
 void SceneTreeOgreObjectListener::OnRenamed(ImprovedEvent &event)

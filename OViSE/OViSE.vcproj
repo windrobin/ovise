@@ -211,10 +211,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\old_mainframe.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\PathProvider.cpp"
 				>
 			</File>

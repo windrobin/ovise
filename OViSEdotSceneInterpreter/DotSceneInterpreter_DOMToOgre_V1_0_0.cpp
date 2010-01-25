@@ -713,7 +713,6 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument*
 	// Call of inherided method. Provides a basic setup and calls inplicid sub-methods for necessary interpretations...
 	bool ReturnValue =  this->Interpretation_DOMScene(DOMRepresentationOfScene, qAnchorNodeName, Configuration);
 
-	if ( ReturnValue ) OgreMediator::GetSingletonPtr()->SendOgreChanged();
 	return ReturnValue;
 
 	// More individual calls. Not necessary for a correct an full interpretation!
