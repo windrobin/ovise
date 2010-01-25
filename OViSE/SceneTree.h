@@ -65,6 +65,8 @@ public:
 private:
 	wxString OGRE_ROOT_STRING;
 
+	QualifiedName mLastSelectedEntry;
+
 	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);
 
 	Ogre::SceneManager *mSceneManager;

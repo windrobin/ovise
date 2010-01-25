@@ -83,8 +83,14 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 		QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(UniqueName);
 		if (qName.IsValid())
 		{
+			// Publish: unselect old selection
+			if (this->mLastSelectedEntry.IsValid()) EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, this->mLastSelectedEntry);
+
+			// Remember new selection
+			this->mLastSelectedEntry = qName;
+
+			// Publish: selected new selection
 			if (this->IsSelected(ID)) EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
-			else EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName);
 		}
 	}
 	event.Skip();
@@ -273,7 +279,22 @@ bool SceneTree::AddOgreObject(QualifiedName qOgreObject)
 }
 bool SceneTree::RemoveOgreObject(QualifiedName qOgreObject)
 {
-	bool Match = false;
+	wxString FullTest = qOgreObject.UniqueName();
 
-	return Match;
+	// Check, if OgreObject is already in SceneTree...
+	if (this->Items.count(qOgreObject.UniqueName()) == 0) return false;
+
+	wxTreeItemId ID = this->Items[FullTest];
+	this->Delete(ID);
+	this->Refresh();
+	/*this->remthis->GetItemParent(ID)
+	this->Delete(ID);
+	this->CollapseAll();
+	this->ExpandAll();
+	this->Refresh();
+	this->GetParent()->Refresh();
+	this->Update();
+	this->GetParent()->Update();*/
+
+	return true;
 }

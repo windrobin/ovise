@@ -1,7 +1,5 @@
 #include "InputHandler.h"
 
-#include "SelectionManager.h"
-
 InputHandler::InputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow *parent)
 {
 	mCamera = cam;
@@ -112,6 +110,11 @@ void InputHandler::handleKeyboardInput(wxKeyEvent &evt)
 	case 'T':
 		showHelpOverlay();
 		break;
+
+	case wxKeyCode::WXK_DELETE:
+		this->DeleteSelectedObjects();
+		break;
+
 	default: break;
 	}
 	evt.Skip();
@@ -256,4 +259,18 @@ void InputHandler::showHelpOverlay()
 	if(hlpOverlay->isVisible())
 		hlpOverlay->hide();
 	else hlpOverlay->show();		
+}
+void InputHandler::DeleteSelectedObjects()
+{
+	QualifiedNameCollection Selection(SelectionManager::getSingletonPtr()->Selection);
+	for (unsigned long IT = 0; IT < Selection.Count(); IT++)
+	{
+		// A QualififiedName is unique and can be associated deterministically. So try to destroy it via all interfaces.
+		// Don't worry about childs: interfaces destroy 'em, too. 
+		OgreMediator::GetSingletonPtr()->iCamera.Destroy(Selection[IT]);
+		OgreMediator::GetSingletonPtr()->iEntity.Destroy(Selection[IT]);
+		OgreMediator::GetSingletonPtr()->iLight.Destroy(Selection[IT]);
+		OgreMediator::GetSingletonPtr()->iSceneManager.Destroy(Selection[IT]);
+		OgreMediator::GetSingletonPtr()->iSceneNode.Destroy(Selection[IT]);
+	}
 }
