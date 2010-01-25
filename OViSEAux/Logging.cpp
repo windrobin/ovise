@@ -25,6 +25,9 @@ Logging* Logging::GetSingletonPtr()
 }
 bool Logging::WriteToOgreLog(wxString LogMessage, Logging::Priority PriorityLevel)
 {
+	Ogre::String temp;
+	wxString tempwx;
+
 	switch(PriorityLevel)
 	{
 	case Trivial:

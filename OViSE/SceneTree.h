@@ -6,6 +6,7 @@
 #include <wx/event.h>
 #include <wx/hashmap.h>
 #include "../OgreMediator/OgreMediator.h"
+#include "../ImprovedEventHandling/EventDispatcher.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -15,7 +16,9 @@
 
 enum SceneTreeDataType
 {
-	ROOT,
+	OGRE_ROOT,
+	SCENE_MANAGER,
+	SCENE_ROOT,
 	SCENE_NODE,
 	CAMERA,
 	LIGHT,
@@ -38,37 +41,38 @@ private:
 	void *mData;
 };
 
-
-class SceneTree : public wxTreeCtrl
+class SceneTree
+	: public wxTreeCtrl
 {
 public:
 
 	// A hash map with string keys and wxTreeItemIds values
 	WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
 
-	SceneTree(Ogre::SceneManager *manager, wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+	SceneTree(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS, const wxValidator& validator = wxDefaultValidator,
 		const wxString& name = wxT("treeCtrl"));
 	~SceneTree(void);
 
-	void setSceneManager(Ogre::SceneManager *manager);
-
-	void initTree();
-
-	void updateTreeContents();
-
-	void ConnectOgreMediator();
-
 	HashMap_wxTreeItemId Items;
 
+	void SetPublishTreeSelectionChanged(bool value);
+	bool GetPublishTreeSelectionChanged();
+
+	bool AddOgreObject(QualifiedName qOgreObject);
+	bool RemoveOgreObject(QualifiedName qOgreObject);
+
 private:
+	wxString OGRE_ROOT_STRING;
+
 	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);
 
 	Ogre::SceneManager *mSceneManager;
 
-	bool mInitialized;
+	bool mPublishTreeSelectionChanged;
 
-	void OnSelectionChanged( wxCommandEvent& event );
+	void OnTreeSelectionChanged( wxTreeEvent& event );
+	void OnItemActivated( wxTreeEvent& event );
 	void OnOgreChanged( wxCommandEvent& event );
 };
 #endif SCENE_TREE_H

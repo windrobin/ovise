@@ -29,11 +29,11 @@ bool SceneManagerInterface::Destroy(QualifiedName qName)
 	// Destroy Ogre::SceneManager
 	Ogre::Root::getSingletonPtr()->destroySceneManager(SM);
 
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
+	EventDispatcher::Publish(EVT_OGRE_SCENEMANAGER_DESTRUCTED, qName);
+
 	// Destroy QualifiedName of Ogre::SceneManager
 	QualifiedName::Destroy(qName);
-
-	// Flag Ogre-engine as chanced
-	this->mOgreChanged = true;
 
 	return true;
 }
@@ -89,9 +89,9 @@ QualifiedName SceneManagerInterface::Create(wxString Name, Ogre::SceneType pScen
 	// Add new association between Ogre::SceneManager and Ogre::SceneManager
 	this->mObjectAccess->AddAssociatedSceneManager(qSceneManager, qSceneManager);
 
-	// Flag Ogre-engine as chanced
-	this->mOgreChanged = true;
-	
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qSceneManager);
+	EventDispatcher::Publish(EVT_OGRE_SCENEMANAGER_CONSTRUCTED, qSceneManager);
+
 	// Return QualifiedName of new Ogre::Camera
 	return qSceneManager;
 }

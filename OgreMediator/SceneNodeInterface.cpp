@@ -67,11 +67,11 @@ bool SceneNodeInterface::Destroy(QualifiedName qName)
 	// Destroy Ogre::SceneNode
 	SM->destroySceneNode(SN);
 
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
+	EventDispatcher::Publish(EVT_OGRE_SCENENODE_DESTRUCTED, qName);
+
 	// Destroy QualifiedName of Ogre::SceneNode
 	QualifiedName::Destroy(qName);
-
-	// Flag Ogre-engine as chanced
-	this->mOgreChanged = true;
 
 	return true;
 }
@@ -136,8 +136,17 @@ QualifiedName SceneNodeInterface::Create(wxString Name, Ogre::SceneNode* pParent
 
 	// Create new Ogre::SceneNode by validating given pParentSceneNode
 	Ogre::SceneNode* SN;
-	if (pParentSceneNode == 0) SN = SM->getRootSceneNode()->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
-	else SN = pParentSceneNode->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
+
+	// Check, if SceneNode is RootSceneNode itself (!)
+	if (ToWxString(SM->getRootSceneNode()->getName()).IsSameAs(Name))
+	{
+		SN = SM->getRootSceneNode();
+	}
+	else
+	{
+		if (pParentSceneNode == 0) SN = SM->getRootSceneNode()->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
+		else SN = pParentSceneNode->createChildSceneNode(ToOgreString(qSceneNode.UniqueName()));
+	}
 
 	// Validate new Ogre::SceneNode
 	if (SN == 0)
@@ -152,8 +161,8 @@ QualifiedName SceneNodeInterface::Create(wxString Name, Ogre::SceneNode* pParent
 	// Add new association between Ogre::SceneNode and Ogre::SceneManager
 	this->mObjectAccess->AddAssociatedSceneManager(this->mObjectAccess->GetActiveSceneManager(), qSceneNode);
 
-	// Flag Ogre-engine as chanced
-	this->mOgreChanged = true;
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qSceneNode);
+	EventDispatcher::Publish(EVT_OGRE_SCENENODE_CONSTRUCTED, qSceneNode);
 	
 	// Return QualifiedName of new Ogre::SceneNode
 	return qSceneNode;

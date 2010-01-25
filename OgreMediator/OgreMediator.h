@@ -43,15 +43,12 @@ private:
 	OgreMediator();
 
 	// Singleton
-	static OgreMediator* instance;
+	static OgreMediator*	instance;
 
 	// General
 	bool Valid;
-	QualifiedName mDefaultSceneManager;
+	QualifiedName			mDefaultSceneManager;
 	ObjectManager*			mObjectAccess;
-
-	// Attributes, used for update-priority
-	bool mOgreChanged;
 
 public:
 	// De- & Constructors
@@ -73,11 +70,6 @@ public:
 
 	// Methods, public: access to "managed" objects
 	ObjectManager*			GetObjectAccess();
-
-	// wxEvent handling
-	void					SendSelectionChanged();
-	void					SendOgreChanged();
-	void					OnOgreChanged(wxCommandEvent& event);
 };
 
 #endif // OGRE_API_MEDIATOR_H_

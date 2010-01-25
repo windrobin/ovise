@@ -301,19 +301,11 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(	xercesc::DOMEl
 	}
 	
 	// STEP 4: Create unique new Ogre::Camera
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Camera \"") << NewCamera_name << ToWxString("\"");
-	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-
 	QualifiedName qC = OgreMediator::GetSingletonPtr()->iCamera.Create(NewCamera_name, AssociateNode);
 	Ogre::Camera* NewCamera = OgreMediator::GetSingletonPtr()->iCamera.GetPtr(qC);
 
 	if (NewCamera != 0)
 	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Camera \"") << qC.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
-		Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-
 		// STEP 4.1: Set rest of attributes...
 		NewCamera->setFOVy(Ogre::Degree(NewCamera_fov));
 		NewCamera->setProjectionType(NewCamera_projectionType);
@@ -424,16 +416,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	}
 
 	// STEP 4: Create unique new Ogre::Entity
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Entity \"") << NewEntity_name << ToWxString("\" using .mesh \"") << NewEntity_meshFile << ToWxString("\"");
-	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-
 	QualifiedName qE = OgreMediator::GetSingletonPtr()->iEntity.Create(NewEntity_name, NewEntity_meshFile, AssociateNode);
 	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->iEntity.GetPtr(qE);
-
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Entity \"") << qE.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
-	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
 }
 
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMElement* DOMElement_light,
@@ -488,19 +472,11 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMEle
 	}
 	
 	// STEP 4: Create unique new Ogre::Light
-	LogMsg.Clear();
-	LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Creating new Ogre::Light \"") << NewLight_name << ToWxString("\"");
-	Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-
 	QualifiedName qL = OgreMediator::GetSingletonPtr()->iLight.Create(NewLight_name, AssociateNode);
 	Ogre::Light* NewLight = OgreMediator::GetSingletonPtr()->iLight.GetPtr(qL);
 
 	if (NewLight != 0)
 	{
-		LogMsg.Clear();
-		LogMsg << ToWxString("OViSE DOM-Interpreter dotSceneV1.0.0: Done. Attached new Ogre::Light \"") << qL.UniqueName() << ToWxString("\" to Ogre::SceneNode \"") << ToWxString(AssociateNode->getName()) << ToWxString("\"");
-		Logging::GetSingletonPtr()->WriteToOgreLog(LogMsg, Logging::Normal);
-
 		// STEP 4.1: Set rest of attributes...
 		NewLight->setType(NewLight_type);
 		NewLight->setPowerScale(NewLight_powerScale);

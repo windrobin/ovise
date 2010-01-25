@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\lib\$(ConfigurationName)"
 			IntermediateDirectory="$(SolutionDir)\build\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="4"
 			CharacterSet="1"
@@ -60,7 +60,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalLibraryDirectories="&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;;&quot;$(SolutionDir)$(ConfigurationName)&quot;"
+				AdditionalLibraryDirectories="&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;;&quot;$(SolutionDir)\lib\$(ConfigurationName)&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
