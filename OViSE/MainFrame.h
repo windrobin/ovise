@@ -21,8 +21,8 @@
 
 #include "MainFrameBase.h"
 #include "SceneHandling.h"
+#include "../OViSE/SceneTree.h"
 #include "LogListener.h"
-#include "SceneTree.h"
 #include "InputHandler.h"
 
 #include "../QualifiedNames/QualifiedName.h"
@@ -32,7 +32,17 @@
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../OViSEAux/Logging.h"
 
-//#include "AddMeshDialog.h"
+#include "../OViSEAux/MovableObjectLogListener.h"
+#include "../OViSEAux/CameraLogListener.h"
+#include "../OViSEAux/EntityLogListener.h"
+#include "../OViSEAux/LightLogListener.h"
+#include "../OViSEAux/SceneManagerLogListener.h"
+#include "../OViSEAux/SceneNodeLogListener.h"
+
+#include "../OViSE/SceneTreeOgreObjectListener.h"
+#include "../OViSE/SelectionManagerOgreObjectListener.h"
+#include "../OViSE/OgreObjectRenderListener.h"
+
 #include "ExportMeshesDialog.h"
 #include "PrototypeManagementDialog.h"
 
@@ -89,9 +99,24 @@ class MainFrame: public MainFrameBase
 
 		Ogre::String GetOgreHandle();
 
-		// NEW // DotSceneManager
 		/// Standard factory for dotScene loading
 		OViSEDotSceneManager *mDotSceneMgr;
+
+		MovableObjectLogListener mMovableObjectLL;
+		CameraLogListener mCameraLogListenerLL;
+		EntityLogListener mEntityLogListenerLL;
+		LightLogListener mLightLogListenerLL;
+		SceneManagerLogListener mSceneManagerLL;
+		SceneNodeLogListener mSceneNodeLL;
+
+		SceneTreeOgreObjectListener mOgreObjectSTL;
+		SelectionManagerOgreObjectListener mOgreObjectSML;
+
+		OgreObjectRenderListener mOgreObjectRL;
+
+		void SelectOgreObject(QualifiedName qName);
+		void UnselectOgreObject(QualifiedName qName);
+		void UnselectAllOgreObjects(QualifiedNameCollection QSelection);
 
     protected:
 		void setupObjectProperties();

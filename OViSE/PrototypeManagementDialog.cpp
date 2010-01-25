@@ -197,7 +197,7 @@ void PrototypeManagementDialog::OnClickAttach( wxCommandEvent& event )
 		this->mDotSceneMgr->MakeOgreSceneFromPrototype(this->qSelectedPrototype, qAnchorSN);
 	}
 
-	OgreMediator::GetSingletonPtr()->SendOgreChanged();
+	//OgreMediator::GetSingletonPtr()->SendOgreChanged();
 }
 
 void PrototypeManagementDialog::OnClickClose( wxCommandEvent& event ) { this->Destroy(); }

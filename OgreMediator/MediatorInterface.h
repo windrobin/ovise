@@ -15,13 +15,11 @@
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OgreMediator/ObjectManager.h"
+#include "../ImprovedEventHandling/EventDispatcher.h"
 
 class MediatorInterface
 {
 protected:
-	// General
-	bool			mOgreChanged;
-
 	// ObjectManager
 	ObjectManager*	mObjectAccess;
 
@@ -32,8 +30,6 @@ public:
 
 	// General
 	virtual bool	IsValid();
-	bool			GetOgreChanged();
-	void			ResetOgreChanged();
 
 	// ObjectManager
 	bool			SetObjectManager(ObjectManager* ObjMgr);

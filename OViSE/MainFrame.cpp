@@ -70,7 +70,11 @@ MainFrame::MainFrame(wxWindow* parent)
 	mWindowManager.AddPane(mLogBox, wxBOTTOM, wxT("Log"));
 	mLogBoxListener = new CustomLogListener(mLogBox);
 
+	// Initialize PropertyGrid
 	setupObjectProperties();
+
+	// Initialize SelectionManager
+	SelectionManager::getSingletonPtr()->SetPropertyGrid(this->mObjectProperties);
 
 	//mAddMeshDialog = NULL;
 
@@ -87,6 +91,17 @@ void MainFrame::OnClose(wxCloseEvent& event)
 
 MainFrame::~MainFrame()
 {
+	this->mOgreObjectRL.StopListening();
+
+	this->mMovableObjectLL.StopListening();
+	this->mCameraLogListenerLL.StopListening();
+	this->mEntityLogListenerLL.StopListening();
+	this->mLightLogListenerLL.StopListening();
+	this->mSceneManagerLL.StopListening();
+	this->mSceneNodeLL.StopListening();
+
+	this->mOgreObjectSML.StopListening();
+
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->removeListener(mLogBoxListener);
 	delete mRoot;
 }
@@ -202,7 +217,39 @@ bool MainFrame::InitOgre()
 		width, height, false, &params);
 	mRenderWin->setActive (true);
 
+	// Register EventListeners of "improved event handling": Render3D
+	this->mOgreObjectRL.StartListening();
+
+	// Register EventListeners of "improved event handling": Logs
+	this->mMovableObjectLL.StartListening();
+	this->mCameraLogListenerLL.StartListening();
+	this->mEntityLogListenerLL.StartListening();
+	this->mLightLogListenerLL.StartListening();
+	this->mSceneManagerLL.StartListening();
+	this->mSceneNodeLL.StartListening();
+
+	// Register EventListeners of "improved event handling": SelectionManager (PropertyGrid)
+	this->mOgreObjectSML.StartListening();
+
+	// Create scene tree
+	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
+	this->loadSceneTreeImageList(sceneTreeImageList);
+	
+	this->mSceneTree = new SceneTree(this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
+	// Register EventListeners of "improved event handling": SceneTree
+	this->mOgreObjectSTL.SetSceneTree(this->mSceneTree);
+	this->mOgreObjectSTL.StartListening();
+	this->mWindowManager.AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
+	this->mSceneTree->SetImageList(sceneTreeImageList);
+
+	// First access to OgreMediator <------------------------
 	OgreMediator* Mediator = OgreMediator::GetSingletonPtr();
+	
+	// Get active SceneManager...
+	this->mSceneMgr = Mediator->iSceneManager.GetPtr(Mediator->iSceneManager.GetActiveSceneManager());
+
+	// Create and store RootSceneNode in qualified context...
+	//Mediator->iSceneNode.Create(ToWxString(this->mSceneMgr->getRootSceneNode()->getName()));
 
 	// Create camera setup
 	QualifiedName qCamFokusSceneNode = Mediator->iSceneNode.Create(ToWxString("mainCamFocusNode"));
@@ -247,16 +294,10 @@ bool MainFrame::InitOgre()
 	SunLight->setDirection(-1,-1,-1);
 	SunLight->setPosition(100, 100, 100);
 
-	// Create scene tree
-	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
-	loadSceneTreeImageList(sceneTreeImageList);
-	mSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager());
-	mSceneTree = new SceneTree(mSceneMgr, this, SCENETREE, wxDefaultPosition, wxSize(300, -1), wxTR_EDIT_LABELS | wxTR_MULTIPLE | wxTR_DEFAULT_STYLE);
-	mWindowManager.AddPane(mSceneTree, wxRIGHT, wxT("Scene structure"));
-	mSceneTree->SetImageList(sceneTreeImageList);
-	mSceneTree->initTree();
 	// When selection in OViSESceneTree changed, call MainFrame::OnSelectionChanged(...) !
 	mSceneTree->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &MainFrame::OnTreeSelectionChanged, this);
+	
+	
 	//MainFrame::OnViewClick handles the other direction
 
 	mWindowManager.Update();
@@ -492,7 +533,8 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 	if(QNames.IsEmpty())
 	{
 		// Nothing selected
-		this->mSceneTree->UnselectAll();
+		//this->mSceneTree->UnselectAll();
+		this->UnselectAllOgreObjects(SelectionManager::getSingletonPtr()->Selection);
 	}
 	else
 	{
@@ -571,14 +613,32 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 			else
 			{
 				// CASE 1: Unselect all, Select one or nothing
-				this->mSceneTree->UnselectAll();
-				if (QNames.Count() > 0)
+				this->UnselectAllOgreObjects(SelectionManager::getSingletonPtr()->Selection);
+				//this->mSceneTree->UnselectAll();
+				/*if (QNames.Count() > 0)
 				{
 					// Select in SceneTree-View
 					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
 					this->mSceneTree->SelectItem(Item);
-				}
+				}*/
+				this->SelectOgreObject(QNames[0]);
 			}
+		}
+	}
+}
+void MainFrame::SelectOgreObject(QualifiedName qName)
+{
+	bool valid = qName.IsValid();
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+}
+void MainFrame::UnselectOgreObject(QualifiedName qName) { EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName); }
+void MainFrame::UnselectAllOgreObjects(QualifiedNameCollection QSelection)
+{
+	if (!QSelection.IsEmpty())
+	{
+		for (unsigned long IT = 0; IT < QSelection.Count(); IT++)
+		{
+			this->UnselectOgreObject(QSelection[IT]);
 		}
 	}
 }
@@ -766,7 +826,7 @@ void MainFrame::deleteMeshes()
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 {
-	wxTreeItemId Item = event.GetItem();
+	/*wxTreeItemId Item = event.GetItem();
 
 	wxString Msg = ToWxString("SELECTED ITEMS:");
 
@@ -781,7 +841,12 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 			else this->RemoveSelectedObject(qName);
 		}
 	}
-	Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
+	//Logging::GetSingletonPtr()->WriteToOgreLog(Msg, Logging::Normal);
+
+	QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetActiveSceneManager();
+	//OgreEventDispatcher::GetSingletonPtr()->SendOgreChanged(qName);
+	//OgreEventDispatcher::GetSingletonPtr()->SendSceneNodeChanged(qName);*/
+	event.Skip();
 }
 
 void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
@@ -789,10 +854,10 @@ void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
 	if (MO != 0)
 	{
-		if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
-			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);
+		/*if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
+			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);*/
 		MO->getParentSceneNode()->showBoundingBox(true);
-		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+		//SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
 	}
 }
 
@@ -801,9 +866,9 @@ void MainFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
 	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
 	if (MO != 0)
 	{
-		SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
+		//SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
 		MO->getParentSceneNode()->showBoundingBox(false);
-		SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+		//SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
 	}
 }
 
@@ -821,7 +886,7 @@ void MainFrame::RemoveAllSelectedObjects()
 	}
 
 	// Clear selection
-	SelectionManager::getSingletonPtr()->Selection.Clear();
+	//SelectionManager::getSingletonPtr()->Selection.Clear();
 
 	// Clear propertygrid
 	this->mObjectProperties->Clear();
@@ -924,7 +989,7 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 		Ogre::Entity *pcEnt = Med->iEntity.GetPtr(qPC);
 		pcEnt->setMaterialName("Pointcloud");
 
-		Med->SendOgreChanged();
+		//Med->SendOgreChanged();
 
 		//delete pc;
 	}
@@ -941,5 +1006,5 @@ void MainFrame::OnTestStuff( wxCommandEvent& event )
 	OgreMediator* Med = OgreMediator::GetSingletonPtr();
 	QualifiedName qNode = Med->iSceneNode.Create(wxT("MyNode"));
 	Med->iEntity.Create(wxT("Barrel"), wxT("Barrel.mesh"), qNode);
-	Med->SendOgreChanged();
+	//Med->SendOgreChanged();
 }

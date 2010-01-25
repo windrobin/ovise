@@ -32,11 +32,11 @@ bool MovableObjectInterface::Destroy(QualifiedName qName)
 	SN->detachObject(MO);
 	SM->destroyMovableObject(MO);
 
+	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
+	EventDispatcher::Publish(EVT_OGRE_MOVABLEOBJECT_DESTRUCTED, qName);
+
 	// Destroy QualifiedName of Ogre::MovableObject
 	QualifiedName::Destroy(qName);
-
-	// Flag Ogre-engine as chanced
-	this->mOgreChanged = true;
 
 	return true;
 }

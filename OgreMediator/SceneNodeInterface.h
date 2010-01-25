@@ -2,8 +2,10 @@
 
 #include "../OgreMediator/MediatorInterface.h"
 #include "../OgreMediator/MovableObjectInterface.h"
+#include "../ImprovedEventHandling/EventDispatcher.h"
 
-class SceneNodeInterface : public MediatorInterface
+class SceneNodeInterface :
+	public MediatorInterface
 {
 private:
 	MovableObjectInterface*	iMovableObject;

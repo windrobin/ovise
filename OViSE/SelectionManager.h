@@ -32,9 +32,21 @@ private:
 	wxPGProperty* ChangedProperty;
 	wxPropertyGrid* PG;
 
+	// wxPropertyGrid-Handling
+	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);
+	bool AddCameraToPGCategory(Ogre::Camera* C);
+	bool AddEntityToPGCategory(Ogre::Entity* E);
+	bool AddLightToPGCategory(Ogre::Light* L);
+	wxPropertyCategory* AddSceneNodeToPGCategory(Ogre::SceneNode* SN);
+	bool AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO);
+
 public:
 	// De- & Constructors
 	~SelectionManager(void);
+
+	// Get-/Set-Methods of attributes
+	wxPropertyGrid* GetPropertyGrid();
+	void SetPropertyGrid(wxPropertyGrid* PG);
 
 	// Singleton
 	static SelectionManager* getSingletonPtr();
@@ -49,16 +61,9 @@ public:
 	bool IsSelected(QualifiedName qName);
 
 	// wxPropertyGrid-Handling
-	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);
-	bool AddCameraToPGCategory(Ogre::Camera* C);
-	bool AddEntityToPGCategory(Ogre::Entity* E);
-	bool AddLightToPGCategory(Ogre::Light* L);
-	wxPropertyCategory* AddSceneNodeToPGCategory(Ogre::SceneNode* SN);
-	bool AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO);
-	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG);
-	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, wxString SelectionUniqueName);
-	bool GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection);
-	bool GeneratePropertyGridContentFromSelection2(wxPropertyGrid* PG, QualifiedNameCollection Selection);
+	bool GeneratePropertyGridContentFromSelection();
+	bool GeneratePropertyGridContentFromSelection(wxString SelectionUniqueName);
+	bool GeneratePropertyGridContentFromSelection(QualifiedNameCollection Selection);
 
 	HashMap_wxString PGIDRegister;
 

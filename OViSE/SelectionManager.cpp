@@ -8,11 +8,17 @@ SelectionManager* SelectionManager::getSingletonPtr()
 	return SelectionManager::instance;
 }
 
-SelectionManager::SelectionManager() { this->Valid = true; }
+SelectionManager::SelectionManager() { }
 SelectionManager::~SelectionManager(void) { }
+// Get-/Set-Methods of attributes
+wxPropertyGrid* SelectionManager::GetPropertyGrid() { return this->PG; }
+void SelectionManager::SetPropertyGrid(wxPropertyGrid* PG) { this->PG = PG; }
 // General
-// wxPropertyGrid-Handling
-bool SelectionManager::IsValid() { return this->Valid; }
+bool SelectionManager::IsValid()
+{
+	if (this->PG == 0) return false;
+	else return true;
+}
 bool SelectionManager::IsSelected(QualifiedName qName)
 {
 	if (this->Selection.IsEmpty()) return false;
@@ -580,13 +586,13 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	PCParent->SetExpanded(false);
 	return true;
 }
-bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG) { return this->GeneratePropertyGridContentFromSelection(PG, this->Selection); }
-bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, wxString UniqueNameOfSelection)
+bool SelectionManager::GeneratePropertyGridContentFromSelection() { return this->GeneratePropertyGridContentFromSelection(this->Selection); }
+bool SelectionManager::GeneratePropertyGridContentFromSelection(wxString UniqueNameOfSelection)
 {
 	/*
 	if (UniqueNameOfSelection.IsEmpty())
 	{*/
-		return this->GeneratePropertyGridContentFromSelection(PG, this->Selection);
+		return this->GeneratePropertyGridContentFromSelection(this->Selection);
 	/*}
 
 	if (this->Selections.count(UniqueNameOfSelection) == 1)
@@ -596,13 +602,10 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* 
 	
 	return false;*/
 }
-bool SelectionManager::GeneratePropertyGridContentFromSelection(wxPropertyGrid* PG, QualifiedNameCollection Selection)
+bool SelectionManager::GeneratePropertyGridContentFromSelection(QualifiedNameCollection Selection)
 {
-	// Validate parameters...
-	if ( PG == 0 ) return false;
-
-	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
-	this->PG = PG;
+	// Check, if PropertyGrid is set!
+	if (!this->IsValid()) return false;
 
 	// Clear wxPropertryGrid
 	this->PG->Clear();
