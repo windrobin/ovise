@@ -9,6 +9,8 @@ if MODE == 'debug':
 project_include_paths = {'CPPPATH': Split('''#QualifiedNames
                                              #OViSEdotSceneInterpreter
                                              #OViSEdotSceneBase
+                                             #OgreMediator
+                                             #ImprovedEventHandling
                                              #OViSEAux''')}
 LocalEnv.MergeFlags(project_include_paths)
 
@@ -19,6 +21,8 @@ if MODE == 'debug':
     project_libs = {'LIBS':Split('''QualifiedNames
                                     OViSEdotSceneInterpreter
                                     OViSEdotSceneBase
+                                    OgreMediator
+                                    ImprovedEventHandling
                                     OViSEAux''')}
 LocalEnv.MergeFlags(project_libs)
 

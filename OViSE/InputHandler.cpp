@@ -111,7 +111,7 @@ void InputHandler::handleKeyboardInput(wxKeyEvent &evt)
 		showHelpOverlay();
 		break;
 
-	case wxKeyCode::WXK_DELETE:
+	case WXK_DELETE:
 		this->DeleteSelectedObjects();
 		break;
 

@@ -85,4 +85,6 @@ SConscript('QualifiedNames/SConscript', variant_dir='build/Debug/QualifiedNames'
 SConscript('OViSEdotSceneInterpreter/SConscript', variant_dir='build/Debug/OViSEdotSceneInterpreter', duplicate=0, exports={'MODE':'debug', 'env':env})
 SConscript('OViSEdotSceneBase/SConscript', variant_dir='build/Debug/OViSEdotSceneBase', duplicate=0, exports={'MODE':'debug', 'env':env})
 SConscript('OViSEAux/SConscript', variant_dir='build/Debug/OViSEAux', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('OgreMediator/SConscript', variant_dir='build/Debug/OgreMediator', duplicate=0, exports={'MODE':'debug', 'env':env})
+SConscript('ImprovedEventHandling/SConscript', variant_dir='build/Debug/ImprovedEventHandling', duplicate=0, exports={'MODE':'debug', 'env':env})
 SConscript('OViSE/SConscript', variant_dir='build/Debug/OViSE', duplicate=0, exports={'MODE':'debug', 'env':env})
