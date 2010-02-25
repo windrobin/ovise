@@ -55,7 +55,9 @@ bool SceneNodeInterface::Destroy(QualifiedName qName)
 		if (this->iMovableObject->Destroy(qMovableObject))
 		{
 			// Iterator is corrupted, because MovableObject is deleted. Reinitialize it! 
-			IT_MovObj = SN->getAttachedObjectIterator();
+			// "fix" for GCC (obviously can't cast the return value of getAttachedObjectIterator() to a reference
+			Ogre::SceneNode::ObjectIterator TmpIt = SN->getAttachedObjectIterator();
+			IT_MovObj = TmpIt;
 		}
 		// else // MovableObject was not registered = was not placed with interface. So don't remove it that way!
 	}
