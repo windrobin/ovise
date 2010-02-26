@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef DOTSCENE_MANAGER_H_
 #define DOTSCENE_MANAGER_H_
 

@@ -56,10 +56,10 @@ void ObjectTitle::update()
 
 	// Derive the average point between the top-most corners of the object's bounding box
 	const Ogre::AxisAlignedBox &AABB = object->getWorldBoundingBox(true);
-	Ogre::Vector3 point = (AABB.getCorner(AxisAlignedBox::FAR_LEFT_TOP)
-		+ AABB.getCorner(AxisAlignedBox::FAR_RIGHT_TOP)
+	Ogre::Vector3 point = (AABB.getCorner(AxisAlignedBox::NEAR_RIGHT_TOP)
 		+ AABB.getCorner(AxisAlignedBox::NEAR_LEFT_TOP)
-		+ AABB.getCorner(AxisAlignedBox::NEAR_RIGHT_TOP)) / 4;
+		+ AABB.getCorner(AxisAlignedBox::NEAR_RIGHT_BOTTOM)
+		+ AABB.getCorner(AxisAlignedBox::NEAR_LEFT_BOTTOM)) / 4;
 
 	// Is the camera facing that point? If not, hide the overlay and return.
 	Ogre::Plane cameraPlane = Plane(Vector3(camera->getDerivedOrientation().zAxis()), camera->getDerivedPosition());

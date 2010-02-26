@@ -35,6 +35,7 @@ bool OViSEApplication::OnInit()
 	SetTopWindow(frame);
 	if(!frame->InitOgre())
 		return false;
+	frame->InitSocketInterface();
 
 	splash->Destroy();
 

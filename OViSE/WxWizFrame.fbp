@@ -183,6 +183,56 @@
                         <event name="OnMenuSelection">OnDynamicShadowsChange</event>
                         <event name="OnUpdateUI"></event>
                     </object>
+                    <object class="submenu" expanded="1">
+                        <property name="label">Display Mode</property>
+                        <property name="name">displayMode</property>
+                        <property name="permission">protected</property>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">ID_POINTS</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">Points</property>
+                            <property name="name">points</property>
+                            <property name="permission">private</property>
+                            <property name="shortcut"></property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection">OnDMPoints</event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">0</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">ID_WIREFRAME</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">Wireframe</property>
+                            <property name="name">wireframe</property>
+                            <property name="permission">private</property>
+                            <property name="shortcut"></property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection">OnDMWire</event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                        <object class="wxMenuItem" expanded="1">
+                            <property name="bitmap"></property>
+                            <property name="checked">1</property>
+                            <property name="enabled">1</property>
+                            <property name="help"></property>
+                            <property name="id">ID_SOLID</property>
+                            <property name="kind">wxITEM_RADIO</property>
+                            <property name="label">Solid</property>
+                            <property name="name">solid</property>
+                            <property name="permission">private</property>
+                            <property name="shortcut"></property>
+                            <property name="unchecked_bitmap"></property>
+                            <event name="OnMenuSelection">OnDMSolid</event>
+                            <event name="OnUpdateUI"></event>
+                        </object>
+                    </object>
                 </object>
                 <object class="wxMenu" expanded="1">
                     <property name="label">Scene</property>

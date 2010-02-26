@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\OViSEdotSceneInterpreter&quot;;&quot;$(SolutionDir)\OViSEdotSceneBase&quot;;&quot;$(SolutionDir)\ImprovedEventHandling&quot;;&quot;$(SolutionDir)\OgreMediator&quot;;&quot;$(SolutionDir)\QualifiedNames&quot;;&quot;$(SolutionDir)\OViSEAux&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(OGRE_HOME)\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\include&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT;_SCL_SECURE_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -258,10 +258,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\ObjectTitle.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\OgreObjectRenderListener.cpp"
 					>
 				</File>
@@ -369,10 +365,6 @@
 				</File>
 				<File
 					RelativePath=".\LogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\ObjectTitle.h"
 					>
 				</File>
 				<File
