@@ -16,8 +16,17 @@
 #include <GL/glx.h>
 #endif
 
+#include "../OViSEAux/SocketMessage.h"
+#include "Pointcloud.h"
+
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
+
+enum 
+{
+	SERVER_ID = 100,
+	SOCKET_ID
+};
 
 //helper functions
 enum wxbuildinfoformat {
@@ -48,7 +57,7 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 }
 
 MainFrame::MainFrame(wxWindow* parent)
-    : MainFrameBase(parent)
+    : MainFrameBase(parent), mSocketServer( NULL ), SocketOk( false )
 {
 #if wxUSE_STATUSBAR
     statusBar->SetStatusText(_("OViSE started up."), 0);
@@ -104,6 +113,9 @@ MainFrame::~MainFrame()
 
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->removeListener(mLogBoxListener);
 	delete mRoot;
+	if( mSocketServer != NULL )
+		delete mSocketServer;
+	delete mInputHandler;
 }
 
 bool MainFrame::InitOgre()
@@ -309,8 +321,109 @@ bool MainFrame::InitOgre()
 	// Create input handler
 	mInputHandler = new InputHandler(mCam, camFocusNode, mMainRenderWin);
 
+	mRoot->addFrameListener( &mFrameListener );
+
 	mOgreInitialized = true;
 	return true;
+}
+
+/// @todo Set this up so it uses values from config file
+void MainFrame::InitSocketInterface()
+{
+	// Create the address - defaults to localhost:0 initially
+#if wxUSE_IPV6
+	wxIPV6address Address;
+#else
+	wxIPV4address Address;
+#endif
+	Address.Service(3000);
+
+	mSocketServer = new wxSocketServer( Address );
+
+	// We use Ok() here to see if the server is really listening
+	if (! mSocketServer->Ok())
+	{
+		Logging::GetSingletonPtr()->WriteToOgreLog( "Could not listen at the specified port !", Logging::Critical );
+		return;
+	}
+	Bind( wxEVT_SOCKET, &MainFrame::OnSocketEvent, this, SOCKET_ID );
+	Bind( wxEVT_SOCKET, &MainFrame::OnServerEvent, this, SERVER_ID );
+	Logging::GetSingletonPtr()->WriteToOgreLog( "Server listening.", Logging::Normal );
+	SocketOk = true;
+	mSocketServer->SetEventHandler( *this, SERVER_ID );
+	mSocketServer->SetNotify(wxSOCKET_CONNECTION_FLAG);
+	mSocketServer->Notify(true);
+	mNumClients = 0;
+}
+
+void MainFrame::OnServerEvent( wxSocketEvent& evt )
+{
+	wxSocketBase *Socket = NULL;
+	Logging *Log = Logging::GetSingletonPtr();
+
+	Socket = mSocketServer->Accept( false );
+
+	if( Socket )
+	{
+		Log->WriteToOgreLog( wxT( "New client connection accepted." ), Logging::Normal );
+	}
+	else
+	{
+		Log->WriteToOgreLog( wxT( "Couldn't accept a new connection." ), Logging::Critical );
+		return;
+	}
+
+	Socket->SetEventHandler( *this, SOCKET_ID );
+	Socket->SetNotify( wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG );
+	Socket->Notify( true );
+
+	mNumClients++;
+}
+
+void MainFrame::OnSocketEvent( wxSocketEvent& evt )
+{
+	Logging *Log = Logging::GetSingletonPtr();
+	wxSocketBase *Socket = evt.GetSocket();
+
+	switch( evt.GetSocketEvent() )
+	{
+	case wxSOCKET_INPUT:
+		{
+			Socket->SetNotify( wxSOCKET_LOST_FLAG );
+			// do stuff
+			Socket->SetFlags( wxSOCKET_WAITALL );
+			unsigned char len;
+			Socket->Read( &len, 1 );
+			wxCharBuffer Buffer( len );
+			Socket->Read( Buffer.data(), len );
+			wxString ReceivedCmd( Buffer );
+			SocketMessage Msg;
+			unsigned char ReturnValue;
+			if( Msg.Parse( ReceivedCmd ) )
+			{
+				Log->WriteToOgreLog( wxT( "Received command: " ) + Msg.GetCommand(), Logging::Normal );
+				for( std::vector<wxString>::const_iterator It = Msg.GetArguments().begin(); It != Msg.GetArguments().end(); It++ )
+					Log->WriteToOgreLog( wxT( "Argument: " ) + *It, Logging::Normal );
+				ReturnValue = '0'; //OK
+			}
+			else
+			{
+				Log->WriteToOgreLog( wxT( "Couldn't parse command!" ), Logging::Critical );
+				ReturnValue = '1'; // ERROR
+			}
+			Socket->Write( &ReturnValue, 1 );
+
+			Socket->SetNotify( wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG );
+		} break;
+	case wxSOCKET_LOST:
+		{
+			mNumClients--;
+			Log->WriteToOgreLog( wxT( "Deleting socket." ), Logging::Normal );
+
+			Socket->Destroy();
+		} break;
+	default: break;
+	}
 }
 
 Ogre::String MainFrame::GetOgreHandle()
@@ -457,14 +570,15 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 	wxString description = wxT("Institute of Computer Science and Engineering (CSE)\n\r");
 	description += wxT("Industrial Applications of Computer Science and Micro Systems (IAIM)\n");
 	description += wxT("Prof. Dr. R. Dillmann\n");
+	description += wxT("http://wwwiaim.ira.uka.de\n");
 	description += wxT("Department of Computer Science\n");
 	description += wxT("Karlsruhe Institute of Technology (KIT)\n");
 	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
 	info.SetDescription(description);
 
-    info.SetCopyright(wxT("(C) 2008-2009 "));
+    info.SetCopyright(wxT("(C) 2008-20010 "));
 
-	info.AddDeveloper(wxT("Programming - Alexander Kasper <akasper@ira.uka.de>\n"));
+	info.AddDeveloper(wxT("Programming - Alexander Kasper <alexander.kasper@kit.edu>\n"));
 	info.AddDeveloper(wxT("Programming - Henning Renartz <hrenart@gmx.de>"));
 
 	wxString licenseText = wxT("Permission is hereby granted, free of charge,");
@@ -998,8 +1112,27 @@ void MainFrame::OnLoadPointCloud(wxCommandEvent& event)
 void MainFrame::OnShowSceneStructure(wxCommandEvent &event)
 {
 	//mSceneHdlr->showSceneGraphStructure();
+	OgreMediator* Med = OgreMediator::GetSingletonPtr();
+	Med->GetObjectAccess()->ShowSceneGraphStructure(Med->iSceneManager.GetActiveSceneManager());
 }
 
+void MainFrame::OnDMPoints(wxCommandEvent &evt)
+{
+	ObjectManager* Mgr = OgreMediator::GetSingletonPtr()->GetObjectAccess();
+	Mgr->GetSceneManager(Mgr->GetActiveSceneManager())->getCurrentViewport()->getCamera()->setPolygonMode( Ogre::PM_POINTS );
+}
+
+void MainFrame::OnDMWire(wxCommandEvent &evt)
+{
+	ObjectManager* Mgr = OgreMediator::GetSingletonPtr()->GetObjectAccess();
+	Mgr->GetSceneManager(Mgr->GetActiveSceneManager())->getCurrentViewport()->getCamera()->setPolygonMode( Ogre::PM_WIREFRAME );
+}
+
+void MainFrame::OnDMSolid(wxCommandEvent &evt)
+{
+	ObjectManager* Mgr = OgreMediator::GetSingletonPtr()->GetObjectAccess();
+	Mgr->GetSceneManager(Mgr->GetActiveSceneManager())->getCurrentViewport()->getCamera()->setPolygonMode( Ogre::PM_SOLID );
+}
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
 {

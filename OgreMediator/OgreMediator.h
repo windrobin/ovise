@@ -70,6 +70,24 @@ public:
 
 	// Methods, public: access to "managed" objects
 	ObjectManager*			GetObjectAccess();
+
+	/** Add a grid to the scene. Gridsize is adjustable and it can be attached to any node.
+	 * By default the grid is aligned in the x-z-plane. To change that create a scene node for the grid
+	 * and rotate it for your needs.
+	 * @param size Defines the length of a grid unit
+	 * @param numRows Number of rows of the grid
+	 * @param numCols Number of columns for the grid
+	 * @param col Color of the grid - RGB (0.0-1.0)
+	 * @param qSceneManager Name of the scenemanager the grid should be added to
+	 * @param qSceneNode Defines the node the grid should be attached to, defaults to the root node
+	 */
+	void AddGrid(int size, int numRows, int numCols, Ogre::Vector3 col, QualifiedName qSceneManager, QualifiedName qSceneNode);
+
+	/** Adds a mesh depicting a coordinate system.
+	 * @param qSceneManager scenemanager the coordinate system will be added to.
+	 * @param qSceneNode Defines the SceneNode the coordinate system shall be attached to. Defaults to the root node.
+	 */
+	void AddCOS(QualifiedName qSceneManager, QualifiedName qSceneNode, float scale = 1.0, bool castShadows=false);
 };
 
 #endif // OGRE_API_MEDIATOR_H_

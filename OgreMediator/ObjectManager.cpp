@@ -429,3 +429,77 @@ bool ObjectManager::SetActiveSceneManager(QualifiedName qSceneManager)
 	return true;
 }
 QualifiedName ObjectManager::GetActiveSceneManager() { return this->mActiveSceneManager; }
+
+void ObjectManager::ShowSceneGraphStructure(QualifiedName qSceneManager, bool update)
+{
+	Ogre::SceneManager *scnMgr = GetSceneManager(qSceneManager);
+	if(!scnMgr) return;
+
+	// Let's see if we're already displaying a structure
+	if(scnMgr->hasManualObject("SceneGraphStructure"))
+	{
+		// yes, delete old structure
+		scnMgr->destroyManualObject("SceneGraphStructure");
+		// kill all object titles
+		for(ObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
+			delete *iter;
+		mObjectTitlesVector.clear();
+		// if we're not requesting an update, return
+		if(!update)	return;
+	}
+	else  // no structure found
+	{
+		if(update) return;
+			// misguided update request, there's nothing to update so don't do anything
+	}
+
+	// either we need to update an existing structure or show a new one
+
+	Ogre::ManualObject *sgs = scnMgr->createManualObject("SceneGraphStructure");
+	// set flags, so it cannot be selected
+	sgs->setQueryFlags(0x01);
+
+	if(!Ogre::MaterialManager::getSingletonPtr()->resourceExists("SceneStructureMaterial"))
+	{
+		Ogre::MaterialPtr sgsMaterial = Ogre::MaterialManager::getSingleton().create("SceneStructureMaterial", "General");
+		sgsMaterial->setReceiveShadows(false);
+		sgsMaterial->getTechnique(0)->setLightingEnabled(true);
+		sgsMaterial->getTechnique(0)->getPass(0)->setDiffuse(1,0,0,0);
+		sgsMaterial->getTechnique(0)->getPass(0)->setAmbient(1,0,0);
+	}
+
+	QualifiedNameCollection Entities = GetEntities();
+	for( unsigned long i = 0; i < Entities.Count(); i++)
+	{
+		Ogre::MovableObject *mobj = GetMovableObject(Entities[i]);
+		ObjectTitle *tmp = new ObjectTitle(mobj->getName(), mobj, scnMgr->getCurrentViewport()->getCamera(), mobj->getName(), "BlueHighway");
+		mObjectTitlesVector.push_back(tmp);
+	}
+	sgs->begin("SceneStructureMaterial", Ogre::RenderOperation::OT_LINE_LIST);
+	std::list<Ogre::Node*> nodeQueue;
+	nodeQueue.push_back(scnMgr->getRootSceneNode());
+	for(std::list<Ogre::Node*>::iterator it = nodeQueue.begin(); it != nodeQueue.end(); it++)
+	{
+		if((*it)->getName().find(Ogre::String("mainCamFocusNode")) != std::string::npos ) continue;
+		Ogre::Node::ChildNodeIterator iter = (*it)->getChildIterator();
+		while(iter.hasMoreElements())
+		{
+			Ogre::Node *tmp = iter.getNext();
+			if(tmp->getName().find(Ogre::String("mainCamFocusNode")) != std::string::npos ) continue;
+			sgs->position((*it)->_getDerivedPosition());
+			sgs->position(tmp->_getDerivedPosition());
+			nodeQueue.push_back(tmp);
+		}
+	}
+	sgs->end();
+	nodeQueue.clear();
+	scnMgr->getRootSceneNode()->attachObject(sgs);
+}
+
+void ObjectManager::UpdateObjectTitles()
+{
+	for(ObjectTitleVector::iterator iter = mObjectTitlesVector.begin(); iter != mObjectTitlesVector.end(); iter++)
+	{
+		(*iter)->update();
+	}
+}

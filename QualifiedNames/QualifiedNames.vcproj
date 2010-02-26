@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(WX_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT;_SCL_SECURE_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

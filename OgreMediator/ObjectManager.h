@@ -9,6 +9,7 @@
 
 #include "../OViSEAux/EnumsForABetterWorld.h"
 #include "../OViSEAux/MovableTypeTranslator.h"
+#include "../OViSEAux/ObjectTitle.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -19,6 +20,9 @@ WX_DECLARE_STRING_HASH_MAP(Ogre::Light*, LightHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::SceneManager*, SceneManagerHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::SceneNode*, SceneNodeHashMap);
 WX_DECLARE_STRING_HASH_MAP(Ogre::RaySceneQuery*, RaySceneQueryHashMap);
+
+/// Map containing object title instances (for updating in the frame listener)
+typedef std::vector<ObjectTitle*> ObjectTitleVector;
 
 class ObjectManager
 {
@@ -37,6 +41,8 @@ private:
 
 	// NEW
 	QualifiedName mActiveSceneManager;
+
+	ObjectTitleVector mObjectTitlesVector;
 
 public:
 	ObjectManager(void);
@@ -94,4 +100,13 @@ public:
 	// NEW
 	bool					SetActiveSceneManager(QualifiedName qSceneManager);
 	QualifiedName			GetActiveSceneManager(); // There is anytime one!
+
+	/** Show graph relations.
+	 *  Function shows a graphical representation of the scene graph using lines and spheres.
+	 */
+	void					ShowSceneGraphStructure(QualifiedName qSceneManager, bool update = false);
+
+	/** Updates the object titles in the internal map.
+	*/
+	void					UpdateObjectTitles();
 };

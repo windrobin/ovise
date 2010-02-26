@@ -31,12 +31,15 @@
 #define ID_SHOW_STRUCTURE 1001
 #define ID_SAVE_SCREENSHOT_TO_FILE 1002
 #define ID_DYNAMIC_SHADOWS 1003
-#define ID_ADD_MESH 1004
-#define ID_DELETE_MESHES 1005
-#define ID_OPEN_PROTOTYPE_MANAGEMENT 1006
-#define ID_LOAD_POINTCLOUD 1007
-#define idMenuAbout 1008
-#define ID_TESTSTUFF 1009
+#define ID_POINTS 1004
+#define ID_WIREFRAME 1005
+#define ID_SOLID 1006
+#define ID_ADD_MESH 1007
+#define ID_DELETE_MESHES 1008
+#define ID_OPEN_PROTOTYPE_MANAGEMENT 1009
+#define ID_LOAD_POINTCLOUD 1010
+#define idMenuAbout 1011
+#define ID_TESTSTUFF 1012
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameBase
@@ -44,11 +47,15 @@
 class MainFrameBase : public wxFrame 
 {
 	private:
+		wxMenuItem* points;
+		wxMenuItem* wireframe;
+		wxMenuItem* solid;
 	
 	protected:
 		wxMenuBar* mbar;
 		wxMenu* fileMenu;
 		wxMenu* view;
+		wxMenu* displayMode;
 		wxMenu* scene;
 		wxMenu* helpMenu;
 		wxMenu* debug;
@@ -60,6 +67,9 @@ class MainFrameBase : public wxFrame
 		virtual void OnShowSceneStructure( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSaveScreenToFile( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnDynamicShadowsChange( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDMPoints( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDMWire( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnDMSolid( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnSceneAddMesh( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ){ event.Skip(); }
 		virtual void OnOpenPrototypeManagement( wxCommandEvent& event ){ event.Skip(); }

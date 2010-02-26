@@ -1,5 +1,5 @@
 #include "FrameListener.h"
-#include "SceneHandling.h"
+#include "../OgreMediator/OgreMediator.h"
 
 CustomFrameListener::CustomFrameListener(void)
 {
@@ -18,7 +18,7 @@ CustomFrameListener::~CustomFrameListener(void)
 
 bool CustomFrameListener::frameStarted(const Ogre::FrameEvent &evt)
 {
-	SceneHandling::getSingletonPtr()->updateObjectTitles();
+	OgreMediator::GetSingletonPtr()->GetObjectAccess()->UpdateObjectTitles();
 	if(mProcessFrameEvents)
 	{
 		std::map<std::string, CallbackObject*>::iterator it;

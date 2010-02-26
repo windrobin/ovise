@@ -19,11 +19,14 @@
 #include <wx/treebase.h>
 #include <wx/imaglist.h>
 
+#include <wx/socket.h>
+
 #include "MainFrameBase.h"
 #include "SceneHandling.h"
 #include "../OViSE/SceneTree.h"
 #include "LogListener.h"
 #include "InputHandler.h"
+#include "FrameListener.h"
 
 #include "../QualifiedNames/QualifiedName.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
@@ -63,6 +66,7 @@ class MainFrame: public MainFrameBase
         ~MainFrame();
 
 		bool InitOgre();
+		void InitSocketInterface();
 
     private:
         virtual void OnQuit(wxCommandEvent& event);
@@ -77,11 +81,17 @@ class MainFrame: public MainFrameBase
 		virtual void OnLoadPointCloud( wxCommandEvent& event );
 		virtual void OnShowSceneStructure( wxCommandEvent& event);
 		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
+		virtual void OnDMPoints(wxCommandEvent &event);
+		virtual void OnDMWire(wxCommandEvent &event);
+		virtual void OnDMSolid(wxCommandEvent &event);
 		virtual void OnTestStuff( wxCommandEvent& event );
 
 		void OnMouseEvent( wxMouseEvent& evt );
 		void OnKeyboardEvent( wxKeyEvent& evt );
 		void OnViewClick( wxMouseEvent& evt );
+
+		void OnServerEvent( wxSocketEvent& evt );
+		void OnSocketEvent( wxSocketEvent& evt );
 		
 		void setObjectProperties(Ogre::MovableObject *object);
 		void clearObjectProperties();
@@ -98,6 +108,8 @@ class MainFrame: public MainFrameBase
 		void UpdateRenderWindow();
 
 		Ogre::String GetOgreHandle();
+
+		CustomFrameListener mFrameListener;
 
 		/// Standard factory for dotScene loading
 		OViSEDotSceneManager *mDotSceneMgr;
@@ -135,6 +147,10 @@ class MainFrame: public MainFrameBase
 		SceneTree* mSceneTree;
 
 		wxPropertyGrid* mObjectProperties;
+
+		wxSocketServer* mSocketServer;
+		int mNumClients;
+		bool SocketOk;
 		
 		Ogre::Root* mRoot;
 		Ogre::SceneManager* mSceneMgr;
