@@ -92,6 +92,7 @@ class AddMeshDialog : public wxDialog
 	private:
 	
 	protected:
+		wxBoxSizer* ListSizer;
 		wxListBox* mMeshList;
 		
 		wxButton* mOkButton;

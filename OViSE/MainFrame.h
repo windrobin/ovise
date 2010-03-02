@@ -27,6 +27,7 @@
 #include "LogListener.h"
 #include "InputHandler.h"
 #include "FrameListener.h"
+#include "AddMeshDialog.h"
 
 #include "../QualifiedNames/QualifiedName.h"
 #include "../QualifiedNames/QualifiedNameCollection.h"
@@ -158,7 +159,7 @@ class MainFrame: public MainFrameBase
 
 		bool mOgreInitialized;
 
-		//OViSEAddMeshDialog *mAddMeshDialog;
+		OViSEAddMeshDialog *mAddMeshDialog;
 };
 
 #endif // MAINFRAME_H

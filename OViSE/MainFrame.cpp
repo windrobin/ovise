@@ -85,7 +85,7 @@ MainFrame::MainFrame(wxWindow* parent)
 	// Initialize SelectionManager
 	SelectionManager::getSingletonPtr()->SetPropertyGrid(this->mObjectProperties);
 
-	//mAddMeshDialog = NULL;
+	mAddMeshDialog = NULL;
 
 	Maximize(true);
 
@@ -552,6 +552,8 @@ void MainFrame::UpdateRenderWindow()
 	{
 		mRoot->_fireFrameStarted();
 		mRenderWin->update(true);
+		if( mAddMeshDialog )
+			mAddMeshDialog->mRenderWin->update(true);
 		mRoot->_fireFrameEnded();
 
 		float FPS = mRenderWin->getLastFPS();
@@ -613,20 +615,20 @@ void MainFrame::OnSaveScreenToFile(wxCommandEvent &event)
 
 void MainFrame::OnSceneAddMesh(wxCommandEvent &event)
 {
-	/*
 	if(mAddMeshDialog == NULL)
 	{
 		mAddMeshDialog = new OViSEAddMeshDialog(this, wxID_HIGHEST + 1);
 		mAddMeshDialog->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrame::OnAddMeshDialogClose ), NULL, this);
 	}
 	mAddMeshDialog->Show();
-	*/
+	mAddMeshDialog->InitOgre();
 }
 
 void MainFrame::OnAddMeshDialogClose(wxCloseEvent& event)
 {
+	mAddMeshDialog->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrame::OnAddMeshDialogClose ), NULL, this);
 	event.Skip();
-	//mAddMeshDialog = NULL;
+	mAddMeshDialog = NULL;
 }
 
 void MainFrame::OnViewClick(wxMouseEvent& event)

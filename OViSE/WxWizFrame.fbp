@@ -457,7 +457,7 @@
                         <property name="minimum_size"></property>
                         <property name="name">ListSizer</property>
                         <property name="orient">wxHORIZONTAL</property>
-                        <property name="permission">none</property>
+                        <property name="permission">protected</property>
                         <object class="sizeritem" expanded="1">
                             <property name="border">5</property>
                             <property name="flag">wxALL|wxEXPAND</property>

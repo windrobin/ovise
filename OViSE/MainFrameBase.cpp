@@ -145,7 +145,6 @@ AddMeshDialog::AddMeshDialog( wxWindow* parent, wxWindowID id, const wxString& t
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxBoxSizer* ListSizer;
 	ListSizer = new wxBoxSizer( wxHORIZONTAL );
 	
 	mMeshList = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL|wxLB_NEEDED_SB|wxLB_SINGLE|wxLB_SORT ); 
