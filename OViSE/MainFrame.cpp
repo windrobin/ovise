@@ -621,6 +621,7 @@ void MainFrame::OnSceneAddMesh(wxCommandEvent &event)
 		mAddMeshDialog->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrame::OnAddMeshDialogClose ), NULL, this);
 	}
 	mAddMeshDialog->Show();
+	wxSafeYield();
 	mAddMeshDialog->InitOgre();
 }
 
