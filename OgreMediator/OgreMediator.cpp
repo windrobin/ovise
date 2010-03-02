@@ -42,49 +42,46 @@ ObjectManager* OgreMediator::GetObjectAccess() { return this->mObjectAccess; }
 
 void OgreMediator::AddGrid(int size, int numRows, int numCols, Ogre::Vector3 col, QualifiedName qSceneManager, QualifiedName qSceneNode)
 {
-	/*try
+	Ogre::SceneManager *tmp = iSceneManager.GetPtr( qSceneManager );
+	Ogre::ManualObject* gridObject = tmp->createManualObject("grid");
+
+	Ogre::SceneNode* node = mObjectAccess->GetSceneNode( qSceneNode );
+	
+	Ogre::SceneNode* gridObjectNode;
+	if(node == NULL)
 	{
-		Ogre::SceneManager *tmp = getSceneManager(sceneManagerName);
-		Ogre::ManualObject* gridObject = tmp->createManualObject("grid");
-		
-		Ogre::SceneNode* gridObjectNode;
-		if(node == NULL)
-		{
-			gridObjectNode = tmp->getRootSceneNode()->createChildSceneNode("grid_node");
-		}
-		else
-		{
-			gridObjectNode = node->createChildSceneNode("grid_node");
-		}
-		Ogre::MaterialPtr gridObjectMaterial = Ogre::MaterialManager::getSingleton().create("gridMaterial", "grid");
-		gridObjectMaterial->setReceiveShadows(false);
-		gridObjectMaterial->getTechnique(0)->setLightingEnabled(true);
-		gridObjectMaterial->getTechnique(0)->getPass(0)->setDiffuse(col.x,col.y,col.z,0);
-		gridObjectMaterial->getTechnique(0)->getPass(0)->setAmbient(col.x,col.y,col.z);
-		
-		gridObject->begin("gridMaterial", Ogre::RenderOperation::OT_LINE_LIST);
-		Ogre::Vector3 currentPos = Ogre::Vector3(numRows*size/-2, 0, numCols*size/-2);
-		for(int i=0; i<numRows+1; i++)
-		{
-			gridObject->position(currentPos);
-			gridObject->position(currentPos.x + numCols*size, currentPos.y, currentPos.z);
-			currentPos.z += size;
-		}
-		currentPos.z = numCols*size/-2;
-		for(int j=0; j<numCols+1; j++)
-		{
-			gridObject->position(currentPos);
-			gridObject->position(currentPos.x, currentPos.y, currentPos.z + numRows * size);
-			currentPos.x += size;
-		}			
-		gridObject->end();
-		
-		gridObjectNode->attachObject(gridObject);
+		gridObjectNode = tmp->getRootSceneNode()->createChildSceneNode("grid_node");
 	}
-	catch (OViSEException e)
+	else
 	{
-		Ogre::LogManager::getSingletonPtr()->logMessage(Ogre::String(e.what()));
-	}*/
+		gridObjectNode = node->createChildSceneNode("grid_node");
+	}
+	mObjectAccess->AddSceneNode( QualifiedName::Create( wxT("grid_node") ), gridObjectNode );
+
+	Ogre::MaterialPtr gridObjectMaterial = Ogre::MaterialManager::getSingleton().create("gridMaterial", "grid");
+	gridObjectMaterial->setReceiveShadows(false);
+	gridObjectMaterial->getTechnique(0)->setLightingEnabled(true);
+	gridObjectMaterial->getTechnique(0)->getPass(0)->setDiffuse(col.x,col.y,col.z,0);
+	gridObjectMaterial->getTechnique(0)->getPass(0)->setAmbient(col.x,col.y,col.z);
+	
+	gridObject->begin("gridMaterial", Ogre::RenderOperation::OT_LINE_LIST);
+	Ogre::Vector3 currentPos = Ogre::Vector3(numRows*size/-2, numCols*size/-2, 0);
+	for(int i=0; i<numRows+1; i++)
+	{
+		gridObject->position(currentPos);
+		gridObject->position(currentPos.x + numCols*size, currentPos.y, currentPos.z);
+		currentPos.y += size;
+	}
+	currentPos.y = numCols*size/-2;
+	for(int j=0; j<numCols+1; j++)
+	{
+		gridObject->position(currentPos);
+		gridObject->position(currentPos.x, currentPos.y + numRows * size, currentPos.z);
+		currentPos.x += size;
+	}			
+	gridObject->end();
+	
+	gridObjectNode->attachObject(gridObject);
 }
 
 void OgreMediator::AddCOS(QualifiedName qSceneManager, QualifiedName qSceneNode, float scale, bool castShadows)
