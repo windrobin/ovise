@@ -1,6 +1,13 @@
 #include "AddMeshDialog.h"
 #include "SceneHandling.h"
 
+#ifdef __WXGTK__
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
+#include <gdk/gdkx.h>
+#include <GL/glx.h>
+#endif
+
 MeshDialogFrameListener::MeshDialogFrameListener(Ogre::SceneManager *scnMgr)
 :
 mSceneManager( scnMgr )
@@ -31,10 +38,12 @@ bool MeshDialogFrameListener::frameEnded(const Ogre::FrameEvent &evt)
 
 OViSEAddMeshDialog::OViSEAddMeshDialog( wxWindow* parent, wxWindowID id )
 :
-AddMeshDialog( parent, id )
+AddMeshDialog( parent, id ),
+mRenderWin( NULL )
 {
     mRenderWinWX = new wxWindow(this, wxID_ANY);
-	ListSizer->Insert(0, mRenderWinWX, 4, wxEXPAND);
+    ListSizer->Insert(0, mRenderWinWX, 4, wxEXPAND);
+    mRenderWinWX->Bind( wxEVT_SIZE, &OViSEAddMeshDialog::OnRenderWinResize, this );
 }
 
 void OViSEAddMeshDialog::InitOgre()
@@ -173,6 +182,19 @@ void OViSEAddMeshDialog::OnApplyClick( wxCommandEvent& event )
 void OViSEAddMeshDialog::OnCancelClick( wxCommandEvent& event )
 {
     Close();
+}
+
+void OViSEAddMeshDialog::OnRenderWinResize( wxSizeEvent& event )
+{
+	if( mRenderWin )
+	{
+		// Setting new size;
+		int width = event.GetSize().GetWidth ();
+		int height = event.GetSize().GetHeight ();
+		mRenderWin->resize(width, height);
+		// Letting Ogre know the window has been resized;
+		mRenderWin->windowMovedOrResized ();
+	}
 }
 
 Ogre::String OViSEAddMeshDialog::GetOgreHandle()

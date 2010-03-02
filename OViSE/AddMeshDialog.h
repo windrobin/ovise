@@ -35,6 +35,7 @@ protected:
     void OnOkClick( wxCommandEvent& event );
     void OnApplyClick( wxCommandEvent& event );
     void OnCancelClick( wxCommandEvent& event );
+    void OnRenderWinResize( wxSizeEvent& event );
 
     void updateMeshList();
         
