@@ -215,6 +215,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PathConfigDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PathProvider.cpp"
 				>
 			</File>
@@ -326,6 +330,10 @@
 			</File>
 			<File
 				RelativePath=".\Messenger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PathConfigDialog.h"
 				>
 			</File>
 			<File

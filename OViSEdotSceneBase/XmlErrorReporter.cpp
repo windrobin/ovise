@@ -21,11 +21,11 @@ void XmlErrorReporter::fatalError(const xercesc::SAXParseException& fatalE)
 
 	wxString tSystemId = ToWxString(fatalE.getSystemId());
 	
-	xercesc_3_0::XMLString::binToText(fatalE.getLineNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)fatalE.getLineNumber(), buffText, 19, 10);
 	wxString tLineNumber = ToWxString(buffText);
 	delete buffText;
 
-	xercesc_3_0::XMLString::binToText(fatalE.getColumnNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)fatalE.getColumnNumber(), buffText, 19, 10);
 	wxString tColumnNumber = ToWxString(buffText);
 	delete buffText;
 	
@@ -58,11 +58,11 @@ void XmlErrorReporter::error(const xercesc::SAXParseException& defaultE)
 
 	wxString tSystemId = ToWxString(defaultE.getSystemId());
 	
-	xercesc_3_0::XMLString::binToText(defaultE.getLineNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)defaultE.getLineNumber(), buffText, 19, 10);
 	wxString tLineNumber = ToWxString(buffText);
 	delete buffText;
 
-	xercesc_3_0::XMLString::binToText(defaultE.getColumnNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)defaultE.getColumnNumber(), buffText, 19, 10);
 	wxString tColumnNumber = ToWxString(buffText);
 	delete buffText;
 	
@@ -95,11 +95,11 @@ void XmlErrorReporter::warning(const xercesc::SAXParseException& warningE)
 
 	wxString tSystemId = ToWxString(warningE.getSystemId());
 	
-	xercesc_3_0::XMLString::binToText(warningE.getLineNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)warningE.getLineNumber(), buffText, 19, 10);
 	wxString tLineNumber = ToWxString(buffText);
 	delete buffText;
 
-	xercesc_3_0::XMLString::binToText(warningE.getColumnNumber(), buffText, 19, 10);
+	xercesc::XMLString::binToText((long)warningE.getColumnNumber(), buffText, 19, 10);
 	wxString tColumnNumber = ToWxString(buffText);
 	delete buffText;
 	
