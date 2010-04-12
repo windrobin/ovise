@@ -14,6 +14,9 @@
 
 class OViSEApplication : public wxApp
 {
+private:
+	virtual void SetupBasicConfiguration();
+
 public:
 	virtual bool OnInit();
 	virtual ~OViSEApplication();
