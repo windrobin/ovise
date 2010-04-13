@@ -378,28 +378,15 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	Ogre::SceneManager* SM = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(qSceneManager);
 	if ( SM == 0 ) return 0;
 
-	// Select PCParent by condition: is Ogre::SceneNode the RootSceneNode?
-	wxPropertyCategory* PCParent = 0;
-	QualifiedName qSceneNode;
-	bool isRoot = false;
-	if (SN == SM->getRootSceneNode())
+	// Is RSN (RootSceneNode)?
+	bool isRoot = (SN == SM->getRootSceneNode());
+	
+	// Check QualifiedName, if it's no RSN
+	if (!isRoot)
 	{
-		// Select SceneManager-category as PCParent
-		PCParent = (wxPropertyCategory*)this->PG->GetProperty(ToWxString("SceneManager"));
-		isRoot = true;
-	}
-	else
-	{
-		// Get QualifiedName
 		QualifiedName qSceneNode = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(ToWxString(SN->getName()));
 		if ( !OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qSceneNode) ) return 0;
-
-		// Handle recusive processing of SceneNode
-		PCParent = this->AddSceneNodeToPGCategory(SN->getParentSceneNode());
 	}
-
-	// Stop, if PCParent is NULL
-	if (PCParent == 0) return 0;
 
 	// Perpare ID and Label
 	wxString Label, CategoryID, PropertyID;
@@ -416,8 +403,7 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	Label << ToWxString("'");
 	
 	PCSceneNode = new wxPropertyCategory(Label, CategoryID);
-	this->PG->AppendIn(PCParent, PCSceneNode);
-	PCSceneNode->SetExpanded(false);
+	this->PG->AppendIn(this->PCSelection, PCSceneNode);
 
 	// Name
 	Label = ToWxString("Name");
@@ -583,7 +569,7 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	// ...Ogre::SceneNode-part
 	//this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), qMovableObject);
 
-	PCParent->SetExpanded(false);
+	PCParent->SetExpanded(true);
 	return true;
 }
 bool SelectionManager::GeneratePropertyGridContentFromSelection() { return this->GeneratePropertyGridContentFromSelection(this->Selection); }
@@ -622,19 +608,28 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(QualifiedNameCol
 	this->PG->Append(PCSceneManager);
 	this->PG->Append(new wxStringProperty(ToWxString("Name"), ToWxString("SceneManagerName")));
 	this->PG->SetPropertyValue(ToWxString("SceneManagerName"), OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager().UniqueName());
-	this->PG->DisableProperty(ToWxString("SceneManagerName"));
-	PCSceneManager->SetExpanded(true);
+	this->PG->DisableProperty(ToWxString("SceneManagerName"));	
 
-	// Add cathergory "SceneNode: Root"
-	this->AddSceneNodeToPGCategory(SM->getRootSceneNode());
+	// Add cathegory "Selection"
+	this->PCSelection = new wxPropertyCategory(ToWxString("Selection"));
+	this->PG->Append(this->PCSelection);
+	this->PCSelection->SetExpanded(true);
 
 	// Create (sub-)cathegories for selected objects (recursiv walktrought)
 	if (!Selection.IsEmpty())
 	{
 		for ( unsigned long IT = 0; IT < Selection.Count(); IT++ )
 		{
-			Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(Selection[IT]);
-			this->AddMovableObjectToPG(PCSceneManager, MO);
+			if (OgreMediator::GetSingletonPtr()->iMovableObject.Exist(Selection[IT]))
+			{
+				Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(Selection[IT]);
+				this->AddMovableObjectToPG(PCSelection, MO);
+			}
+			else if (OgreMediator::GetSingletonPtr()->iSceneNode.Exist(Selection[IT]))
+			{
+				Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(Selection[IT]);
+				this->AddSceneNodeToPGCategory(SN);
+			}
 		}
 	}
 
