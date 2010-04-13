@@ -463,7 +463,7 @@ void MainFrame::setupObjectProperties()
 	mWindowManager.AddPane(mObjectProperties, wxRIGHT, wxT("Properties"));
 	this->Connect(PGID, wxEVT_PG_CHANGED, wxPropertyGridEventHandler(MainFrame::OnPropertyChange));
 	mObjectProperties->SetExtraStyle(wxPG_EX_HELP_AS_TOOLTIPS);
-	
+	/*
 	mObjectProperties->Append(new wxPropertyCategory(wxT("Node Properties")));
 	mObjectProperties->Append(new wxStringProperty(wxT("Name"), wxT("NodeName")));
 	mObjectProperties->SetPropertyValidator(wxT("NodeName"), wxTextValidator(wxFILTER_ALPHANUMERIC));
@@ -498,6 +498,7 @@ void MainFrame::setupObjectProperties()
 	mObjectProperties->Append(new wxStringProperty(wxT("Material"), wxT("MeshMaterial")));
 	mObjectProperties->SetPropertyValidator(wxT("MeshMaterial"), wxTextValidator(wxFILTER_ALPHANUMERIC));
 
+	*/
 	mObjectProperties->SetSplitterLeft(true);
 }
 
