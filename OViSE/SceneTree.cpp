@@ -78,26 +78,90 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 {
 	if (this->GetPublishTreeSelectionChanged())
 	{
+		this->SetPublishTreeSelectionChanged(false);
+
 		wxTreeItemId ID = event.GetItem();
-		wxString UniqueName = this->GetItemText(ID);
-		QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(UniqueName);
-		if (qName.IsValid())
+		wxString SelectedItem = this->GetItemText(ID);
+		QualifiedName qName = QualifiedName::GetQualifiedNameByUnique(SelectedItem);
+
+		if (ID.IsOk() && qName.IsValid())
 		{
-			// Publish: unselect old selection
-			if (this->mLastSelectedEntry.IsValid()) EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, this->mLastSelectedEntry);
+			wxArrayTreeItemIds SelectedItems;
+			long SelectedItemsCount = this->GetSelections(SelectedItems);
 
-			// Remember new selection
-			this->mLastSelectedEntry = qName;
+			if (SelectedItemsCount == 1)
+			{
+				if (this->IsSelected(ID))
+				{
+					// STRG was not used
+					// Unselect complete selection...
+					QualifiedNameCollection SelectedQNames = SelectionManager::getSingletonPtr()->Selection;
+					for(unsigned long IT = 0; IT < SelectedQNames.Count(); IT++)
+					{
+						EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, SelectedQNames[IT]);
+					}
 
-			// Publish: selected new selection
-			if (this->IsSelected(ID)) EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+					// Select this item
+					EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+				}
+				else
+				{
+					// STRG was used...
+					// Unselect this item
+					EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName);
+				}
+			}
+			else
+			{
+				// STRG was used...
+				if (this->IsSelected(ID))
+				{
+					// Select this item
+					EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+				}
+				else
+				{
+					// Unelect this item
+					EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName);
+				}
+			}
+			
+
+			
+			/*
+			if (qName.IsValid())
+			{
+				// Publish: unselected old selection
+				if (this->mLastSelectedEntry.IsValid())
+				{
+					if (!this->IsSelected(this->mLastSelectedID))
+					{
+						// Publish: unselect old selection
+						
+					}
+				}
+
+				// Remember new selection
+				this->mLastSelectedEntry = qName;
+				this->mLastSelectedID = ID;
+
+				// Publish: selected new selection
+				if (this->IsSelected(ID))
+				{
+					EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+				}
+			}
+			*/
 		}
+
+		this->SetPublishTreeSelectionChanged(true);
 	}
 	event.Skip();
 }
 void SceneTree::OnItemActivated( wxTreeEvent& event ) // Double-Click event
 {
 	// Set Focus here?
+	wxString test = ToWxString("DEBUG");
 }
 void SceneTree::SetPublishTreeSelectionChanged(bool value) { this->mPublishTreeSelectionChanged = value; }
 bool SceneTree::GetPublishTreeSelectionChanged() { return this->mPublishTreeSelectionChanged; }

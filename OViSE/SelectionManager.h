@@ -31,6 +31,7 @@ private:
 	// Handle property changing
 	wxPGProperty* ChangedProperty;
 	wxPropertyGrid* PG;
+	wxPropertyCategory* PCSelection;
 
 	// wxPropertyGrid-Handling
 	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);

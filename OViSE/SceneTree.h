@@ -7,6 +7,7 @@
 #include <wx/hashmap.h>
 #include "../OgreMediator/OgreMediator.h"
 #include "../ImprovedEventHandling/EventDispatcher.h"
+#include "../OViSE/SelectionManager.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -66,6 +67,7 @@ private:
 	wxString OGRE_ROOT_STRING;
 
 	QualifiedName mLastSelectedEntry;
+	wxTreeItemId mLastSelectedID;
 
 	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);
 

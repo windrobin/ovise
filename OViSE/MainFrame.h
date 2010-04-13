@@ -128,8 +128,9 @@ class MainFrame: public MainFrameBase
 		OgreObjectRenderListener mOgreObjectRL;
 
 		void SelectOgreObject(QualifiedName qName);
+		void SelectOgreObjects(QualifiedNameCollection QSelection);
 		void UnselectOgreObject(QualifiedName qName);
-		void UnselectAllOgreObjects(QualifiedNameCollection QSelection);
+		void UnselectOgreObjects(QualifiedNameCollection QSelection);
 
     protected:
 		void setupObjectProperties();

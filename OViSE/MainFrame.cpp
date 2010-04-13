@@ -652,7 +652,7 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 	{
 		// Nothing selected
 		//this->mSceneTree->UnselectAll();
-		this->UnselectAllOgreObjects(SelectionManager::getSingletonPtr()->Selection);
+		this->UnselectOgreObjects(SelectionManager::getSingletonPtr()->Selection);
 	}
 	else
 	{
@@ -666,79 +666,31 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 		{
 			if (event.ShiftDown())
 			{
-				// CASE 4: Unselect all in complete Query, Add complete Query < IRREGULAR: only unselect, if all from Query are selected
-				if (QNames.Count() > 0)
-				{
-					QualifiedNameCollection UnselectedQNames = QualifiedNameCollection::CollectionDifference(QNames, SelectionManager::getSingletonPtr()->Selection);
-					if (UnselectedQNames.Count() > 0)
-					{
-						SelectionManager::getSingletonPtr()->Selection = QualifiedNameCollection::CollectionUnion(SelectionManager::getSingletonPtr()->Selection, UnselectedQNames);
-						for (unsigned long IT = 0; IT < QNames.Count(); IT++)
-						{
-							// Select in SceneTree-View
-							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
-							this->mSceneTree->SelectItem(Item);
-						}
-					}
-					else
-					{
-						for (unsigned long IT = 0; IT < QNames.Count(); IT++)
-						{
-							// Select in SceneTree-View
-							wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
-							this->mSceneTree->UnselectItem(Item);
-						}
-					}
-				}
+				// CASE 4: Add only objects to selection, which are not in till now.
+				// Get QNames, whose are not selecte now. ( QNames without any qName, which is in Selection )
+				QualifiedNameCollection UnselectedQNames = QualifiedNameCollection::CollectionDifference(QNames, SelectionManager::getSingletonPtr()->Selection);
+				this->SelectOgreObjects(UnselectedQNames);
 			}
 			else
 			{
 				// CASE 2: Unselect one or nothing, Add one or nothing to Selection(front)
-				if (QNames.Count() > 0)
-				{
-					// Add to first selection // Selection is clear, so it's not neccessary to test, if QName is already in there
-					if (SelectionManager::getSingletonPtr()->Selection.Contains(QNames[0]))
-					{
-						// Unelect in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
-						this->mSceneTree->UnselectItem(Item);
-					}
-					else
-					{
-						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
-						this->mSceneTree->SelectItem(Item);
-					}
-				}
+				// Add to previous selection
+				if (SelectionManager::getSingletonPtr()->Selection.Contains(QNames[0])) this->UnselectOgreObject(QNames[0]);
+				else this->SelectOgreObject(QNames[0]);
 			}
 		}
 		else
 		{
 			if (event.ShiftDown())
 			{
-				// CASE 3: Unselect all, Add complete Query
-				this->mSceneTree->UnselectAll();
-				if (QNames.Count() > 0)
-				{
-					for (unsigned long IT = 0; IT < (unsigned long)QNames.Count(); IT++)
-					{
-						// Select in SceneTree-View
-						wxTreeItemId Item = this->mSceneTree->Items[QNames[IT].UniqueName()];
-						this->mSceneTree->SelectItem(Item);
-					}
-				}
+				// CASE 3: Unselect all, select complete Query
+				this->UnselectOgreObjects(SelectionManager::getSingletonPtr()->Selection);
+				this->SelectOgreObjects(QNames);
 			}
 			else
 			{
-				// CASE 1: Unselect all, Select one or nothing
-				this->UnselectAllOgreObjects(SelectionManager::getSingletonPtr()->Selection);
-				//this->mSceneTree->UnselectAll();
-				/*if (QNames.Count() > 0)
-				{
-					// Select in SceneTree-View
-					wxTreeItemId Item = this->mSceneTree->Items[QNames[0].UniqueName()];
-					this->mSceneTree->SelectItem(Item);
-				}*/
+				// CASE 1: Unselect all, select one or nothing
+				this->UnselectOgreObjects(SelectionManager::getSingletonPtr()->Selection);
 				this->SelectOgreObject(QNames[0]);
 			}
 		}
@@ -749,8 +701,18 @@ void MainFrame::SelectOgreObject(QualifiedName qName)
 	bool valid = qName.IsValid();
 	EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
 }
+void MainFrame::SelectOgreObjects(QualifiedNameCollection QSelection)
+{
+	if (!QSelection.IsEmpty())
+	{
+		for (unsigned long IT = 0; IT < QSelection.Count(); IT++)
+		{
+			this->SelectOgreObject(QSelection[IT]);
+		}
+	}
+}
 void MainFrame::UnselectOgreObject(QualifiedName qName) { EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName); }
-void MainFrame::UnselectAllOgreObjects(QualifiedNameCollection QSelection)
+void MainFrame::UnselectOgreObjects(QualifiedNameCollection QSelection)
 {
 	if (!QSelection.IsEmpty())
 	{
