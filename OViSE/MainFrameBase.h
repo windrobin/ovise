@@ -207,8 +207,13 @@ class PathConfigDialog : public wxDialog
 		
 	
 	public:
-		
-		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Configure path settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 600,310 ), long style = wxDEFAULT_DIALOG_STYLE );
+		PathConfigDialog(
+			wxWindow* parent,
+			wxWindowID id = wxID_ANY,
+			const wxString& title = wxT("Configure path settings"),
+			const wxPoint& pos = wxDefaultPosition,
+			const wxSize& size = wxSize( 600,310 ),
+			long style = wxDEFAULT_DIALOG_STYLE );
 		~PathConfigDialog();
 	
 };

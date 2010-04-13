@@ -105,7 +105,14 @@ void PrototypeManagementDialog::OnClickRemove( wxCommandEvent& event )
 }
 void PrototypeManagementDialog::OnClickImport( wxCommandEvent& event )
 {
-	wxFileDialog* FDlg = new wxFileDialog(this, ToWxString("Choose dotScene-XML file to import"), wxFileName::GetCwd(), wxEmptyString, ToWxString("*.xml"), wxFD_OPEN);
+	wxConfig *OviseConfig = new wxConfig();
+
+	wxString MediaPath;
+	if (!OviseConfig->Read("MediaDirStr", &MediaPath)) MediaPath = wxFileName::GetCwd();
+
+	delete OviseConfig;
+
+	wxFileDialog* FDlg = new wxFileDialog(this, ToWxString("Choose dotScene-XML file to import"), MediaPath, wxEmptyString, ToWxString("*.xml"), wxFD_OPEN);
 	FDlg->ShowModal();
 
 	wxArrayString ResultingFullPaths;
