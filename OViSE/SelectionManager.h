@@ -30,16 +30,18 @@ private:
 
 	// Handle property changing
 	wxPGProperty* ChangedProperty;
+
+	// Attributes: construction of wxPropertyGrid
 	wxPropertyGrid* PG;
 	wxPropertyCategory* PCSelection;
 
-	// wxPropertyGrid-Handling
-	bool AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC);
-	bool AddCameraToPGCategory(Ogre::Camera* C);
-	bool AddEntityToPGCategory(Ogre::Entity* E);
-	bool AddLightToPGCategory(Ogre::Light* L);
-	wxPropertyCategory* AddSceneNodeToPGCategory(Ogre::SceneNode* SN);
-	bool AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO);
+	// Methods: construction of wxPropertyGrid
+	bool AddNOTIMPLEMENTED();
+	bool AddCamera(Ogre::Camera* C);
+	bool AddEntity(Ogre::Entity* E);
+	bool AddLight(Ogre::Light* L);
+	wxPropertyCategory* AddSceneNode(Ogre::SceneNode* SN);
+	bool AddMovableObject(Ogre::MovableObject* MO);
 
 public:
 	// De- & Constructors
@@ -58,17 +60,18 @@ public:
 	// Selection
 	QualifiedNameCollection Selection;
 	
-	// Selection methods
+	// Methods: selection
 	bool IsSelected(QualifiedName qName);
 
-	// wxPropertyGrid-Handling
+	// Methods: construction of wxPropertyGrid
 	bool GeneratePropertyGridContentFromSelection();
 	bool GeneratePropertyGridContentFromSelection(wxString SelectionUniqueName);
 	bool GeneratePropertyGridContentFromSelection(QualifiedNameCollection Selection);
 
+	// Attributes: handle OnPropertyChanged(...)
 	HashMap_wxString PGIDRegister;
 
-	// Handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
+	// Methods: handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
 	bool HandlePropertyChanged(wxPGProperty* ChangedProperty);
 	bool HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID);
 	bool HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID);

@@ -28,21 +28,18 @@ bool SelectionManager::IsSelected(QualifiedName qName)
 	}
 	return false;
 }
-bool SelectionManager::AddNOTIMPLEMENTEDToPGCategory(wxPropertyCategory* PC)
+bool SelectionManager::AddNOTIMPLEMENTED()
 {
-	if ( PC == 0 ) return false;
-
-	wxPropertyGrid* PG = PC->GetGrid();
 	if ( PG == 0 ) return false;
 
 	// Info
-	wxPGProperty* PInfo = PG->AppendIn(PC, new wxStringProperty(wxT("INFO"), wxPG_LABEL));
-	PG->SetPropertyValue(PInfo, ToWxString("not implemented"));
-	PG->DisableProperty(PInfo);
+	wxPGProperty* PInfo = this->PG->AppendIn(this->PCSelection, new wxStringProperty(wxT("INFO"), wxPG_LABEL));
+	this->PG->SetPropertyValue(PInfo, ToWxString("not implemented"));
+	this->PG->DisableProperty(PInfo);
 
 	return true;
 }
-bool SelectionManager::AddCameraToPGCategory(Ogre::Camera* C)
+bool SelectionManager::AddCamera(Ogre::Camera* C)
 {
 	// Validate parameters
 	if ( C == 0 ) return false;
@@ -55,7 +52,7 @@ bool SelectionManager::AddCameraToPGCategory(Ogre::Camera* C)
 	if ( !OgreMediator::GetSingletonPtr()->iCamera.Exist(qCamera) ) return false;
 
 	// Handle recusive processing of SceneNode
-	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)C->getParentNode());
+	wxPropertyCategory* PCParent = this->AddSceneNode((Ogre::SceneNode*)C->getParentNode());
 	if (PCParent == 0) return false;
 
 	// Perpare ID and Label
@@ -137,7 +134,7 @@ bool SelectionManager::AddCameraToPGCategory(Ogre::Camera* C)
 
 	return true;
 }
-bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
+bool SelectionManager::AddEntity(Ogre::Entity* E)
 {
 	// Validate parameters
 	if ( E == 0 ) return false;
@@ -150,7 +147,7 @@ bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 	if ( !OgreMediator::GetSingletonPtr()->iEntity.Exist(qEntity) ) return false;
 
 	// Handle recusive processing of SceneNode
-	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)E->getParentNode());
+	wxPropertyCategory* PCParent = this->AddSceneNode((Ogre::SceneNode*)E->getParentNode());
 	if (PCParent == 0) return false;
 
 	// Perpare ID and Label
@@ -220,7 +217,7 @@ bool SelectionManager::AddEntityToPGCategory(Ogre::Entity* E)
 
 	return true;
 }
-bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
+bool SelectionManager::AddLight(Ogre::Light* L)
 {
 	// TODO: Presentation should change with specific type of light !!!
 
@@ -235,7 +232,7 @@ bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 	if ( !OgreMediator::GetSingletonPtr()->iLight.Exist(qLight) ) return false;
 
 	// Handle recusive processing of SceneNode
-	wxPropertyCategory* PCParent = this->AddSceneNodeToPGCategory((Ogre::SceneNode*)L->getParentNode());
+	wxPropertyCategory* PCParent = this->AddSceneNode((Ogre::SceneNode*)L->getParentNode());
 	if (PCParent == 0) return false;
 
 	// Perpare ID and Label
@@ -310,12 +307,12 @@ bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 	Label = ToWxString("Direction");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PDirection = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PDirectionX = PG->AppendIn(PDirection, new wxFloatProperty(wxT("x"), wxT("dx")));
+	wxPGProperty* PDirection = this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PDirectionX = this->PG->AppendIn(PDirection, new wxFloatProperty(wxT("x"), wxT("dx")));
 	this->PG->SetPropertyValidator(PDirectionX, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PDirectionY = PG->AppendIn(PDirection, new wxFloatProperty(wxT("y"), wxT("dy")));
+	wxPGProperty* PDirectionY = this->PG->AppendIn(PDirection, new wxFloatProperty(wxT("y"), wxT("dy")));
 	this->PG->SetPropertyValidator(PDirectionY, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PDirectionZ = PG->AppendIn(PDirection, new wxFloatProperty(wxT("z"), wxT("dz")));
+	wxPGProperty* PDirectionZ = this->PG->AppendIn(PDirection, new wxFloatProperty(wxT("z"), wxT("dz")));
 	this->PG->SetPropertyValidator(PDirectionZ, wxTextValidator(wxFILTER_NUMERIC));
 	PDirection->SetExpanded(false);
 
@@ -328,14 +325,14 @@ bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 	Label = ToWxString("Diffuse Colour");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PDiffuseColour = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PDiffuseColourR = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("r"), wxT("dcr")));
+	wxPGProperty* PDiffuseColour = this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PDiffuseColourR = this->PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("r"), wxT("dcr")));
 	this->PG->SetPropertyValidator(PDiffuseColourR, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PDiffuseColourG = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("g"), wxT("dcg")));
+	wxPGProperty* PDiffuseColourG = this->PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("g"), wxT("dcg")));
 	this->PG->SetPropertyValidator(PDiffuseColourG, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PDiffuseColourB = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("b"), wxT("dcb")));
+	wxPGProperty* PDiffuseColourB = this->PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("b"), wxT("dcb")));
 	this->PG->SetPropertyValidator(PDiffuseColourB, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PDiffuseColourA = PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("a"), wxT("dca")));
+	wxPGProperty* PDiffuseColourA = this->PG->AppendIn(PDiffuseColour, new wxFloatProperty(wxT("a"), wxT("dca")));
 	this->PG->SetPropertyValidator(PDiffuseColourA, wxTextValidator(wxFILTER_NUMERIC));
 	PDiffuseColour->SetExpanded(false);
 
@@ -349,12 +346,12 @@ bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 	Label = ToWxString("Specular Colour");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PSpecularColour = PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PSpecularColourR = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("r"), wxT("scr")));
+	wxPGProperty* PSpecularColour = this->PG->AppendIn(PCLight, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PSpecularColourR = this->PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("r"), wxT("scr")));
 	this->PG->SetPropertyValidator(PSpecularColourR, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PSpecularColourG = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("g"), wxT("scg")));
+	wxPGProperty* PSpecularColourG = this->PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("g"), wxT("scg")));
 	this->PG->SetPropertyValidator(PSpecularColourG, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PSpecularColourB = PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("b"), wxT("scb")));
+	wxPGProperty* PSpecularColourB = this->PG->AppendIn(PSpecularColour, new wxFloatProperty(wxT("b"), wxT("scb")));
 	this->PG->SetPropertyValidator(PSpecularColourB, wxTextValidator(wxFILTER_NUMERIC));
 	PSpecularColour->SetExpanded(false);
 
@@ -365,7 +362,7 @@ bool SelectionManager::AddLightToPGCategory(Ogre::Light* L)
 
 	return true;
 }
-wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* SN)
+wxPropertyCategory* SelectionManager::AddSceneNode(Ogre::SceneNode* SN)
 {
 	// Validate parameters
 	if ( SN == 0 ) return 0;
@@ -450,14 +447,15 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	Label = ToWxString("Position");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PPosition = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PPositionX = PG->AppendIn(PPosition, new wxFloatProperty(wxT("x"), wxT("px")));
+	wxPGProperty* PPosition = this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PPositionX = this->PG->AppendIn(PPosition, new wxFloatProperty(wxT("x"), wxT("px")));
 	this->PG->SetPropertyValidator(PPositionX, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PPositionY = PG->AppendIn(PPosition, new wxFloatProperty(wxT("y"), wxT("py")));
+	wxPGProperty* PPositionY = this->PG->AppendIn(PPosition, new wxFloatProperty(wxT("y"), wxT("py")));
 	this->PG->SetPropertyValidator(PPositionY, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PPositionZ = PG->AppendIn(PPosition, new wxFloatProperty(wxT("z"), wxT("pz")));
+	wxPGProperty* PPositionZ = this->PG->AppendIn(PPosition, new wxFloatProperty(wxT("z"), wxT("pz")));
 	this->PG->SetPropertyValidator(PPositionZ, wxTextValidator(wxFILTER_NUMERIC));
 	PPosition->SetExpanded(false);
+	PPosition->SetFlag(wxPG_PROP_NOEDITOR);
 
 	// Set values
 	this->PG->SetPropertyValue(PPositionX, (double)SN->getPosition().x);
@@ -468,14 +466,15 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	Label = ToWxString("Rotation");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PRotation = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PRotationRoll = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(x-Axis) Roll"), wxT("roll")));
+	wxPGProperty* PRotation = this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PRotationRoll = this->PG->AppendIn(PRotation, new wxFloatProperty(wxT("(x-Axis) Roll"), wxT("roll")));
 	this->PG->SetPropertyValidator(PRotationRoll, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PRotationPitch = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(y-Axis) Pitch"), wxT("pitch")));
+	wxPGProperty* PRotationPitch = this->PG->AppendIn(PRotation, new wxFloatProperty(wxT("(y-Axis) Pitch"), wxT("pitch")));
 	this->PG->SetPropertyValidator(PRotationPitch, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PRotationYaw = PG->AppendIn(PRotation, new wxFloatProperty(wxT("(z-Axis) Yaw"), wxT("yaw")));
+	wxPGProperty* PRotationYaw = this->PG->AppendIn(PRotation, new wxFloatProperty(wxT("(z-Axis) Yaw"), wxT("yaw")));
 	this->PG->SetPropertyValidator(PRotationYaw, wxTextValidator(wxFILTER_NUMERIC));
 	PRotation->SetExpanded(false);
+	PRotation->SetFlag(wxPG_PROP_NOEDITOR);
 
 	// Set values
 	this->PG->SetPropertyValue(PRotationRoll, (double)SN->getOrientation().getPitch().valueDegrees());
@@ -486,14 +485,15 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	Label = ToWxString("Scale");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
-	wxPGProperty* PScale = PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
-	wxPGProperty* PScaleX = PG->AppendIn(PScale, new wxFloatProperty(wxT("x"), wxT("sx")));
+	wxPGProperty* PScale = this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
+	wxPGProperty* PScaleX = this->PG->AppendIn(PScale, new wxFloatProperty(wxT("x"), wxT("sx")));
 	this->PG->SetPropertyValidator(PScaleX, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PScaleY = PG->AppendIn(PScale, new wxFloatProperty(wxT("y"), wxT("sy")));
+	wxPGProperty* PScaleY = this->PG->AppendIn(PScale, new wxFloatProperty(wxT("y"), wxT("sy")));
 	this->PG->SetPropertyValidator(PScaleY, wxTextValidator(wxFILTER_NUMERIC));
-	wxPGProperty* PScaleZ = PG->AppendIn(PScale, new wxFloatProperty(wxT("z"), wxT("sz")));
+	wxPGProperty* PScaleZ = this->PG->AppendIn(PScale, new wxFloatProperty(wxT("z"), wxT("sz")));
 	this->PG->SetPropertyValidator(PScaleZ, wxTextValidator(wxFILTER_NUMERIC));
 	PScale->SetExpanded(false);
+	PScale->SetFlag(wxPG_PROP_NOEDITOR);
 
 	// Set values
 	this->PG->SetPropertyValue(PScaleX, (double)SN->getScale().x);
@@ -502,14 +502,10 @@ wxPropertyCategory* SelectionManager::AddSceneNodeToPGCategory(Ogre::SceneNode* 
 	
 	return PCSceneNode;
 }
-bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::MovableObject* MO)
+bool SelectionManager::AddMovableObject(Ogre::MovableObject* MO)
 {
 	// Validate parameters...
-	if ( PCParent == 0 ) return false;
 	if ( MO == 0 ) return false;
-
-	// Store wxPropertryGrid (PG is never created in SelectionManager, so it should not be deleted too.
-	this->PG = PG;
 
 	// Get QualifiedName
 	QualifiedName qMovableObject = QualifiedName::GetQualifiedNameByUnique(ToWxString(MO->getName()));
@@ -543,33 +539,24 @@ bool SelectionManager::AddMovableObjectToPG(wxPropertyCategory* PCParent, Ogre::
 	}
 	CategoryHeadline << qMovableObject.UniqueName() << ToWxString("'");
 
-	// Setup properties of category
-	//wxPropertyCategory* PCMovableObject = new wxPropertyCategory(CategoryHeadline, ToWxString(MO->getName()));
-	//this->PG->AppendIn(PCParent, PCMovableObject);
-
-	// ...Ogre::MovableObject-part
 	switch(EnumMT)
 	{
-		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddCameraToPGCategory((Ogre::Camera*)MO); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Entity:					this->AddEntityToPGCategory((Ogre::Entity*)MO); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddLightToPGCategory((Ogre::Light*)MO); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_RibbonTrail:				this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable:		this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	this->AddNOTIMPLEMENTEDToPGCategory(PCParent); break;
-		default: this->AddNOTIMPLEMENTEDToPGCategory(PCParent); return false; break;
+		case OgreEnums::MovableObject::MOVABLETYPE_BillBoardChain:			this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_BillboardSet:			this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Camera:					this->AddCamera((Ogre::Camera*)MO); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Entity:					this->AddEntity((Ogre::Entity*)MO); break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Frustum:					this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_InstancedGeometry_BatchInstance: this->AddNOTIMPLEMENTED();	break;
+		case OgreEnums::MovableObject::MOVABLETYPE_Light:					this->AddLight((Ogre::Light*)MO);	break;
+		case OgreEnums::MovableObject::MOVABLETYPE_ManualObject:			this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_MovablePlane:			this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_ParticleSystem:			this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_RibbonTrail:				this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_SimpleRenderable:		this->AddNOTIMPLEMENTED();			break;
+		case OgreEnums::MovableObject::MOVABLETYPE_StaticGeometry_Region:	this->AddNOTIMPLEMENTED();			break;
+		default: this->AddNOTIMPLEMENTED(); return false; break;
 	}
 
-	// ...Ogre::SceneNode-part
-	//this->AddSceneNodeToPGCategory(PC, MO->getParentSceneNode(), qMovableObject);
-
-	PCParent->SetExpanded(true);
 	return true;
 }
 bool SelectionManager::GeneratePropertyGridContentFromSelection() { return this->GeneratePropertyGridContentFromSelection(this->Selection); }
@@ -623,12 +610,12 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(QualifiedNameCol
 			if (OgreMediator::GetSingletonPtr()->iMovableObject.Exist(Selection[IT]))
 			{
 				Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(Selection[IT]);
-				this->AddMovableObjectToPG(PCSelection, MO);
+				this->AddMovableObject(MO);
 			}
 			else if (OgreMediator::GetSingletonPtr()->iSceneNode.Exist(Selection[IT]))
 			{
 				Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(Selection[IT]);
-				this->AddSceneNodeToPGCategory(SN);
+				this->AddSceneNode(SN);
 			}
 		}
 	}
@@ -643,9 +630,78 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 
     // New property change
 	this->ChangedProperty = ChangedProperty;
+
+	// STEP 0: Is property a subproperty? If so, stop processing event without error!
+	if (this->ChangedProperty->IsSubProperty()) return true;
+
+	// STEP 1: Get full name of changed property
+	wxString FullNameOfChangedProperty = ChangedProperty->GetName();
+	wxString FullNameOfChangedLogicalUnit; // Empty
+
+	// STEP 2: Get parent-property's full name
+	wxPGProperty* ParentProperty = ChangedProperty->GetParent();
+	wxString FullNameOfParentProperty = ParentProperty->GetName();
+
+	wxPGProperty* LastParent = 0;
+
+	// STEP 3: Lookup, until parent's name is not part of property's name any more. 
+	while((ParentProperty == 0) || FullNameOfChangedProperty.Contains(FullNameOfParentProperty))
+	{
+		LastParent = ParentProperty;
+		ParentProperty = LastParent->GetParent();
+		FullNameOfParentProperty = ParentProperty->GetName();
+	}
 	
+	// Check, if it's valid...
+	if (LastParent == 0) return false;
+	
+	// STEP 4: Take last parent!
+	FullNameOfChangedLogicalUnit = LastParent->GetName();
+
+	// STEP 5: Seperate data
+	wxString UniqueName = FullNameOfChangedLogicalUnit;
+	wxString PurePGID = FullNameOfChangedProperty;
+	PurePGID.Replace(UniqueName, ToWxString(""), false);
+
+	// STEP 6: Get QualifiedName
+	QualifiedName qName = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetQualifiedNameOfObject(UniqueName);
+	if ( !qName.IsValid() ) return false;
+	
+	// STEP 7: Get MovableType by QualifiedName
+	OgreEnums::MovableObject::MovableType Type = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetMovableType(qName);
+
+	// STEP 8: Futher calls depend on MovableType...
+	bool ReturnValue = false;
+	switch(Type)
+	{
+	case OgreEnums::MovableObject::MOVABLETYPE_Invalid:
+		// STEP 8.x: Object is no Ogre::MovableObject. Could be Ogre::SceneManager or Ogre::SceneNode
+		
+		if (OgreMediator::GetSingletonPtr()->iSceneManager.Exist(qName))
+		{
+			// Got Ogre::SceneManager
+			this->IsValid(); // DEBUG: Handling of that type not implemented yet !!!
+			ReturnValue = false;
+		}
+		if (OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qName))
+		{
+			// Got Ogre::SceneNode
+			ReturnValue = this->HandleSceneNodeChanged(qName, PurePGID);
+		}	
+		break;
+
+	case OgreEnums::MovableObject::MOVABLETYPE_Camera:	ReturnValue = this->HandleCameraChanged(qName, PurePGID); break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Entity:	ReturnValue = this->HandleEntityChanged(qName, PurePGID); break;
+	case OgreEnums::MovableObject::MOVABLETYPE_Light:	ReturnValue = this->HandleLightChanged(qName, PurePGID); break;
+	default:	ReturnValue = false;	break; // DEBUG: Handling of that type not implemented yet !!!
+	}
+
+	return ReturnValue;
+/*
+	// old technique
 	// Get name of changed property
-	wxString PName = ChangedProperty->GetName();//zAxis_Entity_0.Rotation.rz
+	//zAxis_Entity_0.Rotation.rz
+	wxString PName = ChangedProperty->GetName();
 	wxStringTokenizer StrTok(PName, ToWxString("."));
 
 	// Prepare returnvalue
@@ -655,7 +711,7 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 	if ( StrTok.HasMoreTokens() )
 	{
 		// STAGE 1: Get UniqueName and rebuild rest of PropertyID
-		wxString UniqueName = StrTok.GetNextToken();
+		UniqueName = StrTok.GetNextToken();
 		wxString subPGID;
 		while(StrTok.HasMoreTokens())
 		{
@@ -699,6 +755,7 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 	}
 
 	return ReturnValue;
+	*/
 }
 bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID)
 {
@@ -721,6 +778,10 @@ bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subP
 	
 	// STAGE 2: Handle attribute
 	wxString AttributeID = StrTok.GetNextToken();
+	if (AttributeID.IsEmpty())
+	{
+		AttributeID = StrTok.GetNextToken();
+	}
 
 	if (AttributeID.IsSameAs(ToWxString("Position")))
 	{
