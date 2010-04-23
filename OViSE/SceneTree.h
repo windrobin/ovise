@@ -6,8 +6,11 @@
 #include <wx/event.h>
 #include <wx/hashmap.h>
 #include "../OgreMediator/OgreMediator.h"
-#include "../ImprovedEventHandling/EventDispatcher.h"
 #include "../OViSE/SelectionManager.h"
+
+#include "../ImprovedEventHandling/EventPublisherInterface.h"
+
+#include "../OViSE/InputSourceInterface.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -26,7 +29,8 @@ enum SceneTreeDataType
 	ENTITY
 };
 
-class SceneTreeData : public wxTreeItemData
+class SceneTreeData :
+	public wxTreeItemData
 {
 public:
 	SceneTreeData(SceneTreeDataType type, void *dataPointer);
@@ -42,8 +46,10 @@ private:
 	void *mData;
 };
 
-class SceneTree
-	: public wxTreeCtrl
+class SceneTree :
+	public wxTreeCtrl,
+	public EventPublisherInterface,
+	public InputSourceInterface
 {
 public:
 

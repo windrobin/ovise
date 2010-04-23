@@ -36,6 +36,11 @@
 #include "../OViSEAux/MovableTypeTranslator.h"
 #include "../OViSEAux/Logging.h"
 
+#include "../ImprovedEventHandling/EventPublisherInterface.h"
+
+#include "../OViSE/InputSourceInterface.h"
+
+#include "../OViSEAux/LogListener.h"
 #include "../OViSEAux/MovableObjectLogListener.h"
 #include "../OViSEAux/CameraLogListener.h"
 #include "../OViSEAux/EntityLogListener.h"
@@ -44,8 +49,8 @@
 #include "../OViSEAux/SceneNodeLogListener.h"
 
 #include "../OViSE/SceneTreeOgreObjectListener.h"
-#include "../OViSE/SelectionManagerOgreObjectListener.h"
-#include "../OViSE/OgreObjectRenderListener.h"
+#include "../OViSE/SelectionManagerListener.h"
+#include "../OViSE/RenderListener.h"
 
 #include "ExportMeshesDialog.h"
 #include "PrototypeManagementDialog.h"
@@ -60,7 +65,9 @@ enum
 /** Mainwindow of the application.
  * @todo Documentation!
  */
-class MainFrame: public MainFrameBase
+class MainFrame :
+	public MainFrameBase,
+	public EventPublisherInterface
 {
     public:
 		MainFrame(wxWindow* parent);
@@ -115,17 +122,20 @@ class MainFrame: public MainFrameBase
 		/// Standard factory for dotScene loading
 		OViSEDotSceneManager *mDotSceneMgr;
 
+		/*
 		MovableObjectLogListener mMovableObjectLL;
 		CameraLogListener mCameraLogListenerLL;
 		EntityLogListener mEntityLogListenerLL;
 		LightLogListener mLightLogListenerLL;
 		SceneManagerLogListener mSceneManagerLL;
 		SceneNodeLogListener mSceneNodeLL;
+		*/
+		LogListener mLL;
 
 		SceneTreeOgreObjectListener mOgreObjectSTL;
-		SelectionManagerOgreObjectListener mOgreObjectSML;
+		SelectionManagerListener mSelectionManagerL;
 
-		OgreObjectRenderListener mOgreObjectRL;
+		RenderListener mRenderL;
 
 		void SelectOgreObject(QualifiedName qName);
 		void SelectOgreObjects(QualifiedNameCollection QSelection);

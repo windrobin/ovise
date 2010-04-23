@@ -69,8 +69,8 @@ bool SceneNodeInterface::Destroy(QualifiedName qName)
 	// Destroy Ogre::SceneNode
 	SM->destroySceneNode(SN);
 
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
-	EventDispatcher::Publish(EVT_OGRE_SCENENODE_DESTRUCTED, qName);
+	// Publish event
+	this->Publish(EVT_OGRE_DESTRUCTED, qName);
 
 	// Destroy QualifiedName of Ogre::SceneNode
 	QualifiedName::Destroy(qName);
@@ -163,8 +163,8 @@ QualifiedName SceneNodeInterface::Create(wxString Name, Ogre::SceneNode* pParent
 	// Add new association between Ogre::SceneNode and Ogre::SceneManager
 	this->mObjectAccess->AddAssociatedSceneManager(this->mObjectAccess->GetActiveSceneManager(), qSceneNode);
 
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qSceneNode);
-	EventDispatcher::Publish(EVT_OGRE_SCENENODE_CONSTRUCTED, qSceneNode);
+	// Publish event
+	this->Publish(EVT_OGRE_CONSTRUCTED, qSceneNode);
 	
 	// Return QualifiedName of new Ogre::SceneNode
 	return qSceneNode;
@@ -196,4 +196,291 @@ bool SceneNodeInterface::SetMovableObjectInterface(MovableObjectInterface* iMova
 		this->iMovableObject = iMovableObject;
 		return true;
 	}
+}
+
+// Methods, individual wrapper of Ogre-methods
+Ogre::Vector3 SceneNodeInterface::GetPosition(QualifiedName qName)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return Ogre::Vector3::ZERO;
+	Ogre::Vector3 P = SN->getPosition();
+	return P;
+}
+bool SceneNodeInterface::SetPosition(QualifiedName qName, Ogre::Vector3 &P) 
+{
+	return this->SetPosition(qName, P.x, P.y, P.z);
+}
+bool SceneNodeInterface::SetPosition(QualifiedName qName, Ogre::Real X, Ogre::Real Y, Ogre::Real Z)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false; 
+
+	// Get old position and create string for message
+	Ogre::Vector3 OldP = SN->getPosition();
+
+	// Prepare old values
+	wxString sOldValueWithSemicolons;
+	sOldValueWithSemicolons << (double) OldP.x << ToWxString(";");
+	sOldValueWithSemicolons << (double) OldP.y << ToWxString(";");
+	sOldValueWithSemicolons << (double) OldP.z;
+
+	// Set position
+	SN->setPosition(X, Y, Z);
+
+	// Prepare values
+	wxString sValueWithSemicolons;
+	sValueWithSemicolons << (double) X << ToWxString(";");
+	sValueWithSemicolons << (double) Y << ToWxString(";");
+	sValueWithSemicolons << (double) Z;
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("Position"));
+	asContextData.Add(sOldValueWithSemicolons);
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+
+	// Publish event
+	this->Publish(EVT_OGRE_SCENENODE_TRANSLATED, qName, vContextData);
+
+	return true;
+}
+bool SceneNodeInterface::TranslateRelative(QualifiedName qName, Ogre::Vector3 &T)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+
+	Ogre::Vector3 OldP = this->GetPosition(qName);
+	Ogre::Vector3 NewP = OldP + T;
+
+	return this->SetPosition(qName, NewP);
+}
+bool SceneNodeInterface::TranslateRelative(QualifiedName qName, Ogre::Real X, Ogre::Real Y, Ogre::Real Z)
+{
+	Ogre::Vector3 T(X, Y, Z);
+	return this->TranslateRelative(qName, T);
+}
+Ogre::Quaternion SceneNodeInterface::GetOrientation(QualifiedName qName)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return Ogre::Quaternion::ZERO;
+	Ogre::Quaternion Q = SN->getOrientation();
+	return Q;
+}
+bool SceneNodeInterface::SetOrientation(QualifiedName qName, Ogre::Quaternion &Q)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+	
+	// Get old orientation and create string for message
+	Ogre::Quaternion OldQ = SN->getOrientation();
+
+	// Prepare old values
+	wxString sOldValueWithSemicolons;
+	sOldValueWithSemicolons << (double)OldQ.getRoll(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getPitch(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getYaw(false).valueDegrees();
+
+	// Apply change
+	SN->setOrientation(Q);
+	
+	// Prepare values
+	wxString sValueWithSemicolons;
+	sValueWithSemicolons << (double)Q.getRoll(false).valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double)Q.getPitch(false).valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double)Q.getYaw(false).valueDegrees();
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("Orientation"));
+	asContextData.Add(sOldValueWithSemicolons);
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+
+	// Publish event
+	this->Publish(EVT_OGRE_SCENENODE_ROTATED, qName, vContextData);
+
+	return true;
+}
+bool SceneNodeInterface::SetOrientation(QualifiedName qName, Ogre::Real W, Ogre::Real X, Ogre::Real Y, Ogre::Real Z)
+{
+	Ogre::Quaternion Q = Ogre::Quaternion(W, X, Y, Z);
+	return this->SetOrientation(qName, Q);
+}
+bool SceneNodeInterface::SetOrientation(QualifiedName qName, Ogre::Degree Roll, Ogre::Degree Pitch, Ogre::Degree Yaw)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+	
+	// Get old orientation and create string for message
+	Ogre::Quaternion OldQ = SN->getOrientation();
+
+	// Prepare old values
+	wxString sOldValueWithSemicolons;
+	sOldValueWithSemicolons << (double)OldQ.getRoll(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getPitch(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getYaw(false).valueDegrees();
+
+	// Apply change
+	SN->setOrientation(Ogre::Quaternion::IDENTITY);
+	SN->roll(Ogre::Radian(Roll));
+	SN->pitch(Ogre::Radian(Pitch));
+	SN->yaw(Ogre::Radian(Yaw));
+
+	// Reflect effect
+	Ogre::Quaternion Q = SN->getOrientation();
+	
+	// Prepare values
+	wxString sValueWithSemicolons;
+	sValueWithSemicolons << (double)Q.getRoll(false).valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double)Q.getPitch(false).valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double)Q.getYaw(false).valueDegrees();
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("Orientation"));
+	asContextData.Add(sOldValueWithSemicolons);
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+
+	// Publish event
+	this->Publish(EVT_OGRE_SCENENODE_ROTATED, qName, vContextData);
+
+	return true;
+}
+bool SceneNodeInterface::RotateRelative(QualifiedName qName, Ogre::Quaternion &Qrelative)
+{
+	return this->RotateRelative(	qName,
+									Ogre::Degree(Qrelative.getRoll(false)),
+									Ogre::Degree(Qrelative.getPitch(false)),
+									Ogre::Degree(Qrelative.getYaw(false)));
+}
+bool SceneNodeInterface::RotateRelative(QualifiedName qName, Ogre::Degree Roll, Ogre::Degree Pitch, Ogre::Degree Yaw)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+	
+	// Get old orientation and create string for message
+	Ogre::Quaternion OldQ = SN->getOrientation();
+
+	// Prepare old values
+	wxString sOldValueWithSemicolons;
+	sOldValueWithSemicolons << (double)OldQ.getRoll(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getPitch(false).valueDegrees() << ToWxString(";");
+	sOldValueWithSemicolons << (double)OldQ.getYaw(false).valueDegrees();
+
+	// Apply change
+	SN->roll(Ogre::Radian(Roll), Ogre::Node::TS_PARENT);
+	SN->pitch(Ogre::Radian(Pitch), Ogre::Node::TS_PARENT);
+	SN->yaw(Ogre::Radian(Yaw), Ogre::Node::TS_PARENT);
+
+	// Prepare values
+	wxString sValueWithSemicolons;
+	sValueWithSemicolons << (double) Roll.valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double) Pitch.valueDegrees() << ToWxString(";");
+	sValueWithSemicolons << (double) Yaw.valueDegrees();
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("Orientation"));
+	asContextData.Add(sOldValueWithSemicolons);
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+
+	// Publish event
+	this->Publish(EVT_OGRE_SCENENODE_ROTATED, qName, vContextData);
+
+	return true;	
+}
+Ogre::Vector3 SceneNodeInterface::GetScale(QualifiedName qName)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return Ogre::Vector3::ZERO;
+	Ogre::Vector3 S = SN->getScale();
+	return S;
+}
+bool SceneNodeInterface::SetScale(QualifiedName qName, Ogre::Vector3 &S)
+{
+	return this->SetScale(qName, S.x, S.y, S.z);
+}
+bool SceneNodeInterface::SetScale(QualifiedName qName, Ogre::Real X, Ogre::Real Y, Ogre::Real Z)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+
+	// Get old position and create string for message
+	Ogre::Vector3 OldS = SN->getScale();
+
+	// Prepare old values
+	wxString sOldValueWithSemicolons;
+	sOldValueWithSemicolons << (double) OldS.x << ToWxString(";");
+	sOldValueWithSemicolons << (double) OldS.y << ToWxString(";");
+	sOldValueWithSemicolons << (double) OldS.z;
+	
+	// Set scale
+	SN->setScale(X, Y, Z);
+
+	// Prepare values
+	wxString sValueWithSemicolons = "";
+	sValueWithSemicolons << (double) X << ToWxString(";");
+	sValueWithSemicolons << (double) Y << ToWxString(";");
+	sValueWithSemicolons << (double) Z;
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("Scale"));
+	asContextData.Add(sOldValueWithSemicolons);
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+
+	// Publish event
+	this->Publish(EVT_OGRE_SCENENODE_SCALED, qName, vContextData);
+
+	return true;
+}
+bool SceneNodeInterface::ScaleRelative(QualifiedName qName, Ogre::Vector3 &Srelative)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+
+	Ogre::Vector3 OldS = this->GetScale(qName);
+	Ogre::Vector3 NewS = OldS + Srelative;
+
+	return this->SetScale(qName, NewS);
+}
+bool SceneNodeInterface::ScaleRelative(QualifiedName qName, Ogre::Real Xrelative, Ogre::Real Yrelative, Ogre::Real Zrelative)
+{
+	Ogre::Vector3 Srelative(Xrelative, Yrelative, Zrelative);
+	return this->ScaleRelative(qName, Srelative);
+}
+
+bool SceneNodeInterface::GetShowBoundingBox(QualifiedName qName)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+	return SN->getShowBoundingBox();
+}
+bool SceneNodeInterface::SetShowBoundingBox(QualifiedName qName, bool ShowBoundingBox)
+{
+	Ogre::SceneNode* SN = this->GetPtr(qName);
+	if (!SN) return false;
+
+	// Apply change
+	SN->showBoundingBox(ShowBoundingBox);
+	
+	// Prepare values
+	wxString sValueWithSemicolons;
+	if (ShowBoundingBox) sValueWithSemicolons = ToWxString("TRUE");
+	else sValueWithSemicolons = ToWxString("FALSE");
+
+	// Prepare Variant
+	wxArrayString asContextData;
+	asContextData.Add(ToWxString("ShowBoundingBox"));
+	asContextData.Add(sValueWithSemicolons);
+	wxVariant vContextData = asContextData;
+	
+	// Publish event
+	this->Publish(EVT_OGRE_CHANGED, qName, vContextData);
+
+	return true;
 }

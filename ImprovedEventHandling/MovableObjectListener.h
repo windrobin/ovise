@@ -1,27 +1,26 @@
 #pragma once
 
 // Solution's includes
-#include "../ImprovedEventHandling/OgreObjectListener.h"
+#include "../ImprovedEventHandling/EventListenerInterface.h"
 
 class MovableObjectListener :
-	public OgreObjectListener
+	public EventListenerInterface
 {
 public:
-	MovableObjectListener(void);
-	~MovableObjectListener(void);
-
+						MovableObjectListener(void);
+						~MovableObjectListener(void);
+	
 	// Management of listener
 	virtual void		StartListening();
 	virtual void		StopListening();
-	virtual wxString	GetListenerTypeName();
+	
+			void		StartListeningSelected();
+			void		StopListeningSelected();
 
-	// Methods of parent events
-	virtual void OnSelected(ImprovedEvent &event);
-	virtual void OnUnselected(ImprovedEvent &event);
+			void		StartListeningUnselected();
+			void		StopListeningUnselected();
 
 	// Methods of events
-	virtual void OnChanged(ImprovedEvent &event);
-	virtual void OnConstructed(ImprovedEvent &event);
-	virtual void OnDestructed(ImprovedEvent &event);
-	virtual void OnRenamed(ImprovedEvent &event);
+	virtual void OnSelected(ImprovedEvent &event);
+	virtual void OnUnselected(ImprovedEvent &event);
 };

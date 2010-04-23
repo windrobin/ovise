@@ -100,16 +100,18 @@ void MainFrame::OnClose(wxCloseEvent& event)
 
 MainFrame::~MainFrame()
 {
-	this->mOgreObjectRL.StopListening();
+	this->mRenderL.StopListening();
+	/*
+	//this->mMovableObjectLL.StopListening();
+	//this->mCameraLogListenerLL.StopListening();
+	//this->mEntityLogListenerLL.StopListening();
+	//this->mLightLogListenerLL.StopListening();
+	//this->mSceneManagerLL.StopListening();
+	//this->mSceneNodeLL.StopListening();
+	*/
+	this->mLL.StopListening();
 
-	this->mMovableObjectLL.StopListening();
-	this->mCameraLogListenerLL.StopListening();
-	this->mEntityLogListenerLL.StopListening();
-	this->mLightLogListenerLL.StopListening();
-	this->mSceneManagerLL.StopListening();
-	this->mSceneNodeLL.StopListening();
-
-	this->mOgreObjectSML.StopListening();
+	this->mSelectionManagerL.StopListening();
 
 	Ogre::LogManager::getSingletonPtr()->getDefaultLog()->removeListener(mLogBoxListener);
 	delete mRoot;
@@ -229,19 +231,23 @@ bool MainFrame::InitOgre()
 		width, height, false, &params);
 	mRenderWin->setActive (true);
 
-	// Register EventListeners of "improved event handling": Render3D
-	this->mOgreObjectRL.StartListening();
+	
 
 	// Register EventListeners of "improved event handling": Logs
-	this->mMovableObjectLL.StartListening();
+	/*this->mMovableObjectLL.StartListening();
 	this->mCameraLogListenerLL.StartListening();
 	this->mEntityLogListenerLL.StartListening();
 	this->mLightLogListenerLL.StartListening();
 	this->mSceneManagerLL.StartListening();
 	this->mSceneNodeLL.StartListening();
+	*/
+	this->mLL.StartListening();
+
+	// Register EventListeners of "improved event handling": Render3D
+	this->mRenderL.StartListening();
 
 	// Register EventListeners of "improved event handling": SelectionManager (PropertyGrid)
-	this->mOgreObjectSML.StartListening();
+	this->mSelectionManagerL.StartListening();
 
 	// Create scene tree
 	wxImageList *sceneTreeImageList = new wxImageList(16, 16, true, 5);
@@ -698,8 +704,7 @@ void MainFrame::OnViewClick(wxMouseEvent& event)
 }
 void MainFrame::SelectOgreObject(QualifiedName qName)
 {
-	bool valid = qName.IsValid();
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+	this->Publish(EVT_OGRE_MOVABLEOBJECT_SELECTED, qName);
 }
 void MainFrame::SelectOgreObjects(QualifiedNameCollection QSelection)
 {
@@ -711,7 +716,10 @@ void MainFrame::SelectOgreObjects(QualifiedNameCollection QSelection)
 		}
 	}
 }
-void MainFrame::UnselectOgreObject(QualifiedName qName) { EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName); }
+void MainFrame::UnselectOgreObject(QualifiedName qName)
+{
+	this->Publish(EVT_OGRE_MOVABLEOBJECT_UNSELECTED, qName);
+}
 void MainFrame::UnselectOgreObjects(QualifiedNameCollection QSelection)
 {
 	if (!QSelection.IsEmpty())
@@ -738,7 +746,7 @@ void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 void MainFrame::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *prop = event.GetProperty();
-	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop);
+	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Gui);
 	/*
     // It may be NULL
     if ( !prop )
@@ -931,29 +939,34 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& event )
 
 void MainFrame::AddSelectedObject(QualifiedName qSelectedObject)
 {
-	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
+	//Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
+	/*
 	if (MO != 0)
 	{
 		/*if (!SelectionManager::getSingletonPtr()->Selection.Contains(qSelectedObject))
 			SelectionManager::getSingletonPtr()->Selection.Add(qSelectedObject);*/
-		MO->getParentSceneNode()->showBoundingBox(true);
-		//SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
-	}
+		//MO->getParentSceneNode()->showBoundingBox(true);
+		// //SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+	//}
 }
 
 void MainFrame::RemoveSelectedObject(QualifiedName qSelectedObject)
 {
+	//SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
+	/*
 	Ogre::MovableObject* MO = OgreMediator::GetSingletonPtr()->iMovableObject.GetPtr(qSelectedObject);
 	if (MO != 0)
 	{
-		//SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
+		// //SelectionManager::getSingletonPtr()->Selection.Remove(qSelectedObject);
 		MO->getParentSceneNode()->showBoundingBox(false);
-		//SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
+		// //SelectionManager::getSingletonPtr()->GeneratePropertyGridContentFromSelection(this->mObjectProperties);
 	}
+	*/
 }
 
 void MainFrame::RemoveAllSelectedObjects()
 {
+	/*
 	// Remove all BoundingBoxes
 	if (SelectionManager::getSingletonPtr()->Selection.Count() != 0)
 	{
@@ -970,6 +983,7 @@ void MainFrame::RemoveAllSelectedObjects()
 
 	// Clear propertygrid
 	this->mObjectProperties->Clear();
+	*/
 }
 void MainFrame::OnOpenPrototypeManagement( wxCommandEvent& event )
 {

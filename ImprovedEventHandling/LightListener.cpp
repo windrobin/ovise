@@ -5,6 +5,7 @@ LightListener::~LightListener(void) { }
 // Management of listener
 void LightListener::StartListening()
 {
+	/*
 	EventDispatcher* eventDispatcher = EventDispatcher::GetSingletonPtr();
 
 	// Start listening parents events
@@ -16,9 +17,11 @@ void LightListener::StartListening()
 	eventDispatcher->Connect(EVT_OGRE_LIGHT_CONSTRUCTED,	ImprovedEventHandler( LightListener::OnConstructed ),	NULL, this);
 	eventDispatcher->Connect(EVT_OGRE_LIGHT_DESTRUCTED,		ImprovedEventHandler( LightListener::OnDestructed ),	NULL, this);
 	eventDispatcher->Connect(EVT_OGRE_LIGHT_RENAMED,		ImprovedEventHandler( LightListener::OnRenamed ),		NULL, this);
+	*/
 }
 void LightListener::StopListening()
 {
+	/*
 	EventDispatcher* eventDispatcher = EventDispatcher::GetSingletonPtr();
 
 	// Stop listening parents events
@@ -30,13 +33,7 @@ void LightListener::StopListening()
 	eventDispatcher->Disconnect(EVT_OGRE_LIGHT_CONSTRUCTED,	ImprovedEventHandler( LightListener::OnConstructed ),	NULL, this);
 	eventDispatcher->Disconnect(EVT_OGRE_LIGHT_DESTRUCTED,	ImprovedEventHandler( LightListener::OnDestructed ),	NULL, this);
 	eventDispatcher->Disconnect(EVT_OGRE_LIGHT_RENAMED,		ImprovedEventHandler( LightListener::OnRenamed ),		NULL, this);
+	*/
 }
-wxString LightListener::GetListenerTypeName() { return ToWxString("LightListener"); }
-// Methods of parent events
-void LightListener::OnSelected(ImprovedEvent &event) { event.Skip(); }
-void LightListener::OnUnselected(ImprovedEvent &event) { event.Skip(); }
+//wxString LightListener::GetListenerTypeName() { return ToWxString("LightListener"); }
 // Methods of events
-void LightListener::OnChanged(ImprovedEvent &event) { event.Skip(); }
-void LightListener::OnConstructed(ImprovedEvent &event) { event.Skip(); }
-void LightListener::OnDestructed(ImprovedEvent &event) { event.Skip(); }
-void LightListener::OnRenamed(ImprovedEvent &event) { event.Skip(); }

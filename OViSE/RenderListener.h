@@ -1,25 +1,34 @@
 #pragma once
 
 // Solution's includes
+#include "../ImprovedEventHandling/MovableObjectListener.h"
 #include "../ImprovedEventHandling/OgreObjectListener.h"
+#include "../ImprovedEventHandling/SceneNodeListener.h"
 #include "../OgreMediator/OgreMediator.h"
 
-class OgreObjectRenderListener :
-	public OgreObjectListener
+class RenderListener :
+	public MovableObjectListener,
+	public OgreObjectListener,
+	public SceneNodeListener
 {
 public:
-	OgreObjectRenderListener(void);
-	~OgreObjectRenderListener(void);
+	RenderListener(void);
+	~RenderListener(void);
 
 	// Management of listener, sealed
 	void StartListening();
-	wxString GetListenerTypeName();
+	void StopListening();
 
 	// Methods of parent events, sealed
 	void OnChanged(ImprovedEvent &event);
 	void OnConstructed(ImprovedEvent &event);
 	void OnDestructed(ImprovedEvent &event);
 	void OnRenamed(ImprovedEvent &event);
+
 	void OnSelected(ImprovedEvent &event);
 	void OnUnselected(ImprovedEvent &event);
+
+	void OnTranslated(ImprovedEvent &event);
+	void OnRotated(ImprovedEvent &event);
+	void OnScaled(ImprovedEvent &event);
 };

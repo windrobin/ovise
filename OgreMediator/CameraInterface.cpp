@@ -32,8 +32,8 @@ bool CameraInterface::Destroy(QualifiedName qName)
 	SN->detachObject(C);
 	SM->destroyCamera(C);
 
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
-	EventDispatcher::Publish(EVT_OGRE_CAMERA_DESTRUCTED, qName);
+	// Publish event
+	this->Publish(EVT_OGRE_DESTRUCTED, qName);
 
 	// Destroy QualifiedName of Ogre::Camera
 	QualifiedName::Destroy(qName);
@@ -123,8 +123,8 @@ QualifiedName CameraInterface::Create(wxString Name, Ogre::SceneNode* pAnchorSce
 	if (pAnchorSceneNode == 0)  SM->getRootSceneNode()->attachObject(C);
 	else pAnchorSceneNode->attachObject(C);
 	
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qCamera);
-	EventDispatcher::Publish(EVT_OGRE_CAMERA_CONSTRUCTED, qCamera);
+	// Publish event
+	this->Publish(EVT_OGRE_CONSTRUCTED, qCamera);
 
 	// Return QualifiedName of new Ogre::Camera
 	return qCamera;

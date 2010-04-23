@@ -23,7 +23,6 @@
 
 // Solution's includes
 #include "../ImprovedEventHandling/ImprovedEvent.h"
-#include "../ImprovedEventHandling/EventListener.h"
 
 class EventDispatcher :
 	public wxEvtHandler
@@ -47,10 +46,4 @@ public:
 	void Send(wxEventType CommandType, QualifiedName qContextInfo);
 	void Send(wxEventType CommandType, wxVariant vContextData);
 	void Send(wxEventType CommandType, QualifiedName qContextInfo, wxVariant vContextData);
-
-	// Publish events with static methods // For easy access
-	static void Publish(wxEventType CommandType);
-	static void Publish(wxEventType CommandType, QualifiedName qContextInfo);
-	static void Publish(wxEventType CommandType, wxVariant vContextData);
-	static void Publish(wxEventType CommandType, QualifiedName qContextInfo, wxVariant vContextData);
 };

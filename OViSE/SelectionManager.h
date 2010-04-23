@@ -13,10 +13,13 @@
 #include "../OgreMediator/OgreMediator.h"
 #include "../OViSEAux/Logging.h"
 
+#include "../OViSE/InputSourceInterface.h"
+
 // Include Ogre
 #include "Ogre.h"
 
-class SelectionManager
+class SelectionManager :
+	public InputSourceInterface
 {
 private:
 	// De- & Constructors
@@ -72,18 +75,22 @@ public:
 	HashMap_wxString PGIDRegister;
 
 	// Methods: handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
-	bool HandlePropertyChanged(wxPGProperty* ChangedProperty);
-	bool HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID);
-	bool HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID);
+	bool HandlePropertyChanged(wxPGProperty* ChangedProperty, InputSourceType InputFromPropertyGridUI_or_Event);
+	bool HandleSceneNodeChanged(QualifiedName qSceneNode, wxString PurePGID);
+	//bool HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID);
 	bool HandleCameraChanged(QualifiedName qCamera, wxString subPGID);
 	bool HandleCameraChanged(Ogre::Camera* C, wxString subPGID);
 	bool HandleEntityChanged(QualifiedName qEntity, wxString subPGID);
 	bool HandleEntityChanged(Ogre::Entity* E, wxString subPGID);
 	bool HandleLightChanged(QualifiedName qLight, wxString subPGID);
 	bool HandleLightChanged(Ogre::Light* L, wxString subPGID);
-	bool HandlePositionChanged(Ogre::SceneNode* SN);
-	bool HandleScaleChanged(Ogre::SceneNode* SN);
-	bool HandleRotationChanged(Ogre::SceneNode* SN);
+
+	//bool HandlePositionChanged(Ogre::SceneNode* SN);
+	bool HandlePositionChanged(QualifiedName qName);
+	//bool HandleScaleChanged(Ogre::SceneNode* SN);
+	bool HandleScaleChanged(QualifiedName qName);
+	//bool HandleRotationChanged(Ogre::SceneNode* SN);
+	bool HandleOrientationChanged(QualifiedName qName);
 	bool HandleLightDirectionChanged(Ogre::Light* L);
 	bool HandleLightDiffuseColourChanged(Ogre::Light* L);
 	bool HandleLightSpecularColourChanged(Ogre::Light* L);

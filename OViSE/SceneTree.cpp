@@ -36,7 +36,7 @@ SceneTree::SceneTree(wxWindow* parent, wxWindowID id, const wxPoint& pos,
 	this->ExpandAll();
 
 	this->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &SceneTree::OnTreeSelectionChanged, this);
-	this->SetPublishTreeSelectionChanged(true);
+	this->SetInputSource(Gui);
 }
 void SceneTree::addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId)
 {
@@ -78,7 +78,7 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 {
 	if (this->GetPublishTreeSelectionChanged())
 	{
-		this->SetPublishTreeSelectionChanged(false);
+		this->SetInputSource(Event);
 
 		wxTreeItemId ID = event.GetItem();
 		wxString SelectedItem = this->GetItemText(ID);
@@ -98,17 +98,17 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 					QualifiedNameCollection SelectedQNames = SelectionManager::getSingletonPtr()->Selection;
 					for(unsigned long IT = 0; IT < SelectedQNames.Count(); IT++)
 					{
-						EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, SelectedQNames[IT]);
+						this->Publish(EVT_OGRE_MOVABLEOBJECT_UNSELECTED, SelectedQNames[IT]);
 					}
 
 					// Select this item
-					EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+					this->Publish(EVT_OGRE_MOVABLEOBJECT_SELECTED, qName);
 				}
 				else
 				{
 					// STRG was used...
 					// Unselect this item
-					EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName);
+					this->Publish(EVT_OGRE_MOVABLEOBJECT_UNSELECTED, qName);
 				}
 			}
 			else
@@ -117,12 +117,12 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 				if (this->IsSelected(ID))
 				{
 					// Select this item
-					EventDispatcher::Publish(EVT_OGRE_OBJECT_SELECTED, qName);
+					this->Publish(EVT_OGRE_MOVABLEOBJECT_SELECTED, qName);
 				}
 				else
 				{
 					// Unelect this item
-					EventDispatcher::Publish(EVT_OGRE_OBJECT_UNSELECTED, qName);
+					this->Publish(EVT_OGRE_MOVABLEOBJECT_UNSELECTED, qName);
 				}
 			}
 			
@@ -154,7 +154,7 @@ void SceneTree::OnTreeSelectionChanged( wxTreeEvent& event )
 			*/
 		}
 
-		this->SetPublishTreeSelectionChanged(true);
+		this->SetInputSource(Gui);
 	}
 	event.Skip();
 }
