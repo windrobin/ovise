@@ -438,7 +438,7 @@ wxPropertyCategory* SelectionManager::AddSceneNode(Ogre::SceneNode* SN)
 	this->PG->DisableProperty(PropertyID);
 
 	// BoundingBox
-	Label = ToWxString("Show BoundingBox");
+	Label = ToWxString("ShowBoundingBox");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
 	wxPGProperty* PShowBoundingBox = PG->AppendIn(PCSceneNode, new wxBoolProperty(Label, PropertyID, SN->getShowBoundingBox()));
@@ -463,7 +463,7 @@ wxPropertyCategory* SelectionManager::AddSceneNode(Ogre::SceneNode* SN)
 	this->PG->SetPropertyValue(PPositionZ, (double)SN->getPosition().z);
 
 	// Rotation
-	Label = ToWxString("Rotation");
+	Label = ToWxString("Orientation");
 	PropertyID = CategoryID + ToWxString(".") + Label;
 
 	wxPGProperty* PRotation = this->PG->AppendIn(PCSceneNode, new wxStringProperty(Label, PropertyID, wxT("<composed>")));
@@ -623,7 +623,7 @@ bool SelectionManager::GeneratePropertyGridContentFromSelection(QualifiedNameCol
 	return true;
 }
 // Handle wxMain->OnPropertyChanged(...) wxPropertyGridEvent
-bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
+bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty, InputSourceType InputFromPropertyGridUI_or_Event)
 {
 	// It may be NULL
     if ( ChangedProperty == 0 ) return false;
@@ -670,12 +670,16 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 	// STEP 7: Get MovableType by QualifiedName
 	OgreEnums::MovableObject::MovableType Type = OgreMediator::GetSingletonPtr()->GetObjectAccess()->GetMovableType(qName);
 
-	// STEP 8: Futher calls depend on MovableType...
+	// STEP 8: IMPORTANT!
+	// Set source of input!
+	this->SetInputSource(InputFromPropertyGridUI_or_Event);
+
+	// STEP 9: Futher calls depend on MovableType...
 	bool ReturnValue = false;
 	switch(Type)
 	{
 	case OgreEnums::MovableObject::MOVABLETYPE_Invalid:
-		// STEP 8.x: Object is no Ogre::MovableObject. Could be Ogre::SceneManager or Ogre::SceneNode
+		// STEP 9.x: Object is no Ogre::MovableObject. Could be Ogre::SceneManager or Ogre::SceneNode
 		
 		if (OgreMediator::GetSingletonPtr()->iSceneManager.Exist(qName))
 		{
@@ -757,13 +761,72 @@ bool SelectionManager::HandlePropertyChanged(wxPGProperty* ChangedProperty)
 	return ReturnValue;
 	*/
 }
-bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString subPGID)
+bool SelectionManager::HandleSceneNodeChanged(QualifiedName qSceneNode, wxString PurePGID)
 {
-	// Verify qSceneNode
-	if (!OgreMediator::GetSingletonPtr()->iSceneNode.Exist(qSceneNode)) return false;
-	Ogre::SceneNode* SN = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(qSceneNode);
-	return this->HandleSceneNodeChanged(SN, subPGID);
+	// STEP 1: Get name of changed property
+	wxStringTokenizer StrTok(PurePGID, ToWxString("."));
+	
+	// STEP 2: Get name of parameter
+	wxString AttributeID = StrTok.GetNextToken();
+	if (AttributeID.IsEmpty())
+	{
+		AttributeID = StrTok.GetNextToken();
+	}
+
+	// STEP 3: Handle parameter
+	if (AttributeID.IsSameAs(ToWxString("Position")))
+	{
+		if (!StrTok.HasMoreTokens()) return this->HandlePositionChanged(qSceneNode);
+		else return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Orientation")))
+	{
+		if (!StrTok.HasMoreTokens()) return this->HandleOrientationChanged(qSceneNode);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Scale")))
+	{
+		if (!StrTok.HasMoreTokens()) return this->HandleScaleChanged(qSceneNode);
+		return true;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Name"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Native"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Hint"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("Generic"))) // not editable
+	{
+		return false;
+	}
+	if (AttributeID.IsSameAs(ToWxString("ShowBoundingBox")))
+	{
+		if (!StrTok.HasMoreTokens())
+		{
+			if (this->GetInputSource() == Gui)
+			{
+				// Access OgreMediator-Interface
+				return OgreMediator::GetSingletonPtr()->iSceneNode.SetShowBoundingBox(qSceneNode, this->ChangedProperty->GetValue().GetBool());
+			}
+			else 
+			{
+				// Just read new value
+				wxVariant vShowBoundingBox(OgreMediator::GetSingletonPtr()->iSceneNode.GetShowBoundingBox(qSceneNode));
+				this->ChangedProperty->SetValue(vShowBoundingBox);
+				return true;
+			}
+		}
+		return true;
+	}
+	return false;
 }
+/*
 bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subPGID)
 {
 	// INFO: Don't worry. Change parts of composed-types will be propagated :-)
@@ -822,6 +885,7 @@ bool SelectionManager::HandleSceneNodeChanged(Ogre::SceneNode* SN, wxString subP
 
 	return false;
 }
+*/
 bool SelectionManager::HandleCameraChanged(QualifiedName qCamera, wxString subPGID)
 {
 	// Verify qCamera
@@ -1007,8 +1071,11 @@ bool SelectionManager::HandleLightChanged(Ogre::Light* L, wxString subPGID)
 	return false;
 }
 
+/*
 bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN)
 {
+	if (!this->GetHandleChanged()) return true;
+
 	// It may be NULL
 	if ( SN == 0 ) return false;
 
@@ -1071,6 +1138,42 @@ bool SelectionManager::HandlePositionChanged(Ogre::SceneNode* SN)
 
 	return true;
 }
+*/
+bool SelectionManager::HandlePositionChanged(QualifiedName qName)
+{
+	bool ReturnValue = true;
+
+	if (this->GetInputSource() == Gui)
+	{
+		// Use variant as string an tokenize it
+		wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+
+		// Format subtokens into Ogre::Real(double) via variant
+		wxVariant V;
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewX = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewY = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewZ = Ogre::Real(V.GetDouble());
+
+		// Access OgreMediator-Interface
+		ReturnValue =  OgreMediator::GetSingletonPtr()->iSceneNode.SetPosition(qName, NewX, NewY, NewZ);
+	}
+	else
+	{
+		// Just read new value
+		Ogre::Vector3 P = OgreMediator::GetSingletonPtr()->iSceneNode.GetPosition(qName);
+		
+		// Set values
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("px")), (double)P.x);
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("py")), (double)P.y);
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("pz")), (double)P.z);
+	}
+
+	return ReturnValue;
+}
+/*
 bool SelectionManager::HandleScaleChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
@@ -1135,6 +1238,41 @@ bool SelectionManager::HandleScaleChanged(Ogre::SceneNode* SN)
 
 	return true;
 }
+*/
+bool SelectionManager::HandleScaleChanged(QualifiedName qName)
+{
+	bool ReturnValue = true;
+
+	if (this->GetInputSource() == Gui)
+	{
+		// Use variant as string an tokenize it
+		wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+		
+		// Format subtokens into Ogre::Real(double) via variant
+		wxVariant V;
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewX = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewY = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real NewZ = Ogre::Real(V.GetDouble());
+
+		// Access OgreMediator-Interface
+		ReturnValue = OgreMediator::GetSingletonPtr()->iSceneNode.SetScale(qName, NewX, NewY, NewZ);
+	}
+	else
+	{
+		// Just read new value
+		Ogre::Vector3 S = OgreMediator::GetSingletonPtr()->iSceneNode.GetScale(qName);
+		
+		// Set values
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("sx")), (double)S.x);
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("sy")), (double)S.y);
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("sz")), (double)S.z);
+	}
+	return ReturnValue;
+}
+/*
 bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN)
 {
 	// It may be NULL
@@ -1202,7 +1340,41 @@ bool SelectionManager::HandleRotationChanged(Ogre::SceneNode* SN)
 
 	return true;
 }
+*/
+bool SelectionManager::HandleOrientationChanged(QualifiedName qName)
+{
+	bool ReturnValue = true;
 
+	if (this->GetInputSource() == Gui)
+	{
+		// Use variant as string an tokenize it
+		wxStringTokenizer SemiSeperator(this->ChangedProperty->GetValue().GetString(), wxT(";"));
+		
+		// Format subtokens into Ogre::Real(double) via variant
+		wxVariant V;
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real R = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real P = Ogre::Real(V.GetDouble());
+		V = SemiSeperator.GetNextToken();
+		Ogre::Real Y = Ogre::Real(V.GetDouble());
+
+		// Access OgreMediator-Interface
+		return OgreMediator::GetSingletonPtr()->iSceneNode.SetOrientation(qName, Ogre::Degree(R), Ogre::Degree(P), Ogre::Degree(Y));
+	}
+	else
+	{
+		// Just read new value
+		Ogre::Quaternion Q = OgreMediator::GetSingletonPtr()->iSceneNode.GetOrientation(qName);
+		
+		// Set values
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("roll")), (double)Q.getPitch().valueDegrees());
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("pitch")), (double)Q.getRoll().valueDegrees());
+		this->PG->SetPropertyValue(this->ChangedProperty->GetPropertyByName(wxT("yaw")), (double)Q.getYaw().valueDegrees());
+	}
+
+	return ReturnValue;
+}
 bool SelectionManager::HandleLightDirectionChanged(Ogre::Light* L)
 {
 	// It may be NULL
@@ -1403,6 +1575,9 @@ bool SelectionManager::HandleLightSpecularColourChanged(Ogre::Light* L)
 
 	return true;
 }
+// Methods: event-system
+//void SelectionManager::SetPropgridInputContext(bool value) { this->mActivePropgridInputContext = value; }
+//bool SelectionManager::GetPropgridInputContext() { return this->mActivePropgridInputContext; }
 // OLD code
 	/*
 

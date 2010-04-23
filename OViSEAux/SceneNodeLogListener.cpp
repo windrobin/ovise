@@ -2,10 +2,9 @@
 
 SceneNodeLogListener::SceneNodeLogListener(void) { }
 SceneNodeLogListener::~SceneNodeLogListener(void) { }
-
+/*
 // Management of listener, sealed
 wxString SceneNodeLogListener::GetListenerTypeName() { return ToWxString("SceneNodeLogListener"); }
-
 // Methods of parent events, sealed
 void SceneNodeLogListener::OnChanged(ImprovedEvent &event)
 {
@@ -23,6 +22,21 @@ void SceneNodeLogListener::OnChanged(ImprovedEvent &event)
 			MSG << ToWxString(" '");
 			MSG << qName.UniqueName();
 			MSG << ToWxString("'");
+		}
+
+		wxArrayString asContextData = event.GetContextData().GetArrayString();
+		asContextData.GetCount();
+		if (asContextData.GetCount() > 0)
+		{
+			MSG << ToWxString(" ");
+			MSG << asContextData[0];
+			
+			if (asContextData.GetCount() > 1)
+			{
+				MSG << ToWxString(" to [");
+				MSG << asContextData[1];
+				MSG << ToWxString("]");
+			}
 		}
 	}
 	Logging::GetSingletonPtr()->WriteToOgreLog(MSG, Logging::Normal);
@@ -141,3 +155,4 @@ void SceneNodeLogListener::OnUnselected(ImprovedEvent &event)
 		event.Skip();
 	}
 }
+*/

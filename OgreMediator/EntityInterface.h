@@ -1,11 +1,14 @@
 #pragma once
 
 #include "../OgreMediator/MovableObjectInterface.h"
+#include "../ImprovedEventHandling/EventPublisherInterface.h"
 
 // Include WX
 #include <wx/filename.h>
 
-class EntityInterface : public MovableObjectInterface
+class EntityInterface :
+	public MovableObjectInterface,
+	public EventPublisherInterface
 {
 public:
 	// De- & Constructors, individual

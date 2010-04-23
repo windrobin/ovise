@@ -1,12 +1,9 @@
 #include "../OViSEAux/CameraLogListener.h"
 
-CameraLogListener::CameraLogListener(void) { }
+CameraLogListener::CameraLogListener(void) { this->SetListenerTypeName(ToWxString("CameraLogListener")); }
 CameraLogListener::~CameraLogListener(void) { }
-
-// Management of listener, sealed
-wxString CameraLogListener::GetListenerTypeName() { return ToWxString("CameraLogListener"); }
-
 // Methods of parent events, sealed
+/*
 void CameraLogListener::OnChanged(ImprovedEvent &event)
 {
 	wxString MSG = ToWxString("[-EVENT-] ");
@@ -141,3 +138,4 @@ void CameraLogListener::OnUnselected(ImprovedEvent &event)
 		event.Skip();
 	}
 }
+*/

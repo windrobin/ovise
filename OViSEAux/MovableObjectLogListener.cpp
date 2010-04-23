@@ -2,7 +2,7 @@
 
 MovableObjectLogListener::MovableObjectLogListener(void) { }
 MovableObjectLogListener::~MovableObjectLogListener(void) { }
-
+/*
 // Management of listener, sealed
 wxString MovableObjectLogListener::GetListenerTypeName() { return ToWxString("MovableObjectLogListener"); }
 
@@ -141,3 +141,4 @@ void MovableObjectLogListener::OnUnselected(ImprovedEvent &event)
 		event.Skip();
 	}
 }
+*/

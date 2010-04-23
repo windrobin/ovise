@@ -32,8 +32,8 @@ bool LightInterface::Destroy(QualifiedName qName)
 	SN->detachObject(L);
 	SM->destroyLight(L);
 
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
-	EventDispatcher::Publish(EVT_OGRE_LIGHT_DESTRUCTED, qName);
+	// Publish event
+	this->Publish(EVT_OGRE_DESTRUCTED, qName);
 
 	// Destroy QualifiedName of Ogre::Light
 	QualifiedName::Destroy(qName);
@@ -123,8 +123,8 @@ QualifiedName LightInterface::Create(wxString Name, Ogre::SceneNode* pAnchorScen
 	if (pAnchorSceneNode == 0)  SM->getRootSceneNode()->attachObject(L);
 	else pAnchorSceneNode->attachObject(L);
 	
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qLight);
-	EventDispatcher::Publish(EVT_OGRE_LIGHT_CONSTRUCTED, qLight);
+	// Publish event
+	this->Publish(EVT_OGRE_CONSTRUCTED, qLight);
 
 	// Return QualifiedName of new Ogre::Light
 	return qLight;

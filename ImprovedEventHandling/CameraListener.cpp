@@ -5,6 +5,7 @@ CameraListener::~CameraListener(void) { }
 // Management of listener
 void CameraListener::StartListening()
 {
+	/*
 	EventDispatcher* eventDispatcher = EventDispatcher::GetSingletonPtr();
 
 	// Start listening parents events
@@ -16,9 +17,11 @@ void CameraListener::StartListening()
 	eventDispatcher->Connect(EVT_OGRE_CAMERA_CONSTRUCTED,	ImprovedEventHandler( CameraListener::OnConstructed ),	NULL, this);
 	eventDispatcher->Connect(EVT_OGRE_CAMERA_DESTRUCTED,	ImprovedEventHandler( CameraListener::OnDestructed ),	NULL, this);
 	eventDispatcher->Connect(EVT_OGRE_CAMERA_RENAMED,		ImprovedEventHandler( CameraListener::OnRenamed ),		NULL, this);
+	*/
 }
 void CameraListener::StopListening()
 {
+	/*
 	EventDispatcher* eventDispatcher = EventDispatcher::GetSingletonPtr();
 
 	// Stop listening parents events
@@ -30,13 +33,7 @@ void CameraListener::StopListening()
 	eventDispatcher->Disconnect(EVT_OGRE_CAMERA_CONSTRUCTED,ImprovedEventHandler( CameraListener::OnConstructed ),	NULL, this);
 	eventDispatcher->Disconnect(EVT_OGRE_CAMERA_DESTRUCTED, ImprovedEventHandler( CameraListener::OnDestructed ),	NULL, this);
 	eventDispatcher->Disconnect(EVT_OGRE_CAMERA_RENAMED,	ImprovedEventHandler( CameraListener::OnRenamed ),		NULL, this);
+	*/
 }
-wxString CameraListener::GetListenerTypeName() { return ToWxString("CameraListener"); }
-// Methods of parent events
-void CameraListener::OnSelected(ImprovedEvent &event) { event.Skip(); }
-void CameraListener::OnUnselected(ImprovedEvent &event) { event.Skip(); }
+//wxString CameraListener::GetListenerTypeName() { return ToWxString("CameraListener"); }
 // Methods of events
-void CameraListener::OnChanged(ImprovedEvent &event) { event.Skip(); }
-void CameraListener::OnConstructed(ImprovedEvent &event) { event.Skip(); }
-void CameraListener::OnDestructed(ImprovedEvent &event) { event.Skip(); }
-void CameraListener::OnRenamed(ImprovedEvent &event) { event.Skip(); }

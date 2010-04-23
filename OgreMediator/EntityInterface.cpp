@@ -32,8 +32,8 @@ bool EntityInterface::Destroy(QualifiedName qName)
 	SN->detachObject(E);
 	SM->destroyEntity(E);
 	
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_DESTRUCTED, qName);
-	EventDispatcher::Publish(EVT_OGRE_ENTITY_DESTRUCTED, qName);
+	// Publish event
+	this->Publish(EVT_OGRE_DESTRUCTED, qName);
 
 	// Destroy QualifiedName of Ogre::Entity
 	QualifiedName::Destroy(qName);
@@ -126,8 +126,8 @@ QualifiedName EntityInterface::Create(wxString Name, wxString MeshFile, Ogre::Sc
 	if (pAnchorSceneNode == 0)  SM->getRootSceneNode()->attachObject(E);
 	else pAnchorSceneNode->attachObject(E);
 
-	EventDispatcher::Publish(EVT_OGRE_OBJECT_CONSTRUCTED, qEntity);
-	EventDispatcher::Publish(EVT_OGRE_ENTITY_CONSTRUCTED, qEntity);
+	// Publish event
+	this->Publish(EVT_OGRE_CONSTRUCTED, qEntity);
 	
 	// Return QualifiedName of new Ogre::Entity
 	return qEntity;

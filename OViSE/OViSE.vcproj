@@ -266,11 +266,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OgreObjectRenderListener.cpp"
+					RelativePath=".\Pointcloud.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\Pointcloud.cpp"
+					RelativePath=".\RenderListener.cpp"
 					>
 				</File>
 				<File
@@ -306,7 +306,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\SelectionManagerOgreObjectListener.cpp"
+					RelativePath=".\SelectionManagerListener.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="GUI Object Extensions"
+				>
+				<File
+					RelativePath=".\InputSourceInterface.cpp"
 					>
 				</File>
 			</Filter>
@@ -384,11 +392,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\OgreObjectRenderListener.h"
+					RelativePath=".\Pointcloud.h"
 					>
 				</File>
 				<File
-					RelativePath=".\Pointcloud.h"
+					RelativePath=".\RenderListener.h"
 					>
 				</File>
 				<File
@@ -424,7 +432,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\SelectionManagerOgreObjectListener.h"
+					RelativePath=".\SelectionManagerListener.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="GUI Object Extensions"
+				>
+				<File
+					RelativePath=".\InputSourceInterface.h"
 					>
 				</File>
 			</Filter>
@@ -435,6 +451,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\ClassDiagram1.cd"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

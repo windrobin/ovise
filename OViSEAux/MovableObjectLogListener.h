@@ -10,7 +10,7 @@ class MovableObjectLogListener :
 public:
 	MovableObjectLogListener(void);
 	~MovableObjectLogListener(void);
-
+/*
 	// Management of listener, sealed
 	wxString GetListenerTypeName();
 
@@ -21,4 +21,5 @@ public:
 	void OnRenamed(ImprovedEvent &event);
 	void OnSelected(ImprovedEvent &event);
 	void OnUnselected(ImprovedEvent &event);
+	*/
 };

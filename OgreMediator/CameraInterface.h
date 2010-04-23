@@ -1,8 +1,11 @@
 #pragma once
 
 #include "../OgreMediator/MovableObjectInterface.h"
+#include "../ImprovedEventHandling/EventPublisherInterface.h"
 
-class CameraInterface : public MovableObjectInterface
+class CameraInterface :
+	public MovableObjectInterface,
+	public EventPublisherInterface
 {
 public:
 	// De- & Constructors, individual

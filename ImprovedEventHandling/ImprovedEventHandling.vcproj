@@ -157,19 +157,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CameraListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EntityListener.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\EventDispatcher.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EventListener.cpp"
 				>
 			</File>
 			<File
@@ -180,26 +168,58 @@
 				RelativePath=".\ImprovedEventTypes.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\LightListener.cpp"
+			<Filter
+				Name="Basic Listeners"
 				>
-			</File>
-			<File
-				RelativePath=".\MovableObjectListener.cpp"
+				<File
+					RelativePath=".\CameraListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\EntityListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\LightListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MovableObjectListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\OgreObjectListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SceneManagerListener.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\SceneNodeListener.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Interfaces"
 				>
-			</File>
-			<File
-				RelativePath=".\OgreObjectListener.cpp"
+				<File
+					RelativePath=".\EventListenerInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\EventPublisherInterface.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Inherited Listeners for Testing"
 				>
-			</File>
-			<File
-				RelativePath=".\SceneManagerListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SceneNodeListener.cpp"
-				>
-			</File>
+				<File
+					RelativePath=".\MultiListener.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -207,23 +227,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CameraListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EntityListener.h"
-				>
-			</File>
-			<File
 				RelativePath=".\EventDispatcher.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EventListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EventListenerInterface.h"
 				>
 			</File>
 			<File
@@ -234,26 +238,58 @@
 				RelativePath=".\ImprovedEventTypes.h"
 				>
 			</File>
-			<File
-				RelativePath=".\LightListener.h"
+			<Filter
+				Name="Basic Listeners"
 				>
-			</File>
-			<File
-				RelativePath=".\MovableObjectListener.h"
+				<File
+					RelativePath=".\CameraListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\EntityListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LightListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MovableObjectListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\OgreObjectListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SceneManagerListener.h"
+					>
+				</File>
+				<File
+					RelativePath=".\SceneNodeListener.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Interfaces"
 				>
-			</File>
-			<File
-				RelativePath=".\OgreObjectListener.h"
+				<File
+					RelativePath=".\EventListenerInterface.h"
+					>
+				</File>
+				<File
+					RelativePath=".\EventPublisherInterface.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Inherited Listeners"
 				>
-			</File>
-			<File
-				RelativePath=".\SceneManagerListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SceneNodeListener.h"
-				>
-			</File>
+				<File
+					RelativePath=".\MultiListener.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

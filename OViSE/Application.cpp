@@ -74,6 +74,9 @@ void OViSEApplication::SetupBasicConfiguration()
 
 		OViSEPathConfigDialog* PCDlg = new OViSEPathConfigDialog(WorkingDirStr, BaseDirStr, MediaDirStr, NULL);
 		PCDlg->ShowModal();
+
+		BaseDirStr = PCDlg->GetBasePath();
+		MediaDirStr = PCDlg->GetMediaPath();
 		
 		switch(PCDlg->GetReturnCode())
 		{
