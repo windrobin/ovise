@@ -3,7 +3,7 @@
  * Purpose:   Code describes a singleton class holding strings as parts of 		*
  *			  qualified names. These parts are: native name, generic name and 	*
  *			  genic hint.The generic name is unique and acts as hash-key.		*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Author:    Henning Renartz													*
  * Created:   2009-11-02														*
  * Copyright: Henning Renartz,													*
  *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*

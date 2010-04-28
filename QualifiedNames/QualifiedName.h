@@ -3,7 +3,7 @@
  * Purpose:   Code describes a class for qualified names, composed of a	native	*
  *			  and a generic part. It ensures a unique instance for a given		*
  *			  native name, divided from generic part and compareable.			*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Author:    Henning Renartz													*
  * Created:   2009-11-02														*
  * Copyright: Henning Renartz,													*
  *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*

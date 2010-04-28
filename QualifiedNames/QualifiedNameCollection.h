@@ -3,7 +3,7 @@
  * Purpose:   Code describes a container for QualifiedName-objects and			*
  *			  operations on that collection. Addition math. set-operations,		*
  *			  whose imporve handlich with collections.							*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+ * Author:    Henning Renartz													*
  * Created:   2009-11-02														*
  * Copyright: Henning Renartz,													*
  *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
