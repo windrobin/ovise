@@ -746,7 +746,7 @@ void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 void MainFrame::OnPropertyChange(wxPropertyGridEvent& event)
 {
 	wxPGProperty *prop = event.GetProperty();
-	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Gui);
+	SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceInterface::Gui);
 	/*
     // It may be NULL
     if ( !prop )
