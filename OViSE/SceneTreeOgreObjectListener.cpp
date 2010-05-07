@@ -29,7 +29,7 @@ void SceneTreeOgreObjectListener::OnRenamed(ImprovedEvent &event)
 void SceneTreeOgreObjectListener::OnSelected(ImprovedEvent &event)
 {
 	// Stop publishing selection-changed-events, while apply selection in SceneTree. Otherwise code walkhrouth in an endless loop!
-	this->mSceneTree->SetInputSource(Event);
+	this->mSceneTree->SetInputSource(InputSourceInterface::Event);
 	
 	// Apply SelectItem()
 	QualifiedName qName = event.GetContextInfo();
@@ -37,7 +37,7 @@ void SceneTreeOgreObjectListener::OnSelected(ImprovedEvent &event)
 	this->mSceneTree->SelectItem(Item);
 
 	// Start publishing selection-changed-events again!
-	this->mSceneTree->SetInputSource(Gui);
+	this->mSceneTree->SetInputSource(InputSourceInterface::Gui);
 
 	// Forwarding event
 	event.Skip();

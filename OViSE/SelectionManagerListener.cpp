@@ -29,7 +29,7 @@ void SelectionManagerListener::OnChanged(ImprovedEvent &event)
 			wxString FullProperyName;
 			FullProperyName << qName.UniqueName() << ToWxString(".") << asContextData[0];
 			wxPGProperty* prop = SelectionManager::getSingletonPtr()->GetPropertyGrid()->GetPropertyByName(FullProperyName);
-			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Event);
+			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceInterface::Event);
 		}
 		else
 		{
@@ -122,7 +122,7 @@ void SelectionManagerListener::OnTranslated(ImprovedEvent &event)
 			wxString FullProperyName;
 			FullProperyName << qName.UniqueName() << ToWxString(".") << asContextData[0];
 			wxPGProperty* prop = SelectionManager::getSingletonPtr()->GetPropertyGrid()->GetPropertyByName(FullProperyName);
-			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Event);
+			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceInterface::Event);
 		}
 		else
 		{
@@ -149,7 +149,7 @@ void SelectionManagerListener::OnRotated(ImprovedEvent &event)
 			wxString FullProperyName;
 			FullProperyName << qName.UniqueName() << ToWxString(".") << asContextData[0];
 			wxPGProperty* prop = SelectionManager::getSingletonPtr()->GetPropertyGrid()->GetPropertyByName(FullProperyName);
-			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Event);
+			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceInterface::Event);
 		}
 		else
 		{
@@ -176,7 +176,7 @@ void SelectionManagerListener::OnScaled(ImprovedEvent &event)
 			wxString FullProperyName;
 			FullProperyName << qName.UniqueName() << ToWxString(".") << asContextData[0];
 			wxPGProperty* prop = SelectionManager::getSingletonPtr()->GetPropertyGrid()->GetPropertyByName(FullProperyName);
-			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceType::Event);
+			if (prop) SelectionManager::getSingletonPtr()->HandlePropertyChanged(prop, InputSourceInterface::Event);
 		}
 		else
 		{
