@@ -21,6 +21,7 @@
 #include <wx/config.h>
 #include "PathConfigDialog.h"
 
+
 IMPLEMENT_APP(OViSEApplication);
 
 /** Setup the path configuration, if it does not exist yet.
@@ -81,9 +82,9 @@ bool OViSEApplication::SetupBasicConfiguration()
 	{
 		case wxID_OK:
 			// Save if the user wants this
-			OviseConfig.Write("WorkingDir", ConfigDialog.GetCmdPath());
-			OviseConfig.Write("BaseDirStr", ConfigDialog.GetBasePath());
-			OviseConfig.Write("MediaDirStr", ConfigDialog.GetMediaPath());
+			OviseConfig.Write(WorkPathKey, ConfigDialog.GetCmdPath());
+			OviseConfig.Write(BasePathKey, ConfigDialog.GetBasePath());
+			OviseConfig.Write(MediaPathKey, ConfigDialog.GetMediaPath());
 
 			OviseConfig.Write("ConfigurationDone", true);
 			return true;
@@ -98,13 +99,14 @@ bool OViSEApplication::SetupBasicConfiguration()
 
 bool OViSEApplication::OnInit()
 {
+	// Bump out if configuration fails
 	if ( !this->SetupBasicConfiguration() )
 		return false;
 
 	// Retrieve the media path
 	wxConfig OviseConfig;
 	wxString MediaPath=OviseConfig.Read(wxT("MediaDirStr"));
-
+	wxFileName::SetCwd( OviseConfig.Read(wxT("WorkingDir")));
 
 	wxImage::AddHandler( new wxPNGHandler );
 	wxBitmap Bitmap;

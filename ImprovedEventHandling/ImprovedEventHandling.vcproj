@@ -81,8 +81,8 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="2"
+			ConfigurationType="4"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -104,6 +104,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\OViSEAux&quot;;&quot;$(SolutionDir)\QualifiedNames&quot;;&quot;$(OGRE_HOME)\include&quot;;&quot;$(XERCES_HOME)\include&quot;;&quot;$(WX_HOME)\include&quot;;&quot;$(WX_HOME)\include\msvc&quot;;&quot;$(WX_HOME)\contrib\include&quot;;&quot;$(WX_HOME)\lib\mswud&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -119,17 +120,11 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="true"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
+				Name="VCLibrarianTool"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\$(ConfigurationName)&quot;;&quot;$(XERCES_HOME)\lib&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -139,9 +134,6 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
