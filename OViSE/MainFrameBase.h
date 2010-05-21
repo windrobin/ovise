@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 17 2010)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -189,31 +189,14 @@ class PathConfigDialog : public wxDialog
 	private:
 	
 	protected:
-		wxStaticText* mWelcomeLabel;
+		wxBoxSizer* mMainSizer;
 		wxDirPickerCtrl* mCmdDirPicker;
 		wxDirPickerCtrl* mBaseDirPicker;
 		wxDirPickerCtrl* mMediaDirPicker;
-		wxStdDialogButtonSizer* mDialogButtonSizer;
-		wxButton* mDialogButtonSizerSave;
-		wxButton* mDialogButtonSizerCancel;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
-		virtual void OnCmdDirChanged( wxFileDirPickerEvent& event ) { event.Skip(); }
-		virtual void OnBaseDirChanged( wxFileDirPickerEvent& event ) { event.Skip(); }
-		virtual void OnMediaDirChanged( wxFileDirPickerEvent& event ) { event.Skip(); }
-		virtual void OnClickCancel( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickSave( wxCommandEvent& event ) { event.Skip(); }
-		
 	
 	public:
-		PathConfigDialog(
-			wxWindow* parent,
-			wxWindowID id = wxID_ANY,
-			const wxString& title = wxT("Configure path settings"),
-			const wxPoint& pos = wxDefaultPosition,
-			const wxSize& size = wxSize( 600,310 ),
-			long style = wxDEFAULT_DIALOG_STYLE );
+		
+		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~PathConfigDialog();
 	
 };
