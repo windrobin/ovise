@@ -1574,10 +1574,10 @@
             <property name="minimum_size"></property>
             <property name="name">PathConfigDialog</property>
             <property name="pos"></property>
-            <property name="size">600,310</property>
+            <property name="size">-1,-1</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
             <property name="subclass"></property>
-            <property name="title">Configure path settings</property>
+            <property name="title">OViSE - Configure Path Settings</property>
             <property name="tooltip"></property>
             <property name="validator_data_type"></property>
             <property name="validator_style">wxFILTER_NONE</property>
@@ -1589,7 +1589,7 @@
             <event name="OnActivate"></event>
             <event name="OnActivateApp"></event>
             <event name="OnChar"></event>
-            <event name="OnClose">OnClose</event>
+            <event name="OnClose"></event>
             <event name="OnEnterWindow"></event>
             <event name="OnEraseBackground"></event>
             <event name="OnHibernate"></event>
@@ -1618,9 +1618,9 @@
             <event name="OnUpdateUI"></event>
             <object class="wxBoxSizer" expanded="1">
                 <property name="minimum_size"></property>
-                <property name="name">MainSizer</property>
+                <property name="name">mMainSizer</property>
                 <property name="orient">wxVERTICAL</property>
-                <property name="permission">none</property>
+                <property name="permission">protected</property>
                 <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
@@ -1633,11 +1633,11 @@
                         <property name="orient">wxVERTICAL</property>
                         <property name="permission">none</property>
                         <event name="OnUpdateUI"></event>
-                        <object class="sizeritem" expanded="1">
+                        <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
                             <property name="flag">wxALL</property>
                             <property name="proportion">0</property>
-                            <object class="wxStaticText" expanded="1">
+                            <object class="wxStaticText" expanded="0">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="context_menu">1</property>
@@ -1646,11 +1646,11 @@
                                 <property name="font"></property>
                                 <property name="hidden">0</property>
                                 <property name="id">wxID_ANY</property>
-                                <property name="label">You run OViSE first time or application has been moved.&#x0A;&#x0A;This application binds to recources located in serveral path. For propper use these paths must be configured. This dialog look up itself, which works usually. In some cases your assistance is necessary while configuration.</property>
+                                <property name="label">You are running OViSE for the first time or it has been moved.&#x0A;&#x0A;This application uses resources located at different paths. These paths must be properly configured now. If you have never run this dialog before, the paths are guessed and probably correct as they are. In rare cases, however, it might be necessary to manually adjust them.</property>
                                 <property name="maximum_size"></property>
                                 <property name="minimum_size"></property>
                                 <property name="name">mWelcomeLabel</property>
-                                <property name="permission">protected</property>
+                                <property name="permission">none</property>
                                 <property name="pos"></property>
                                 <property name="size"></property>
                                 <property name="style"></property>
@@ -1697,17 +1697,17 @@
                     <property name="proportion">0</property>
                     <object class="wxStaticBoxSizer" expanded="1">
                         <property name="id">wxID_ANY</property>
-                        <property name="label">CMD Path</property>
+                        <property name="label">Working Directory (Usually, this is where your executable files are located)</property>
                         <property name="minimum_size"></property>
                         <property name="name">CmdPathSizer</property>
                         <property name="orient">wxVERTICAL</property>
                         <property name="permission">none</property>
                         <event name="OnUpdateUI"></event>
-                        <object class="sizeritem" expanded="1">
+                        <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
                             <property name="flag">wxALIGN_CENTER|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
-                            <object class="wxDirPickerCtrl" expanded="1">
+                            <object class="wxDirPickerCtrl" expanded="0">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="context_menu">1</property>
@@ -1735,7 +1735,7 @@
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
                                 <event name="OnChar"></event>
-                                <event name="OnDirChanged">OnCmdDirChanged</event>
+                                <event name="OnDirChanged"></event>
                                 <event name="OnEnterWindow"></event>
                                 <event name="OnEraseBackground"></event>
                                 <event name="OnKeyDown"></event>
@@ -1774,11 +1774,11 @@
                         <property name="orient">wxVERTICAL</property>
                         <property name="permission">none</property>
                         <event name="OnUpdateUI"></event>
-                        <object class="sizeritem" expanded="1">
+                        <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
                             <property name="flag">wxALIGN_CENTER|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
-                            <object class="wxDirPickerCtrl" expanded="1">
+                            <object class="wxDirPickerCtrl" expanded="0">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="context_menu">1</property>
@@ -1806,7 +1806,7 @@
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
                                 <event name="OnChar"></event>
-                                <event name="OnDirChanged">OnBaseDirChanged</event>
+                                <event name="OnDirChanged"></event>
                                 <event name="OnEnterWindow"></event>
                                 <event name="OnEraseBackground"></event>
                                 <event name="OnKeyDown"></event>
@@ -1845,11 +1845,11 @@
                         <property name="orient">wxVERTICAL</property>
                         <property name="permission">none</property>
                         <event name="OnUpdateUI"></event>
-                        <object class="sizeritem" expanded="1">
+                        <object class="sizeritem" expanded="0">
                             <property name="border">5</property>
                             <property name="flag">wxALIGN_CENTER|wxALL|wxEXPAND</property>
                             <property name="proportion">0</property>
-                            <object class="wxDirPickerCtrl" expanded="1">
+                            <object class="wxDirPickerCtrl" expanded="0">
                                 <property name="bg"></property>
                                 <property name="context_help"></property>
                                 <property name="context_menu">1</property>
@@ -1877,7 +1877,7 @@
                                 <property name="window_name"></property>
                                 <property name="window_style"></property>
                                 <event name="OnChar"></event>
-                                <event name="OnDirChanged">OnMediaDirChanged</event>
+                                <event name="OnDirChanged"></event>
                                 <event name="OnEnterWindow"></event>
                                 <event name="OnEraseBackground"></event>
                                 <event name="OnKeyDown"></event>
@@ -1902,32 +1902,6 @@
                                 <event name="OnUpdateUI"></event>
                             </object>
                         </object>
-                    </object>
-                </object>
-                <object class="sizeritem" expanded="1">
-                    <property name="border">5</property>
-                    <property name="flag">wxEXPAND</property>
-                    <property name="proportion">1</property>
-                    <object class="wxStdDialogButtonSizer" expanded="1">
-                        <property name="Apply">0</property>
-                        <property name="Cancel">1</property>
-                        <property name="ContextHelp">0</property>
-                        <property name="Help">0</property>
-                        <property name="No">0</property>
-                        <property name="OK">0</property>
-                        <property name="Save">1</property>
-                        <property name="Yes">0</property>
-                        <property name="minimum_size"></property>
-                        <property name="name">mDialogButtonSizer</property>
-                        <property name="permission">protected</property>
-                        <event name="OnApplyButtonClick"></event>
-                        <event name="OnCancelButtonClick">OnClickCancel</event>
-                        <event name="OnContextHelpButtonClick"></event>
-                        <event name="OnHelpButtonClick"></event>
-                        <event name="OnNoButtonClick"></event>
-                        <event name="OnOKButtonClick"></event>
-                        <event name="OnSaveButtonClick">OnClickSave</event>
-                        <event name="OnYesButtonClick"></event>
                     </object>
                 </object>
             </object>

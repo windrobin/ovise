@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 17 2010)
+// C++ code generated with wxFormBuilder (version May  4 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -106,38 +106,38 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrameBase::OnClose ) );
-	this->Connect( menuFileQuit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
-	this->Connect( showStructure->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
-	this->Connect( saveScreenshotToFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
-	this->Connect( dynamicShadows->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
-	this->Connect( points->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
-	this->Connect( wireframe->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
-	this->Connect( solid->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Connect( addMesh->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
-	this->Connect( deleteMeshes->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
-	this->Connect( OpenPrototypeManagement->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
-	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
-	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
-	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
+	this->Connect( idMenuQuit, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
+	this->Connect( ID_SHOW_STRUCTURE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
+	this->Connect( ID_SAVE_SCREENSHOT_TO_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
+	this->Connect( ID_DYNAMIC_SHADOWS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
+	this->Connect( ID_POINTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
+	this->Connect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
+	this->Connect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
+	this->Connect( ID_ADD_MESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
+	this->Connect( ID_DELETE_MESHES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
+	this->Connect( ID_OPEN_PROTOTYPE_MANAGEMENT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
+	this->Connect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
+	this->Connect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
+	this->Connect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 }
 
 MainFrameBase::~MainFrameBase()
 {
 	// Disconnect Events
 	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrameBase::OnClose ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
-	this->Disconnect( wxID_ANY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
+	this->Disconnect( idMenuQuit, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
+	this->Disconnect( ID_SHOW_STRUCTURE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
+	this->Disconnect( ID_SAVE_SCREENSHOT_TO_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
+	this->Disconnect( ID_DYNAMIC_SHADOWS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
+	this->Disconnect( ID_POINTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
+	this->Disconnect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
+	this->Disconnect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
+	this->Disconnect( ID_ADD_MESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
+	this->Disconnect( ID_DELETE_MESHES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
+	this->Disconnect( ID_OPEN_PROTOTYPE_MANAGEMENT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
+	this->Disconnect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
+	this->Disconnect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
+	this->Disconnect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 	
 }
 
@@ -326,25 +326,25 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 	
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+	mMainSizer = new wxBoxSizer( wxVERTICAL );
 	
 	wxStaticBoxSizer* WelcomeSizer;
 	WelcomeSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Welcome") ), wxVERTICAL );
 	
-	mWelcomeLabel = new wxStaticText( this, wxID_ANY, wxT("You run OViSE first time or application has been moved.\n\nThis application binds to recources located in serveral path. For propper use these paths must be configured. This dialog look up itself, which works usually. In some cases your assistance is necessary while configuration."), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText* mWelcomeLabel;
+	mWelcomeLabel = new wxStaticText( this, wxID_ANY, wxT("You are running OViSE for the first time or it has been moved.\n\nThis application uses resources located at different paths. These paths must be properly configured now. If you have never run this dialog before, the paths are guessed and probably correct as they are. In rare cases, however, it might be necessary to manually adjust them."), wxDefaultPosition, wxDefaultSize, 0 );
 	mWelcomeLabel->Wrap( 580 );
 	WelcomeSizer->Add( mWelcomeLabel, 0, wxALL, 5 );
 	
-	MainSizer->Add( WelcomeSizer, 0, wxEXPAND, 5 );
+	mMainSizer->Add( WelcomeSizer, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* CmdPathSizer;
-	CmdPathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("CMD Path") ), wxVERTICAL );
+	CmdPathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Working Directory (Usually, this is where your executable files are located)") ), wxVERTICAL );
 	
 	mCmdDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's CMD folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
 	CmdPathSizer->Add( mCmdDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
-	MainSizer->Add( CmdPathSizer, 0, wxEXPAND, 5 );
+	mMainSizer->Add( CmdPathSizer, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* BasePathSizer;
 	BasePathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Base Path") ), wxVERTICAL );
@@ -352,7 +352,7 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 	mBaseDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's base folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
 	BasePathSizer->Add( mBaseDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
-	MainSizer->Add( BasePathSizer, 0, wxEXPAND, 5 );
+	mMainSizer->Add( BasePathSizer, 0, wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* MediaPathSizer;
 	MediaPathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Media Path") ), wxVERTICAL );
@@ -360,38 +360,15 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 	mMediaDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's media folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
 	MediaPathSizer->Add( mMediaDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
-	MainSizer->Add( MediaPathSizer, 0, wxEXPAND, 5 );
+	mMainSizer->Add( MediaPathSizer, 0, wxEXPAND, 5 );
 	
-	mDialogButtonSizer = new wxStdDialogButtonSizer();
-	mDialogButtonSizerSave = new wxButton( this, wxID_SAVE );
-	mDialogButtonSizer->AddButton( mDialogButtonSizerSave );
-	mDialogButtonSizerCancel = new wxButton( this, wxID_CANCEL );
-	mDialogButtonSizer->AddButton( mDialogButtonSizerCancel );
-	mDialogButtonSizer->Realize();
-	MainSizer->Add( mDialogButtonSizer, 1, wxEXPAND, 5 );
-	
-	this->SetSizer( MainSizer );
+	this->SetSizer( mMainSizer );
 	this->Layout();
+	mMainSizer->Fit( this );
 	
 	this->Centre( wxBOTH );
-	
-	// Connect Events
-	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PathConfigDialog::OnClose ) );
-	mCmdDirPicker->Connect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnCmdDirChanged ), NULL, this );
-	mBaseDirPicker->Connect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnBaseDirChanged ), NULL, this );
-	mMediaDirPicker->Connect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnMediaDirChanged ), NULL, this );
-	mDialogButtonSizerCancel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PathConfigDialog::OnClickCancel ), NULL, this );
-	mDialogButtonSizerSave->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PathConfigDialog::OnClickSave ), NULL, this );
 }
 
 PathConfigDialog::~PathConfigDialog()
 {
-	// Disconnect Events
-	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( PathConfigDialog::OnClose ) );
-	mCmdDirPicker->Disconnect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnCmdDirChanged ), NULL, this );
-	mBaseDirPicker->Disconnect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnBaseDirChanged ), NULL, this );
-	mMediaDirPicker->Disconnect( wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEventHandler( PathConfigDialog::OnMediaDirChanged ), NULL, this );
-	mDialogButtonSizerCancel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PathConfigDialog::OnClickCancel ), NULL, this );
-	mDialogButtonSizerSave->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PathConfigDialog::OnClickSave ), NULL, this );
-	
 }

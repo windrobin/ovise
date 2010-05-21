@@ -23,97 +23,107 @@
 
 IMPLEMENT_APP(OViSEApplication);
 
-void OViSEApplication::SetupBasicConfiguration()
+/** Setup the path configuration, if it does not exist yet.
+	\returns false if the user canceled the process, true otherwise.
+	\todo Rename? The name is somewhat misleading.
+*/
+bool OViSEApplication::SetupBasicConfiguration()
 {
+	// FIXME: move this info out of the root config?
+
 	// Get config
-	wxConfig *OviseConfig = new wxConfig();
+	wxConfig OviseConfig;
 
 	// Configuration already done?
-	bool ConfigurationDone = OviseConfig->ReadBool("ConfigurationDone", false);
+	if ( OviseConfig.ReadBool("ConfigurationDone", false) )
+		return true;
 
-	// If not, get working-directory and open PathConfigDialog...
-	if (!ConfigurationDone)
+	// The names of the tags in the config
+	const wxString BasePathKey = wxT("BaseDirStr");
+	const wxString MediaPathKey = wxT("MediaDirStr");
+	const wxString WorkPathKey = wxT("WorkingDir");
+
+
+	// Try to guess values based on the working directory
+	wxString	WorkingDirectory = wxFileName::GetCwd();
+
+	// Look for base-path...
+	wxFileName	BasePath = wxFileName::DirName(WorkingDirectory);
+	BasePath.RemoveLastDir();
+
+	// Assume that the working directory is a subdir of our base path.
+	// Also, assume that the base path starts with "ovise"
+	wxArrayString BasePathFolders = BasePath.GetDirs();
+	for ( size_t i=0,ei=BasePathFolders.GetCount();i<ei;++i )
 	{
-		ConfigurationDone = true;
-		OviseConfig->Write("ConfigurationDone", ConfigurationDone);
+		wxString& CurrentDir(BasePathFolders[ei-1-i]);
+		CurrentDir.MakeLower(); // Do this case insensitive
 
-		// Get working-directory...
-		wxString WorkingDirStr = wxFileName::GetCwd();
-		wxFileName WorkingDir = wxFileName(WorkingDirStr);
-		OviseConfig->Write("WorkingDir", WorkingDirStr);
+		if ( CurrentDir.StartsWith("ovise") )
+			break;
 
-		// Look for base-path...
-		wxString ParentDirStr = WorkingDir.GetPath();
-		wxFileName ParentDir = wxFileName(ParentDirStr);
-		wxString DirectoryStr = ParentDir.GetName();
-
-		while(!(DirectoryStr.IsSameAs("ovise", true) || DirectoryStr.IsSameAs("", true)))
-		{
-			ParentDirStr = ParentDir.GetPath();
-			ParentDir = wxFileName(ParentDirStr);
-			DirectoryStr = ParentDir.GetName();
-		}
-
-		// Create base- and media-path
-		wxString BaseDirStr, MediaDirStr;
-		if(DirectoryStr.IsSameAs("ovise", true))
-		{
-			BaseDirStr = ParentDirStr;
-			MediaDirStr = ParentDir.GetFullPath();
-			MediaDirStr.Append(wxFileName::GetPathSeparator());
-			MediaDirStr.Append("Media");
-		}
-		else
-		{
-			BaseDirStr = WorkingDirStr;
-			MediaDirStr = WorkingDirStr;
-		}
-
-		OviseConfig->Write("BaseDirStr", BaseDirStr);
-		OviseConfig->Write("MediaDirStr", MediaDirStr);
-
-		OViSEPathConfigDialog* PCDlg = new OViSEPathConfigDialog(WorkingDirStr, BaseDirStr, MediaDirStr, NULL);
-		PCDlg->ShowModal();
-
-		BaseDirStr = PCDlg->GetBasePath();
-		MediaDirStr = PCDlg->GetMediaPath();
-		
-		switch(PCDlg->GetReturnCode())
-		{
-			case wxID_SAVE:
-				OviseConfig->Write("BaseDirStr", BaseDirStr);
-				OviseConfig->Write("MediaDirStr", MediaDirStr);
-				break;
-			case wxID_CANCEL:
-				break;
-			default:
-				break;
-		}
+		BasePath.RemoveLastDir();
 	}
 
-	delete OviseConfig;
+	// Append the media path
+	wxFileName	MediaPath = BasePath;
+	MediaPath.AppendDir("Media");
+	
+	// Read values from the config, using the guessed values as a default
+	wxString BasePathValue = OviseConfig.Read(BasePathKey,BasePath.GetPath());
+	wxString MediaPathValue = OviseConfig.Read(MediaPathKey,MediaPath.GetPath());
+	WorkingDirectory = OviseConfig.Read(WorkPathKey,WorkingDirectory);
+
+	// Run the dialog..
+	OViSEPathConfigDialog ConfigDialog(WorkingDirectory, BasePathValue, MediaPathValue, NULL);
+
+	switch( ConfigDialog.ShowModal() )
+	{
+		case wxID_OK:
+			// Save if the user wants this
+			OviseConfig.Write("WorkingDir", ConfigDialog.GetCmdPath());
+			OviseConfig.Write("BaseDirStr", ConfigDialog.GetBasePath());
+			OviseConfig.Write("MediaDirStr", ConfigDialog.GetMediaPath());
+
+			OviseConfig.Write("ConfigurationDone", true);
+			return true;
+
+		default:
+		case wxID_CANCEL:
+			// Do not save
+			return false;
+	}
+
 }
 
 bool OViSEApplication::OnInit()
 {
-	this->SetupBasicConfiguration();
+	if ( !this->SetupBasicConfiguration() )
+		return false;
 
-	wxConfig *OviseConfig = new wxConfig();
+	// Retrieve the media path
+	wxConfig OviseConfig;
+	wxString MediaPath=OviseConfig.Read(wxT("MediaDirStr"));
 
-	wxString MediaPath;
-	OviseConfig->Read("MediaDirStr", &MediaPath);
 
 	wxImage::AddHandler( new wxPNGHandler );
-	wxBitmap bitmap;
+	wxBitmap Bitmap;
 	wxSplashScreen *splash = NULL;
 
-	if (bitmap.LoadFile(MediaPath + wxT("/Splash/OViSESplash.png"), wxBITMAP_TYPE_PNG))
+	// Check whether the the Splash image can be loaded
+	// This works also as a test to check whether path configuration was successful
+	if (Bitmap.LoadFile(MediaPath + wxT("/Splash/OViSESplash.png"), wxBITMAP_TYPE_PNG))
 	{
-		splash = new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
+		splash = new wxSplashScreen(Bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
 			wxDefaultSize, wxBORDER_NONE | wxSTAY_ON_TOP);
 	}
+	else
+	{
+		// Exit gracefully if loading failed - and allow reconfiguration
+		OviseConfig.Write("ConfigurationDone",false);
+		return false;
+	}
 
-	delete OviseConfig;
 
     MainFrame* frame = new MainFrame(NULL);
 
