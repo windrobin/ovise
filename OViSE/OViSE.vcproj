@@ -63,6 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="comctl32.lib rpcrt4.lib winmm.lib wsock32.lib wxmsw29ud_core.lib wxbase29ud.lib wxmsw29ud_adv.lib OgreMain_d.lib wxmsw29ud_propgrid.lib xerces-c_3D.lib"
+				OutputFile="$(OutDir)\$(ProjectName)Debug.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(XERCES_HOME)\lib&quot;;&quot;$(SolutionDir)\lib\$(ConfigurationName)&quot;;&quot;$(OGRE_HOME)\lib&quot;;&quot;$(WX_HOME)\lib\vc_lib&quot;"
 				IgnoreDefaultLibraryNames=""
