@@ -98,6 +98,7 @@ class MainFrame :
 		void OnKeyboardEvent( wxKeyEvent& evt );
 		void OnViewClick( wxMouseEvent& evt );
 
+
 		void OnServerEvent( wxSocketEvent& evt );
 		void OnSocketEvent( wxSocketEvent& evt );
 		
@@ -113,6 +114,7 @@ class MainFrame :
 
 		void OnIdle( wxIdleEvent& evt );
 		void OnRenderWindowResize(wxSizeEvent& evt);
+		void OnRenderWindowPaint(wxPaintEvent& Event);
 		void UpdateRenderWindow();
 
 		Ogre::String GetOgreHandle();
