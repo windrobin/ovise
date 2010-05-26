@@ -74,6 +74,7 @@ MainFrame::MainFrame(wxWindow* parent)
 	mMainRenderWin->Bind(wxEVT_SIZE, &MainFrame::OnRenderWindowResize, this);
 	Bind(wxEVT_IDLE, &MainFrame::OnIdle, this);
 	mMainRenderWin->Bind(wxEVT_LEFT_DCLICK, &MainFrame::OnViewClick, this);
+	mMainRenderWin->Bind(wxEVT_PAINT, &MainFrame::OnRenderWindowPaint, this);
 	
 	mLogBox = new wxListBox(this, wxID_ANY);
 	mWindowManager.AddPane(mLogBox, wxBOTTOM, wxT("Log"));
@@ -536,6 +537,13 @@ void MainFrame::OnIdle(wxIdleEvent& evt)
 {
 	UpdateRenderWindow();
 	evt.RequestMore();
+}
+
+void MainFrame::OnRenderWindowPaint(wxPaintEvent& Event)
+{
+	wxPaintDC Context(mMainRenderWin);
+
+	UpdateRenderWindow();
 }
 
 void MainFrame::OnRenderWindowResize(wxSizeEvent& evt)
