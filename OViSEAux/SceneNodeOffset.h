@@ -15,7 +15,7 @@
 #define SCENENODE_OFFSET_H_
 
 // Include Ogre
-#include "Ogre.h"
+#include <Ogre.h>
 
 class SceneNodeOffset
 {

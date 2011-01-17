@@ -33,37 +33,37 @@ namespace {
 
 //helper functions
 enum wxbuildinfoformat {
-    short_f, long_f };
+	short_f, long_f };
 
 wxString wxbuildinfo(wxbuildinfoformat format)
 {
-    wxString wxbuild(wxVERSION_STRING);
+	wxString wxbuild(wxVERSION_STRING);
 
-    if (format == long_f )
-    {
+	if (format == long_f )
+	{
 #if defined(__WXMSW__)
-        wxbuild << _T("-Windows");
+		wxbuild << _T("-Windows");
 #elif defined(__WXMAC__)
-        wxbuild << _T("-Mac");
+		wxbuild << _T("-Mac");
 #elif defined(__UNIX__)
-        wxbuild << _T("-Linux");
+		wxbuild << _T("-Linux");
 #endif
 
 #if wxUSE_UNICODE
-        wxbuild << _T("-Unicode build");
+		wxbuild << _T("-Unicode build");
 #else
-        wxbuild << _T("-ANSI build");
+		wxbuild << _T("-ANSI build");
 #endif // wxUSE_UNICODE
-    }
+	}
 
-    return wxbuild;
+	return wxbuild;
 }
 
 MainFrame::MainFrame(wxWindow* ParentWindow)
 : MainFrameBase(ParentWindow), mOgreWindow(0), mInputHandler(0), mCurrentEntity(0)
 {
 #if wxUSE_STATUSBAR
-    statusBar->SetStatusText(_("OViSE started up."), 0);
+	statusBar->SetStatusText(_("OViSE started up."), 0);
 	statusBar->SetStatusText(wxT("FPS:"), 1);
 #endif
 
@@ -124,7 +124,7 @@ MainFrame::~MainFrame()
 void MainFrame::SetStatusMessage( wxString& Msg, int field )
 {
 #if wxUSE_STATUSBAR
-    statusBar->SetStatusText( Msg, field);
+	statusBar->SetStatusText( Msg, field);
 #endif
 }
 
@@ -182,7 +182,7 @@ bool MainFrame::InitOgre()
 	mCamera = SceneManager->createCamera("MainCamera");
 	mCamera->setNearClipDistance(0.01);
 	mCamera->setFarClipDistance(1000);
-    mCamera->setAutoAspectRatio(true);
+	mCamera->setAutoAspectRatio(true);
 	mCamera->setQueryFlags(0x01);
 
 	Ogre::SceneNode* CameraFocusNode = SceneManager
@@ -201,11 +201,11 @@ bool MainFrame::InitOgre()
 	//wxYield();
 
 	// Create viewport for camera
-    Ogre::Viewport* Viewport = mOgreWindow->GetRenderWindow()->addViewport(mCamera);
+	Ogre::Viewport* Viewport = mOgreWindow->GetRenderWindow()->addViewport(mCamera);
 	Viewport->setBackgroundColour(Ogre::ColourValue(0.5, 0.5, 0.5));
 
 	// Initialize resources
-    Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
+	Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	// DBG: Testscene
@@ -298,7 +298,7 @@ void MainFrame::LoadPlugin( wxString Filename )
 
 	if ( !Function )
 	{
-	    std::cout << "Plugin entry point not found." << std::endl;
+		std::cout << "Plugin entry point not found." << std::endl;
 		return;
 	}
 
@@ -347,9 +347,9 @@ void MainFrame::OnIdle(wxIdleEvent& evt)
 
 void MainFrame::OnAbout(wxCommandEvent &event)
 {
-    wxAboutDialogInfo info;
-    info.SetName(wxT("OViSE"));
-    info.SetVersion(wxT("0.3 Beta (gnome)"));
+	wxAboutDialogInfo info;
+	info.SetName(wxT("OViSE"));
+	info.SetVersion(wxT("0.3 Beta (gnome)"));
 
 	wxString description = wxT("Institute of Computer Science and Engineering (CSE)\n\r");
 	description += wxT("Industrial Applications of Computer Science and Micro Systems (IAIM)\n");
@@ -360,7 +360,7 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
 	info.SetDescription(description);
 
-    info.SetCopyright(wxT("(C) 2008-20010 "));
+	info.SetCopyright(wxT("(C) 2008-20010 "));
 
 	info.AddDeveloper(wxT("Programming - Alexander Kasper <alexander.kasper@kit.edu>\n"));
 	info.AddDeveloper(wxT("Programming - Marius Elvert <marius.elvert@googlemail.com>"));
@@ -380,7 +380,7 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 
 	info.SetWebSite(wxT("http://code.google.com/p/ovise/"));
 
-    wxAboutBox(info);
+	wxAboutBox(info);
 }
 
 void MainFrame::OnSaveScreenToFile(wxCommandEvent &event)

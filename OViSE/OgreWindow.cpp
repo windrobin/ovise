@@ -200,8 +200,8 @@ void OgreWindow::LoadResources()
 
 void OgreWindow::OnCreate(wxWindowCreateEvent& Event)
 {
-    try
-    {
+	try
+	{
 #ifndef _WIN32
 		// Postpone init till we are realized
 		if ( !gtk_widget_get_realized( this->GetHandle() ) )
@@ -245,11 +245,11 @@ void OgreWindow::OnCreate(wxWindowCreateEvent& Event)
 			mInitFunc();
 
 		mContextCreated = true;
-    }
-    catch( ... )
-    {
+	}
+	catch( ... )
+	{
 		std::cout << "Some error happened (" << __FILE__ << ")" << std::endl;
-    }
+	}
 }
 
 void OgreWindow::OnPaint(wxPaintEvent& Event)
