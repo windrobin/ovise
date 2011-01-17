@@ -3,9 +3,13 @@
 
 // Include WX
 #ifdef __WXMSW__
-#include "wx/msw/winundef.h"
+# include "wx/msw/winundef.h"
 #endif
+
 #include <wx/string.h>
+
+// For boost::noncopyable
+#include <boost/utility.hpp>
 
 // Include Xerces
 #include <xercesc/util/XMLString.hpp>
@@ -13,7 +17,11 @@
 // Include STD
 #include <string>
 
-class StringConverter
+class StringConverter :
+// FIXME (ME): doesn't implement correct copy-ctor, so leave it noncopyable for now.
+// Either leave it like that, implement a copy-ctor, move the code to free functions or
+// use a complete variable instead of a pointer
+	public boost::noncopyable 
 {
 private:
 	wxString* mStr;

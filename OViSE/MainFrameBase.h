@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -26,6 +26,9 @@
 #include <wx/stattext.h>
 #include <wx/statbox.h>
 #include <wx/filepicker.h>
+#include <wx/radiobox.h>
+#include <wx/textctrl.h>
+#include <wx/statline.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -36,12 +39,14 @@
 #define ID_POINTS 1004
 #define ID_WIREFRAME 1005
 #define ID_SOLID 1006
-#define ID_ADD_MESH 1007
-#define ID_DELETE_MESHES 1008
-#define ID_OPEN_PROTOTYPE_MANAGEMENT 1009
-#define ID_LOAD_POINTCLOUD 1010
-#define idMenuAbout 1011
-#define ID_TESTSTUFF 1012
+#define ID_INSERT_ENTITY 1007
+#define ID_REMOVE_ENTITY 1008
+#define ID_ADD_ATTRIBUTE 1009
+#define ID_DELETE_ATTRIBUTE 1010
+#define ID_LOAD_POINTCLOUD 1011
+#define ID_SERVER_LISTEN 1012
+#define idMenuAbout 1013
+#define ID_TESTSTUFF 1014
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameBase
@@ -59,6 +64,7 @@ class MainFrameBase : public wxFrame
 		wxMenu* view;
 		wxMenu* displayMode;
 		wxMenu* scene;
+		wxMenu* network;
 		wxMenu* helpMenu;
 		wxMenu* debug;
 		wxStatusBar* statusBar;
@@ -72,10 +78,8 @@ class MainFrameBase : public wxFrame
 		virtual void OnDMPoints( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMWire( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMSolid( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnSceneAddMesh( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnMenuDeleteMeshes( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOpenPrototypeManagement( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLoadPointCloud( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnNetworkListenChange( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ) { event.Skip(); }
 		
@@ -198,6 +202,44 @@ class PathConfigDialog : public wxDialog
 		
 		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~PathConfigDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class AddAttributeDialog
+///////////////////////////////////////////////////////////////////////////////
+class AddAttributeDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+	
+	public:
+		wxBoxSizer* Sizer;
+		wxRadioBox* TypeRadioBox;
+		wxTextCtrl* NameCtrl;
+		wxTextCtrl* ValueCtrl;
+		
+		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~AddAttributeDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class ConnectToServerDialog
+///////////////////////////////////////////////////////////////////////////////
+class ConnectToServerDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+	
+	public:
+		wxBoxSizer* Sizer;
+		wxTextCtrl* NameCtrl;
+		
+		ConnectToServerDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connect to remote Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		~ConnectToServerDialog();
 	
 };
 

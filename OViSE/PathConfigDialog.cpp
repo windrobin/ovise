@@ -7,9 +7,15 @@ OViSEPathConfigDialog::OViSEPathConfigDialog(wxString CmdPath, wxString BasePath
 	this->mBaseDirPicker->SetPath(BasePath);
 	this->mMediaDirPicker->SetPath(MediaPath);
 
-	mMainSizer->Add( CreateButtonSizer(wxOK|wxCANCEL), 0, wxEXPAND,5);
-	//this->Layout();
-	mMainSizer->Fit( this );
+	wxSizer* ButtonSizer = CreateButtonSizer(wxOK|wxCANCEL);
+	
+	if ( ButtonSizer )
+	{
+		mMainSizer->Add( ButtonSizer, 0, wxEXPAND,5);
+		this->Layout();
+		mMainSizer->SetSizeHints( this );
+		//this->Layout();
+	}
 }
 
 OViSEPathConfigDialog::~OViSEPathConfigDialog()

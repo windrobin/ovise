@@ -110,14 +110,16 @@ bool OViSEApplication::OnInit()
 
 	wxImage::AddHandler( new wxPNGHandler );
 	wxBitmap Bitmap;
-	wxSplashScreen *splash = NULL;
+	wxSplashScreen* Splash = NULL;
 
 	// Check whether the the Splash image can be loaded
 	// This works also as a test to check whether path configuration was successful
 	if (Bitmap.LoadFile(MediaPath + wxT("/Splash/OViSESplash.png"), wxBITMAP_TYPE_PNG))
 	{
-		splash = new wxSplashScreen(Bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
+#ifndef _DEBUG
+		Splash = new wxSplashScreen(Bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
 			wxDefaultSize, wxBORDER_NONE | wxSTAY_ON_TOP);
+#endif
 	}
 	else
 	{
@@ -131,13 +133,16 @@ bool OViSEApplication::OnInit()
 
     frame->Show();
 	SetTopWindow(frame);
-	if(!frame->InitOgre())
-		return false;
-	frame->InitSocketInterface();
+	//if(!frame->InitOgre())
+	//	return false;
 
-	splash->Destroy();
+	// Remove and delete the spash window
+	if ( Splash != 0 )
+		Splash->Destroy();
 
     return true;
 }
 
-OViSEApplication::~OViSEApplication() { }
+OViSEApplication::~OViSEApplication()
+{
+}

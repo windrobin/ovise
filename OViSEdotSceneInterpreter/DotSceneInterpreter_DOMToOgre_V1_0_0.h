@@ -27,7 +27,6 @@ class DotSceneInterpreter_DOMToOgre_V1_0_0 : public DotSceneInterpreter_DOMToOgr
 	// IMPORTANT: This class and it's children are not thread-safe! (Because of XML-stuff)
 private:
 	// Inherited methods
-	virtual void Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup);
 	virtual void Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes);
 	virtual void Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode);
 	virtual void Interpretation_Light(xercesc::DOMElement* DOMElement_light, Ogre::SceneNode* AssociateNode);
@@ -52,7 +51,6 @@ public:
 
 	// Inherited methods
 	virtual bool Interpretation(xercesc::DOMDocument* DOMRepresentationOfScene,
-								QualifiedName qAnchorNodeName,
 								DotSceneBaseConfiguration* Configuration);
 };
 

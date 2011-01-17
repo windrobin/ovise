@@ -26,15 +26,14 @@ wxString DotSceneInterpreter_DOMToOgre::GetVersionString( xercesc::DOMDocument* 
 	if (DOMElement_scene->hasAttribute(ToXMLString("formatVersion"))) return ToWxString(DOMElement_scene->getAttribute(ToXMLString("formatVersion")));
 	else return wxString(); // Return "" (empty string) when no version-string is found!
 }
+#if 0
 bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument* DOMRepresentationOfScene,
-															QualifiedName qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration )
 {
 	wxString LogMsg;
 	this->Configuration = Configuration;
 
 	// Get and check Ogre::SceneManager...
-	Ogre::SceneManager* SceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(this->Configuration->qSceneManager);
 	if (SceneMgr == 0) return false; // "Configuration" is invalid!
 	
 	// Store external anchor node...
@@ -123,3 +122,4 @@ bool DotSceneInterpreter_DOMToOgre::Interpretation_DOMScene(xercesc::DOMDocument
 
 	return true;
 }
+#endif

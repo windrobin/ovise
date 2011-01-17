@@ -155,10 +155,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MovableTypeTranslator.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ObjectTitle.cpp"
 				>
 			</File>
@@ -178,42 +174,6 @@
 				RelativePath=".\StringConverter.cpp"
 				>
 			</File>
-			<Filter
-				Name="Old Listeners"
-				>
-				<File
-					RelativePath=".\CameraLogListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\EntityLogListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\LightLogListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\MovableObjectLogListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SceneManagerLogListener.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\SceneNodeLogListener.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Listeners"
-				>
-				<File
-					RelativePath=".\LogListener.cpp"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -221,15 +181,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\EnumsForABetterWorld.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Logging.h"
-				>
-			</File>
-			<File
-				RelativePath=".\MovableTypeTranslator.h"
 				>
 			</File>
 			<File
@@ -252,42 +204,6 @@
 				RelativePath=".\StringConverter.h"
 				>
 			</File>
-			<Filter
-				Name="Old Listeners"
-				>
-				<File
-					RelativePath=".\CameraLogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\EntityLogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\LightLogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\MovableObjectLogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\SceneManagerLogListener.h"
-					>
-				</File>
-				<File
-					RelativePath=".\SceneNodeLogListener.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Listeners"
-				>
-				<File
-					RelativePath=".\LogListener.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

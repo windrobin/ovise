@@ -15,10 +15,7 @@
 
 DotSceneInterpreter_DOMToOgre_V1_0_0::DotSceneInterpreter_DOMToOgre_V1_0_0() { }
 DotSceneInterpreter_DOMToOgre_V1_0_0::~DotSceneInterpreter_DOMToOgre_V1_0_0() { }
-void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup)
-{
 
-}
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes)
 {
 	xercesc::DOMNodeList *NodeElements = 0, *CamElements = 0, *LightElements = 0;
@@ -172,8 +169,7 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Node(	xercesc::DOMElem
 	}
 
 	// STEP 4: Create unique new SceneNode
-	QualifiedName qSN = OgreMediator::GetSingletonPtr()->iSceneNode.Create(NewNode_name, ParentNode);
-	Ogre::SceneNode* NewNode = OgreMediator::GetSingletonPtr()->iSceneNode.GetPtr(qSN);
+	Ogre::SceneNode* NewNode = 0;
 
 	if (NewNode != 0)
 	{
@@ -301,8 +297,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Camera(	xercesc::DOMEl
 	}
 	
 	// STEP 4: Create unique new Ogre::Camera
-	QualifiedName qC = OgreMediator::GetSingletonPtr()->iCamera.Create(NewCamera_name, AssociateNode);
-	Ogre::Camera* NewCamera = OgreMediator::GetSingletonPtr()->iCamera.GetPtr(qC);
+//	QualifiedName qC = OgreMediator::GetSingletonPtr()->iCamera.Create(NewCamera_name, AssociateNode);
+	Ogre::Camera* NewCamera = 0;//OgreMediator::GetSingletonPtr()->iCamera.GetPtr(qC);
 
 	if (NewCamera != 0)
 	{
@@ -416,8 +412,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Entity(	xercesc::DOMEl
 	}
 
 	// STEP 4: Create unique new Ogre::Entity
-	QualifiedName qE = OgreMediator::GetSingletonPtr()->iEntity.Create(NewEntity_name, NewEntity_meshFile, AssociateNode);
-	Ogre::Entity* NewEntity = OgreMediator::GetSingletonPtr()->iEntity.GetPtr(qE);
+//	QualifiedName qE = OgreMediator::GetSingletonPtr()->iEntity.Create(NewEntity_name, NewEntity_meshFile, AssociateNode);
+	Ogre::Entity* NewEntity = 0;//OgreMediator::GetSingletonPtr()->iEntity.GetPtr(qE);
 }
 
 void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMElement* DOMElement_light,
@@ -472,8 +468,8 @@ void DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation_Light(	xercesc::DOMEle
 	}
 	
 	// STEP 4: Create unique new Ogre::Light
-	QualifiedName qL = OgreMediator::GetSingletonPtr()->iLight.Create(NewLight_name, AssociateNode);
-	Ogre::Light* NewLight = OgreMediator::GetSingletonPtr()->iLight.GetPtr(qL);
+	//QualifiedName qL = OgreMediator::GetSingletonPtr()->iLight.Create(NewLight_name, AssociateNode);
+	Ogre::Light* NewLight = 0;//OgreMediator::GetSingletonPtr()->iLight.GetPtr(qL);
 
 	if (NewLight != 0)
 	{
@@ -703,6 +699,7 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::IsValidFormatVersion(xercesc::DOMDocu
 {
 	return DotSceneInterpreter_DOMToOgre::GetVersionString(DOMRepresentationOfScene).IsSameAs(ToWxString("1.0.0"));
 }
+#if 0
 bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument* DOMRepresentationOfScene,
 															QualifiedName qAnchorNodeName,
 															DotSceneBaseConfiguration* Configuration)
@@ -717,3 +714,4 @@ bool DotSceneInterpreter_DOMToOgre_V1_0_0::Interpretation(	xercesc::DOMDocument*
 
 	// More individual calls. Not necessary for a correct an full interpretation!
 }
+#endif

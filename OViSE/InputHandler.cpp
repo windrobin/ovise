@@ -5,7 +5,7 @@ InputHandler::InputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow
 	mCamera = cam;
 	mCameraNode = camnode;
 	mParent = parent;
-	mRotateSpeed = 1.0;
+	mRotateSpeed = 3.0;
 	mMoveSpeed = 0.05;
 	mMouseCaptured = false;
 
@@ -63,14 +63,15 @@ void InputHandler::handleMouseInput(wxMouseEvent &evt)
 				translateCameraHorizontal(-mMoveSpeed * 0.5);
 
 			if(newY > mY)
-				translateCameraVertical(-mMoveSpeed);
-			else if(newY < mY)
 				translateCameraVertical(mMoveSpeed);
+			else if(newY < mY)
+				translateCameraVertical(-mMoveSpeed);
 	
 			mX = newX;
 			mY = newY;
 		}
 	}
+	mParent->Refresh(false);
 	evt.Skip();
 }
 
@@ -224,7 +225,7 @@ void InputHandler::setDistance(float dist)
 void InputHandler::focusCamera()
 {
 	// FIXME: replace with new selection functionality
-	SelectionManager* SelMgr = SelectionManager::getSingletonPtr();
+/*	SelectionManager* SelMgr = SelectionManager::getSingletonPtr();
 	if(SelMgr->Selection.Count() != 0)
 	{
 		Ogre::AxisAlignedBox ObjectsBox = Ogre::AxisAlignedBox::BOX_NULL;
@@ -248,7 +249,7 @@ void InputHandler::focusCamera()
 
 			setDistance(distance);
 		}
-	}
+	}*/
 }
 
 void InputHandler::showHelpOverlay()
@@ -262,7 +263,7 @@ void InputHandler::showHelpOverlay()
 }
 void InputHandler::DeleteSelectedObjects()
 {
-	QualifiedNameCollection Selection(SelectionManager::getSingletonPtr()->Selection);
+/*	QualifiedNameCollection Selection(SelectionManager::getSingletonPtr()->Selection);
 	for (unsigned long IT = 0; IT < Selection.Count(); IT++)
 	{
 		// A QualififiedName is unique and can be associated deterministically. So try to destroy it via all interfaces.
@@ -272,5 +273,5 @@ void InputHandler::DeleteSelectedObjects()
 		OgreMediator::GetSingletonPtr()->iLight.Destroy(Selection[IT]);
 		OgreMediator::GetSingletonPtr()->iSceneManager.Destroy(Selection[IT]);
 		OgreMediator::GetSingletonPtr()->iSceneNode.Destroy(Selection[IT]);
-	}
+	}*/
 }

@@ -6,11 +6,9 @@ LocalEnv = env.Clone()
 if MODE == 'debug':
     LocalEnv.MergeFlags({'CCFLAGS':['-g','-Wall']})
 
-project_include_paths = {'CPPPATH': Split('''#QualifiedNames
-                                             #OViSEdotSceneInterpreter
+project_include_paths = {'CPPPATH': Split('''#OViSEdotSceneInterpreter
                                              #OViSEdotSceneBase
-                                             #OgreMediator
-                                             #ImprovedEventHandling
+                                             #Core
                                              #OViSEAux''')}
 LocalEnv.MergeFlags(project_include_paths)
 
@@ -18,12 +16,10 @@ project_library_paths = {'LIBPATH':['#lib/Debug']}
 LocalEnv.MergeFlags(project_library_paths)
 
 if MODE == 'debug':
-    project_libs = {'LIBS':Split('''QualifiedNames
-                                    OViSEdotSceneInterpreter
-                                    OViSEdotSceneBase
-                                    OgreMediator
-                                    ImprovedEventHandling
-                                    OViSEAux''')}
+    project_libs = {'LIBS':Split('''OViSEdotSceneInterpreter
+                                    Core
+                                    OViSEAux
+                                    boost_thread''')}
 LocalEnv.MergeFlags(project_libs)
 
 ## Input files

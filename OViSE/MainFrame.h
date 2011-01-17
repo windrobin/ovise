@@ -26,153 +26,84 @@
 #include "../OViSE/SceneTree.h"
 #include "LogListener.h"
 #include "InputHandler.h"
-#include "FrameListener.h"
 #include "AddMeshDialog.h"
 
-#include "../QualifiedNames/QualifiedName.h"
-#include "../QualifiedNames/QualifiedNameCollection.h"
-#include "../OgreMediator/OgreMediator.h"
-#include "../OViSE/SelectionManager.h"
-#include "../OViSEAux/MovableTypeTranslator.h"
+#include <boost/scoped_ptr.hpp>
+
 #include "../OViSEAux/Logging.h"
 
-#include "../ImprovedEventHandling/EventPublisherInterface.h"
+#include "OgreWindow.h"
 
-#include "../OViSE/InputSourceInterface.h"
+#include "AttributeView.h"
+#include "../Core/SceneView.h"
+#include "NetworkInterface.h"
+//#include "XMLRPCServer.h"
 
-#include "../OViSEAux/LogListener.h"
-#include "../OViSEAux/MovableObjectLogListener.h"
-#include "../OViSEAux/CameraLogListener.h"
-#include "../OViSEAux/EntityLogListener.h"
-#include "../OViSEAux/LightLogListener.h"
-#include "../OViSEAux/SceneManagerLogListener.h"
-#include "../OViSEAux/SceneNodeLogListener.h"
+using boost::scoped_ptr;
 
-#include "../OViSE/SceneTreeOgreObjectListener.h"
-#include "../OViSE/SelectionManagerListener.h"
-#include "../OViSE/RenderListener.h"
-
-#include "ExportMeshesDialog.h"
-#include "PrototypeManagementDialog.h"
-
-enum
-{
-    WINDOW_MainRender = wxID_HIGHEST + 1,
-	PGID,
-	SCENETREE
-};
-
-/** Mainwindow of the application.
+/** Main window of the application.
  * @todo Documentation!
  */
 class MainFrame :
-	public MainFrameBase,
-	public EventPublisherInterface
+	public MainFrameBase
 {
     public:
-		MainFrame(wxWindow* parent);
+		explicit						MainFrame(wxWindow* parent);
         ~MainFrame();
+		void							SetStatusMessage( wxString& Msg, int field = 0 );
 
-		bool InitOgre();
-		void InitSocketInterface();
 
     private:
-        virtual void OnQuit(wxCommandEvent& event);
-		virtual void OnClose( wxCloseEvent& event );
-        virtual void OnAbout(wxCommandEvent& event);
-		virtual void OnSaveScreenToFile(wxCommandEvent& event);
-		virtual void OnSceneAddMesh(wxCommandEvent& event);
-		virtual void OnAddMeshDialogClose(wxCloseEvent& event);
-		virtual void OnPropertyChange(wxPropertyGridEvent& event);
-		virtual void OnMenuDeleteMeshes( wxCommandEvent& event );
-		virtual void OnOpenPrototypeManagement( wxCommandEvent& event );
-		virtual void OnLoadPointCloud( wxCommandEvent& event );
-		virtual void OnShowSceneStructure( wxCommandEvent& event);
-		virtual void OnDynamicShadowsChange(wxCommandEvent& event);
-		virtual void OnDMPoints(wxCommandEvent &event);
-		virtual void OnDMWire(wxCommandEvent &event);
-		virtual void OnDMSolid(wxCommandEvent &event);
-		virtual void OnTestStuff( wxCommandEvent& event );
+        virtual void					OnQuit(wxCommandEvent& event);
+		virtual void					OnClose( wxCloseEvent& event );
+        virtual void					OnAbout(wxCommandEvent& event);
+		virtual void					OnSaveScreenToFile(wxCommandEvent& event);
+		virtual void					OnShowSceneStructure( wxCommandEvent& event);
+		virtual void					OnDynamicShadowsChange(wxCommandEvent& event);
+		virtual void					OnDMPoints(wxCommandEvent &event);
+		virtual void					OnDMWire(wxCommandEvent &event);
+		virtual void					OnDMSolid(wxCommandEvent &event);
+		virtual void					OnTestStuff( wxCommandEvent& event );
+		void                            OnNetworkListenChange( wxCommandEvent &event);
+		void							OnInsertEntity( wxCommandEvent& Event );
+		void							OnRemoveEntity( wxCommandEvent& Event );
+		void							OnConnectServer( wxCommandEvent& Event );
+		void							OnAddAttribute( wxCommandEvent& Event );
+		void							OnDeleteAttribute( wxCommandEvent& Event );
+		void							OnMouseEvent( wxMouseEvent& evt );
+		void							OnKeyboardEvent( wxKeyEvent& evt );
+		void							OnViewClick( wxMouseEvent& evt );
+		void							OnTreeSelectionChanged( wxTreeEvent& event );
+		void							OnIdle( wxIdleEvent& evt );
 
-		void OnMouseEvent( wxMouseEvent& evt );
-		void OnKeyboardEvent( wxKeyEvent& evt );
-		void OnViewClick( wxMouseEvent& evt );
+		void							SetupSceneTree();
 
 
-		void OnServerEvent( wxSocketEvent& evt );
-		void OnSocketEvent( wxSocketEvent& evt );
-		
-		void setObjectProperties(Ogre::MovableObject *object);
-		void clearObjectProperties();
-		void deleteMeshes();
-
-		void OnTreeSelectionChanged( wxTreeEvent& event );
-
-		void AddSelectedObject(QualifiedName qSelectedObject);
-		void RemoveSelectedObject(QualifiedName qSelectedObject);
-		void RemoveAllSelectedObjects();
-
-		void OnIdle( wxIdleEvent& evt );
-		void OnRenderWindowResize(wxSizeEvent& evt);
-		void OnRenderWindowPaint(wxPaintEvent& Event);
-		void UpdateRenderWindow();
-
-		Ogre::String GetOgreHandle();
-
-		CustomFrameListener mFrameListener;
-
-		/// Standard factory for dotScene loading
-		OViSEDotSceneManager *mDotSceneMgr;
-
-		/*
-		MovableObjectLogListener mMovableObjectLL;
-		CameraLogListener mCameraLogListenerLL;
-		EntityLogListener mEntityLogListenerLL;
-		LightLogListener mLightLogListenerLL;
-		SceneManagerLogListener mSceneManagerLL;
-		SceneNodeLogListener mSceneNodeLL;
-		*/
-		LogListener mLL;
-
-		SceneTreeOgreObjectListener mOgreObjectSTL;
-		SelectionManagerListener mSelectionManagerL;
-
-		RenderListener mRenderL;
-
-		void SelectOgreObject(QualifiedName qName);
-		void SelectOgreObjects(QualifiedNameCollection QSelection);
-		void UnselectOgreObject(QualifiedName qName);
-		void UnselectOgreObjects(QualifiedNameCollection QSelection);
+		bool							InitOgre();
+		EntityPool						mEntityPool;
 
     protected:
-		void setupObjectProperties();
+		void							LoadPlugins();
+		void							LoadPlugin( wxString Filename );
 
-		void loadSceneTreeImageList(wxImageList *list);
+		OgreWindow*						mOgreWindow;
+		scoped_ptr<SceneView>			mSceneView;
 
-        wxWindow* mMainRenderWin;
-		Ogre::RenderWindow* mRenderWin;
-		InputHandler* mInputHandler;
-		
-		wxListBox* mLogBox;
-		CustomLogListener *mLogBoxListener;
-		
-		wxAuiManager mWindowManager;
+		scoped_ptr<InputHandler>		mInputHandler;
 
-		SceneTree* mSceneTree;
+		wxListBox*						mLogBox;
+		scoped_ptr<CustomLogListener>	mLogBoxListener;
 
-		wxPropertyGrid* mObjectProperties;
+		wxAuiManager					mWindowManager;
 
-		wxSocketServer* mSocketServer;
-		int mNumClients;
-		bool SocketOk;
-		
-		Ogre::Root* mRoot;
-		Ogre::SceneManager* mSceneMgr;
-        Ogre::Camera* mCam;
+		SceneTree*						mSceneTree;
 
-		bool mOgreInitialized;
+		scoped_ptr<AttributeView>		mAttributeView;
+		Entity*							mCurrentEntity;
+        Ogre::Camera*					mCamera;
 
-		OViSEAddMeshDialog *mAddMeshDialog;
+//        XMLRPCServer                    mRPCServer;
+		NetworkInterface				mNetworkInterface;
 };
 
 #endif // MAINFRAME_H

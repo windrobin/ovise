@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version May  4 2010)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -33,7 +33,7 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	view = new wxMenu();
 	wxMenuItem* showStructure;
-	showStructure = new wxMenuItem( view, ID_SHOW_STRUCTURE, wxString( wxT("Show Structure") ) + wxT('\t') + wxT("M"), wxT("Show Scene Structure"), wxITEM_NORMAL );
+	showStructure = new wxMenuItem( view, ID_SHOW_STRUCTURE, wxString( wxT("Show Structure") ) , wxT("Show Scene Structure"), wxITEM_NORMAL );
 	view->Append( showStructure );
 	
 	wxMenuItem* saveScreenshotToFile;
@@ -60,20 +60,24 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	mbar->Append( view, wxT("View") ); 
 	
 	scene = new wxMenu();
-	wxMenuItem* addMesh;
-	addMesh = new wxMenuItem( scene, ID_ADD_MESH, wxString( wxT("Add Mesh") ) + wxT('\t') + wxT("I"), wxT("Add a new mesh to the scene"), wxITEM_NORMAL );
-	scene->Append( addMesh );
+	wxMenuItem* m_menuInsertEntity;
+	m_menuInsertEntity = new wxMenuItem( scene, ID_INSERT_ENTITY, wxString( wxT("Insert Entity") ) , wxEmptyString, wxITEM_NORMAL );
+	scene->Append( m_menuInsertEntity );
 	
-	wxMenuItem* deleteMeshes;
-	deleteMeshes = new wxMenuItem( scene, ID_DELETE_MESHES, wxString( wxT("Delete Mesh(es)") ) + wxT('\t') + wxT("X"), wxT("Remove selected meshes from scene"), wxITEM_NORMAL );
-	scene->Append( deleteMeshes );
+	wxMenuItem* m_menuRemoveEntity;
+	m_menuRemoveEntity = new wxMenuItem( scene, ID_REMOVE_ENTITY, wxString( wxT("Remove Entity") ) , wxEmptyString, wxITEM_NORMAL );
+	scene->Append( m_menuRemoveEntity );
 	
-	wxMenuItem* m_separator1;
-	m_separator1 = scene->AppendSeparator();
+	wxMenuItem* m_separator3;
+	m_separator3 = scene->AppendSeparator();
 	
-	wxMenuItem* OpenPrototypeManagement;
-	OpenPrototypeManagement = new wxMenuItem( scene, ID_OPEN_PROTOTYPE_MANAGEMENT, wxString( wxT("Manage Prototypes ( dotScene )") ) , wxT("Opens a dialog, which allows management of (dotScene) prototypes."), wxITEM_NORMAL );
-	scene->Append( OpenPrototypeManagement );
+	wxMenuItem* m_menuAddAttribute;
+	m_menuAddAttribute = new wxMenuItem( scene, ID_ADD_ATTRIBUTE, wxString( wxT("Add Attribute") ) , wxEmptyString, wxITEM_NORMAL );
+	scene->Append( m_menuAddAttribute );
+	
+	wxMenuItem* m_menuDeleteAttribute;
+	m_menuDeleteAttribute = new wxMenuItem( scene, ID_DELETE_ATTRIBUTE, wxString( wxT("Delete Attribute") ) , wxEmptyString, wxITEM_NORMAL );
+	scene->Append( m_menuDeleteAttribute );
 	
 	wxMenuItem* m_separator2;
 	m_separator2 = scene->AppendSeparator();
@@ -83,6 +87,13 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	scene->Append( loadPointcloud );
 	
 	mbar->Append( scene, wxT("Scene") ); 
+	
+	network = new wxMenu();
+	wxMenuItem* m_networkConnect;
+	m_networkConnect = new wxMenuItem( network, ID_SERVER_LISTEN, wxString( wxT("Listen for remote connection") ) , wxEmptyString, wxITEM_CHECK );
+	network->Append( m_networkConnect );
+	
+	mbar->Append( network, wxT("Network") ); 
 	
 	helpMenu = new wxMenu();
 	wxMenuItem* menuHelpAbout;
@@ -106,19 +117,17 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrameBase::OnClose ) );
-	this->Connect( idMenuQuit, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
-	this->Connect( ID_SHOW_STRUCTURE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
-	this->Connect( ID_SAVE_SCREENSHOT_TO_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
-	this->Connect( ID_DYNAMIC_SHADOWS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
-	this->Connect( ID_POINTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
-	this->Connect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
-	this->Connect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Connect( ID_ADD_MESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
-	this->Connect( ID_DELETE_MESHES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
-	this->Connect( ID_OPEN_PROTOTYPE_MANAGEMENT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
-	this->Connect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
-	this->Connect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
-	this->Connect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
+	this->Connect( menuFileQuit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
+	this->Connect( showStructure->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
+	this->Connect( saveScreenshotToFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
+	this->Connect( dynamicShadows->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDynamicShadowsChange ) );
+	this->Connect( points->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
+	this->Connect( wireframe->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
+	this->Connect( solid->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
+	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
+	this->Connect( m_networkConnect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnNetworkListenChange ) );
+	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
+	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 }
 
 MainFrameBase::~MainFrameBase()
@@ -132,10 +141,8 @@ MainFrameBase::~MainFrameBase()
 	this->Disconnect( ID_POINTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
 	this->Disconnect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Disconnect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Disconnect( ID_ADD_MESH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSceneAddMesh ) );
-	this->Disconnect( ID_DELETE_MESHES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnMenuDeleteMeshes ) );
-	this->Disconnect( ID_OPEN_PROTOTYPE_MANAGEMENT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnOpenPrototypeManagement ) );
 	this->Disconnect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
+	this->Disconnect( ID_SERVER_LISTEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnNetworkListenChange ) );
 	this->Disconnect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
 	this->Disconnect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 	
@@ -370,5 +377,101 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 }
 
 PathConfigDialog::~PathConfigDialog()
+{
+}
+
+AddAttributeDialog::AddAttributeDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	Sizer = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticText* m_staticText3;
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Create a new attribute:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	Sizer->Add( m_staticText3, 0, wxALL, 5 );
+	
+	wxString TypeRadioBoxChoices[] = { wxT("Integer"), wxT("String"), wxT("Floating-point number") };
+	int TypeRadioBoxNChoices = sizeof( TypeRadioBoxChoices ) / sizeof( wxString );
+	TypeRadioBox = new wxRadioBox( this, wxID_ANY, wxT("Attribute Type"), wxDefaultPosition, wxDefaultSize, TypeRadioBoxNChoices, TypeRadioBoxChoices, 2, wxRA_SPECIFY_COLS );
+	TypeRadioBox->SetSelection( 0 );
+	Sizer->Add( TypeRadioBox, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxStaticText* m_staticText4;
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Name"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	bSizer12->Add( m_staticText4, 0, wxALL, 5 );
+	
+	NameCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( NameCtrl, 1, wxALL, 5 );
+	
+	wxStaticText* m_staticText5;
+	m_staticText5 = new wxStaticText( this, wxID_ANY, wxT("Value"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5->Wrap( -1 );
+	bSizer12->Add( m_staticText5, 0, wxALL, 5 );
+	
+	ValueCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer12->Add( ValueCtrl, 1, wxALL, 5 );
+	
+	Sizer->Add( bSizer12, 1, wxEXPAND, 5 );
+	
+	wxStaticLine* m_staticline1;
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	Sizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	this->SetSizer( Sizer );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+AddAttributeDialog::~AddAttributeDialog()
+{
+}
+
+ConnectToServerDialog::ConnectToServerDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	Sizer = new wxBoxSizer( wxVERTICAL );
+	
+	wxStaticText* m_staticText3;
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Connect to:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	Sizer->Add( m_staticText3, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizer12;
+	bSizer12 = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizer17;
+	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
+	
+	wxStaticText* m_staticText4;
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	bSizer17->Add( m_staticText4, 0, wxALL, 5 );
+	
+	NameCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+	bSizer17->Add( NameCtrl, 1, wxALL, 5 );
+	
+	bSizer12->Add( bSizer17, 1, wxEXPAND, 5 );
+	
+	Sizer->Add( bSizer12, 1, wxEXPAND, 5 );
+	
+	wxStaticLine* m_staticline1;
+	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+	Sizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
+	
+	this->SetSizer( Sizer );
+	this->Layout();
+	Sizer->Fit( this );
+	
+	this->Centre( wxBOTH );
+}
+
+ConnectToServerDialog::~ConnectToServerDialog()
 {
 }

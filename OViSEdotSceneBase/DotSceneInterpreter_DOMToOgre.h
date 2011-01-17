@@ -26,7 +26,6 @@
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 #include "../OViSEAux/Logging.h"
-#include "../OgreMediator/OgreMediator.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -45,7 +44,6 @@ class DotSceneInterpreter_DOMToOgre
 	// IMPORTANT: This class and it's children are not thread-safe! (Because of XML-stuff)
 private:
 	// All abstract methods
-	virtual void Interpretation_Externals(xercesc::DOMElement* DOMElement_externals, QualifiedName qResourceGroup) = 0;
 	virtual void Interpretation_Nodes(xercesc::DOMElement* DOMElement_nodes) = 0;
 	virtual void Interpretation_Node(xercesc::DOMElement* DOMElement_node, Ogre::SceneNode* ParentNode) = 0;
 	virtual void Interpretation_Camera(xercesc::DOMElement* DOMElement_camera, Ogre::SceneNode* AssociateNode) = 0;
@@ -67,9 +65,6 @@ protected:
 	wxString VersionString;
 
 	// Methods
-	bool Interpretation_DOMScene(	xercesc::DOMDocument* DOMRepresentationOfScene,
-									QualifiedName qAnchorNodeName,
-									DotSceneBaseConfiguration* Configuration);
 
 	// Static methods
 	
@@ -82,7 +77,6 @@ public:
 
 	// Inheritable methods
 	virtual bool Interpretation(xercesc::DOMDocument* DOMRepresentationOfScene,
-								QualifiedName qAnchorNodeName,
 								DotSceneBaseConfiguration* Configuration) = 0;
 };
 

@@ -21,13 +21,10 @@
 #include <wx/hashmap.h>
 
 // Solution's includes
-#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 #include "../OViSEdotSceneBase/ScenePrototype.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEAux/Logging.h"
-#include "../OgreMediator/OgreMediator.h"
-#include "../OViSEAux/EnumsForABetterWorld.h"
 
 // Include Ogre
 #include "Ogre.h"
@@ -72,10 +69,10 @@ protected:
 	ScenePrototype* Prototype;
 	Ogre::SceneManager* SceneMgr;
 	DOMImplementation* Implementation;
-	QualifiedNameCollection Selection;
+	//QualifiedNameCollection Selection;
 
 	wxString VersionString;
-	QualifiedName qPrototype;
+	//QualifiedName qPrototype;
 
 	// Abstract methods
 	virtual void SetVersionString(wxString VersionString) = 0;
@@ -88,14 +85,12 @@ protected:
 										HashMap_DOMPointer& WhiteList_STAGE2,
 										HashMap_DOMPointer& BlackList);
 	bool Interpretation_OgreScene(	wxString PrototypeNativeName,
-									QualifiedNameCollection Selection,
 									DotSceneBaseConfiguration* Configuration);
 public:
 	~DotSceneInterpreter_OgreToDOM(void);
 
 	// Inheritable methods
 	virtual ScenePrototype* Interpretation(	wxString PrototypeNativeName,
-											QualifiedNameCollection Selection,
 											DotSceneBaseConfiguration* Configuration) = 0;
 };
 
