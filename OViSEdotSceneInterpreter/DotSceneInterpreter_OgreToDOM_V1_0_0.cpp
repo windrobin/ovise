@@ -199,10 +199,11 @@ bool DotSceneInterpreter_OgreToDOM_V1_0_0::IsValidFormatVersion(wxString Version
 {
 	return VersionStringForExport.IsSameAs(ToWxString("1.0.0"));
 }
-ScenePrototype* DotSceneInterpreter_OgreToDOM_V1_0_0::Interpretation(	wxString NotUniquePrototypeName,
+
+/*ScenePrototype* DotSceneInterpreter_OgreToDOM_V1_0_0::Interpretation(	wxString NotUniquePrototypeName,
 																		QualifiedNameCollection Selection,
 																		DotSceneBaseConfiguration* Configuration)
 {
 	if (this->Interpretation_OgreScene(NotUniquePrototypeName, Selection, Configuration)) return this->Prototype;
 	else return 0;
-}
+}*/

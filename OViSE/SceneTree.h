@@ -5,12 +5,9 @@
 #include <wx/wx.h>
 #include <wx/event.h>
 #include <wx/hashmap.h>
-#include "../OgreMediator/OgreMediator.h"
-#include "../OViSE/SelectionManager.h"
 
-#include "../ImprovedEventHandling/EventPublisherInterface.h"
 
-#include "../OViSE/InputSourceInterface.h"
+#include "../Core/EntityPool.h"
 
 #ifndef __APPLE__
 #include <Ogre.h>
@@ -29,60 +26,36 @@ enum SceneTreeDataType
 	ENTITY
 };
 
-class SceneTreeData :
-	public wxTreeItemData
-{
-public:
-	SceneTreeData(SceneTreeDataType type, void *dataPointer);
-	virtual ~SceneTreeData();
-
-	SceneTreeDataType getType();
-
-	void* getDataPointer();
-
-private:
-	SceneTreeDataType mType;
-	std::string mName;
-	void *mData;
-};
 
 class SceneTree :
 	public wxTreeCtrl,
-	public EventPublisherInterface,
-	public InputSourceInterface
+	public EntityPoolObserver
 {
 public:
 
 	// A hash map with string keys and wxTreeItemIds values
-	WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
+	//WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
 
 	SceneTree(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS, const wxValidator& validator = wxDefaultValidator,
 		const wxString& name = wxT("treeCtrl"));
 	~SceneTree(void);
 
-	HashMap_wxTreeItemId Items;
-
-	void SetPublishTreeSelectionChanged(bool value);
-	bool GetPublishTreeSelectionChanged();
-
-	bool AddOgreObject(QualifiedName qOgreObject);
-	bool RemoveOgreObject(QualifiedName qOgreObject);
+	Entity* GetEntity( wxTreeItemId Item );
 
 private:
-	wxString OGRE_ROOT_STRING;
 
-	QualifiedName mLastSelectedEntry;
-	wxTreeItemId mLastSelectedID;
+	void OnEntityInsert( Entity* Object, std::size_t Position );
+	void OnEntityRemove( Entity* Object, std::size_t Position );
 
-	void addSceneNodeToTree(Ogre::SceneNode *node, wxTreeItemId parentItemId);
+	void	LoadImageList();
 
-	Ogre::SceneManager *mSceneManager;
-
-	bool mPublishTreeSelectionChanged;
+	wxString RootString;
 
 	void OnTreeSelectionChanged( wxTreeEvent& event );
 	void OnItemActivated( wxTreeEvent& event );
 	void OnOgreChanged( wxCommandEvent& event );
 };
-#endif SCENE_TREE_H
+
+#endif //SCENE_TREE_H
+

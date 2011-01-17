@@ -63,8 +63,8 @@ void OViSEAddMeshDialog::InitOgre()
 		width, height, false, &params);
 	mRenderWin->setActive (true);
 
-	qSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.Create( wxT("AddMeshScene" ) );
-	mSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr( qSceneMgr );
+//	qSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.Create( wxT("AddMeshScene" ) );
+//	mSceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr( qSceneMgr );
 
 	mListener = new MeshDialogFrameListener( mSceneMgr );
     Ogre::Root::getSingletonPtr()->addFrameListener(mListener);
@@ -78,8 +78,8 @@ void OViSEAddMeshDialog::InitOgre()
     mCam->setAutoAspectRatio(true);
 
     mMeshNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("MeshNode");
-	qMeshNode = QualifiedName::Create( wxT( "MeshNode" ) );
-	OgreMediator::GetSingletonPtr()->GetObjectAccess()->AddSceneNode(qMeshNode, mMeshNode);
+//	qMeshNode = QualifiedName::Create( wxT( "MeshNode" ) );
+	//OgreMediator::GetSingletonPtr()->GetObjectAccess()->AddSceneNode(qMeshNode, mMeshNode);
         
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.1, 0.1, 0.1));
     mLight = mSceneMgr->createLight("AddMeshLight");
@@ -87,7 +87,7 @@ void OViSEAddMeshDialog::InitOgre()
     mLight->setPosition(-20, 0, 0);
     mLight->setDirection(1, -1, 0);
 
-	OgreMediator::GetSingletonPtr()->AddGrid(1, 10, 10, Ogre::Vector3(1, 1, 1), qSceneMgr, qMeshNode);
+	//OgreMediator::GetSingletonPtr()->AddGrid(1, 10, 10, Ogre::Vector3(1, 1, 1), qSceneMgr, qMeshNode);
 
     Ogre::Viewport *vP = mRenderWin->addViewport(mCam);
     vP->setBackgroundColour(Ogre::ColourValue(0.7, 0.7, 0.7));
@@ -121,7 +121,7 @@ void OViSEAddMeshDialog::OnCloseDialog( wxCloseEvent& event )
     Ogre::Root::getSingletonPtr()->removeFrameListener(mListener);
     delete mListener;
 	Ogre::Root::getSingletonPtr()->detachRenderTarget("AddMeshDialogRender");
-	OgreMediator::GetSingletonPtr()->iSceneManager.Destroy( qSceneMgr );
+//	OgreMediator::GetSingletonPtr()->iSceneManager.Destroy( qSceneMgr );
     Destroy();
 }
 
@@ -165,18 +165,18 @@ void OViSEAddMeshDialog::OnMeshListSelect( wxCommandEvent& event )
 void OViSEAddMeshDialog::OnOkClick( wxCommandEvent& event )
 {
     // Add selected mesh to the base scene and close the dialog
-   	OgreMediator *Med = OgreMediator::GetSingletonPtr();
-	wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
-	Med->iEntity.Create( tmp, lastSelected );        
+//   	OgreMediator *Med = OgreMediator::GetSingletonPtr();
+//wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
+//Med->iEntity.Create( tmp, lastSelected );        
     this->Close();
 }
 
 void OViSEAddMeshDialog::OnApplyClick( wxCommandEvent& event )
 {
     // Add selected mesh to the base scene and continue the dialog
-    OgreMediator *Med = OgreMediator::GetSingletonPtr();
-	wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
-	Med->iEntity.Create( tmp, lastSelected ); 
+//    OgreMediator *Med = OgreMediator::GetSingletonPtr();
+//	wxString tmp = lastSelected.substr(0, lastSelected.Length() - 5);
+//	Med->iEntity.Create( tmp, lastSelected ); 
 }
 
 void OViSEAddMeshDialog::OnCancelClick( wxCommandEvent& event )

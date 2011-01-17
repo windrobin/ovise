@@ -189,7 +189,6 @@ bool XmlManager::ExportScenePrototype(ScenePrototype* Prototype, wxFileName Dest
 
 	// STEP 3: Check Prototype...
 	if (Prototype == 0) return false; // Return false, when UniqueName doesn't exist!
-	QualifiedName qPrototypeName = Prototype->GetName();
 
 	// STEP 4: Write DOM-structure to *.xml file!
 	this->mImplementation = DOMImplementationRegistry::getDOMImplementation(XMLString::transcode("Core"));

@@ -19,19 +19,16 @@
 wxString DotSceneInterpreter_OgreToDOM::GetVersionString() { return VersionString; }
 DotSceneInterpreter_OgreToDOM::~DotSceneInterpreter_OgreToDOM(void) { }
 bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString PrototypeNativeName,
-																QualifiedNameCollection Selection,
 																DotSceneBaseConfiguration* Configuration)
 {
 	wxString LogMsg;
 
 	if (PrototypeNativeName.IsSameAs(ToWxString(""))) PrototypeNativeName = ToWxString("NoName");
 
-	this->Selection  = Selection;
 	this->Configuration = Configuration;
 	this->SetVersionString(ToWxString("1.0.0"));
 
 	// Get and check Ogre::SceneManager...
-	this->SceneMgr = OgreMediator::GetSingletonPtr()->iSceneManager.GetPtr(this->Configuration->qSceneManager);
 	if (this->SceneMgr == 0) return false; // "Configuration" is invalid!
 
 	// Create DOMImplementation
@@ -42,9 +39,6 @@ bool DotSceneInterpreter_OgreToDOM::Interpretation_OgreScene(	wxString Prototype
 	
 	// Create new Prototype
 	this->Prototype = new ScenePrototype(PrototypeNativeName, TempDOMDocument);
-
-	// Store qualified name of prototype
-	this->qPrototype = this->Prototype->GetName();
 
 	// Get "scene"-element and add attribute "formatVersion"...
 	DOMElement* SceneElement = this->Prototype->GetDOMRepresentation()->getDocumentElement();
@@ -70,7 +64,8 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 	HashMap_OgreSceneNodePointer WhiteList_STAGE1; // List of Ogre::MoveableObejcts
 	HashMap_DOMPointer WhiteList_STAGE2; // List of nodes/DOMElements
 	HashMap_DOMPointer BlackList_STAGE2; // List of already created nodes/DOMElements
-	
+
+#if 0
 	// STEP 1: Generate Stage 2 WhiteList == Selected SceneNodes (WhilteList_STAGE1)
 	if (!this->Selection.IsEmpty())
 	{
@@ -110,6 +105,7 @@ void DotSceneInterpreter_OgreToDOM::Interpretation_Nodes(xercesc::DOMElement* Sc
 		// Add RootSceneNode, when there aren't any choosen SceneNodes...
 		WhiteList_STAGE1[ToWxString(this->SceneMgr->getRootSceneNode()->getName())] = this->SceneMgr->getRootSceneNode();
 	}
+#endif
 
 	// STEP 2: Generate Stage 2 WhiteList recursivly (WhilteList_STAGE2)
 	if (!WhiteList_STAGE1.empty())

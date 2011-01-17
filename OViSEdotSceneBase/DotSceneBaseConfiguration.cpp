@@ -11,9 +11,7 @@
 
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 
-DotSceneBaseConfiguration::DotSceneBaseConfiguration(	QualifiedName qSceneManager,
-														QualifiedName qDotSceneManager,
-														QualifiedName qResourceGroup )
+DotSceneBaseConfiguration::DotSceneBaseConfiguration()
 {
 	// Attributes, import (DOM -> Ogre)
 	this->doAttachExternals = true;
@@ -27,12 +25,12 @@ DotSceneBaseConfiguration::DotSceneBaseConfiguration(	QualifiedName qSceneManage
 	this->doOverwriteWhileExport = true;
 
 	// Attributes, both
-	this->qSceneManager = qSceneManager;
-	this->qDotSceneManager = qDotSceneManager;
-	this->qResourceGroup = qResourceGroup;
 
 	this->LocationOfMeshFiles = wxFileName(wxFileName::GetCwd());
 	this->LocationOfMeshFiles.SetName(wxString());
 	this->LocationOfMeshFiles.SetEmptyExt();
 }
-DotSceneBaseConfiguration::~DotSceneBaseConfiguration(void) { }
+
+DotSceneBaseConfiguration::~DotSceneBaseConfiguration()
+{
+}

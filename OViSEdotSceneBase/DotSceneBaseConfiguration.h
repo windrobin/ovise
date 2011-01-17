@@ -20,7 +20,6 @@
 #include <wx/filename.h>
 
 // Solution's includes
-#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/SceneNodeOffset.h"
 
 // Include Ogre
@@ -29,10 +28,8 @@
 class DotSceneBaseConfiguration
 {
 public:
-	DotSceneBaseConfiguration(	QualifiedName qSceneManager,
-								QualifiedName qDotSceneManager,
-								QualifiedName qResourceGroup);
-	~DotSceneBaseConfiguration(void);
+	DotSceneBaseConfiguration();
+	~DotSceneBaseConfiguration();
 
 	// Attributes, import
 	bool doAttachNodes;
@@ -46,9 +43,6 @@ public:
 	bool doOverwriteWhileExport;
 
 	// Attributes, both
-	QualifiedName qSceneManager;
-	QualifiedName qDotSceneManager;
-	QualifiedName qResourceGroup;
 	wxFileName LocationOfMeshFiles;
 };
 

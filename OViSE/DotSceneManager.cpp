@@ -1,5 +1,6 @@
 #include "../OViSE/DotSceneManager.h"
 
+#if 0
 // De- & Constructors
 OViSEDotSceneManager::OViSEDotSceneManager(DotSceneBaseConfiguration *Configuration)
 {
@@ -314,7 +315,7 @@ bool OViSEDotSceneManager::attachSingleSceneTo(	std::string UniqueNameOfPrototyp
     	Ogre::LogManager::getSingletonPtr()->logMessage("Attaching nodes...");
 		recursiveNodeCreator(actualScene.get_Nodes()._ListOfNodes, this->_AttachRootNode, UniqueNameOfPrototype);
     }
-/*
+
 	// Subsection of interpretation: Environment <-- ATTENTION, malfunction source...because dotScene-format and blenderexporter aren't fully compatible to ogre (?) 
     if (this->doAttachEnvironment)
     {
@@ -359,7 +360,6 @@ bool OViSEDotSceneManager::attachSingleSceneTo(	std::string UniqueNameOfPrototyp
 			;// Just catch any exceptions like null reference exceptions
 		}
     }
-*//*
     return true;
 }
 */
@@ -494,7 +494,6 @@ void OViSEDotSceneManager::recursiveNodeCreator(	std::list<dotSceneNode> actualN
                     actualNode->attachObject(actualEntity);                                               
 
                     break;
-				/*	
                 case light: // if node is a light-source
                                 
                     formatedToDotSceneLight = (dotSceneObjects::dotSceneLight*)actualNodeFromXML.get_specific();
@@ -1254,7 +1253,6 @@ void OViSEDotSceneManager::v1_0_0_Interpretation_Nodes(xercesc::DOMElement* DOME
 
 void OViSEDotSceneManager::v1_0_0_Interpretation_Camera(xercesc::DOMElement* DOMElement_camera)
 {
-	/*
 	Ogre::Camera test;
 
       //<xs:attribute name="name" type="xs:string" />
@@ -1447,3 +1445,4 @@ Ogre::Entity* OViSEDotSceneManager::attachEntity(wxString NotUniqueEntityName, w
 
 
 */
+#endif

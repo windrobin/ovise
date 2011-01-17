@@ -31,6 +31,8 @@ XERCES_CPP_NAMESPACE_USE
 // Special defines for debugging or mode-activations
 #define ATTACH_FACTORY__ALLOW_INTERPRETATION_ASSUMPTIONS
 
+#if 0
+
 class OViSEDotSceneManager
 {
 private:
@@ -43,7 +45,7 @@ private:
 	WX_DECLARE_STRING_HASH_MAP(ScenePrototype*, PrototypeHashMap);
 
 	PrototypeHashMap		mPrototypes;
-	QualifiedNameCollection mQPrototypes;
+	//QualifiedNameCollection mQPrototypes;
 
 	// Access to XML
 	XmlManager *mXmlMgr;
@@ -59,17 +61,17 @@ public:
     ~OViSEDotSceneManager();
 
 
-	bool				SetPrototypeData(QualifiedName qPrototype, ScenePrototypeData DataSet); // Return false, if there is no prototyp with that name.
-	ScenePrototypeData	GetPrototypeData(QualifiedName qPrototype); // Empty (IsEmpty() == true), if there is no prototype with that unique name. Data can be modified externally.
+//	bool				SetPrototypeData(QualifiedName qPrototype, ScenePrototypeData DataSet); // Return false, if there is no prototyp with that name.
+//	ScenePrototypeData	GetPrototypeData(QualifiedName qPrototype); // Empty (IsEmpty() == true), if there is no prototype with that unique name. Data can be modified externally.
 
 	// Accessors of general properies
 	void						SetConfiguration(DotSceneBaseConfiguration* Configuration);
 
 	DotSceneBaseConfiguration*	GetConfiguration();
-	QualifiedName				GetSceneManager();
-	QualifiedName				GetName();
-	QualifiedName				GetAssociatedResourceGroup();
-	QualifiedNameCollection		GetImportedPrototypes();
+	//QualifiedName				GetSceneManager();
+	//QualifiedName				GetName();
+	//QualifiedName				GetAssociatedResourceGroup();
+	//QualifiedNameCollection		GetImportedPrototypes();
 
 	// Selection of interpreter 
 	static		DotSceneBaseConfiguration* CreateDefaultConfiguration();
@@ -85,13 +87,13 @@ public:
 
 	// Management of DOMDocuments
 	bool			MakeOgreSceneFromPrototype(QualifiedName qPrototype, QualifiedName qAnchorNode);
-	QualifiedName	MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport); // Returns UniquePrototypeName
+	//QualifiedName	MakePrototypeFromOgreScene(wxString NotUniquePrototypeName, QualifiedNameCollection Selection, wxString VersionStringForExport); // Returns UniquePrototypeName
 	
 	bool			ExportScenePrototype(QualifiedName qPrototype, wxFileName DestinationURL);
-	QualifiedName	ImportScenePrototype(wxFileName URLofXML);  // Returns UniquePrototypeName
+	//QualifiedName	ImportScenePrototype(wxFileName URLofXML);  // Returns UniquePrototypeName
 
 	bool			RemoveScenePrototype(QualifiedName qPrototype);
-	QualifiedName	RenameScenePrototype(QualifiedName qPrototype, wxString NewNativePrototypeName); // Returns the new UniquePrototypeName. If "OldUniquePrototypeName" is unknown, an empty wxString is returned.
+	//QualifiedName	RenameScenePrototype(QualifiedName qPrototype, wxString NewNativePrototypeName); // Returns the new UniquePrototypeName. If "OldUniquePrototypeName" is unknown, an empty wxString is returned.
 
 
 	// Top-Layer handling-methods
@@ -100,5 +102,7 @@ public:
 	//wxString	ImportPrototype(wxString URLofXML); // Returns unique name of prototype	
 	//bool		AttachSceneFromPrototype(wxString UniqueNameOfPrototype, wxString AnchorNodeName);
 };
+
+#endif
 
 #endif /*DOTSCENE_MANAGER_H_*/

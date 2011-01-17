@@ -13,9 +13,6 @@
 
 #include "../OViSEAux/OViSEException.h"
 
-#include "../OViSE/SelectionManager.h"
-#include "../OgreMediator/OgreMediator.h"
-#include "../ImprovedEventHandling/EventDispatcher.h"
 
 /** Class to handle input from the user for a render widget.
  * This calls handles all the keyboard and mouse input for a render widget. It is

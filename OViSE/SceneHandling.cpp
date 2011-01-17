@@ -14,5 +14,7 @@ std::vector<std::string> SceneHandling::getAvailableMeshes(std::string group)
 //ID#0002//
 std::vector<std::string> SceneHandling::getAvailableResourceGroupNames()
 {
-	return Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups();
+	const Ogre::StringVector& Vector( Ogre::ResourceGroupManager::getSingletonPtr()->getResourceGroups() );
+	std::vector<std::string> Result( Vector.begin(), Vector.end() );
+	return Result;
 }

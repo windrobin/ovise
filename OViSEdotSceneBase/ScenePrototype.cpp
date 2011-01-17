@@ -15,30 +15,22 @@
 #include "../OViSEdotSceneBase/ScenePrototype.h"
 
 void ScenePrototype::SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation) { this->DOMRepresentation = DOMRepresentation; }
-QualifiedName ScenePrototype::GetName() { return this->qName; }
+
 xercesc::DOMDocument* ScenePrototype::GetDOMRepresentation() { return this->DOMRepresentation; }
 bool ScenePrototype::Rename(wxString NewNativeName)
 {
-	if ( !this->qName.IsValid() ) return false;
-	
-	this->qName.Destroy();
-
-	this->qName = QualifiedName::Create(NewNativeName, ToWxString("Prototype"));
 	return true;
 }
 ScenePrototype::ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation)
 {
-	this->qName = QualifiedName::Create(NativeName, ToWxString("Prototype"));
 	this->SetDOMRepresentation(DOMRepresentation);
 }
 ScenePrototype::ScenePrototype(const ScenePrototype& ToCopy)
 {
-	this->qName = ToCopy.qName;
 	this->DOMRepresentation = ToCopy.DOMRepresentation;
 	this->Data = ToCopy.Data;
 }
 ScenePrototype::~ScenePrototype(void) 
 {
-	if ( this->qName.IsValid() ) this->qName.Destroy();
 	if ( this->DOMRepresentation != 0 ) this->DOMRepresentation->release();
 }

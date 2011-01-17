@@ -45,9 +45,9 @@ public:
 	static bool IsValidFormatVersion(wxString VersionStringForExport); // Returns "true" for "1.0.0"
 
 	// Inherited methods
-	virtual ScenePrototype* Interpretation(	wxString NotUniquePrototypeName,
+	/*virtual ScenePrototype* Interpretation(	wxString NotUniquePrototypeName,
 											QualifiedNameCollection Selection,
-											DotSceneBaseConfiguration* Configuration);
+											DotSceneBaseConfiguration* Configuration);*/
 };
 
 #endif /*DOTSCENE_INTERPRETER_OGRE_TO_DOM_V1_0_0_H_*/

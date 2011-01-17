@@ -16,7 +16,6 @@
 #define SCENE_PROTOTYPE_H_
 
 // Solutuion's inludes
-#include "../QualifiedNames/QualifiedNameCollection.h"
 #include "../OViSEAux/StringConverter.h"
 #include "../OViSEdotSceneBase/ScenePrototypeData.h"
 
@@ -35,20 +34,17 @@ XERCES_CPP_NAMESPACE_USE
 class ScenePrototype
 {
 private:
-	QualifiedName qName;
 	xercesc::DOMDocument* DOMRepresentation;
 	
 	void SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation);
 public:
 	ScenePrototypeData Data;
 
-	QualifiedName			GetName();
 	xercesc::DOMDocument*	GetDOMRepresentation();
 
 	bool Rename(wxString NewNativeName);
 
 	ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation);
-	ScenePrototype(QualifiedName qName, xercesc::DOMDocument* DOMRepresentation);
 	ScenePrototype(const ScenePrototype& ToCopy);
 	~ScenePrototype(void);
 };
