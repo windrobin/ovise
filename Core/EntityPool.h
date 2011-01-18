@@ -4,7 +4,6 @@
 
 #include <vector>
 #include <set>
-#include <boost/thread.hpp>
 #include "Entity.h"
 
 /** Abstract observer for an entity pool.
@@ -50,8 +49,6 @@ public:
 	*/
 	void							RemoveEntity( Entity* Rhs );
 
-	void                            RemoveEntityById(int id);
-
 	Entity*                         GetEntityById( int id );
 
 	void							InsertObserver( EntityPoolObserver* Rhs );
@@ -59,10 +56,13 @@ public:
 
 private:
 	std::vector<Entity*>			mData;
-	int                             nextId;
+	int                             mNextId;
 	std::set<EntityPoolObserver*>	mObserver;
-	boost::mutex					mutex;
-
 };
+
+void RemoveEntityById( const EntityPool& Pool, const int Id )
+{
+	Pool.RemoveEntity( Pool.GetEntityById( Id ) );
+}
 
 #endif
