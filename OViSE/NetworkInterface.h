@@ -3,27 +3,22 @@
 
 
 #include "../Core/EntityPool.h"
+#include <boost/asio.hpp>
 
-
-
-/* Class for the Network Interface. To solve dependencies the implementation is hidden in a nested class. */
-class NetworkInterface
+/** Base class for network interfaces. 
+	Network plugins shall derive from this. The given io_service object will be polled
+	from the main loop enabling interfaces to manipulate the entity pool in a 
+	synchronized fashion.
+*/
+class CNetworkInterface
 {
 public:
-
-	NetworkInterface(void);
-	~NetworkInterface(void);
-
-
-	void disconnect(void);
-	void connectEntityPool(EntityPool* pool);
-	void StartListening(void);
-	void StopListening(void);
+	CNetworkInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
+	virtual ~CNetworkInterface();
 
 private:
-	class NetworkImplementation;
-	boost::scoped_ptr<NetworkImplementation>		nImpl;
-
+	boost::asio::io_service& mIOService;
+	EntityPool&				 mEntityPool;
 };
 
 
