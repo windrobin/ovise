@@ -3,44 +3,33 @@
 
 #include "../Core/EntityPool.h"
 
+#include "../rapidxml-1.13/rapidxml.hpp"
 
-
-#include <xercesc/util/PlatformUtils.hpp>
-
-#include <xercesc/dom/DOM.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
-
-
-#include <xercesc/util/XMLString.hpp>
-
-
-XERCES_CPP_NAMESPACE_USE
-//using namespace xercesc;
-
-/* Class to parse a message recieved by the Socket, and update the EntityPool with the socket Information */
+/** Class that processes a network message.
+	Parses a message recieved by the Socket, and updates the EntityPool with the socket Information. 
+*/
 class SocketMessage
 {
 public:
-    SocketMessage();
-    ~SocketMessage();
+	SocketMessage();
+	virtual ~SocketMessage();
 
-    /* takes the XML definition of an entity. Returns the ID of this Entity. */
-    int HandleMessage(const char*);
+	/** Handles the message.
+		\param Message Socket message in XML format
+		\returns ID of the entity 
+	*/
+	int HandleMessage( const char* Message );
 
-    int     HandleInsert(DOMElement* root);
-    void    HandleUpdate(DOMNodeList* AttributeList, Entity* Rhs);
-    void    HandleDelete();
+	int     HandleInsert( rapidxml::xml_node<>* Node );
+	bool    HandleUpdate( rapidxml::xml_node<>* AttributeList, Entity* Rhs);
+	void    HandleDelete();
 
-    void connectEntityPool(EntityPool* Pool);
+	void	ConnectEntityPool( EntityPool* Pool );
 
 
 private:
-    XercesDOMParser*     mParser;
-    DOMDocument*         mDoc;
-    EntityPool*          mEntityPool;
-
-
-
+	rapidxml::xml_document<> mDocument;
+	EntityPool*				 mEntityPool;
 };
 
 
