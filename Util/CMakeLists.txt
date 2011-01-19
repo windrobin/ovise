@@ -23,6 +23,10 @@ set( UtilSources
 	
 add_library( Util STATIC ${UtilHeaders} ${UtilSources} )
 
+if( WIN32 )
+set_target_properties( Util PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP" )
+endif( WIN32 )
+
 target_link_libraries( Util
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
