@@ -68,9 +68,6 @@ public:
 	typedef std::map<std::string,VariantType>	AttributeType;
 	typedef AttributeType::value_type			ValueType;
 
-    boost::mutex                                mutex;
-    bool                                        locked;
-
 	/** Proxy to simplify setting multiple attributes.
 	*/
 	class SetterProxy
@@ -101,7 +98,7 @@ public:
 	*/
 	explicit Entity( const int id );
 
-    /** Construct an entity with a given name and id.
+	/** Construct an entity with a given name and id.
 	*/
 	explicit Entity( const::std::string& name, const int id );
 
@@ -124,7 +121,7 @@ public:
 	template<typename T> inline
 	SetterProxy Set( const std::string& Id, T Rhs )
 	{
-	    VariantType& x(Attribute[Id]);
+		VariantType& x(Attribute[Id]);
 		x = Rhs;
 		Changed(Id,&x);
 		return SetterProxy(this);
@@ -148,7 +145,7 @@ public:
 	inline const int			        GetId() const { return Id; }
 
 
-    /** Set the ID of this entity.
+	/** Set the ID of this entity.
 		The ID should only be modified by the EntityPool. Changing the ID somewhere else could produce problems.
 	*/
 	void								SetId( int newId );

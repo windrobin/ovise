@@ -19,6 +19,10 @@ add_library( ILCASInterface SHARED ${ILCASInterfaceHeaders} ${ILCASInterfaceSour
 
 set_property( TARGET ILCASInterface PROPERTY RUNTIME_OUTPUT_DIRECTORY
 			  ${CMAKE_BINARY_DIR}/Interfaces )
+
+if( WIN32 )
+set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP" )
+endif( WIN32 )
 			  
 add_dependencies( ILCASInterface
 				  Core )
