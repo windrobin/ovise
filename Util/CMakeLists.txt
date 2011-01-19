@@ -1,0 +1,29 @@
+# Util
+
+include_directories( ${Boost_INCLUDE_DIR}
+					 ${OGRE_INCLUDE_DIRS} )
+					 
+include( ${wxWidgets_USE_FILE} )
+					 
+set( UtilHeaders
+	Logging.h
+	NetworkInterface.h
+	ObjectTitle.h
+	OViSEException.h
+	SceneNodeOffset.h
+	StringConverter.h )
+	
+set( UtilSources
+	Logging.cpp
+	NetworkInterface.cpp
+	ObjectTitle.cpp
+	OViSEException.cpp
+	SceneNodeOffset.cpp
+	StringConverter.cpp )
+	
+add_library( Util STATIC ${UtilHeaders} ${UtilSources} )
+
+target_link_libraries( Util
+					   ${Boost_LIBRARIES}
+					   ${OGRE_LIBRARIES}
+					   ${wxWidgets_LIBRARIES} )

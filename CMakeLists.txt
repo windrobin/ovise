@@ -2,6 +2,10 @@
 
 project( OViSE CXX )
 
+cmake_minimum_required( VERSION 2.8 )
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Scripts/")
+
 set( Boost_ADDITIONAL_VERSIONS "1.44.0" "1.44" )
 
 if( WIN32 )
@@ -12,3 +16,39 @@ else( WIN32 )
 find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem )
 endif( WIN32 )
 
+# Ogre
+find_package( OGRE 1.7.2 REQUIRED )
+
+# wxWidgets
+set( wxWidgets_USE_UNICODE ON )
+set( wxWidgets_USE_STATIC ON )
+set( wxWidgets_USE_DEBUG OFF )
+find_package( wxWidgets REQUIRED base core aui propgrid )
+
+option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
+option( PLUGINS_ROBOT "Build robot plugin" ON )
+option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
+
+option( INTERFACES_ILCAS "Build ILCAS interface" ON )
+
+add_subdirectory( Core )
+add_subdirectory( Util )
+#add_subdirectory( DotSceneBase )
+#add_subdirectory( DotSceneInterpreter )
+add_subdirectory( Viewer )
+
+if( PLUGINS_SIMPLE )
+add_subdirectory( SimplePlugin )
+endif()
+
+if( PLUGINS_ROBOT )
+add_subdirectory( RobotPlugin )
+endif()
+
+if( PLUGINS_POINTCLOUD )
+add_subdirectory( PointcloudPlugin )
+endif()
+
+if( INTERFACES_ILCAS )
+add_subdirectory( ILCASInterface )
+endif()
