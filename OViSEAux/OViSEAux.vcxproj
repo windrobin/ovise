@@ -54,7 +54,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(OGRE_HOME)\include\OGRE;$(XERCES_HOME)\include;$(WX_HOME)\include;$(WX_HOME)\include\msvc;$(WX_HOME)\contrib\include;$(WX_HOME)\lib\mswud;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;STRICT;_SCL_SECURE_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;__WINDOWS;__WXMSW;__WXMSW__;__WXDEBUG__;WXDEBUG=1;__WIN95__;__WIN32__;WINVER=0x0400;_WIN32_WINNT=0x0501;STRICT;_SCL_SECURE_NO_WARNINGS;_CRTDBG_MAP_ALLOC;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -70,7 +70,7 @@
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(OGRE_HOME)\include\OGRE;$(XERCES_HOME)\include;$(WX_HOME)\include;$(WX_HOME)\include\msvc;$(WX_HOME)\contrib\include;$(WX_HOME)\lib\mswu;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__WXMSW__;__WIN95__;__WIN32__;WINVER=0x0400;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__WXMSW__;__WIN95__;__WIN32__;WINVER=0x0400;_WIN32_WINNT=0x0501;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -82,22 +82,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="NetworkInterface.cpp" />
     <ClCompile Include="ObjectTitle.cpp" />
     <ClCompile Include="OViSEException.cpp" />
     <ClCompile Include="SceneNodeOffset.cpp" />
-    <ClCompile Include="SocketMessage.cpp" />
     <ClCompile Include="StringConverter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="NetworkInterface.h" />
     <ClInclude Include="ObjectTitle.h" />
     <ClInclude Include="OViSEException.h" />
     <ClInclude Include="SceneNodeOffset.h" />
-    <ClInclude Include="SocketMessage.h" />
     <ClInclude Include="StringConverter.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

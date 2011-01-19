@@ -16,7 +16,7 @@ public:
 	CNetworkInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
 	virtual ~CNetworkInterface();
 
-private:
+protected:
 	boost::asio::io_service& mIOService;
 	EntityPool&				 mEntityPool;
 };

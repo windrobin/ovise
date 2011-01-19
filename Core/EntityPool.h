@@ -60,9 +60,6 @@ private:
 	std::set<EntityPoolObserver*>	mObserver;
 };
 
-void RemoveEntityById( const EntityPool& Pool, const int Id )
-{
-	Pool.RemoveEntity( Pool.GetEntityById( Id ) );
-}
+void RemoveEntityById( EntityPool* Pool, const int Id );
 
 #endif

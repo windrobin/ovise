@@ -2,6 +2,11 @@
 #include "EntityPool.h"
 #include <boost/foreach.hpp>
 
+void RemoveEntityById( EntityPool* Pool, const int Id )
+{
+	Pool->RemoveEntity( Pool->GetEntityById( Id ) );
+}
+
 EntityPoolObserver::EntityPoolObserver()
 {
 }

@@ -67,8 +67,8 @@ void SceneView::OnEntityRemove( Entity* Object, std::size_t Index )
 
 void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribute )
 {
-    // lock the entity
-    //boost::lock_guard<boost::mutex> lock(Object->mutex);
+	// lock the entity
+	//boost::lock_guard<boost::mutex> lock(Object->mutex);
 
 	// First check whether the 'type' attribute is set
 	const std::string* TypeString = boost::get<std::string>(Attribute);
@@ -112,7 +112,7 @@ void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribut
 			ViewEntry& Ve = HashEntry->second;
 
 			if ( Ve.CachedType == *TypeString )
-                //Object->mutex.unlock();
+				//Object->mutex.unlock();
 				return;
 
 			// Remove the old view
