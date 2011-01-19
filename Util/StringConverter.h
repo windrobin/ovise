@@ -12,7 +12,7 @@
 #include <boost/utility.hpp>
 
 // Include Xerces
-#include <xercesc/util/XMLString.hpp>
+//#include <xercesc/util/XMLString.hpp>
 
 // Include STD
 #include <string>
@@ -30,19 +30,19 @@ public:
 	StringConverter(const char* const InputForm_c_str);
 	StringConverter(std::string InputForm_std_str);
 	StringConverter(wxString InputForm_wx_str);
-	StringConverter(const XMLCh* InputForm_xerces_str);
+	//StringConverter(const XMLCh* InputForm_xerces_str);
 	~StringConverter(void);
 
 	const char* toCString() const;
 	std::string toStdString() const;
 	wxString toWxString() const;
-	XMLCh* toXMLString() const;
+	//XMLCh* toXMLString() const;
 };
 
 #define ToCString(Str) StringConverter(Str).toCString()
 #define ToStdString(Str) StringConverter(Str).toStdString()
 #define ToWxString(Str) StringConverter(Str).toWxString()
-#define ToXMLString(Str) StringConverter(Str).toXMLString()
+//#define ToXMLString(Str) StringConverter(Str).toXMLString()
 
 #define ToOgreString(Str) StringConverter(Str).toStdString()
 

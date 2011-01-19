@@ -40,6 +40,9 @@ set( ViewerSources
 add_executable( Viewer ${ViewerHeaders} ${ViewerSources} )
 
 set_property( TARGET Viewer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+if( WIN32 )
+set_target_properties( Viewer PROPERTIES COMPILE_FLAGS "/D_CRT_SECURE_NO_WARNINGS" )
+endif()
 
 add_dependencies( Viewer
 				  Core

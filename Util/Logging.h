@@ -14,7 +14,7 @@
 #define LOGGING_H_
 
 // Solution's includes
-#include "../OViSEAux/StringConverter.h"
+#include "StringConverter.h"
 
 // Include Ogre
 #include "Ogre.h"

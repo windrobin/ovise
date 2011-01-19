@@ -1,7 +1,7 @@
 #ifndef OVISE_ILCAS_INTERFACE_H
 #define OVISE_ILCAS_INTERFACE_H
 
-#include "../OViSEAux/NetworkInterface.h"
+#include "NetworkInterface.h"
 #include "SocketMessage.h"
 
 class CILCASInterface :

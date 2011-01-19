@@ -1,7 +1,7 @@
 #ifndef OVISESCENEHANDLING_H_
 #define OVISESCENEHANDLING_H_
 
-#include "../OViSEAux/OViSEException.h"
+#include "OViSEException.h"
 
 // Include Ogre
 #ifdef __APPLE__

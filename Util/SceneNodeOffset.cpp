@@ -11,7 +11,7 @@
  * License:																		*
  ********************************************************************************/
 
-#include "../OViSEAux/SceneNodeOffset.h"
+#include "SceneNodeOffset.h"
 
 // De- & Constructors
 SceneNodeOffset::SceneNodeOffset(void)

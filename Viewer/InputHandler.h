@@ -11,7 +11,7 @@
 // Include WX
 #include <wx/wx.h>
 
-#include "../OViSEAux/OViSEException.h"
+#include <OViSEException.h>
 
 
 /** Class to handle input from the user for a render widget.

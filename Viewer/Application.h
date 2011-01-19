@@ -10,6 +10,10 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <wx/app.h>
 
 class OViSEApplication : public wxApp

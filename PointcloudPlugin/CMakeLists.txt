@@ -4,6 +4,8 @@ include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
 					 
+include( ${wxWidgets_USE_FILE} )
+					 
 set( PointcloudPluginHeaders
 	 PointcloudEntityView.h
 	 Pointcloud.h )
@@ -23,4 +25,5 @@ add_dependencies( PointcloudPlugin
 target_link_libraries( PointcloudPlugin
 					   Core
 					   ${OGRE_LIBRARIES}
+					   ${wxWidgets_LIBRARIES}
 					   ${Boost_LIBRARIES} )

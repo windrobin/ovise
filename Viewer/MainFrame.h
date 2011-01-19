@@ -10,6 +10,10 @@
 #ifndef MAINFRAME_H
 #define MAINFRAME_H
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <wx/aui/aui.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/tokenzr.h>
@@ -23,20 +27,20 @@
 
 #include "MainFrameBase.h"
 #include "SceneHandling.h"
-#include "../OViSE/SceneTree.h"
+#include "SceneTree.h"
 #include "LogListener.h"
 #include "InputHandler.h"
 #include "AddMeshDialog.h"
 
 #include <boost/scoped_ptr.hpp>
 
-#include "../OViSEAux/Logging.h"
+#include <Logging.h>
 
 #include "OgreWindow.h"
 
 #include "AttributeView.h"
-#include "../Core/SceneView.h"
-#include "NetworkInterface.h"
+#include <SceneView.h>
+#include <NetworkInterface.h>
 //#include "XMLRPCServer.h"
 
 using boost::scoped_ptr;
@@ -47,16 +51,16 @@ using boost::scoped_ptr;
 class MainFrame :
 	public MainFrameBase
 {
-    public:
+	public:
 		explicit						MainFrame(wxWindow* parent);
-        ~MainFrame();
+		~MainFrame();
 		void							SetStatusMessage( wxString& Msg, int field = 0 );
 
 
-    private:
-        virtual void					OnQuit(wxCommandEvent& event);
+	private:
+		virtual void					OnQuit(wxCommandEvent& event);
 		virtual void					OnClose( wxCloseEvent& event );
-        virtual void					OnAbout(wxCommandEvent& event);
+		virtual void					OnAbout(wxCommandEvent& event);
 		virtual void					OnSaveScreenToFile(wxCommandEvent& event);
 		virtual void					OnShowSceneStructure( wxCommandEvent& event);
 		virtual void					OnDynamicShadowsChange(wxCommandEvent& event);
@@ -82,7 +86,7 @@ class MainFrame :
 		bool							InitOgre();
 		EntityPool						mEntityPool;
 
-    protected:
+	protected:
 		void							LoadPlugins();
 		void							LoadPlugin( wxString Filename );
 
@@ -100,10 +104,11 @@ class MainFrame :
 
 		scoped_ptr<AttributeView>		mAttributeView;
 		Entity*							mCurrentEntity;
-        Ogre::Camera*					mCamera;
+		Ogre::Camera*					mCamera;
 
 //        XMLRPCServer                    mRPCServer;
-		NetworkInterface				mNetworkInterface;
+		boost::asio::io_service			mIOService;
+		CNetworkInterface				mNetworkInterface;
 };
 
 #endif // MAINFRAME_H
