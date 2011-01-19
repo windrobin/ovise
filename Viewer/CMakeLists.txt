@@ -37,7 +37,7 @@ set( ViewerSources
 	 SceneHandling.cpp
 	 SceneTree.cpp )
 	 
-add_executable( Viewer ${ViewerHeaders} ${ViewerSources} )
+add_executable( Viewer WIN32 ${ViewerHeaders} ${ViewerSources} )
 
 set_property( TARGET Viewer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 if( WIN32 )
