@@ -27,10 +27,10 @@
     <ClCompile Include="SceneNodeOffset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SocketMessage.cpp">
+    <ClCompile Include="StringConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StringConverter.cpp">
+    <ClCompile Include="NetworkInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,14 +47,11 @@
     <ClInclude Include="SceneNodeOffset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SocketMessage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StringConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <ClInclude Include="NetworkInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

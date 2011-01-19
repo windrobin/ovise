@@ -126,7 +126,6 @@
     <ClCompile Include="AddMeshDialog.cpp" />
     <ClCompile Include="AttributeView.cpp" />
     <ClCompile Include="DotSceneManager.cpp" />
-    <ClCompile Include="NetworkInterface.cpp" />
     <ClCompile Include="PathConfigDialog.cpp" />
     <ClCompile Include="PathProvider.cpp" />
     <ClCompile Include="Application.cpp" />
@@ -142,7 +141,6 @@
     <ClInclude Include="AddMeshDialog.h" />
     <ClInclude Include="AttributeView.h" />
     <ClInclude Include="DotSceneManager.h" />
-    <ClInclude Include="NetworkInterface.h" />
     <ClInclude Include="PathConfigDialog.h" />
     <ClInclude Include="PathProvider.h" />
     <ClInclude Include="Application.h" />

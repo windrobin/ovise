@@ -11,7 +11,7 @@
 class SocketMessage
 {
 public:
-	SocketMessage();
+	SocketMessage( EntityPool* EntPool );
 	virtual ~SocketMessage();
 
 	/** Handles the message.
@@ -23,9 +23,6 @@ public:
 	int     HandleInsert( rapidxml::xml_node<>* Node );
 	bool    HandleUpdate( rapidxml::xml_node<>* AttributeList, Entity* Rhs);
 	void    HandleDelete();
-
-	void	ConnectEntityPool( EntityPool* Pool );
-
 
 private:
 	rapidxml::xml_document<> mDocument;

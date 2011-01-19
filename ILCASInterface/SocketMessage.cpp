@@ -3,19 +3,14 @@
 #include <wx/tokenzr.h>
 #include <boost/lexical_cast.hpp>
 
-SocketMessage::SocketMessage(void)
+SocketMessage::SocketMessage( EntityPool* EntPool )
+	: mEntityPool( EntPool )
 {
 }
 
 SocketMessage::~SocketMessage(void)
 {
 }
-
-void SocketMessage::ConnectEntityPool(EntityPool* Pool) 
-{
-	mEntityPool = Pool;
-}
-
 
 int SocketMessage::HandleMessage(const char* Message) 
 {
@@ -31,7 +26,7 @@ int SocketMessage::HandleMessage(const char* Message)
 	std::string OpStr( Operation->value() );
 	if ( OpStr == "insert" ) 
 	{
-		return HandleInsert(root);
+		return HandleInsert( RootNode );
 	} 
 	else if ( OpStr == "update" ) 
 	{
