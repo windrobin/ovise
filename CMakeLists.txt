@@ -23,7 +23,7 @@ find_package( OGRE 1.7.2 REQUIRED )
 set( wxWidgets_USE_UNICODE ON )
 set( wxWidgets_USE_STATIC ON )
 set( wxWidgets_USE_DEBUG OFF )
-find_package( wxWidgets REQUIRED base core aui propgrid )
+find_package( wxWidgets REQUIRED base core aui propgrid adv )
 
 option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
 option( PLUGINS_ROBOT "Build robot plugin" ON )
