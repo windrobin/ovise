@@ -2,7 +2,7 @@
 #include <memory>
 #include <wx/config.h>
 #include <wx/imaglist.h>
-#include "../OViSEAux/StringConverter.h"
+#include <StringConverter.h>
 
 namespace {
 // Holder for the associated entity

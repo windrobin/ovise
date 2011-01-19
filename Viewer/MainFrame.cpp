@@ -60,7 +60,8 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 }
 
 MainFrame::MainFrame(wxWindow* ParentWindow)
-: MainFrameBase(ParentWindow), mOgreWindow(0), mInputHandler(0), mCurrentEntity(0)
+: MainFrameBase(ParentWindow), mOgreWindow(0), mInputHandler(0), mCurrentEntity(0),
+  mNetworkInterface( mIOService, mEntityPool )
 {
 #if wxUSE_STATUSBAR
 	statusBar->SetStatusText(_("OViSE started up."), 0);
@@ -101,10 +102,6 @@ MainFrame::MainFrame(wxWindow* ParentWindow)
 	// Initialize SelectionManager
 	SetupSceneTree();
 
-	//conntect the entity pool
-	mNetworkInterface.connectEntityPool(&mEntityPool);
-	//mNetworkInterface.startListening();
-
 	Maximize(true);
 
 	mWindowManager.Update();
@@ -112,7 +109,6 @@ MainFrame::MainFrame(wxWindow* ParentWindow)
 
 void MainFrame::OnClose(wxCloseEvent& event)
 {
-	mNetworkInterface.StopListening();
 	mWindowManager.UnInit();
 	event.Skip();
 }
@@ -431,9 +427,8 @@ void MainFrame::OnNetworkListenChange(wxCommandEvent& event)
 	{
 		//start listening
 		std::cout << "Start listening for remote connection" << std::endl;
-		mNetworkInterface.StartListening();
 		//mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-		mEntityPool.RemoveEntityById(1);
+		//mEntityPool.RemoveEntityById(1);
 
 	}
 	else
@@ -441,8 +436,8 @@ void MainFrame::OnNetworkListenChange(wxCommandEvent& event)
 		//stop listening
 		std::cout << "Stop listening for remote connection." << std::endl;
 		//mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-		mEntityPool.RemoveEntityById(2);
-		mNetworkInterface.StopListening();
+		//mEntityPool.RemoveEntityById(2);
+		//mNetworkInterface.StopListening();
 	}
 }
 

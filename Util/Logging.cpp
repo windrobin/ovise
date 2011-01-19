@@ -10,7 +10,7 @@
  * License:																		*
  ********************************************************************************/
 
-#include "../OViSEAux/Logging.h"
+#include "Logging.h"
 
 // Singleton
 Logging* Logging::instance = 0;

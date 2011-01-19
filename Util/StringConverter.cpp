@@ -15,12 +15,12 @@ StringConverter::StringConverter(std::string InputForm_std_str) {
 	#endif
 }
 StringConverter::StringConverter(wxString InputForm_wx_str) { this->mStr = new wxString(InputForm_wx_str); }
-StringConverter::StringConverter(const XMLCh* InputForm_xerces_str)
+/*StringConverter::StringConverter(const XMLCh* InputForm_xerces_str)
 {
 	char* Buff = xercesc::XMLString::transcode(InputForm_xerces_str);
 	this->mStr = new wxString(Buff, wxConvUTF8);
 	delete[] Buff;
-}
+}*/
 
 StringConverter::~StringConverter(void) { delete this->mStr; }
 
@@ -33,7 +33,7 @@ std::string StringConverter::toStdString() const {
 	#endif
 }
 wxString StringConverter::toWxString() const { return wxString(*(this->mStr)); }
-XMLCh* StringConverter::toXMLString() const {return xercesc::XMLString::transcode(this->mStr->mb_str()); }
+//XMLCh* StringConverter::toXMLString() const {return xercesc::XMLString::transcode(this->mStr->mb_str()); }
 
 /*
 Interesting example, if problems with umlauds occure again and the actual solution doesn't match:
@@ -55,20 +55,20 @@ inline const wxCharBuffer ConvToUTF8( const wxString &s )
 #if wxUSE_UNICODE 
 inline const wxWCharBuffer ConvFromUTF8( const char *s ) 
 { 
-        wxWCharBuffer buf(wxConvUTF8.cMB2WC(s)); 
-        if(buf.data()) 
-                return buf; 
-        return wxWCharBuffer(L"");
+		wxWCharBuffer buf(wxConvUTF8.cMB2WC(s)); 
+		if(buf.data()) 
+				return buf; 
+		return wxWCharBuffer(L"");
 } 
 
 
 #else 
 inline const wxCharBuffer ConvFromUTF8( const char *s ) 
 { 
-        wxWCharBuffer buf(wxConvUTF8.cMB2WC(s)); 
-        if(buf.data()) 
-                return wxConvCurrent->cWC2WX(buf); 
-        return wxCharBuffer("");
+		wxWCharBuffer buf(wxConvUTF8.cMB2WC(s)); 
+		if(buf.data()) 
+				return wxConvCurrent->cWC2WX(buf); 
+		return wxCharBuffer("");
 } 
 #endif 
 */

@@ -8,8 +8,8 @@
 #include <wx/hashmap.h>
 
 // Solution's includes
-#include "../OViSEAux/StringConverter.h"
-#include "../OViSEdotSceneBase/XmlManager.h"
+#include <StringConverter.h>
+/*#include "../OViSEdotSceneBase/XmlManager.h"
 #include "../OViSEdotSceneBase/DotSceneBaseConfiguration.h"
 #include "../OViSEdotSceneBase/DotSceneInterpreter_DOMToOgre.h"
 #include "../OViSEdotSceneBase/DotSceneInterpreter_OgreToDOM.h"
@@ -23,7 +23,7 @@
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/XMLFloat.hpp>
 
-XERCES_CPP_NAMESPACE_USE
+XERCES_CPP_NAMESPACE_USE*/
 
 // Include STD
 #include <string>
@@ -58,7 +58,7 @@ private:
 public:
 	// De- & Constructors
 	OViSEDotSceneManager(DotSceneBaseConfiguration *Configuration);
-    ~OViSEDotSceneManager();
+	~OViSEDotSceneManager();
 
 
 //	bool				SetPrototypeData(QualifiedName qPrototype, ScenePrototypeData DataSet); // Return false, if there is no prototyp with that name.
