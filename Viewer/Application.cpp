@@ -33,7 +33,7 @@ bool OViSEApplication::SetupBasicConfiguration()
 	// FIXME: move this info out of the root config?
 
 	// Get config
-	wxConfig OviseConfig;
+	wxConfig OviseConfig( "OViSE" );
 
 	// Configuration already done?
 	if ( OviseConfig.ReadBool("ConfigurationDone", false) && !mForceConfig )
@@ -53,10 +53,13 @@ bool OViSEApplication::SetupBasicConfiguration()
 	{
 		case wxID_OK:
 			// Save if the user wants this
+			std::cout << "PluginPath: " << ConfigDialog.GetPluginPath() << std::endl;
+			std::cout << "MediaPath: " << ConfigDialog.GetMediaPath() << std::endl;
 			OviseConfig.Write( PluginPathKey, ConfigDialog.GetPluginPath() );
 			OviseConfig.Write( MediaPathKey, ConfigDialog.GetMediaPath() );
 
 			OviseConfig.Write( "ConfigurationDone", true );
+			std::cout << "Configuration written." << std::endl;
 			return true;
 
 		default:
@@ -77,7 +80,7 @@ bool OViSEApplication::OnInit()
 		return false;
 
 	// Retrieve the media path
-	wxConfig OviseConfig;
+	wxConfig OviseConfig( "OViSE" );
 	wxString MediaPath = OviseConfig.Read( wxT( "MediaDirStr" ) );
 	wxString PluginPath = OviseConfig.Read( wxT( "PluginDirStr" ) );
 
