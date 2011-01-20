@@ -24,8 +24,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
-#include <wx/statbox.h>
 #include <wx/filepicker.h>
+#include <wx/statbox.h>
 #include <wx/radiobox.h>
 #include <wx/textctrl.h>
 #include <wx/statline.h>
@@ -194,13 +194,12 @@ class PathConfigDialog : public wxDialog
 	
 	protected:
 		wxBoxSizer* mMainSizer;
-		wxDirPickerCtrl* mCmdDirPicker;
-		wxDirPickerCtrl* mBaseDirPicker;
+		wxDirPickerCtrl* mPluginDirPicker;
 		wxDirPickerCtrl* mMediaDirPicker;
 	
 	public:
 		
-		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,138 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~PathConfigDialog();
 	
 };

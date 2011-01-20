@@ -36,57 +36,27 @@ bool OViSEApplication::SetupBasicConfiguration()
 	wxConfig OviseConfig;
 
 	// Configuration already done?
-	if ( OviseConfig.ReadBool("ConfigurationDone", false) )
+	if ( OviseConfig.ReadBool("ConfigurationDone", false) && !mForceConfig )
 		return true;
 
 	// The names of the tags in the config
-	const wxString BasePathKey = wxT("BaseDirStr");
+	const wxString PluginPathKey = wxT("PluginDirStr");
 	const wxString MediaPathKey = wxT("MediaDirStr");
-	const wxString WorkPathKey = wxT("WorkingDir");
 
-
-	// Try to guess values based on the working directory
-	wxString	WorkingDirectory = wxFileName::GetCwd();
-
-	// Look for base-path...
-	wxFileName	BasePath = wxFileName::DirName(WorkingDirectory);
-	BasePath.RemoveLastDir();
-
-	// Assume that the working directory is a subdir of our base path.
-	// Also, assume that the base path starts with "ovise"
-	wxArrayString BasePathFolders = BasePath.GetDirs();
-	for ( size_t i=0,ei=BasePathFolders.GetCount();i<ei;++i )
-	{
-		wxString& CurrentDir(BasePathFolders[ei-1-i]);
-		CurrentDir.MakeLower(); // Do this case insensitive
-
-		if ( CurrentDir.StartsWith("ovise") )
-			break;
-
-		BasePath.RemoveLastDir();
-	}
-
-	// Append the media path
-	wxFileName	MediaPath = BasePath;
-	MediaPath.AppendDir("Media");
+	wxString MediaDir =  OviseConfig.Read( MediaPathKey, "Media" );
+	wxString PluginDir =  OviseConfig.Read( PluginPathKey, "Plugins" );
 	
-	// Read values from the config, using the guessed values as a default
-	wxString BasePathValue = OviseConfig.Read(BasePathKey,BasePath.GetPath());
-	wxString MediaPathValue = OviseConfig.Read(MediaPathKey,MediaPath.GetPath());
-	WorkingDirectory = OviseConfig.Read(WorkPathKey,WorkingDirectory);
-
 	// Run the dialog..
-	OViSEPathConfigDialog ConfigDialog(WorkingDirectory, BasePathValue, MediaPathValue, NULL);
+	OViSEPathConfigDialog ConfigDialog( PluginDir, MediaDir, NULL);
 
 	switch( ConfigDialog.ShowModal() )
 	{
 		case wxID_OK:
 			// Save if the user wants this
-			OviseConfig.Write(WorkPathKey, ConfigDialog.GetCmdPath());
-			OviseConfig.Write(BasePathKey, ConfigDialog.GetBasePath());
-			OviseConfig.Write(MediaPathKey, ConfigDialog.GetMediaPath());
+			OviseConfig.Write( PluginPathKey, ConfigDialog.GetPluginPath() );
+			OviseConfig.Write( MediaPathKey, ConfigDialog.GetMediaPath() );
 
-			OviseConfig.Write("ConfigurationDone", true);
+			OviseConfig.Write( "ConfigurationDone", true );
 			return true;
 
 		default:
@@ -99,14 +69,17 @@ bool OViSEApplication::SetupBasicConfiguration()
 
 bool OViSEApplication::OnInit()
 {
+	if( !wxApp::OnInit() )
+		return false;
+
 	// Bump out if configuration fails
-	if ( !this->SetupBasicConfiguration() )
+	if( !SetupBasicConfiguration() )
 		return false;
 
 	// Retrieve the media path
 	wxConfig OviseConfig;
-	wxString MediaPath=OviseConfig.Read(wxT("MediaDirStr"));
-	wxFileName::SetCwd( OviseConfig.Read(wxT("WorkingDir")));
+	wxString MediaPath = OviseConfig.Read( wxT( "MediaDirStr" ) );
+	wxString PluginPath = OviseConfig.Read( wxT( "PluginDirStr" ) );
 
 	wxImage::AddHandler( new wxPNGHandler );
 	wxBitmap Bitmap;
@@ -114,7 +87,7 @@ bool OViSEApplication::OnInit()
 
 	// Check whether the the Splash image can be loaded
 	// This works also as a test to check whether path configuration was successful
-	if (Bitmap.LoadFile(MediaPath + wxT("/Splash/OViSESplash.png"), wxBITMAP_TYPE_PNG))
+	if( Bitmap.LoadFile( MediaPath + wxT("/Splash/OViSESplash.png"), wxBITMAP_TYPE_PNG ) )
 	{
 #ifndef _DEBUG
 		Splash = new wxSplashScreen(Bitmap, wxSPLASH_CENTRE_ON_SCREEN|wxSPLASH_NO_TIMEOUT, 0, NULL, -1, wxDefaultPosition,
@@ -124,23 +97,35 @@ bool OViSEApplication::OnInit()
 	else
 	{
 		// Exit gracefully if loading failed - and allow reconfiguration
-		OviseConfig.Write("ConfigurationDone",false);
+		OviseConfig.Write( "ConfigurationDone", false );
 		return false;
 	}
 
+	MainFrame* frame = new MainFrame( MediaPath, PluginPath, NULL );
 
-    MainFrame* frame = new MainFrame(NULL);
-
-    frame->Show();
+	frame->Show();
 	SetTopWindow(frame);
-	//if(!frame->InitOgre())
-	//	return false;
-
+	
 	// Remove and delete the spash window
 	if ( Splash != 0 )
 		Splash->Destroy();
 
-    return true;
+	return true;
+}
+
+void OViSEApplication::OnInitCmdLine( wxCmdLineParser& Parser )
+{
+	Parser.AddSwitch( wxT("h"), wxT("help"), wxT("displays help on the command line parameters"), wxCMD_LINE_OPTION_HELP );
+	Parser.AddSwitch( wxT("c"), wxT("configure"), wxT("forces configuration dialog") );
+	// must refuse '/' as parameter starter or cannot use "/path" style paths
+	Parser.SetSwitchChars( wxT("-") );
+}
+
+bool OViSEApplication::OnCmdLineParsed( wxCmdLineParser& Parser )
+{
+	mForceConfig = Parser.Found( wxT( "c" ) );
+
+	return true;
 }
 
 OViSEApplication::~OViSEApplication()

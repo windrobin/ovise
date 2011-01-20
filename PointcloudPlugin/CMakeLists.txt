@@ -17,7 +17,7 @@ set( PointcloudPluginSources
 add_library( PointcloudPlugin SHARED ${PointcloudPluginHeaders} ${PointcloudPluginSources} )
 
 set_property( TARGET PointcloudPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins )
+			  ${CMAKE_BINARY_DIR}/Plugins/Visualization )
 
 if( UNIX )
 set_target_properties( PointcloudPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )

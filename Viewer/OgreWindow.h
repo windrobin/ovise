@@ -15,11 +15,11 @@ class OgreWindow :
 	public boost::noncopyable
 {
 public:
-	OgreWindow( wxWindow* Parent, wxWindowID id,
-                const wxPoint& pos,
-                const wxSize& size,
-                long style,
-                const wxString& name );
+	OgreWindow( const wxString& MediaPath, wxWindow* Parent, wxWindowID id,
+				const wxPoint& pos,
+				const wxSize& size,
+				long style,
+				const wxString& name );
 
 	~OgreWindow();
 
@@ -37,6 +37,8 @@ private:
 	void UpdateOgre();
 
 	void LoadResources();
+
+	wxString						mMediaDir;
 
 	boost::scoped_ptr<Ogre::Root>	mRoot;
 	Ogre::RenderWindow*				mRenderWindow;

@@ -59,8 +59,13 @@ wxString wxbuildinfo(wxbuildinfoformat format)
 	return wxbuild;
 }
 
-MainFrame::MainFrame(wxWindow* ParentWindow)
-: MainFrameBase(ParentWindow), mOgreWindow(0), mInputHandler(0), mCurrentEntity(0),
+MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWindow )
+: MainFrameBase(ParentWindow),
+  mMediaPath( MediaDir ),
+  mPluginPath( PluginDir ),
+  mOgreWindow(0), 
+  mInputHandler(0), 
+  mCurrentEntity(0),
   mNetworkInterface( mIOService, mEntityPool )
 {
 #if wxUSE_STATUSBAR
@@ -78,26 +83,16 @@ MainFrame::MainFrame(wxWindow* ParentWindow)
 	this->Connect( ID_DELETE_ATTRIBUTE, wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler( MainFrame::OnDeleteAttribute ) );
 
-
-
 	mWindowManager.SetManagedWindow( this );
-	//mOgreInitialized = false;
 
-	mOgreWindow = new OgreWindow(this, wxID_ANY,
+	mOgreWindow = new OgreWindow( mMediaPath, this, wxID_ANY,
 		wxDefaultPosition, wxDefaultSize, wxBORDER_NONE, "OgreWindow" );
 	mOgreWindow->SetGraphicsInit( boost::bind( &MainFrame::InitOgre, this )  );
-
-	mWindowManager.AddPane(mOgreWindow, wxCENTER, wxT("RenderWindow"));
-
-	// Connect window events
-
-	/*mLogBox = new wxListBox(this, wxID_ANY);
-	mWindowManager.AddPane(mLogBox, wxBOTTOM, wxT("Log"));
-	mLogBoxListener.reset( new CustomLogListener(mLogBox) );*/
+	mWindowManager.AddPane( mOgreWindow, wxCENTER, wxT( "RenderWindow" ) );
 
 	// Initialize PropertyGrid
 	mAttributeView.reset( new AttributeView( this ) );
-	mWindowManager.AddPane(mAttributeView->GetGrid(), wxRIGHT, wxT("Properties"));
+	mWindowManager.AddPane( mAttributeView->GetGrid(), wxRIGHT, wxT( "Properties" ) );
 
 	// Initialize SelectionManager
 	SetupSceneTree();
@@ -142,20 +137,15 @@ void MainFrame::SetupSceneTree()
 		( "Model", "Barrel.mesh" )
 		( "Position", vec3( -5.f, -5.f, 0.f ) )
 	;*/
-
-
+	
 	mEntityPool.CreateEntity( "MisterRoboto").Set
 		( "Type", "Robot" )
 		( "Model", "Albert.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;
-
-
+	
 	mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-
-
-
-
+	
 	/*mEntityPool.CreateEntity( "Cloud" ).Set
 		( "Type", "Pointcloud" )
 		( "Filename", "torus.off" )
@@ -169,40 +159,35 @@ bool MainFrame::InitOgre()
 	//Ogre::LogManager *logMgr = new Ogre::LogManager;
 	//Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("OViSE.log", true, true, false);
 	//Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener( mLogBoxListener );
-
-
-
-
+	
 	// Create camera setup
 	Ogre::SceneManager* SceneManager = mOgreWindow->GetSceneManager();
-	mCamera = SceneManager->createCamera("MainCamera");
-	mCamera->setNearClipDistance(0.01);
-	mCamera->setFarClipDistance(1000);
-	mCamera->setAutoAspectRatio(true);
-	mCamera->setQueryFlags(0x01);
+	mCamera = SceneManager->createCamera( "MainCamera" );
+	mCamera->setNearClipDistance( 0.01f );
+	mCamera->setFarClipDistance( 1000.f );
+	mCamera->setAutoAspectRatio( true );
+	mCamera->setQueryFlags( 0x01 );
 
 	Ogre::SceneNode* CameraFocusNode = SceneManager
 		->getRootSceneNode()->createChildSceneNode( "CameraFocusNode" );
 	CameraFocusNode->setFixedYawAxis( true, Ogre::Vector3::UNIT_Z );
-	CameraFocusNode->yaw(Ogre::Degree(-45), Ogre::Node::TS_WORLD);
-	CameraFocusNode->pitch(Ogre::Degree(45), Ogre::Node::TS_LOCAL);
+	CameraFocusNode->yaw( Ogre::Degree( -45.f ), Ogre::Node::TS_WORLD );
+	CameraFocusNode->pitch( Ogre::Degree( 45.f ), Ogre::Node::TS_LOCAL );
 
 	typedef Ogre::Quaternion Quat;
 	Ogre::SceneNode* CameraNode = CameraFocusNode->createChildSceneNode( "CameraNode" );
 	CameraNode->attachObject( mCamera );
-	CameraNode->setPosition(0, 5, 0);
-	CameraNode->setOrientation(Quat(Ogre::Degree(-90), Ogre::Vector3::UNIT_X)*
-		Quat(Ogre::Degree(180), Ogre::Vector3::UNIT_Z));
-
-	//wxYield();
+	CameraNode->setPosition( 0.f, 5.f, 0.f );
+	CameraNode->setOrientation( Quat( Ogre::Degree( -90.f ), Ogre::Vector3::UNIT_X ) *
+		Quat( Ogre::Degree( 180.f ), Ogre::Vector3::UNIT_Z ) );
 
 	// Create viewport for camera
-	Ogre::Viewport* Viewport = mOgreWindow->GetRenderWindow()->addViewport(mCamera);
-	Viewport->setBackgroundColour(Ogre::ColourValue(0.5, 0.5, 0.5));
+	Ogre::Viewport* Viewport = mOgreWindow->GetRenderWindow()->addViewport( mCamera );
+	Viewport->setBackgroundColour( Ogre::ColourValue( 0.5f, 0.5f, 0.5f ) );
 
 	// Initialize resources
 	Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
-	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps( 5 );
 
 	// DBG: Testscene
 	Ogre::Entity* GridPlane=SceneManager->createEntity( "GridPlane", "GridPlane.mesh" );
@@ -210,45 +195,31 @@ bool MainFrame::InitOgre()
 	SceneManager->getRootSceneNode()->attachObject(GridPlane);
 
 	Ogre::Entity* CoS=SceneManager->createEntity( "CoS", "CoS.mesh" );
-	SceneManager->getRootSceneNode()->attachObject(CoS);
+	SceneManager->getRootSceneNode()->attachObject( CoS );
 
 	Ogre::Light* SunLight = SceneManager->createLight( "Sun" );
 	SunLight->setShadowFarDistance( Ogre::Real( 100.f ) );
-	SunLight->setCastShadows(true);
-	SunLight->setDirection(-1,-1,-1);
-	SunLight->setPosition(100, 100, 100);
-
-	// testing Albert export
-	//Ogre::Entity* Albert = SceneManager->createEntity( "Albert", "Albert.mesh" );
-	//SceneManager->getRootSceneNode()->attachObject( Albert );
-	//Ogre::SkeletonInstance* AlbertRig = Albert->getSkeleton();
-	//Ogre::Skeleton::BoneIterator iter = AlbertRig->getBoneIterator();
-	//while( iter.hasMoreElements() )
-	//{
-		//Ogre::Bone* b = iter.getNext();
-		//b->setManuallyControlled( true );
-	//}
-
+	SunLight->setCastShadows( true );
+	SunLight->setDirection( -1.f, -1.f, -1.f );
+	SunLight->setPosition( 100.f, 100.f, 100.f );
 
 	// When selection in OViSESceneTree changed, call MainFrame::OnSelectionChanged(...) !
-	mSceneTree->Bind(wxEVT_COMMAND_TREE_SEL_CHANGED, &MainFrame::OnTreeSelectionChanged, this);
-
+	mSceneTree->Bind( wxEVT_COMMAND_TREE_SEL_CHANGED, &MainFrame::OnTreeSelectionChanged, this );
 
 	// Create input handler
-	mInputHandler.reset( new InputHandler(mCamera, CameraFocusNode, mOgreWindow) );
+	mInputHandler.reset( new InputHandler( mCamera, CameraFocusNode, mOgreWindow ) );
 
 	mSceneView.reset( new SceneView( mOgreWindow->GetSceneManager(),
-		boost::bind(&OgreWindow::Refresh,mOgreWindow,false,(wxRect*)0)) );
+		boost::bind( &OgreWindow::Refresh, mOgreWindow, false, (wxRect*) 0 ) ) );
 
-	LoadPlugins();
-
+	LoadVisPlugins();
 
 	mEntityPool.InsertObserver( mSceneView.get() );
 
 	return true;
 }
 
-void MainFrame::LoadPlugin( wxString Filename )
+void MainFrame::LoadVisualizationPlugin( wxString Filename )
 {
 	typedef void (*FunctionType)( SceneView& );
 	const wxString InitFunctionName( "LoadEntityView" ); // The function to load from the dynamic library
@@ -302,19 +273,72 @@ void MainFrame::LoadPlugin( wxString Filename )
 #endif
 }
 
-/** Load entity visualization plugins.
-*/
-void MainFrame::LoadPlugins()
+void MainFrame::LoadNetworkPlugin( wxString Filename )
 {
-#ifdef NDEBUG
-	wxString PluginPath="/Plugins/";
-#else
-	wxString PluginPath="/Plugins_d/";
-#endif
+	typedef void (*FunctionType)( boost::asio::io_service&, EntityPool& );
+	const wxString InitFunctionName( "LoadInterface" ); // The function to load from the dynamic library
 
-	wxConfig OviseConfig;
-	wxString BasePath=OviseConfig.Read(wxT("BaseDirStr"));
-	wxDir Directory( BasePath+PluginPath );
+	wxString Extension;
+	wxFileName::SplitPath(Filename,0,0,0,&Extension);
+
+#ifdef WIN32
+	if ( Extension != "dll" )
+		return;
+
+	// Attempt to load it.
+	HMODULE Plugin=LoadLibrary(Filename.c_str());
+
+	if ( Plugin==NULL )
+	{
+		DWORD Error=GetLastError(); // FIXME
+		return;
+	}
+
+	FARPROC Function=GetProcAddress(Plugin,InitFunctionName.c_str());
+
+	if ( Function )
+	{
+		FunctionType f = reinterpret_cast<FunctionType>(Function);
+		f( mIOService, mEntityPool );
+	}
+
+#else // Linux
+	if ( Extension != "so" )
+		return;
+
+	void* Plugin=dlopen(Filename.c_str(), RTLD_NOW);
+
+	if ( Plugin==NULL )
+	{
+		// FIXME
+		std::cout << "Plugin " << " " << Filename << " failed to load:\n" << dlerror() << std::endl;
+		return;
+	}
+
+	FunctionType Function=reinterpret_cast<FunctionType>(dlsym(Plugin,InitFunctionName.c_str()));
+
+	if ( !Function )
+	{
+		std::cout << "Plugin entry point not found." << std::endl;
+		return;
+	}
+
+	Function( mIOService, mEntityPool );
+#endif
+}
+
+/** Load plugins.
+*/
+void MainFrame::LoadVisPlugins()
+{
+	wxString PluginPath;
+
+#ifdef NDEBUG
+	PluginPath = mPluginPath + "/Visualization/Release/";
+#else
+	PluginPath = mPluginPath + "/Visualization/Debug/";
+#endif
+	wxDir Directory( PluginPath );
 
 	if ( !Directory.IsOpened() )
 	{
@@ -326,10 +350,34 @@ void MainFrame::LoadPlugins()
 	wxString Filename;
 	for ( bool c=Directory.GetFirst(&Filename);c;c=Directory.GetNext(&Filename) )
 	{
-		LoadPlugin( BasePath+PluginPath+Filename );
+		LoadVisualizationPlugin( PluginPath+Filename );
 	}
 }
 
+void MainFrame::LoadNWPlugins()
+{
+	wxString PluginPath;
+
+#ifdef NDEBUG
+	PluginPath = mPluginPath + "/Interfaces/Release/";
+#else
+	PluginPath = mPluginPath + "/Interfaces/Debug/";
+#endif
+	wxDir Directory( PluginPath );
+
+	if ( !Directory.IsOpened() )
+	{
+		// FIXME: no plugins
+		return;
+	}
+
+	// Check for DLL files
+	wxString Filename;
+	for ( bool c=Directory.GetFirst(&Filename);c;c=Directory.GetNext(&Filename) )
+	{
+		LoadNetworkPlugin( PluginPath+Filename );
+	}
+}
 
 void MainFrame::OnQuit(wxCommandEvent &event)
 {
@@ -358,8 +406,9 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 
 	info.SetCopyright(wxT("(C) 2008-20010 "));
 
-	info.AddDeveloper(wxT("Programming - Alexander Kasper <alexander.kasper@kit.edu>\n"));
+	info.AddDeveloper(wxT("Programming - Alexander Kasper <alexander.kasper@kit.edu>"));
 	info.AddDeveloper(wxT("Programming - Marius Elvert <marius.elvert@googlemail.com>"));
+	info.AddDeveloper(wxT("Programming - Thorsten Engelhardt <thorsten.engelhardt@student.kit.edu>"));
 	info.AddDeveloper(wxT("Programming - Henning Renartz <hrenart@gmx.de>"));
 
 	wxString licenseText = wxT("Permission is hereby granted, free of charge,");

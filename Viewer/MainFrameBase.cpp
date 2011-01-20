@@ -335,29 +335,11 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 	
 	mMainSizer = new wxBoxSizer( wxVERTICAL );
 	
-	wxStaticBoxSizer* WelcomeSizer;
-	WelcomeSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Welcome") ), wxVERTICAL );
-	
-	wxStaticText* mWelcomeLabel;
-	mWelcomeLabel = new wxStaticText( this, wxID_ANY, wxT("You are running OViSE for the first time or it has been moved.\n\nThis application uses resources located at different paths. These paths must be properly configured now. If you have never run this dialog before, the paths are guessed and probably correct as they are. In rare cases, however, it might be necessary to manually adjust them."), wxDefaultPosition, wxDefaultSize, 0 );
-	mWelcomeLabel->Wrap( 580 );
-	WelcomeSizer->Add( mWelcomeLabel, 0, wxALL, 5 );
-	
-	mMainSizer->Add( WelcomeSizer, 0, wxEXPAND, 5 );
-	
-	wxStaticBoxSizer* CmdPathSizer;
-	CmdPathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Working Directory (Usually, this is where your executable files are located)") ), wxVERTICAL );
-	
-	mCmdDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's CMD folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
-	CmdPathSizer->Add( mCmdDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
-	
-	mMainSizer->Add( CmdPathSizer, 0, wxEXPAND, 5 );
-	
 	wxStaticBoxSizer* BasePathSizer;
-	BasePathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Base Path") ), wxVERTICAL );
+	BasePathSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxT("Plugins Path") ), wxVERTICAL );
 	
-	mBaseDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's base folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
-	BasePathSizer->Add( mBaseDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	mPluginDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxT("Not configured"), wxT("Select OViSE's base folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
+	BasePathSizer->Add( mPluginDirPicker, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	mMainSizer->Add( BasePathSizer, 0, wxEXPAND, 5 );
 	
@@ -371,7 +353,6 @@ PathConfigDialog::PathConfigDialog( wxWindow* parent, wxWindowID id, const wxStr
 	
 	this->SetSizer( mMainSizer );
 	this->Layout();
-	mMainSizer->Fit( this );
 	
 	this->Centre( wxBOTH );
 }

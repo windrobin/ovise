@@ -52,7 +52,7 @@ class MainFrame :
 	public MainFrameBase
 {
 	public:
-		explicit						MainFrame(wxWindow* parent);
+		explicit						MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* Parent );
 		~MainFrame();
 		void							SetStatusMessage( wxString& Msg, int field = 0 );
 
@@ -87,8 +87,13 @@ class MainFrame :
 		EntityPool						mEntityPool;
 
 	protected:
-		void							LoadPlugins();
-		void							LoadPlugin( wxString Filename );
+		void							LoadVisPlugins();
+		void							LoadNWPlugins();
+		void							LoadVisualizationPlugin( wxString Filename );
+		void							LoadNetworkPlugin( wxString Filename );
+
+		wxString						mMediaPath;
+		wxString						mPluginPath;
 
 		OgreWindow*						mOgreWindow;
 		scoped_ptr<SceneView>			mSceneView;
