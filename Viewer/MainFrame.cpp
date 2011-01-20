@@ -333,10 +333,14 @@ void MainFrame::LoadVisPlugins()
 {
 	wxString PluginPath;
 
+#ifdef WIN32
 #ifdef NDEBUG
 	PluginPath = mPluginPath + "/Visualization/Release/";
 #else
 	PluginPath = mPluginPath + "/Visualization/Debug/";
+#endif
+#else
+	PluginPath = mPluginPath + "/Visualization/";
 #endif
 	wxDir Directory( PluginPath );
 
@@ -358,10 +362,14 @@ void MainFrame::LoadNWPlugins()
 {
 	wxString PluginPath;
 
+#ifdef WIN32
 #ifdef NDEBUG
 	PluginPath = mPluginPath + "/Interfaces/Release/";
 #else
 	PluginPath = mPluginPath + "/Interfaces/Debug/";
+#endif
+#else
+	PluginPath = mPluginPath + "/Interfaces/";
 #endif
 	wxDir Directory( PluginPath );
 

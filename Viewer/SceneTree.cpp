@@ -64,7 +64,7 @@ Entity* SceneTree::GetEntity( wxTreeItemId Item )
 
 void SceneTree::LoadImageList()
 {
-	wxConfig OviseConfig;
+	wxConfig OviseConfig( "OViSE" );
 	wxString MediaPath=OviseConfig.Read(wxT("MediaDirStr"));
 
 	std::auto_ptr<wxImageList> List(new wxImageList(16, 16, true, 2));

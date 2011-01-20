@@ -17,14 +17,17 @@ set( ILCASInterfaceSources
 	 
 add_library( ILCASInterface SHARED ${ILCASInterfaceHeaders} ${ILCASInterfaceSources} )
 
+if( WIN32 )
 set_property( TARGET ILCASInterface PROPERTY RUNTIME_OUTPUT_DIRECTORY
 			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
-
-if( WIN32 )
 set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP" )
-else( WIN32 )
-set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "-fPIC" )
 endif( WIN32 )
+
+if( UNIX )
+set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "-fPIC" )
+set_property( TARGET ILCASInterface PROPERTY LIBRARY_OUTPUT_DIRECTORY
+			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
+endif( UNIX )
 			  
 add_dependencies( ILCASInterface
 				  Core )
