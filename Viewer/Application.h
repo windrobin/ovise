@@ -15,15 +15,21 @@
 #endif
 
 #include <wx/app.h>
+#include <wx/cmdline.h>
 
 class OViSEApplication : public wxApp
 {
 private:
 	bool	SetupBasicConfiguration();
+	bool	mForceConfig;
 
 public:
 	virtual bool OnInit();
+	virtual void OnInitCmdLine( wxCmdLineParser& Parser );
+	virtual bool OnCmdLineParsed( wxCmdLineParser& Parser );
 	virtual ~OViSEApplication();
 };
+
+DECLARE_APP( OViSEApplication );
 
 #endif // APPLICATION_H

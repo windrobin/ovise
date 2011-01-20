@@ -164,9 +164,10 @@ BEGIN_EVENT_TABLE(OgreWindow, wxWindow)
 END_EVENT_TABLE()
 
 
-OgreWindow::OgreWindow( wxWindow* Parent, wxWindowID id, const wxPoint& pos,
- const wxSize& size, long style, const wxString& name )
-: wxWindow(Parent,id,pos,size,style,name), mRenderWindow(0), mSceneMgr(0), mContextCreated(false)
+OgreWindow::OgreWindow( const wxString& MediaPath, wxWindow* Parent, wxWindowID id, 
+const wxPoint& pos, const wxSize& size, long style, const wxString& name )
+: wxWindow(Parent,id,pos,size,style,name), mMediaDir( MediaPath ), mRenderWindow(0), 
+  mSceneMgr(0), mContextCreated(false)
 {
 	/*this->Bind(wxEVT_CREATE, &OgreWindow::OnCreate, this);
 	this->Bind(wxEVT_SIZE, &OgreWindow::OnResize, this);
@@ -179,9 +180,10 @@ OgreWindow::~OgreWindow()
 
 void OgreWindow::LoadResources()
 {
-	// FIXME: use media dir setting
+	Ogre::String MediaDirStr( mMediaDir.data() );
 	Ogre::ConfigFile cf;
-	cf.load("../resources.cfg");
+	cf.load( MediaDirStr + "/resources.cfg" );
+	
 	Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 	Ogre::String secName, typeName, archName;
 	while(seci.hasMoreElements())
@@ -192,7 +194,7 @@ void OgreWindow::LoadResources()
 		for(i=settings->begin(); i!=settings->end(); ++i){
 			typeName = i->first;
 			archName = i->second;
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation( MediaDirStr + archName, typeName, secName);
 		}
 		//wxYield();
 	}

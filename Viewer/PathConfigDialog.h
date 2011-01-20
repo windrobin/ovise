@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OVISE_PATH_CONFIG_DLG_H
+#define OVISE_PATH_CONFIG_DLG_H
 
 /**
 @file
@@ -11,10 +12,11 @@ class OViSEPathConfigDialog : public PathConfigDialog
 {
 public:
 	/** Constructor */
-	OViSEPathConfigDialog(wxString CmdPath, wxString BasePath, wxString MediaPath, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Configure path settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+	OViSEPathConfigDialog(wxString PluginPath, wxString MediaPath, wxWindow* parent );
 	~OViSEPathConfigDialog(void);
 
-	wxString GetCmdPath();
-	wxString GetBasePath();
+	wxString GetPluginPath();
 	wxString GetMediaPath();
 };
+
+#endif // OVISE_PATH_CONFIG_DLG_H
