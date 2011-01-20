@@ -1,6 +1,7 @@
 #include "ILCASInterface.h"
 
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 
 
 CILCASInterface::CILCASInterface( boost::asio::io_service& IOService, EntityPool& EntPool )

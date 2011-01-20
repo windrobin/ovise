@@ -14,6 +14,10 @@ add_library( RobotPlugin SHARED ${RobotPluginHeaders} ${RobotPluginSources} )
 
 set_property( TARGET RobotPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 			  ${CMAKE_BINARY_DIR}/Plugins )
+
+if( UNIX )
+set_target_properties( RobotPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
+endif( UNIX )
 			  
 add_dependencies( RobotPlugin
 				  Core )

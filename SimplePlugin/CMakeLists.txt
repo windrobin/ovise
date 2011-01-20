@@ -14,6 +14,10 @@ add_library( SimplePlugin SHARED ${SimplePluginHeaders} ${SimplePluginSources} )
 
 set_property( TARGET SimplePlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 			  ${CMAKE_BINARY_DIR}/Plugins )
+
+if( UNIX )
+set_target_properties( SimplePlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
+endif( UNIX )
 			  
 add_dependencies( SimplePlugin
 				  Core )
