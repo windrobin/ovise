@@ -2,6 +2,7 @@
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIRS}
+					 ${GTK2_INCLUDE_DIRS}
 					 ${CMAKE_SOURCE_DIR}/Core 
 					 ${CMAKE_SOURCE_DIR}/Util )
 					 
@@ -53,4 +54,5 @@ target_link_libraries( Viewer
 					   Util
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
+					   ${GTK2_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
