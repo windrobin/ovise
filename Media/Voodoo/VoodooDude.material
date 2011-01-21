@@ -1,0 +1,140 @@
+material Material.001
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.003
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.002
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.005
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.010
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.007
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.006
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.009
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.008
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Material.004
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.427070 0.000000 0.046978 1.000000
+			diffuse 0.800000 0.000000 0.088000 1.000000
+			specular 0.145000 0.120000 0.405000 1.000000 35.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}

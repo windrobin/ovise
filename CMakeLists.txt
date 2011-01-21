@@ -32,6 +32,7 @@ endif( UNIX )
 option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
 option( PLUGINS_ROBOT "Build robot plugin" ON )
 option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
+option( PLUGINS_VOODOO "Build Voodoo plugin" ON )
 
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
 
@@ -51,6 +52,10 @@ endif()
 
 if( PLUGINS_POINTCLOUD )
 add_subdirectory( PointcloudPlugin )
+endif()
+
+if( PLUGINS_VOODOO )
+add_subdirectory( VoodooPlugin )
 endif()
 
 if( INTERFACES_ILCAS )

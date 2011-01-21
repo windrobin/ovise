@@ -144,6 +144,13 @@ void MainFrame::SetupSceneTree()
 		( "Model", "Albert.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;
+
+	mEntityPool.CreateEntity( "VoodooDude" ).Set
+		( "Type", "VoodooDoll" )
+		( "Model", "VoodooDude.mesh" )
+		( "Position", vec3( 1.f, 0.f, 0.f ) )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+	;
 	
 	/*mEntityPool.CreateEntity( "Cloud" ).Set
 		( "Type", "Pointcloud" )
