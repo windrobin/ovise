@@ -65,8 +65,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
   mPluginPath( PluginDir ),
   mOgreWindow(0), 
   mInputHandler(0), 
-  mCurrentEntity(0),
-  mNetworkInterface( mIOService, mEntityPool )
+  mCurrentEntity(0)
 {
 #if wxUSE_STATUSBAR
 	statusBar->SetStatusText(_("OViSE started up."), 0);
@@ -96,6 +95,8 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 
 	// Initialize SelectionManager
 	SetupSceneTree();
+
+	mInterfaceManager.reset( new CInterfaceManager( mIOService, mEntityPool ) );
 
 	Maximize(true);
 
@@ -213,6 +214,13 @@ bool MainFrame::InitOgre()
 		boost::bind( &OgreWindow::Refresh, mOgreWindow, false, (wxRect*) 0 ) ) );
 
 	LoadVisPlugins();
+	LoadNWPlugins();
+
+	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
+	for( std::set<std::string>::iterator i = Interfaces.begin(); i != Interfaces.end(); i++ )
+	{
+		network->AppendCheckItem( wxID_ANY, *i );
+	}
 
 	mEntityPool.InsertObserver( mSceneView.get() );
 
@@ -275,7 +283,7 @@ void MainFrame::LoadVisualizationPlugin( wxString Filename )
 
 void MainFrame::LoadNetworkPlugin( wxString Filename )
 {
-	typedef void (*FunctionType)( boost::asio::io_service&, EntityPool& );
+	typedef void (*FunctionType)( CInterfaceManager& );
 	const wxString InitFunctionName( "LoadInterface" ); // The function to load from the dynamic library
 
 	wxString Extension;
@@ -299,7 +307,7 @@ void MainFrame::LoadNetworkPlugin( wxString Filename )
 	if ( Function )
 	{
 		FunctionType f = reinterpret_cast<FunctionType>(Function);
-		f( mIOService, mEntityPool );
+		f( *mInterfaceManager );
 	}
 
 #else // Linux
@@ -323,7 +331,7 @@ void MainFrame::LoadNetworkPlugin( wxString Filename )
 		return;
 	}
 
-	Function( mIOService, mEntityPool );
+	Function( *mInterfaceManager );
 #endif
 }
 
@@ -478,26 +486,6 @@ void MainFrame::OnDynamicShadowsChange(wxCommandEvent& event)
 }
 
 
-void MainFrame::OnNetworkListenChange(wxCommandEvent& event)
-{
-	if(event.IsChecked())
-	{
-		//start listening
-		std::cout << "Start listening for remote connection" << std::endl;
-		//mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-		//mEntityPool.RemoveEntityById(1);
-
-	}
-	else
-	{
-		//stop listening
-		std::cout << "Stop listening for remote connection." << std::endl;
-		//mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-		//mEntityPool.RemoveEntityById(2);
-		//mNetworkInterface.StopListening();
-	}
-}
-
 void MainFrame::OnInsertEntity( wxCommandEvent& Event )
 {
 	wxTextEntryDialog Dialog( this, "Name the new entity:", "Create Entity" );
@@ -593,11 +581,6 @@ void MainFrame::OnDeleteAttribute( wxCommandEvent& Event )
 	mCurrentEntity->RemoveAttribute( Name );
 }
 
-
-void MainFrame::OnConnectServer( wxCommandEvent& Event )
-{
-
-}
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 {

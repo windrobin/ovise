@@ -15,6 +15,8 @@ public:
 	void AcceptHandler( const boost::system::error_code& );
 	void ReadHandler( const boost::system::error_code&, std::size_t );
 
+	bool Init();
+
 private:
 	boost::asio::ip::tcp::endpoint	mEndpoint;
 	boost::asio::ip::tcp::acceptor	mAcceptor;

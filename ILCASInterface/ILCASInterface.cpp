@@ -3,6 +3,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 
+#include <InterfaceManager.h>
+
 
 CILCASInterface::CILCASInterface( boost::asio::io_service& IOService, EntityPool& EntPool )
 	: CNetworkInterface( IOService, EntPool ),
@@ -11,14 +13,19 @@ CILCASInterface::CILCASInterface( boost::asio::io_service& IOService, EntityPool
 	mSocket( mIOService ),
 	mMessageHandler( &EntPool )
 {
-	mAcceptor.listen();
-	mAcceptor.async_accept( mSocket,
-		boost::bind( &CILCASInterface::AcceptHandler, this, _1 ) );
 }
 
 
 CILCASInterface::~CILCASInterface(void)
 {
+}
+
+bool CILCASInterface::Init()
+{
+	mAcceptor.listen();
+	mAcceptor.async_accept( mSocket,
+		boost::bind( &CILCASInterface::AcceptHandler, this, _1 ) );
+	return true;
 }
 
 void CILCASInterface::WriteHandler( const boost::system::error_code&, std::size_t )
@@ -50,4 +57,10 @@ void CILCASInterface::AcceptHandler( const boost::system::error_code& Error )
 	boost::asio::write( mSocket, boost::asio::buffer( "ready" ) );
 	boost::asio::async_read_until( mSocket, mStreamBuffer, "</Entity>", 
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
+}
+
+extern "C" INTERFACE_API
+void LoadInterface( CInterfaceManager& InterfaceManager )
+{
+	InterfaceManager.RegisterInterface<CILCASInterface>( "ILCAS" );
 }

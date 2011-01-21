@@ -87,12 +87,12 @@ class SceneView :
 public:
 	typedef AbstractOgreEntityView Node;
 	typedef boost::function<Node*(Entity* Object, Ogre::SceneManager* Mgr)> FactoryType;
-    
+	
 	template <typename T>
-    struct SimpleFactoryType
-    {
+	struct SimpleFactoryType
+	{
 		T* operator()(Entity* Object, Ogre::SceneManager* Mgr) { return new T(Object,Mgr); }
-    };
+	};
 
 	SceneView( Ogre::SceneManager* SceneMgr, boost::function<void()> UpdateFunction );
 	~SceneView();

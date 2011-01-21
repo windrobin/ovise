@@ -31,6 +31,7 @@
 #include "LogListener.h"
 #include "InputHandler.h"
 #include "AddMeshDialog.h"
+#include "InterfaceManager.h"
 
 #include <boost/scoped_ptr.hpp>
 
@@ -68,10 +69,8 @@ class MainFrame :
 		virtual void					OnDMWire(wxCommandEvent &event);
 		virtual void					OnDMSolid(wxCommandEvent &event);
 		virtual void					OnTestStuff( wxCommandEvent& event );
-		void                            OnNetworkListenChange( wxCommandEvent &event);
 		void							OnInsertEntity( wxCommandEvent& Event );
 		void							OnRemoveEntity( wxCommandEvent& Event );
-		void							OnConnectServer( wxCommandEvent& Event );
 		void							OnAddAttribute( wxCommandEvent& Event );
 		void							OnDeleteAttribute( wxCommandEvent& Event );
 		void							OnMouseEvent( wxMouseEvent& evt );
@@ -113,7 +112,8 @@ class MainFrame :
 
 //        XMLRPCServer                    mRPCServer;
 		boost::asio::io_service			mIOService;
-		CNetworkInterface				mNetworkInterface;
+
+		boost::scoped_ptr<CInterfaceManager> mInterfaceManager;
 };
 
 #endif // MAINFRAME_H

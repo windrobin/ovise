@@ -6,6 +6,7 @@ include_directories( ${Boost_INCLUDE_DIR}
 include( ${wxWidgets_USE_FILE} )
 					 
 set( UtilHeaders
+	InterfaceManager.h
 	Logging.h
 	NetworkInterface.h
 	ObjectTitle.h
@@ -14,6 +15,7 @@ set( UtilHeaders
 	StringConverter.h )
 	
 set( UtilSources
+	InterfaceManager.cpp
 	Logging.cpp
 	NetworkInterface.cpp
 	ObjectTitle.cpp
