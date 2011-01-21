@@ -145,8 +145,6 @@ void MainFrame::SetupSceneTree()
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;
 	
-	mEntityPool.GetEntityById(1)->SetAttribute("Pan", 50);
-	
 	/*mEntityPool.CreateEntity( "Cloud" ).Set
 		( "Type", "Pointcloud" )
 		( "Filename", "torus.off" )
@@ -402,6 +400,7 @@ void MainFrame::OnQuit(wxCommandEvent &event)
 
 void MainFrame::OnIdle(wxIdleEvent& evt)
 {
+	mIOService.poll();
 	evt.RequestMore();
 }
 

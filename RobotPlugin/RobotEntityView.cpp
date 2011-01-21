@@ -9,7 +9,8 @@ RobotEntityView::RobotEntityView( Entity* Object, Ogre::SceneManager* Mgr )
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 
 	//only if Model is set yet...
-	if (Object->GetAttribute("Model") != 0)	OnEntityAttributeChanged(Object,"Model",Object->GetAttribute("Model"));
+	if (Object->GetAttribute("Model") != 0)	
+		OnEntityAttributeChanged(Object,"Model",Object->GetAttribute("Model"));
 }
 
 RobotEntityView::~RobotEntityView()
@@ -41,11 +42,6 @@ void RobotEntityView::OnEntityAttributeChanged(
 	}
 	else if ( Name == "Model" )
 	{
-
-
-
-
-
 		// Delete all old bone names
 		if ( mOgreEntity )
 		{
@@ -104,14 +100,14 @@ void RobotEntityView::OnEntityAttributeChanged(
 
 		// Check if this is an angle value and a bone of this name exists
 		Ogre::SkeletonInstance* Skeleton=mOgreEntity->getSkeleton();
-		const float* Angle = boost::get<float>( Attribute );
+		const double* Angle = boost::get<double>( Attribute );
 
 		if ( Angle && Skeleton->hasBone(Name) )
 		{
 			Ogre::Bone* Bone=Skeleton->getBone(Name);
 
 			quat Delta;
-			Delta.FromAngleAxis( Ogre::Degree( *Angle ), vec3( 0.f, 1.f, 0.f ) );
+			Delta.FromAngleAxis( Ogre::Degree( (float)(*Angle) ), vec3( 0.f, 1.f, 0.f ) );
 
 			Bone->setOrientation( Bone->getInitialOrientation() * Delta );
 
