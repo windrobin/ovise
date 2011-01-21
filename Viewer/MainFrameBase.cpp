@@ -89,10 +89,6 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	mbar->Append( scene, wxT("Scene") ); 
 	
 	network = new wxMenu();
-	wxMenuItem* m_networkConnect;
-	m_networkConnect = new wxMenuItem( network, ID_SERVER_LISTEN, wxString( wxT("Listen for remote connection") ) , wxEmptyString, wxITEM_CHECK );
-	network->Append( m_networkConnect );
-	
 	mbar->Append( network, wxT("Network") ); 
 	
 	helpMenu = new wxMenu();
@@ -125,7 +121,6 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	this->Connect( wireframe->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Connect( solid->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
 	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
-	this->Connect( m_networkConnect->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnNetworkListenChange ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 }
@@ -142,7 +137,6 @@ MainFrameBase::~MainFrameBase()
 	this->Disconnect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Disconnect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
 	this->Disconnect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
-	this->Disconnect( ID_SERVER_LISTEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnNetworkListenChange ) );
 	this->Disconnect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
 	this->Disconnect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 	
@@ -410,49 +404,5 @@ AddAttributeDialog::AddAttributeDialog( wxWindow* parent, wxWindowID id, const w
 }
 
 AddAttributeDialog::~AddAttributeDialog()
-{
-}
-
-ConnectToServerDialog::ConnectToServerDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
-{
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
-	
-	Sizer = new wxBoxSizer( wxVERTICAL );
-	
-	wxStaticText* m_staticText3;
-	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Connect to:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText3->Wrap( -1 );
-	Sizer->Add( m_staticText3, 0, wxALL, 5 );
-	
-	wxBoxSizer* bSizer12;
-	bSizer12 = new wxBoxSizer( wxVERTICAL );
-	
-	wxBoxSizer* bSizer17;
-	bSizer17 = new wxBoxSizer( wxHORIZONTAL );
-	
-	wxStaticText* m_staticText4;
-	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Server:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_staticText4->Wrap( -1 );
-	bSizer17->Add( m_staticText4, 0, wxALL, 5 );
-	
-	NameCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
-	bSizer17->Add( NameCtrl, 1, wxALL, 5 );
-	
-	bSizer12->Add( bSizer17, 1, wxEXPAND, 5 );
-	
-	Sizer->Add( bSizer12, 1, wxEXPAND, 5 );
-	
-	wxStaticLine* m_staticline1;
-	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	Sizer->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
-	this->SetSizer( Sizer );
-	this->Layout();
-	Sizer->Fit( this );
-	
-	this->Centre( wxBOTH );
-}
-
-ConnectToServerDialog::~ConnectToServerDialog()
 {
 }

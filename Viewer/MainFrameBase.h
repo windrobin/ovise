@@ -44,9 +44,8 @@
 #define ID_ADD_ATTRIBUTE 1009
 #define ID_DELETE_ATTRIBUTE 1010
 #define ID_LOAD_POINTCLOUD 1011
-#define ID_SERVER_LISTEN 1012
-#define idMenuAbout 1013
-#define ID_TESTSTUFF 1014
+#define idMenuAbout 1012
+#define ID_TESTSTUFF 1013
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameBase
@@ -79,7 +78,6 @@ class MainFrameBase : public wxFrame
 		virtual void OnDMWire( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMSolid( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnLoadPointCloud( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnNetworkListenChange( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ) { event.Skip(); }
 		
@@ -221,24 +219,6 @@ class AddAttributeDialog : public wxDialog
 		
 		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~AddAttributeDialog();
-	
-};
-
-///////////////////////////////////////////////////////////////////////////////
-/// Class ConnectToServerDialog
-///////////////////////////////////////////////////////////////////////////////
-class ConnectToServerDialog : public wxDialog 
-{
-	private:
-	
-	protected:
-	
-	public:
-		wxBoxSizer* Sizer;
-		wxTextCtrl* NameCtrl;
-		
-		ConnectToServerDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Connect to remote Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~ConnectToServerDialog();
 	
 };
 
