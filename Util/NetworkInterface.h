@@ -22,12 +22,18 @@ public:
 	CNetworkInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
 	virtual ~CNetworkInterface();
 
-	virtual bool Init() = 0;
+	/// Should implement intialization and starting of the interface
+	virtual bool Start() = 0;
+	/// Should implement unitialization and stopping of interface
+	virtual bool Stop() = 0;
+
+	bool IsRunning() { return mRunning; }
 
 protected:
 	boost::asio::io_service& mIOService;
 	EntityPool&				 mEntityPool;
 	std::string				 mName;
+	bool					 mRunning;
 };
 
 

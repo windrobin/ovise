@@ -9,8 +9,8 @@
 CILCASInterface::CILCASInterface( boost::asio::io_service& IOService, EntityPool& EntPool )
 	: CNetworkInterface( IOService, EntPool ),
 	mEndpoint( boost::asio::ip::tcp::v4(), 2121 ),
-	mAcceptor( mIOService ),
-	mSocket( mIOService ),
+	mAcceptor( IOService, mEndpoint ),
+	mSocket( IOService ),
 	mMessageHandler( &EntPool )
 {
 }
@@ -18,13 +18,24 @@ CILCASInterface::CILCASInterface( boost::asio::io_service& IOService, EntityPool
 
 CILCASInterface::~CILCASInterface(void)
 {
+	mSocket.shutdown( boost::asio::ip::tcp::socket::shutdown_both );
+	mAcceptor.close();
 }
 
-bool CILCASInterface::Init()
+bool CILCASInterface::Start()
 {
 	mAcceptor.listen();
 	mAcceptor.async_accept( mSocket,
 		boost::bind( &CILCASInterface::AcceptHandler, this, _1 ) );
+	mRunning = true;
+	return true;
+}
+
+bool CILCASInterface::Stop()
+{
+	// FIXME: Is this the way to do it?
+	mAcceptor.close();
+	mRunning = false;
 	return true;
 }
 
