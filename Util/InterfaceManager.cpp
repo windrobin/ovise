@@ -9,9 +9,6 @@ CInterfaceManager::CInterfaceManager( boost::asio::io_service& IOService, Entity
 
 CInterfaceManager::~CInterfaceManager(void)
 {
-	for( InterfaceMapType::iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
-		delete i->second;
-	mInterfaces.clear();
 }
 
 CNetworkInterface* CInterfaceManager::GetInterface( const std::string& Name )

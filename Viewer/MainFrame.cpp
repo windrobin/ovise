@@ -75,6 +75,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	// Connect event handlers
 	this->Connect( ID_INSERT_ENTITY, wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler( MainFrame::OnInsertEntity ) );
+	//Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnInsertEntity, this, ID_INSERT_ENTITY );
 	this->Connect( ID_REMOVE_ENTITY, wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler( MainFrame::OnRemoveEntity ) );
 	this->Connect( ID_ADD_ATTRIBUTE, wxEVT_COMMAND_MENU_SELECTED,
@@ -98,6 +99,20 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 
 	mInterfaceManager.reset( new CInterfaceManager( mIOService, mEntityPool ) );
 
+	LoadNWPlugins();
+
+	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
+	for( std::set<std::string>::iterator i = Interfaces.begin(); i != Interfaces.end(); i++ )
+	{
+		wxMenuItem* InterfaceItem = network->AppendCheckItem( wxID_ANY, *i );
+		boost::function< void ( wxCommandEvent& ) > InitHandler(
+			boost::bind( &MainFrame::OnNetworkInterfaceCheck, this, _1, *i ) );
+		Bind( wxEVT_COMMAND_MENU_SELECTED, InitHandler, InterfaceItem->GetId() );
+	}
+
+	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
+	mNetworkTimer.Start( 50 );
+
 	Maximize(true);
 
 	mWindowManager.Update();
@@ -105,6 +120,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 
 void MainFrame::OnClose(wxCloseEvent& event)
 {
+	mNetworkTimer.Stop();
 	mWindowManager.UnInit();
 	event.Skip();
 }
@@ -219,17 +235,30 @@ bool MainFrame::InitOgre()
 		boost::bind( &OgreWindow::Refresh, mOgreWindow, false, (wxRect*) 0 ) ) );
 
 	LoadVisPlugins();
-	LoadNWPlugins();
-
-	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
-	for( std::set<std::string>::iterator i = Interfaces.begin(); i != Interfaces.end(); i++ )
-	{
-		network->AppendCheckItem( wxID_ANY, *i );
-	}
-
+	
 	mEntityPool.InsertObserver( mSceneView.get() );
 
 	return true;
+}
+
+void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name )
+{
+	CNetworkInterface* Interface = mInterfaceManager->GetInterface( Name );
+
+	if( Event.IsChecked() )
+	{
+		wxString msg = wxT( "Starting interface " ) + wxString( Name );
+		SetStatusMessage( msg );
+		if( Interface )
+			Interface->Start();
+	}
+	else
+	{
+		wxString msg = wxT( "Stopping interface " ) + wxString( Name );
+		SetStatusMessage( msg );
+		if( Interface )
+			Interface->Stop();
+	}
 }
 
 void MainFrame::LoadVisualizationPlugin( wxString Filename )
@@ -407,8 +436,12 @@ void MainFrame::OnQuit(wxCommandEvent &event)
 
 void MainFrame::OnIdle(wxIdleEvent& evt)
 {
-	mIOService.poll();
 	evt.RequestMore();
+}
+
+void MainFrame::OnNetworkTimer( wxTimerEvent& Event )
+{
+	mIOService.poll();
 }
 
 void MainFrame::OnAbout(wxCommandEvent &event)
@@ -417,8 +450,8 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 	info.SetName(wxT("OViSE"));
 	info.SetVersion(wxT("0.3 Beta (gnome)"));
 
-	wxString description = wxT("Institute of Computer Science and Engineering (CSE)\n\r");
-	description += wxT("Industrial Applications of Computer Science and Micro Systems (IAIM)\n");
+	wxString description = wxT("Institute for Anthropomatics (IfA)\n\r");
+	description += wxT("Humanoid and Intelligence Systems Lab (HIS)\n");
 	description += wxT("Prof. Dr. R. Dillmann\n");
 	description += wxT("http://wwwiaim.ira.uka.de\n");
 	description += wxT("Department of Computer Science\n");
@@ -426,7 +459,7 @@ void MainFrame::OnAbout(wxCommandEvent &event)
 	description += wxT("Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)");
 	info.SetDescription(description);
 
-	info.SetCopyright(wxT("(C) 2008-20010 "));
+	info.SetCopyright(wxT("(C) 2008-2011 "));
 
 	info.AddDeveloper(wxT("Programming - Alexander Kasper <alexander.kasper@kit.edu>"));
 	info.AddDeveloper(wxT("Programming - Marius Elvert <marius.elvert@googlemail.com>"));

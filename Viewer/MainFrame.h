@@ -22,8 +22,7 @@
 
 #include <wx/treebase.h>
 #include <wx/imaglist.h>
-
-#include <wx/socket.h>
+#include <wx/timer.h>
 
 #include "MainFrameBase.h"
 #include "SceneHandling.h"
@@ -78,6 +77,8 @@ class MainFrame :
 		void							OnViewClick( wxMouseEvent& evt );
 		void							OnTreeSelectionChanged( wxTreeEvent& event );
 		void							OnIdle( wxIdleEvent& evt );
+		void							OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
+		void							OnNetworkTimer( wxTimerEvent& Event );
 
 		void							SetupSceneTree();
 
@@ -110,10 +111,10 @@ class MainFrame :
 		Entity*							mCurrentEntity;
 		Ogre::Camera*					mCamera;
 
-//        XMLRPCServer                    mRPCServer;
 		boost::asio::io_service			mIOService;
+		wxTimer							mNetworkTimer;
 
-		boost::scoped_ptr<CInterfaceManager> mInterfaceManager;
+		scoped_ptr<CInterfaceManager>	mInterfaceManager;
 };
 
 #endif // MAINFRAME_H
