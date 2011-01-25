@@ -111,7 +111,6 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	}
 
 	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
-	mNetworkTimer.Start( 50 );
 
 	Maximize(true);
 
@@ -121,6 +120,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 void MainFrame::OnClose(wxCloseEvent& event)
 {
 	mNetworkTimer.Stop();
+	mIOService.stop();
 	mWindowManager.UnInit();
 	event.Skip();
 }
@@ -250,14 +250,20 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Nam
 		wxString msg = wxT( "Starting interface " ) + wxString( Name );
 		SetStatusMessage( msg );
 		if( Interface )
-			Interface->Start();
+		{
+			if( Interface->Start() && !mNetworkTimer.IsRunning() )
+				mNetworkTimer.Start();
+		}
 	}
 	else
 	{
 		wxString msg = wxT( "Stopping interface " ) + wxString( Name );
 		SetStatusMessage( msg );
 		if( Interface )
-			Interface->Stop();
+		{
+			if( Interface->Stop() && !mInterfaceManager->HasInterfaceRunning() )
+				mNetworkTimer.Stop();
+		}
 	}
 }
 
@@ -441,7 +447,8 @@ void MainFrame::OnIdle(wxIdleEvent& evt)
 
 void MainFrame::OnNetworkTimer( wxTimerEvent& Event )
 {
-	mIOService.poll();
+	std::size_t H = mIOService.poll();
+	mIOService.reset();
 }
 
 void MainFrame::OnAbout(wxCommandEvent &event)
