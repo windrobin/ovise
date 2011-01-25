@@ -27,3 +27,12 @@ std::set<std::string> CInterfaceManager::GetInterfaceNames() const
 
 	return RValues;
 }
+
+bool CInterfaceManager::HasInterfaceRunning()
+{
+	bool RValue = true;
+	for( InterfaceMapType::iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
+		RValue = RValue && i->second->IsRunning();
+
+	return RValue;
+}

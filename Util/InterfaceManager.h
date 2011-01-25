@@ -22,6 +22,8 @@ public:
 	CNetworkInterface* GetInterface( const std::string& Name );
 	std::set<std::string> GetInterfaceNames() const;
 
+	bool HasInterfaceRunning();
+
 private:
 	typedef std::map<std::string, CNetworkInterface* > InterfaceMapType;
 	InterfaceMapType			mInterfaces;

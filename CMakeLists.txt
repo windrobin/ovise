@@ -35,6 +35,7 @@ option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
 option( PLUGINS_VOODOO "Build Voodoo plugin" ON )
 
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
+option( INTERFACES_SHAROME "Build SHAROME interface" ON )
 
 add_subdirectory( Core )
 add_subdirectory( Util )
@@ -60,4 +61,8 @@ endif()
 
 if( INTERFACES_ILCAS )
 add_subdirectory( ILCASInterface )
+endif()
+
+if( INTERFACES_SHAROME )
+add_subdirectory( SharomeInterface )
 endif()

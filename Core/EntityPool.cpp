@@ -64,21 +64,16 @@ void EntityPool::RemoveEntity( Entity* Rhs )
 	delete Rhs;
 }
 
-Entity* EntityPool::GetEntityById( int id ) 
+Entity* EntityPool::GetEntityById( int Id ) 
 {
-	Entity* cEntity;
+	Entity* E = NULL;
 
 	//find the Entity and return it
-	BOOST_FOREACH( cEntity, mData ) 
+	BOOST_FOREACH( E, mData ) 
 	{
-		if (cEntity->GetId() == id) 
-		{
-			std::cout << "Found the entity with given id" << std::endl;
-			return cEntity;
-		}
-		std::cout << cEntity->GetId() << std::endl;
+		if ( E->GetId() == Id ) 
+			return E;
 	}
-	std::cout << "Entity with given ID not found!" << std::endl;
 	
 	return NULL;
 }
