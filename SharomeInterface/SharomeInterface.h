@@ -11,7 +11,7 @@ class SharomeInterface :
 	public CNetworkInterface
 {
 public:
-	SharomeInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
+	SharomeInterface( EntityPool& EntPool );
 	~SharomeInterface(void);
 
 	bool Start();
@@ -23,6 +23,8 @@ public:
 		boost::shared_ptr<Comm::Message> Msg );
 	void HandleWrite( const boost::system::error_code& Error );
 
+	void Poll();
+
 private:
 	void HandleObjectCreated( const OOWM::Mem::CObj& Obj );
 	void HandleObjectChanged( const OOWM::Mem::CObj& Obj );
@@ -32,7 +34,9 @@ private:
 	void HandleError( std::string Msg );
 
 	OOWM::Mem::CScene	mLocalScene;
-	CConnection			mConnection;
+	ConnectionPtr		mConnection;
+
+	boost::asio::io_service mIOService;
 };
 
 #endif // LEGACY_INTERFACE_H

@@ -97,7 +97,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	// Initialize SelectionManager
 	SetupSceneTree();
 
-	mInterfaceManager.reset( new CInterfaceManager( mIOService, mEntityPool ) );
+	mInterfaceManager.reset( new CInterfaceManager( mEntityPool ) );
 
 	LoadNWPlugins();
 
@@ -120,7 +120,6 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 void MainFrame::OnClose(wxCloseEvent& event)
 {
 	mNetworkTimer.Stop();
-	mIOService.stop();
 	mWindowManager.UnInit();
 	event.Skip();
 }
@@ -161,12 +160,12 @@ void MainFrame::SetupSceneTree()
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;
 
-	mEntityPool.CreateEntity( "VoodooDude" ).Set
+	/*mEntityPool.CreateEntity( "VoodooDude" ).Set
 		( "Type", "VoodooDoll" )
 		( "Model", "VoodooDude.mesh" )
 		( "Position", vec3( 1.f, 0.f, 0.f ) )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
-	;
+	;*/
 	
 	/*mEntityPool.CreateEntity( "Cloud" ).Set
 		( "Type", "Pointcloud" )
@@ -447,8 +446,7 @@ void MainFrame::OnIdle(wxIdleEvent& evt)
 
 void MainFrame::OnNetworkTimer( wxTimerEvent& Event )
 {
-	std::size_t H = mIOService.poll();
-	mIOService.reset();
+	mInterfaceManager->PollInterfaces();
 }
 
 void MainFrame::OnAbout(wxCommandEvent &event)
