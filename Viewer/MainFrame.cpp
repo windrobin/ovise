@@ -251,7 +251,7 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Nam
 		if( Interface )
 		{
 			if( Interface->Start() && !mNetworkTimer.IsRunning() )
-				mNetworkTimer.Start();
+				mNetworkTimer.Start( 50 );
 		}
 	}
 	else
@@ -430,6 +430,7 @@ void MainFrame::LoadNWPlugins()
 	wxString Filename;
 	for ( bool c=Directory.GetFirst(&Filename);c;c=Directory.GetNext(&Filename) )
 	{
+		std::cout << "Loading network plugin " << Filename << std::endl;
 		LoadNetworkPlugin( PluginPath+Filename );
 	}
 }
