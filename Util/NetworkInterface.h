@@ -19,7 +19,7 @@
 class CNetworkInterface
 {
 public:
-	CNetworkInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
+	CNetworkInterface( EntityPool& EntPool );
 	virtual ~CNetworkInterface();
 
 	/// Should implement intialization and starting of the interface
@@ -29,8 +29,9 @@ public:
 
 	bool IsRunning() { return mRunning; }
 
+	virtual void Poll() = 0;
+
 protected:
-	boost::asio::io_service& mIOService;
 	EntityPool&				 mEntityPool;
 	std::string				 mName;
 	bool					 mRunning;

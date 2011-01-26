@@ -1,8 +1,8 @@
 #include "InterfaceManager.h"
 
 
-CInterfaceManager::CInterfaceManager( boost::asio::io_service& IOService, EntityPool& EntPool )
-	: mIOService( IOService ), mEntityPool( EntPool )
+CInterfaceManager::CInterfaceManager( EntityPool& EntPool )
+	: mEntityPool( EntPool )
 {
 }
 
@@ -26,6 +26,12 @@ std::set<std::string> CInterfaceManager::GetInterfaceNames() const
 	}
 
 	return RValues;
+}
+
+void CInterfaceManager::PollInterfaces()
+{
+	for( InterfaceMapType::iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
+		i->second->Poll();
 }
 
 bool CInterfaceManager::HasInterfaceRunning()

@@ -2,10 +2,12 @@
 
 #include <InterfaceManager.h>
 #include <Mem/Serialization.hpp>
+#include <Mem/Location.h>
+#include <Result.h>
 
 
-SharomeInterface::SharomeInterface( boost::asio::io_service& IOService, EntityPool& EntPool ) 
-	: CNetworkInterface( IOService, EntPool ), mConnection( IOService )
+SharomeInterface::SharomeInterface( EntityPool& EntPool ) 
+	: CNetworkInterface( EntPool )
 {
 }
 
@@ -27,7 +29,9 @@ bool SharomeInterface::Start()
 	boost::asio::ip::tcp::resolver::iterator EndpointIterator = Resolver.resolve( Query );
 	boost::asio::ip::tcp::endpoint Endpoint = *EndpointIterator;
 
-	mConnection.Socket().async_connect( Endpoint,
+	mConnection.reset( new CConnection( mIOService ) );
+
+	mConnection->Socket().async_connect( Endpoint,
 		boost::bind( &SharomeInterface::HandleConnect, this,
 		boost::asio::placeholders::error, ++EndpointIterator ) );
 
@@ -39,11 +43,17 @@ bool SharomeInterface::Start()
 bool SharomeInterface::Stop()
 {
 	std::cout << "SharomeInterface uninit." << std::endl;
-	mConnection.Socket().close();
+	mConnection->Socket().close();
 
 	mRunning = false;
 
 	return true;
+}
+
+void SharomeInterface::Poll()
+{
+	mIOService.poll();
+	mIOService.reset();
 }
 
 void SharomeInterface::HandleConnect( const boost::system::error_code& Error,
@@ -52,22 +62,22 @@ void SharomeInterface::HandleConnect( const boost::system::error_code& Error,
 	if(!Error)
 	{
 		boost::asio::socket_base::keep_alive option(true);
-		mConnection.Socket().set_option( option );
+		mConnection->Socket().set_option( option );
 
 		// tell server we want the whole scene
 		boost::shared_ptr<Comm::Message> msg( new Comm::Message );
 		msg->m_Code = Comm::MSG_GET;
 		msg->m_Type = Comm::TYPE_CSCENE;
 
-		mConnection.AsyncWrite(msg,
+		mConnection->AsyncWrite(msg,
 			boost::bind(&SharomeInterface::HandleWrite, this,
 			boost::asio::placeholders::error ) );
 	}
 	else if( EndpointIterator != boost::asio::ip::tcp::resolver::iterator())
 	{
-		mConnection.Socket().close();
+		mConnection->Socket().close();
 		boost::asio::ip::tcp::endpoint Endpoint = *EndpointIterator;
-		mConnection.Socket().async_connect(Endpoint,
+		mConnection->Socket().async_connect(Endpoint,
 			boost::bind(&SharomeInterface::HandleConnect, this,
 			boost::asio::placeholders::error, ++EndpointIterator) );
 	}
@@ -83,7 +93,7 @@ void SharomeInterface::HandleWrite( const boost::system::error_code& Error )
 	{
 		boost::shared_ptr<Comm::Message> Reply;
 		Reply.reset( new Comm::Message );
-		mConnection.AsyncRead(Reply,
+		mConnection->AsyncRead(Reply,
 			boost::bind(&SharomeInterface::HandleRead, this,
 			boost::asio::placeholders::error, Reply ) );
 	}
@@ -153,14 +163,19 @@ void SharomeInterface::HandleRead( const boost::system::error_code& Error,
 
 	
 	boost::shared_ptr<Comm::Message> Inc( new Comm::Message );
-	mConnection.AsyncRead( Inc,
+	mConnection->AsyncRead( Inc,
 		boost::bind( &SharomeInterface::HandleRead, this,
 		boost::asio::placeholders::error, Inc ) );
 }
 
 void SharomeInterface::HandleObjectCreated( const OOWM::Mem::CObj& Obj )
 {
-
+	// create new entity for object
+	mEntityPool.CreateEntity( Obj.getName() ).Set
+		( "Type", "Simpel" )
+		( "Model", "Unknown.mesh" )
+		( "SharomeId", Obj.getId() )
+	;
 }
 
 void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj )
@@ -175,7 +190,35 @@ void SharomeInterface::HandleObjectDeleted( const OOWM::Mem::CObj& Obj )
 
 void SharomeInterface::HandleSceneChanged()
 {
+	// remove all Sharome entities
+	mEntityPool.RemoveEntitiesByAttribute<std::string>( "SharomeId" );
 
+	// add all objects of changed scene
+	std::set<std::string> Ids;
+	mLocalScene.getIdsByName( Ids, "*" );
+	for( std::set<std::string>::iterator i = Ids.begin(); i != Ids.end(); i++ )
+	{
+		OOWM::Mem::CObj O;
+		mLocalScene.getById( O, *i );
+
+		Entity& E = mEntityPool.CreateEntity( O.getName() );
+		E.SetAttribute( "Type", "Simpel" );
+		E.SetAttribute( "Model", "Unknown.mesh" );
+		E.SetAttribute( "SharomeId", O.getId() );
+
+		OOWM::Mem::CAttribute A;
+		OOWM::SResult Result;
+		O.getFirstByName( A, "Location", &Result );
+		if( Result.m_nCode == R_OK )
+		{
+			OOWM::Mem::CLocation L;
+			if( L.FromAttribute( A ) )
+			{
+				E.SetAttribute( "Position", vec3( L.m_Position[0], L.m_Position[1], L.m_Position[2] ) );
+			}
+		}
+	}
+				
 }
 
 void SharomeInterface::HandleSceneDeleted()

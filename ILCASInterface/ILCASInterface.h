@@ -4,11 +4,15 @@
 #include "NetworkInterface.h"
 #include "SocketMessage.h"
 
+#include <boost/scoped_ptr.hpp>
+
+using namespace boost::asio;
+
 class CILCASInterface :
 	public CNetworkInterface
 {
 public:
-	CILCASInterface( boost::asio::io_service& IOService, EntityPool& EntPool );
+	CILCASInterface( EntityPool& EntPool );
 	~CILCASInterface(void);
 
 	void WriteHandler( const boost::system::error_code& , std::size_t );
@@ -18,10 +22,14 @@ public:
 	bool Start();
 	bool Stop();
 
+	void Poll();
+
 private:
-	boost::asio::ip::tcp::endpoint	mEndpoint;
-	boost::asio::ip::tcp::acceptor	mAcceptor;
-	boost::asio::ip::tcp::socket	mSocket;
+	boost::scoped_ptr<ip::tcp::endpoint> mEndpoint;
+	boost::scoped_ptr<ip::tcp::acceptor> mAcceptor;
+	boost::scoped_ptr<ip::tcp::socket>	 mSocket;
+
+	boost::asio::io_service			mIOService;
 
 	boost::array<char, 4096>		mBuffer;
 	boost::asio::streambuf			mStreamBuffer;

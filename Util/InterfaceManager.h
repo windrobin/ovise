@@ -10,13 +10,13 @@ class EntityPool;
 class CInterfaceManager
 {
 public:
-	explicit CInterfaceManager( boost::asio::io_service& IOService, EntityPool& EntPool );
+	explicit CInterfaceManager( EntityPool& EntPool );
 	~CInterfaceManager(void);
 
 	template<class InterfaceType> inline
 	void RegisterInterface( const std::string& InterfaceName )
 	{
-		mInterfaces[InterfaceName] = new InterfaceType( mIOService, mEntityPool );
+		mInterfaces[InterfaceName] = new InterfaceType( mEntityPool );
 	}
 
 	CNetworkInterface* GetInterface( const std::string& Name );
@@ -24,11 +24,12 @@ public:
 
 	bool HasInterfaceRunning();
 
+	void PollInterfaces();
+
 private:
 	typedef std::map<std::string, CNetworkInterface* > InterfaceMapType;
 	InterfaceMapType			mInterfaces;
 
-	boost::asio::io_service&	mIOService;
 	EntityPool&					mEntityPool;
 };
 

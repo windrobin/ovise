@@ -5,6 +5,7 @@ find_package( Sharome REQUIRED )
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${Sharome_INCLUDE_DIRS}
+					 ${Sharome_INCLUDE_DIRS}/replay
 					 ${CMAKE_SOURCE_DIR}/Core
 					 ${CMAKE_SOURCE_DIR}/Util )
 					 

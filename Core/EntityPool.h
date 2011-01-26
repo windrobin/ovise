@@ -50,8 +50,10 @@ public:
 	void							RemoveEntity( Entity* Rhs );
 
 	Entity*                         GetEntityById( int id );
-	template< typename T>
+	template< typename T >
 	Entity*							GetEntityByAttribute( std::string Attribute, const T& Value );
+	template< typename T >
+	int								RemoveEntitiesByAttribute( const std::string& Attribute, T* Value = NULL );
 
 	void							InsertObserver( EntityPoolObserver* Rhs );
 	void							RemoveObserver( EntityPoolObserver* Rhs );
@@ -82,6 +84,37 @@ Entity* EntityPool::GetEntityByAttribute( std::string Attribute, const T& Value 
 	}
 
 	return NULL;
+}
+
+template< typename T > inline
+int RemoveEntitiesByAttribute( const std::string& Attribute, T* Value )
+{
+	std::vector<int> Ids;
+	Entity* E = NULL;
+		
+	BOOST_FOREACH( E, mData )
+	{
+		const EntityVariantType* A = E->GetAttribute( Attribute );
+		if( A )
+		{
+			if( !Value )
+				Ids.push_back( E->GetId() );
+			else
+			{
+				const T* V = boost::get<T>( A );
+				if( V )
+				{
+					if( *V == Value )
+						Ids.push_back( E->GetId() );
+				}
+			}
+		}
+	}
+
+	for( std::vector<int>::iterator i = Ids.begin(); i != Ids.end(); i++ )
+		RemoveEntity( GetEntityById( *i ) );
+
+	return int( Ids.size() );
 }
 
 void RemoveEntityById( EntityPool* Pool, const int Id );

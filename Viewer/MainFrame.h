@@ -111,7 +111,7 @@ class MainFrame :
 		Entity*							mCurrentEntity;
 		Ogre::Camera*					mCamera;
 
-		boost::asio::io_service			mIOService;
+		//boost::asio::io_service			mIOService;
 		wxTimer							mNetworkTimer;
 
 		scoped_ptr<CInterfaceManager>	mInterfaceManager;
