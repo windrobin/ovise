@@ -101,3 +101,21 @@ void EntityPool::RemoveObserver( EntityPoolObserver* Rhs )
 
 	mObserver.erase( Rhs );
 }
+
+int EntityPool::RemoveEntitiesByAttribute( const std::string& Attribute )
+{
+	std::vector<int> Ids;
+	Entity* E = NULL;
+		
+	BOOST_FOREACH( E, mData )
+	{
+		const EntityVariantType* A = E->GetAttribute( Attribute );
+		if( A )
+			Ids.push_back( E->GetId() );
+	}
+
+	for( std::vector<int>::iterator i = Ids.begin(); i != Ids.end(); i++ )
+		RemoveEntity( GetEntityById( *i ) );
+
+	return int( Ids.size() );
+}

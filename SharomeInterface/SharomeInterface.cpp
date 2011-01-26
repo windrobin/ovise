@@ -5,6 +5,32 @@
 #include <Mem/Location.h>
 #include <Result.h>
 
+namespace {
+
+void CreateEntityFromCObj( EntityPool& Pool, const OOWM::Mem::CObj& Obj )
+{
+	Entity& E = Pool.CreateEntity( Obj.getName() );
+	E.Set
+		( "Type", "Simple" )
+		( "Model", "Unknown.mesh" )
+		( "SharomeId", Obj.getId() )
+	;
+
+	OOWM::Mem::CAttribute A;
+	OOWM::SResult Result;
+	Obj.getFirstByName( A, "Location", &Result );
+	if( Result.m_nCode == R_OK )
+	{
+		OOWM::Mem::CLocation L;
+		if( L.FromAttribute( A ) )
+		{
+			E.SetAttribute( "Position", vec3( L.m_Position.m_Value[0], L.m_Position.m_Value[1], L.m_Position.m_Value[2] ) );
+		}
+	}
+}
+
+}
+
 
 SharomeInterface::SharomeInterface( EntityPool& EntPool ) 
 	: CNetworkInterface( EntPool )
@@ -21,7 +47,7 @@ bool SharomeInterface::Start()
 	std::cout << "SharomeInterface init." << std::endl;
 
 	// FIXME: to be set by dialog
-	std::string Host = "i61akasp2";
+	std::string Host = "i61pst1";
 	std::string Service = "12345";
 
 	boost::asio::ip::tcp::resolver Resolver( mIOService);
@@ -170,28 +196,24 @@ void SharomeInterface::HandleRead( const boost::system::error_code& Error,
 
 void SharomeInterface::HandleObjectCreated( const OOWM::Mem::CObj& Obj )
 {
-	// create new entity for object
-	mEntityPool.CreateEntity( Obj.getName() ).Set
-		( "Type", "Simpel" )
-		( "Model", "Unknown.mesh" )
-		( "SharomeId", Obj.getId() )
-	;
+	CreateEntityFromCObj( mEntityPool, Obj );
 }
 
 void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj )
 {
-
+	mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId", Obj.getId() );
+	CreateEntityFromCObj( mEntityPool, Obj );
 }
 
 void SharomeInterface::HandleObjectDeleted( const OOWM::Mem::CObj& Obj )
 {
-
+	mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId", Obj.getId() );
 }
 
 void SharomeInterface::HandleSceneChanged()
 {
 	// remove all Sharome entities
-	mEntityPool.RemoveEntitiesByAttribute<std::string>( "SharomeId" );
+	mEntityPool.RemoveEntitiesByAttribute( "SharomeId" );
 
 	// add all objects of changed scene
 	std::set<std::string> Ids;
@@ -201,29 +223,14 @@ void SharomeInterface::HandleSceneChanged()
 		OOWM::Mem::CObj O;
 		mLocalScene.getById( O, *i );
 
-		Entity& E = mEntityPool.CreateEntity( O.getName() );
-		E.SetAttribute( "Type", "Simpel" );
-		E.SetAttribute( "Model", "Unknown.mesh" );
-		E.SetAttribute( "SharomeId", O.getId() );
-
-		OOWM::Mem::CAttribute A;
-		OOWM::SResult Result;
-		O.getFirstByName( A, "Location", &Result );
-		if( Result.m_nCode == R_OK )
-		{
-			OOWM::Mem::CLocation L;
-			if( L.FromAttribute( A ) )
-			{
-				E.SetAttribute( "Position", vec3( L.m_Position[0], L.m_Position[1], L.m_Position[2] ) );
-			}
-		}
+		CreateEntityFromCObj( mEntityPool, O );
 	}
 				
 }
 
 void SharomeInterface::HandleSceneDeleted()
 {
-
+	mEntityPool.RemoveEntitiesByAttribute( "SharomeId" );
 }
 
 void SharomeInterface::HandleError( std::string Msg )

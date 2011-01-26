@@ -4,6 +4,9 @@
 
 #include <vector>
 #include <set>
+
+#include <boost/foreach.hpp>
+
 #include "Entity.h"
 
 /** Abstract observer for an entity pool.
@@ -53,7 +56,8 @@ public:
 	template< typename T >
 	Entity*							GetEntityByAttribute( std::string Attribute, const T& Value );
 	template< typename T >
-	int								RemoveEntitiesByAttribute( const std::string& Attribute, T* Value = NULL );
+	int								RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value );
+	int								RemoveEntitiesByAttribute( const std::string& Attribute );
 
 	void							InsertObserver( EntityPoolObserver* Rhs );
 	void							RemoveObserver( EntityPoolObserver* Rhs );
@@ -87,7 +91,7 @@ Entity* EntityPool::GetEntityByAttribute( std::string Attribute, const T& Value 
 }
 
 template< typename T > inline
-int RemoveEntitiesByAttribute( const std::string& Attribute, T* Value )
+int EntityPool::RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value )
 {
 	std::vector<int> Ids;
 	Entity* E = NULL;
@@ -97,16 +101,11 @@ int RemoveEntitiesByAttribute( const std::string& Attribute, T* Value )
 		const EntityVariantType* A = E->GetAttribute( Attribute );
 		if( A )
 		{
-			if( !Value )
-				Ids.push_back( E->GetId() );
-			else
+			const T* V = boost::get<T>( A );
+			if( V )
 			{
-				const T* V = boost::get<T>( A );
-				if( V )
-				{
-					if( *V == Value )
-						Ids.push_back( E->GetId() );
-				}
+				if( *V == Value )
+					Ids.push_back( E->GetId() );
 			}
 		}
 	}
