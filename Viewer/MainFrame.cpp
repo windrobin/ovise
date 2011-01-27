@@ -154,11 +154,11 @@ void MainFrame::SetupSceneTree()
 		( "Position", vec3( -5.f, -5.f, 0.f ) )
 	;*/
 	
-	mEntityPool.CreateEntity( "MisterRoboto").Set
+	/*mEntityPool.CreateEntity( "MisterRoboto").Set
 		( "Type", "Robot" )
 		( "Model", "Albert.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
-	;
+		;*/
 
 	/*mEntityPool.CreateEntity( "VoodooDude" ).Set
 		( "Type", "VoodooDoll" )

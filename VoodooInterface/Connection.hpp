@@ -98,7 +98,7 @@ private:
 			PacketSize.assign( mHeaderData.begin(), i );
 			std::vector<char> PacketType;
 			PacketType.assign( i, mHeaderData.end() );
-			unsigned int PSize = DecodeInt( PacketSize );
+			unsigned int PSize =  DecodeInt(PacketSize);
 			
 			mPacketBuffer.resize( PSize - HEADER_SIZE );
 			async_read( mSocket,
