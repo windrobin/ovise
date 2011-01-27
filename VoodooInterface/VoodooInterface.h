@@ -4,6 +4,8 @@
 #include "NetworkInterface.h"
 #include "Connection.hpp"
 
+#include "VoodooParser.hpp"
+
 class CVoodooInterface :
 	public CNetworkInterface
 {
@@ -21,6 +23,8 @@ private:
 
 	boost::asio::io_service			mIOService;
 	CVoodooConnection::CtnPointer   mConnection;
+
+	CVoodooParser mVoodooParser;
 
 	Entity* mVoodooDude;
 };

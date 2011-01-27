@@ -1,0 +1,16 @@
+<BodyMapping>
+  <Limbs>
+    <Limb name="Root">0</Limb>
+    <Limb name="Head">1</Limb>
+    <Limb name="UpperArm.L">5</Limb>
+    <Limb name="UpperArm.R">2</Limb>
+    <Limb name="LowerArm.L">6</Limb>
+    <Limb name="LowerArm.R">3</Limb>
+    <Limb name="Hand.R">4</Limb>
+    <Limb name="Hand.L">7</Limb>
+    <Limb name="Leg.L">10</Limb>
+    <Limb name="Leg.R">8</Limb>
+    <Limb name="Shin.L">11</Limb>
+    <Limb name="Shin.R">9</Limb>
+  </Limbs>
+</BodyMapping>

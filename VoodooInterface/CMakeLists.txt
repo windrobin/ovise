@@ -9,10 +9,12 @@ include( ${wxWidgets_USE_FILE} )
 					 
 set( VoodooInterfaceHeaders
 	 VoodooInterface.h
-	 Connection.hpp )
+	 Connection.hpp
+	 VoodooParser.hpp )
 	 
 set( VoodooInterfaceSources
-	 VoodooInterface.cpp )
+	 VoodooInterface.cpp
+	 VoodooParser.cpp )
 	 
 add_library( VoodooInterface SHARED ${VoodooInterfaceHeaders} ${VoodooInterfaceSources} )
 
