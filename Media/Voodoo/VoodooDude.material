@@ -54,7 +54,7 @@ material Material.005
 		}
 	}
 }
-material Material.010
+material Material.004
 {
 	receive_shadows on
 	technique
@@ -68,7 +68,7 @@ material Material.010
 		}
 	}
 }
-material Material.007
+material Material.010
 {
 	receive_shadows on
 	technique
@@ -124,7 +124,7 @@ material Material.008
 		}
 	}
 }
-material Material.004
+material Material.007
 {
 	receive_shadows on
 	technique
