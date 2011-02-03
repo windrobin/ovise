@@ -33,6 +33,18 @@ void SimpleEntityView::OnEntityAttributeChanged(
 		if ( const vec3* Data = boost::get<vec3>(Attribute) )
 			mNode->setPosition( *Data );
 	}
+	else if ( Name == "Orientation" )
+	{
+		// Set the orientation, if it is available
+		if ( const vec4* Data = boost::get<vec4>(Attribute) )
+			mNode->setOrientation( Data->w, Data->x, Data->y, Data->z );
+	}
+	else if ( Name == "Scale" )
+	{
+		// Set the scale, if it is available
+		if ( const vec3* Data = boost::get<vec3>(Attribute) )
+			mNode->setScale( *Data );
+	}
 	else if ( Name == "Model" )
 	{
 		// Try to retrieve a model name

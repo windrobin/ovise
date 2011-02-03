@@ -29,12 +29,12 @@ public:
 	Ogre::RenderWindow*				GetRenderWindow() { return mRenderWindow; }
 	Ogre::Root*						GetRoot() { return mRoot.get(); }
 
+	void UpdateOgre();
+
 private:
 	void OnResize(wxSizeEvent& Event);
 	void OnPaint(wxPaintEvent& Event);
 	void OnCreate(wxWindowCreateEvent& Event);
-
-	void UpdateOgre();
 
 	void LoadResources();
 
