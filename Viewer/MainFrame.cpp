@@ -9,6 +9,8 @@
 
 #include "MainFrame.h"
 
+#include "../Util/SceneLoader.h"
+
 //#include "../OViSEAux/SocketMessage.h"
 
 #include <wx/textfile.h>
@@ -111,10 +113,12 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	}
 
 	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
+	mRenderTimer.Bind( wxEVT_TIMER, &MainFrame::OnRenderTimer, this );
 
 	Maximize(true);
 
 	mWindowManager.Update();
+	mRenderTimer.Start( 100 );
 }
 
 void MainFrame::OnClose(wxCloseEvent& event)
@@ -126,6 +130,26 @@ void MainFrame::OnClose(wxCloseEvent& event)
 
 MainFrame::~MainFrame()
 {
+}
+
+void MainFrame::OnRenderTimer( wxTimerEvent& event )
+{
+	mOgreWindow->UpdateOgre();
+}
+
+void MainFrame::OnLoadScene( wxCommandEvent& event )
+{
+	wxFileDialog OpenFileDialog( this, 
+								 wxT(" Load .scene file "), "", "",
+								 "scene files (*.scene)|*.scene", 
+								 wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+
+	if( OpenFileDialog.ShowModal() == wxID_CANCEL )
+		return;
+
+	std::string Filename( OpenFileDialog.GetPath().mb_str() );
+
+	LoadSceneFromXML( Filename, mEntityPool );
 }
 
 void MainFrame::SetStatusMessage( wxString& Msg, int field )

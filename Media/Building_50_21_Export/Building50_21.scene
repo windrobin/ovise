@@ -1,0 +1,788 @@
+<?xml version="1.0" ?>
+<scene>
+	<nodes>
+		<node name="Arbeitsplatte">
+			<position x="23.481453" y="0.994953" z="0.951772"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Arbeitsplatte.mesh" name="Arbeitsplatte" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="DoorFrame">
+			<position x="30.072496" y="6.282500" z="0.996875"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBDoorFrame&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="DoorFrame.mesh" name="DoorFrame" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="DoorFrame.001">
+			<position x="33.867504" y="6.282500" z="1.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBDoorFrame.001&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="DoorFrame.001.mesh" name="DoorFrame.001" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="DoorFrame.002">
+			<position x="24.270407" y="6.282500" z="0.996875"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBDoorFrame.002&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="DoorFrame.002.mesh" name="DoorFrame.002" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard">
+			<position x="28.791620" y="1.691030" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.mesh" name="Keyboard" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.001">
+			<position x="29.447403" y="1.708289" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.001&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.001.mesh" name="Keyboard.001" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.002">
+			<position x="32.828907" y="1.520060" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.002&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.002.mesh" name="Keyboard.002" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.003">
+			<position x="32.825161" y="0.864059" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.003&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.003.mesh" name="Keyboard.003" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.004">
+			<position x="34.786686" y="2.288040" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.004&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.004.mesh" name="Keyboard.004" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.005">
+			<position x="34.741276" y="0.980029" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.005&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.005.mesh" name="Keyboard.005" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.006">
+			<position x="34.762733" y="2.980305" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.006&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.006.mesh" name="Keyboard.006" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.007">
+			<position x="34.679169" y="3.968858" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.007&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.007.mesh" name="Keyboard.007" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.008">
+			<position x="34.560181" y="5.146356" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.008&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.008.mesh" name="Keyboard.008" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.009">
+			<position x="32.870415" y="5.631222" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.009&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.009.mesh" name="Keyboard.009" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.010">
+			<position x="25.563919" y="0.833406" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.010&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.010.mesh" name="Keyboard.010" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.011">
+			<position x="25.567665" y="1.489407" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.011&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.011.mesh" name="Keyboard.011" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.012">
+			<position x="27.733242" y="2.980305" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.012&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.012.mesh" name="Keyboard.012" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.013">
+			<position x="27.711784" y="0.980029" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.013&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.013.mesh" name="Keyboard.013" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Keyboard.014">
+			<position x="27.757195" y="2.288040" z="0.737500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBKeyboard.014&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Keyboard.014.mesh" name="Keyboard.014" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabAisleFloor">
+			<position x="1.031437" y="1.007450" z="0.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabAisleFloor&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabAisleFloor.mesh" name="LabAisleFloor" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabDrawer">
+			<position x="31.282389" y="5.812230" z="0.997500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabDrawer&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabDrawer.mesh" name="LabDrawer" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabFloors">
+			<position x="1.031437" y="1.007450" z="0.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabFloors&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabFloors.mesh" name="LabFloors" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable">
+			<position x="29.160202" y="1.828361" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.mesh" name="LabTable" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.001">
+			<position x="32.696159" y="1.230701" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.001&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.001.mesh" name="LabTable.001" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.002">
+			<position x="34.933403" y="1.247583" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.002&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.002.mesh" name="LabTable.002" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.003">
+			<position x="34.933403" y="2.643833" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.003&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.003.mesh" name="LabTable.003" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.004">
+			<position x="25.434917" y="1.200049" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.004&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.004.mesh" name="LabTable.004" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.005">
+			<position x="34.720676" y="5.047966" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.005&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.005.mesh" name="LabTable.005" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.006">
+			<position x="29.072943" y="5.504125" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.006&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.006.mesh" name="LabTable.006" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.007">
+			<position x="27.903912" y="2.643833" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.007&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.007.mesh" name="LabTable.007" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTable.008">
+			<position x="27.903912" y="1.247583" z="0.707500"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTable.008&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTable.008.mesh" name="LabTable.008" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTableSquare">
+			<position x="32.694118" y="5.653527" z="0.360000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTableSquare&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTableSquare.mesh" name="LabTableSquare" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LabTableSquareLarge">
+			<position x="34.938957" y="3.944692" z="0.360000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLabTableSquareLarge&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LabTableSquareLarge.mesh" name="LabTableSquareLarge" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LampCase">
+			<position x="31.885086" y="2.349969" z="2.421455"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLampCase&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LampCase.mesh" name="LampCase" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="LightEmitter">
+			<position x="31.885086" y="2.349969" z="2.421455"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBLightEmitter&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="LightEmitter.mesh" name="LightEmitter" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B">
+			<position x="28.774818" y="2.085474" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.mesh" name="Monitor204B" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.001">
+			<position x="29.458704" y="2.057994" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.001&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.001.mesh" name="Monitor204B.001" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.002">
+			<position x="32.496094" y="1.625389" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.002&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.002.mesh" name="Monitor204B.002" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.003">
+			<position x="32.496094" y="0.945025" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.003&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.003.mesh" name="Monitor204B.003" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.004">
+			<position x="35.123260" y="0.892986" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.004&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.004.mesh" name="Monitor204B.004" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.005">
+			<position x="32.541042" y="5.641247" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.005&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.005.mesh" name="Monitor204B.005" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.006">
+			<position x="35.107479" y="2.965666" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.006&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.006.mesh" name="Monitor204B.006" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.007">
+			<position x="35.123260" y="2.241943" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.007&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.007.mesh" name="Monitor204B.007" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.008">
+			<position x="34.912361" y="5.105194" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.008&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.008.mesh" name="Monitor204B.008" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.009">
+			<position x="25.234852" y="0.914372" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.009&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.009.mesh" name="Monitor204B.009" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.010">
+			<position x="25.234852" y="1.594736" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.010&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.010.mesh" name="Monitor204B.010" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.011">
+			<position x="35.032955" y="3.756237" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.011&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.011.mesh" name="Monitor204B.011" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.012">
+			<position x="28.093769" y="2.241943" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.012&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.012.mesh" name="Monitor204B.012" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.013">
+			<position x="28.077988" y="2.965666" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.013&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.013.mesh" name="Monitor204B.013" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Monitor204B.014">
+			<position x="28.093769" y="0.892986" z="0.973763"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBMonitor204B.014&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Monitor204B.014.mesh" name="Monitor204B.014" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHLO">
+			<position x="24.644289" y="1.009872" z="2.320356"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHLO.mesh" name="ProfilHLO" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHMH">
+			<position x="23.475283" y="0.743752" z="2.310844"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHMH.mesh" name="ProfilHMH" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHMHH">
+			<position x="23.475283" y="0.648711" z="2.310844"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHMHH.mesh" name="ProfilHMHH" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHMV">
+			<position x="23.475283" y="1.798700" z="2.310844"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHMV.mesh" name="ProfilHMV" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHRM">
+			<position x="22.306295" y="1.009867" z="0.904256"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHRM.mesh" name="ProfilHRM" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHRO">
+			<position x="22.306295" y="1.009874" z="2.320356"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHRO.mesh" name="ProfilHRO" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilHRU">
+			<position x="22.306295" y="1.009864" z="0.181949"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilHRU.mesh" name="ProfilHRU" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilVLH">
+			<position x="24.644289" y="0.221029" z="1.177969"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilVLH.mesh" name="ProfilVLH" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilVLU">
+			<position x="24.644289" y="1.009864" z="0.181950"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilVLU.mesh" name="ProfilVLU" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilVLV">
+			<position x="24.644289" y="1.798700" z="1.177969"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilVLV.mesh" name="ProfilVLV" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilVRH">
+			<position x="22.306295" y="0.221031" z="1.177969"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilVRH.mesh" name="ProfilVRH" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="ProfilVRV">
+			<position x="22.306295" y="1.798700" z="1.177969"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="ProfilVRV.mesh" name="ProfilVRV" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="PTUSVSLinks1">
+			<position x="24.644289" y="0.268550" z="1.503007"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="PTUSVSLinks1.mesh" name="PTUSVSLinks1" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="PTUSVSLinks2">
+			<position x="24.644289" y="0.313218" z="1.503007"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="PTUSVSLinks2.mesh" name="PTUSVSLinks2" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+			<node name="SVSLinks">
+				<position x="0.033529" y="0.075065" z="0.023613"/>
+				<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+				<scale x="1.000000" y="1.000000" z="1.000000"/>
+				<game>
+					<sensors/>
+					<actuators/>
+				</game>
+				<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="SVSLinks.mesh" name="SVSLinks" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+			</node>
+		</node>
+		<node name="PTUSVSMitteOben1">
+			<position x="23.598841" y="0.686728" z="2.263329"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="PTUSVSMitteOben1.mesh" name="PTUSVSMitteOben1" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="PTUSVSMitteOben2">
+			<position x="23.598841" y="0.686728" z="2.218661"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="PTUSVSMitteOben2.mesh" name="PTUSVSMitteOben2" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+			<node name="SVSMitteOben">
+				<position x="-0.001709" y="-0.012418" z="-0.020398"/>
+				<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+				<scale x="1.000000" y="1.000000" z="1.000000"/>
+				<game>
+					<sensors/>
+					<actuators/>
+				</game>
+				<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="SVSMItteOben.mesh" name="SVSMItteOben" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+			</node>
+		</node>
+		<node name="RoundTable">
+			<position x="29.235844" y="3.241191" z="0.259760"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBRoundTable&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="RoundTable.mesh" name="RoundTable" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="Walls">
+			<position x="0.000000" y="0.000000" z="0.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBWalls&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Walls.mesh" name="Walls" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="WallTops">
+			<position x="0.000000" y="0.000000" z="0.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBWallTops&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="WallTops.mesh" name="WallTops" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="WoodenChair">
+			<position x="29.977928" y="3.967391" z="0.000000"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBWoodenChair&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="WoodenChair.mesh" name="WoodenChair" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+	</nodes>
+	<externals>
+		<item type="material">
+			<file name="Scene.material"/>
+		</item>
+	</externals>
+	<environment>
+		<colorDiffuse b="0.600000023842" g="0.0" r="0.0"/>
+		<colorBackground b="0.600000023842" g="0.0" r="0.0"/>
+		<colorAmbient b="0.0" g="0.0" r="0.0"/>
+	</environment>
+</scene>

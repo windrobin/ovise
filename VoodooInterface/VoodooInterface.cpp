@@ -31,11 +31,14 @@ bool CVoodooInterface::Start()
 
 	mConnection->MessageSignal.connect( boost::bind( &CVoodooInterface::HandleMessage, this, _1 ) );
 	mConnection->Connect();
+
+	return true;
 }
 
 bool CVoodooInterface::Stop()
 {
 	mIOService.stop();
+	return true;
 }
 
 void CVoodooInterface::Poll()

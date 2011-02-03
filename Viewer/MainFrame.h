@@ -59,6 +59,7 @@ class MainFrame :
 
 	private:
 		virtual void					OnQuit(wxCommandEvent& event);
+		virtual void					OnLoadScene(wxCommandEvent& event);
 		virtual void					OnClose( wxCloseEvent& event );
 		virtual void					OnAbout(wxCommandEvent& event);
 		virtual void					OnSaveScreenToFile(wxCommandEvent& event);
@@ -79,6 +80,7 @@ class MainFrame :
 		void							OnIdle( wxIdleEvent& evt );
 		void							OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
 		void							OnNetworkTimer( wxTimerEvent& Event );
+		void							OnRenderTimer( wxTimerEvent& Event );
 
 		void							SetupSceneTree();
 
@@ -113,6 +115,7 @@ class MainFrame :
 
 		//boost::asio::io_service			mIOService;
 		wxTimer							mNetworkTimer;
+		wxTimer							mRenderTimer;
 
 		scoped_ptr<CInterfaceManager>	mInterfaceManager;
 };

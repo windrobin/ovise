@@ -11,6 +11,7 @@ set( UtilHeaders
 	NetworkInterface.h
 	ObjectTitle.h
 	OViSEException.h
+	SceneLoader.h
 	SceneNodeOffset.h
 	StringConverter.h )
 	
