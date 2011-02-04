@@ -76,8 +76,9 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 		tmp = std::string( IDAttr->value() );
 		int ModelID;
 		std::istringstream( tmp ) >> ModelID;
-		if( ModelID != mModelID )
-			continue;
+		mModelID = ModelID;
+		//if( ModelID != mModelID )
+		//	continue;
 
 		int LimbID;
 		tmp = std::string( LimbAttr->value() );
@@ -92,38 +93,26 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 		std::istringstream( tmp ) >> v;
 
 		tmp = std::string( NameAttr->value() );
-		if( tmp == "xPos" )
-			mLimbMap[LimbID].xPos = v;
-		else if( tmp == "yPos" )
-			mLimbMap[LimbID].yPos = v;
-		else if( tmp == "zPos" )
-			mLimbMap[LimbID].zPos = v;
-		else if( tmp == "z0" )
-			mLimbMap[LimbID].z0 = v;
-		else if( tmp == "y1" )
-			mLimbMap[LimbID].y1 = v;
-		else if( tmp == "z2" )
-			mLimbMap[LimbID].z2 = v;
+		if( tmp == "w" )
+			mLimbMap[LimbID].quat[3] = v;
+		else if( tmp == "x" )
+			mLimbMap[LimbID].quat[0] = v;
+		else if( tmp == "y" )
+			mLimbMap[LimbID].quat[1] = v;
+		else if( tmp == "z" )
+			mLimbMap[LimbID].quat[2] = v;
 	}
 	return true;
 }
 
 void CVoodooParser::UpdateEntity( Entity* Ent )
 {
+	Ent->Set<int>( "ModelID", mLimbMap.begin()->second.ModelID  );
 	for( LimbMapType::iterator i = mLimbMap.begin(); i != mLimbMap.end(); i++ )
 	{
-		double c1 = cos(i->second.z0/2);
-		double s1 = sin(i->second.z0/2);
-		double c2 = cos(i->second.z2/2);
-		double s2 = sin(i->second.z2/2);
-		double c3 = cos(i->second.y1/2);
-		double s3 = sin(i->second.y1/2);
-		double c1c2 = c1*c2;
-		double s1s2 = s1*s2;
-		double w = c1c2*c3 - s1s2*s3;
-        double x = c1c2*s3 + s1s2*c3;
-        double y = s1*c2*c3 + c1*s2*s3;
-        double z = c1*s2*c3 - s1*c2*s3;
-		Ent->Set<vec4>( i->second.LimbName, vec4( w, x, y, z ) );
+		Ent->Set<vec4>( i->second.LimbName, vec4( i->second.quat[0],
+												  i->second.quat[1], 
+												  i->second.quat[2], 
+												  i->second.quat[3] ) );
 	}
 }

@@ -5,7 +5,6 @@
 #include <boost/filesystem.hpp>
 
 #include <istream>
-#include <sstream>
 
 namespace bf = boost::filesystem;
 
@@ -27,7 +26,7 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 	if( !bf::exists( FilePath ) )
 		return;
 
-	std::ifstream Infile( Filename );
+	std::ifstream Infile( Filename.c_str() );
 	std::string Content( (std::istreambuf_iterator<char>( Infile )), std::istreambuf_iterator<char>() );
 
 	xml_document<> XMLDoc;
@@ -79,7 +78,7 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 			( "Type", "Simple" )
 			( "Model", Mesh )
 			( "Position", vec3( PosX, PosY, PosZ ) )
-			( "Orientation", vec4( QuatW, QuatX, QuatY, QuatZ ) )
+			( "Orientation", vec4( QuatX, QuatY, QuatZ, QuatW ) )
 			( "Scale", vec3( ScaleX, ScaleY, ScaleZ ) )
 		;
 	}
