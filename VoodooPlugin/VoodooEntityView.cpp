@@ -95,7 +95,8 @@ void VoodooEntityView::OnEntityAttributeChanged(
 			//if this attribute has already a attribute, do not overwrite it and inform observers (to  get visualize the orientation here)
 			if ( GetDataEntity()->GetAttribute(Name) == 0 ) 
 			{
-				vec4 v( Val.x, Val.y, Val.z, Val.w );
+				//vec4 v( Val.x, Val.y, Val.z, Val.w );
+				vec4 v( 0.f, 0.f, 0.f, 1.f );
 				GetDataEntity()->Set<vec4>( Name, v );
 			} 
 			else 
@@ -118,9 +119,14 @@ void VoodooEntityView::OnEntityAttributeChanged(
 			Ogre::Bone* Bone=Skeleton->getBone(Name);
 
 			quat O( Val->w, Val->x, Val->y, Val->z );
-			//Delta.FromAngleAxis( Ogre::Degree( (float)(*Angle) ), vec3( 0.f, 1.f, 0.f ) );
+			Ogre::Quaternion CorrectorX;
+			CorrectorX.FromAngleAxis( Ogre::Radian( Ogre::Degree( -90 ) ), vec3( 1.f, 0.f, 0.f ) );
+			Ogre::Quaternion CorrectorZ;
+			CorrectorZ.FromAngleAxis( Ogre::Radian( Ogre::Degree( 90 ) ), vec3( 0.f, 0.f, 1.f ) );
+			
+			Ogre::Quaternion Corrector = CorrectorX * CorrectorZ;
 
-			Bone->setOrientation( O );
+			Bone->setOrientation( Bone->getInitialOrientation() * Corrector * O * Corrector.UnitInverse() );
 
 			// FIXME: is this really needed?
 			mOgreEntity->getAllAnimationStates()->_notifyDirty();

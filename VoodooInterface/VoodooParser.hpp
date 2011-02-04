@@ -18,12 +18,8 @@ public:
 private:
 	struct Limb
 	{
-		double xPos;
-		double yPos;
-		double zPos;
-		double z0;
-		double y1;
-		double z2;
+		Limb() { quat[0] = quat[1] = quat[2] = 0.f; quat[3] = 1.f; }
+		double quat[4];
 		int ModelID;
 		int LimbID;
 		std::string LimbName;
