@@ -46,7 +46,12 @@ PointcloudEntityView::PointcloudEntityView( Entity* Object, Ogre::SceneManager* 
 
 PointcloudEntityView::~PointcloudEntityView()
 {
-	//GetSceneManager()->getRootSceneNode()->removeChild(mNode);
+	if( mOgreEntity )
+	{
+		mNode->detachAllObjects();
+		GetSceneManager()->destroyEntity( mOgreEntity );
+	}
+	GetSceneManager()->getRootSceneNode()->removeChild(mNode);
 }
 
 void PointcloudEntityView::OnEntityAttributeChanged
@@ -60,8 +65,110 @@ void PointcloudEntityView::OnEntityAttributeChanged
 	{
 		const std::string* Str=boost::get<std::string>(Attribute);
 
+		if( mNode )
+		{
+			mNode->detachAllObjects();
+			GetSceneManager()->destroySceneNode( mNode );
+		}
+		if( mOgreEntity )
+			GetSceneManager()->destroyEntity( mOgreEntity );
+
 		if ( Str )
 			LoadFromFile(*Str);		
+	}
+	else if ( Name == "Points" )
+	{
+		const boost::any* PAny = boost::get<boost::any>( Attribute );
+		try
+		{
+			std::vector<float>& Points = boost::any_cast<std::vector<float>>( *PAny );
+			if( !mPointCloud )
+			{
+				const EntityVariantType* ColorsAttr = Rhs->GetAttribute( "Colors" );
+				if( !ColorsAttr )
+				{
+					mPointCloud.reset( new CPointcloud( Rhs->GetName(), "General",
+						Points.size()/3, Points.data(), 0 ) );
+
+					// Insert the model into the scene	
+					const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
+					mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Rhs->GetName());
+					mOgreEntity->setMaterialName( "Pointcloud" );
+
+					mNode->attachObject( mOgreEntity );
+				}
+				else
+				{
+					const boost::any* CAny = boost::get<boost::any>( ColorsAttr );
+					try
+					{
+						std::vector<float>& Colors = boost::any_cast<std::vector<float>>( *CAny );
+						mPointCloud.reset( new CPointcloud( Rhs->GetName(), "General",
+						Points.size()/3, Points.data(), Colors.data() ) );
+
+						// Insert the model into the scene	
+						const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
+						mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Rhs->GetName());
+						mOgreEntity->setMaterialName( "Pointcloud" );
+						
+						mNode->attachObject( mOgreEntity );
+					}
+					catch( const boost::bad_any_cast & )
+					{}
+				}
+			}
+			else if( mPointCloud)
+			{
+				mPointCloud->UpdateVertexPositions( Points.size()/3, Points.data() );
+			}
+		}
+		catch( const boost::bad_any_cast & )
+		{}
+	}
+	else if ( Name == "Colors" )
+	{
+		if( mPointCloud )
+		{
+			const boost::any* CAny = boost::get<boost::any>( Attribute );
+			try
+			{
+				std::vector<float>& Colors = boost::any_cast<std::vector<float>>( *CAny );
+				mPointCloud->UpdateVertexColours( Colors.size()/3, Colors.data() );
+			}
+			catch( const boost::bad_any_cast & )
+			{}
+		}
+	}
+	else if ( Name == "PointSize" )
+	{
+		const double* PS = boost::get<double>( Attribute );
+
+		if( mOgreEntity && PS )
+		{
+			// values above 0.05 do not show any difference
+			mOgreEntity->getSubEntity( 0 )->getMaterial()->setPointSize( float( *PS ) );
+		}
+	}
+	else if ( Name == "Position" )
+	{
+		const vec3* Data = boost::get<vec3>( Attribute );
+
+		if( Data )
+			mNode->setPosition( *Data );
+	}
+	else if ( Name == "Orientation" )
+	{
+		const quat* Data = boost::get<quat>( Attribute );
+
+		if( Data )
+			mNode->setOrientation( *Data );
+	}
+	else if ( Name == "Scale" )
+	{
+		const vec3* Data = boost::get<vec3>( Attribute );
+
+		if( Data )
+			mNode->setScale( *Data );
 	}
 }
 
@@ -148,8 +255,8 @@ void PointcloudEntityView::LoadFromFile( const std::string& Filename, float r, f
 
 	Ogre::AxisAlignedBox PCBounds( PCmin[0], PCmin[1], PCmin[2], PCmax[0], PCmax[1], PCmax[2] );
 	
-	mPointCloud.reset( new Pointcloud(std::string(PointcloudName.mb_str()),"General",
-		Points.size()/3, ptr(Points), Colors.size()?ptr(Colors):0, PCBounds) );
+	mPointCloud.reset( new CPointcloud(std::string(PointcloudName.mb_str()),"General",
+		Points.size()/3, ptr(Points), Colors.size()?ptr(Colors):0) );
 	
 	// Insert the model into the scene	
 	const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );

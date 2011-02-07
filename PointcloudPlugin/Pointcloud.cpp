@@ -1,88 +1,137 @@
 #include "Pointcloud.h"
 
-Pointcloud::Pointcloud(const std::string& name, const std::string& resourcegroup, const int numpoints, float *parray, float *carray, Ogre::AxisAlignedBox& bounds)
+#include <boost/algorithm/minmax.hpp>
+
+CPointcloud::CPointcloud( const std::string& Name, const std::string& Resourcegroup, 
+	const std::size_t VNumber, float* VArray, float* CArray)
+	: mNumVertices( VNumber )
 {
-	/// Create the mesh via the MeshManager
-	Ogre::MeshPtr msh = Ogre::MeshManager::getSingleton().createManual(name, resourcegroup);
+	// Create the mesh via the MeshManager
+	mMsh = Ogre::MeshManager::getSingleton().createManual( Name, Resourcegroup);
 
-	/// Create one submesh
-	Ogre::SubMesh* sub = msh->createSubMesh();
+	// Create one submesh
+	mSub = mMsh->createSubMesh();
+
+	// Create vertex data structure for vertices shared between submeshes
+	mMsh->sharedVertexData = new Ogre::VertexData();
+	mMsh->sharedVertexData->vertexCount = mNumVertices;
+
+	// Create declaration (memory format) of vertex data
+	mDeclaration = mMsh->sharedVertexData->vertexDeclaration;
+	mDeclaration->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
 	
-	/// Create vertex data structure for vertices shared between submeshes
-	msh->sharedVertexData = new Ogre::VertexData();
-	msh->sharedVertexData->vertexCount = numpoints;
+	mVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+		mDeclaration->getVertexSize(0), mMsh->sharedVertexData->vertexCount,
+		Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+	// Upload the vertex data to the card
+	mVertexBuffer->writeData(0, mVertexBuffer->getSizeInBytes(), VArray, true);
 
-	/// Create declaration (memory format) of vertex data
-	Ogre::VertexDeclaration* decl = msh->sharedVertexData->vertexDeclaration;
-	decl->addElement(0, 0, Ogre::VET_FLOAT3, Ogre::VES_POSITION);
-	
-	vbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
-		decl->getVertexSize(0), msh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-	/// Upload the vertex data to the card
-	vbuf->writeData(0, vbuf->getSizeInBytes(), parray, true);
-
-	if(carray != NULL)
+	if( CArray != NULL )
 	{
 		// Create 2nd buffer for colors
-		decl->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
-		cbuf = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
-			msh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+		mDeclaration->addElement(1, 0, Ogre::VET_COLOUR, Ogre::VES_DIFFUSE);
+		mColorBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+			Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
+			mMsh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 
 		Ogre::RenderSystem* rs = Ogre::Root::getSingleton().getRenderSystem();
-		Ogre::RGBA *colours = new Ogre::RGBA[numpoints];
-		for(int i=0, k=0; i<numpoints*3 && k<numpoints; i+=3, k++)
+		Ogre::RGBA *colours = new Ogre::RGBA[mNumVertices];
+		for( std::size_t i=0, k=0; i < mNumVertices*3 && k < mNumVertices; i+=3, k++)
 		{
 			// Use render system to convert colour value since colour packing varies
-			rs->convertColourValue(Ogre::ColourValue(carray[i],carray[i+1],carray[i+2]), &colours[k]);
+			rs->convertColourValue(Ogre::ColourValue(CArray[i],CArray[i+1],CArray[i+2]), &colours[k]);
 		}
 		// Upload colour data
-		cbuf->writeData(0, cbuf->getSizeInBytes(), colours, true);
+		mColorBuffer->writeData(0, mColorBuffer->getSizeInBytes(), colours, true);
 		delete[] colours;
 	}
 
 	/// Set vertex buffer binding so buffer 0 is bound to our vertex buffer
-	Ogre::VertexBufferBinding* bind = msh->sharedVertexData->vertexBufferBinding; 
-	bind->setBinding(0, vbuf);
+	Ogre::VertexBufferBinding* bind = mMsh->sharedVertexData->vertexBufferBinding; 
+	bind->setBinding(0, mVertexBuffer);
 
-	if(carray != NULL)
+	if( CArray != NULL )
 	{
 		// Set colour binding so buffer 1 is bound to colour buffer
-		bind->setBinding(1, cbuf);
+		bind->setBinding(1, mColorBuffer);
 	}
 
-	sub->useSharedVertices = true;
-	sub->operationType = Ogre::RenderOperation::OT_POINT_LIST;
+	mSub->useSharedVertices = true;
+	mSub->operationType = Ogre::RenderOperation::OT_POINT_LIST;
 	
-
-	msh->load();
-	msh->_setBounds( bounds );
-}
-
-void Pointcloud::updateVertexPositions(int size, float *points)
-{
-	float *pPArray = static_cast<float*>(vbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-	for(int i=0; i<size*3; i+=3)
+	float minx, miny, minz;
+	minx = miny = minz = 100000000;
+	float maxx, maxy, maxz;
+	maxx = maxy = maxz = -1000000000;
+	for( int i=0; i<mNumVertices; i++ )
 	{
-		pPArray[i] = points[i];
-		pPArray[i+1] = points[i+1];
-		pPArray[i+2] = points[i+2];
+		float x = VArray[3*i];
+		float y = VArray[3*i+1];
+		float z = VArray[3*i+2];
+
+		if( x < minx ) minx = x;
+		if( y < miny ) miny = y;
+		if( z < minz ) minz = z;
+		if( x > maxx ) maxx = x;
+		if( y > maxy ) maxy = y;
+		if( z > maxz ) maxz = z;
 	}
-	vbuf->unlock();
+	mMsh->load();
+	mMsh->_setBounds( Ogre::AxisAlignedBox( minx, miny, minz, maxx, maxy, maxz ) );
 }
 
-void Pointcloud::updateVertexColours(int size, float *colours)
+void CPointcloud::PrepareBuffers( std::size_t VertexSize )
 {
-	float *pCArray = static_cast<float*>(cbuf->lock(Ogre::HardwareBuffer::HBL_DISCARD));
-	for(int i=0; i<size*3; i+=3)
+	if( VertexSize != mNumVertices )
 	{
-		pCArray[i] = colours[i];
-		pCArray[i+1] = colours[i+1];
-		pCArray[i+2] = colours[i+2];
+		mNumVertices = VertexSize;
+		mVertexBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+			mDeclaration->getVertexSize(0), mNumVertices,
+			Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE );
+		mMsh->sharedVertexData->vertexCount = mNumVertices;
+		mColorBuffer = Ogre::HardwareBufferManager::getSingleton().createVertexBuffer(
+			Ogre::VertexElement::getTypeSize(Ogre::VET_COLOUR),
+			mMsh->sharedVertexData->vertexCount, Ogre::HardwareBuffer::HBU_DYNAMIC_WRITE_ONLY_DISCARDABLE );
+
+		mMsh->sharedVertexData->vertexBufferBinding->setBinding( 0, mVertexBuffer );
+		mMsh->sharedVertexData->vertexBufferBinding->setBinding( 1, mColorBuffer );
 	}
-	cbuf->unlock();
 }
 
-Pointcloud::~Pointcloud()
+void CPointcloud::UpdateVertexPositions( std::size_t VNumber, float* Vertices)
 {
+	PrepareBuffers( VNumber );
+	float minx, miny, minz;
+	minx = miny = minz = 100000000;
+	float maxx, maxy, maxz;
+	maxx = maxy = maxz = -1000000000;
+	mVertexBuffer->writeData( 0, mVertexBuffer->getSizeInBytes(), Vertices, true );
+	for(int i=0; i<VNumber*3; i+=3)
+	{
+		if( Vertices[i] < minx ) minx = Vertices[i];
+		if( Vertices[i+1] < miny ) miny = Vertices[i+1];
+		if( Vertices[i+2] < minz ) minz = Vertices[i+2];
+		if( Vertices[i] > maxx ) maxx = Vertices[i];
+		if( Vertices[i+1] > maxy ) maxy = Vertices[i+1];
+		if( Vertices[i+2] > maxz ) maxz = Vertices[i+2];
+	}
+	
+	mMsh->_setBounds( Ogre::AxisAlignedBox( minx, miny, minz, maxx, maxy, maxz ) );
+}
 
+void CPointcloud::UpdateVertexColours( std::size_t CNumber, float* Colors)
+{
+	if( CNumber <= mNumVertices )
+	{
+		mColorBuffer->writeData( 0, mColorBuffer->getSizeInBytes(), Colors, true );
+	}
+	else
+	{
+		mColorBuffer->writeData( 0, CNumber*3, Colors );
+	}
+}
+
+CPointcloud::~CPointcloud()
+{
+	delete mSub->vertexData;
 }

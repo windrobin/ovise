@@ -78,7 +78,7 @@ bool SharomeInterface::Stop()
 
 void SharomeInterface::Poll()
 {
-	mIOService.poll();
+	mIOService.poll_one();
 	mIOService.reset();
 }
 

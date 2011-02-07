@@ -22,8 +22,8 @@ CVoodooParser::CVoodooParser( int ModelID )
 bool CVoodooParser::LoadBodyMapping()
 {
 	// Create an empty property tree object
-    using boost::property_tree::ptree;
-    ptree PropTree;
+	using boost::property_tree::ptree;
+	ptree PropTree;
 
 	try
 	{
@@ -88,19 +88,19 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 		mLimbMap[LimbID].LimbID = LimbID;
 		mLimbMap[LimbID].LimbName = mBodyMapping[LimbID];
 
-		double v;
+		float v;
 		tmp = std::string( DEntry->value() );
 		std::istringstream( tmp ) >> v;
 
 		tmp = std::string( NameAttr->value() );
 		if( tmp == "w" )
-			mLimbMap[LimbID].quat[3] = v;
-		else if( tmp == "x" )
 			mLimbMap[LimbID].quat[0] = v;
-		else if( tmp == "y" )
+		else if( tmp == "x" )
 			mLimbMap[LimbID].quat[1] = v;
-		else if( tmp == "z" )
+		else if( tmp == "y" )
 			mLimbMap[LimbID].quat[2] = v;
+		else if( tmp == "z" )
+			mLimbMap[LimbID].quat[3] = v;
 	}
 	return true;
 }
@@ -110,7 +110,7 @@ void CVoodooParser::UpdateEntity( Entity* Ent )
 	Ent->Set<int>( "ModelID", mLimbMap.begin()->second.ModelID  );
 	for( LimbMapType::iterator i = mLimbMap.begin(); i != mLimbMap.end(); i++ )
 	{
-		Ent->Set<vec4>( i->second.LimbName, vec4( i->second.quat[0],
+		Ent->Set<quat>( i->second.LimbName, quat( i->second.quat[0],
 												  i->second.quat[1], 
 												  i->second.quat[2], 
 												  i->second.quat[3] ) );
