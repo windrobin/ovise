@@ -73,7 +73,6 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	statusBar->SetStatusText(_("OViSE started up."), 0);
 	statusBar->SetStatusText(wxT("FPS:"), 1);
 #endif
-
 	// Connect event handlers
 	this->Connect( ID_INSERT_ENTITY, wxEVT_COMMAND_MENU_SELECTED,
 		wxCommandEventHandler( MainFrame::OnInsertEntity ) );
@@ -118,7 +117,7 @@ MainFrame::MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* ParentWin
 	Maximize(true);
 
 	mWindowManager.Update();
-	mRenderTimer.Start( 100 );
+	mRenderTimer.Start( 20 );
 }
 
 void MainFrame::OnClose(wxCloseEvent& event)
@@ -191,9 +190,26 @@ void MainFrame::SetupSceneTree()
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 	;*/
 	
-	/*mEntityPool.CreateEntity( "Cloud" ).Set
+	/*std::vector<float> Points;
+	std::vector<float> Colors;
+	for( int i=0; i<100; i++ )
+	{
+		Points.push_back( i/10.f );
+		Points.push_back( i/10.f );
+		Points.push_back( i/10.f );
+
+		Colors.push_back( float(i) );
+		Colors.push_back( float(i) );
+		Colors.push_back( float(i) );
+	}
+	mEntityPool.CreateEntity( "Cloud" ).Set
 		( "Type", "Pointcloud" )
-		( "Filename", "torus.off" )
+		( "Points", boost::any( Points ) )
+		( "Colors", boost::any( Colors ) )
+		( "PointSize", 0.05 )
+		( "Position", vec3( 0.f, 0.f, -1.f ) )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+		( "Orientation", quat( 0.f, 0.f, 0.f, 1.f ) )
 		;*/
 }
 
@@ -685,4 +701,5 @@ void MainFrame::OnDMSolid(wxCommandEvent &evt)
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
 {
+	
 }

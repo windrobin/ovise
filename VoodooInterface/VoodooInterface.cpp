@@ -43,7 +43,7 @@ bool CVoodooInterface::Stop()
 
 void CVoodooInterface::Poll()
 {
-	mIOService.poll();
+	mIOService.poll_one();
 	mIOService.reset();
 }
 

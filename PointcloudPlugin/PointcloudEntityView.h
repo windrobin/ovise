@@ -24,7 +24,7 @@ private:
 	Ogre::SceneNode*				mNode;
 	Ogre::Entity*					mOgreEntity;
 
-	boost::scoped_ptr<Pointcloud>	mPointCloud;
+	boost::scoped_ptr<CPointcloud>	mPointCloud;
 
 	void							LoadFromFile( const std::string& Filename, float r = 1.f, float g = 1.f, float b = 1.f );
 };

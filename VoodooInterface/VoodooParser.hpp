@@ -19,7 +19,7 @@ private:
 	struct Limb
 	{
 		Limb() { quat[0] = quat[1] = quat[2] = 0.f; quat[3] = 1.f; }
-		double quat[4];
+		float quat[4];
 		int ModelID;
 		int LimbID;
 		std::string LimbName;

@@ -102,7 +102,6 @@ material LabDrawerGrip
 			diffuse 0.849752581113 0.849752581113 0.849752581113 1.0
 			specular 1.49854433537 1.49854433537 1.49854433537 1.0 8.75
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MALabDrawerGrip">
 		}
 	}
 }
@@ -117,7 +116,6 @@ material LabDrawerMat
 			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MALabDrawerMat">
 		}
 	}
 }
@@ -153,7 +151,6 @@ material TableMat
 			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MATableMat">
 		}
 	}
 }
@@ -182,7 +179,6 @@ material TableMat.001
 			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MATableMat.001">
 		}
 	}
 }
@@ -197,7 +193,6 @@ material TableMat2.001
 			diffuse 0.448000008583 0.448000008583 0.448000008583 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MATableMat2.001">
 		}
 	}
 }
@@ -212,7 +207,6 @@ material TableMat.002
 			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MATableMat.002">
 		}
 	}
 }
@@ -227,7 +221,6 @@ material TableMat2.002
 			diffuse 0.448000008583 0.448000008583 0.448000008583 1.0
 			specular 0.5 0.5 0.5 1.0 12.5
 			emissive 0.0 0.0 0.0 1.0
-			YafRay <bpy ID property from "MATableMat2.002">
 		}
 	}
 }

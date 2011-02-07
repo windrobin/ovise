@@ -15,23 +15,31 @@
  * [3]=P2x [4]=P2y [5]=P2z ...
  * FIXME: (LTJ) should this rather be called PointcloudMesh/Model ?
  */
-class Pointcloud
+class CPointcloud
 {
 public:
-	Pointcloud(const std::string& name, const std::string& resourcegroup,
-		const int numpoints, float* parray, float* carray, Ogre::AxisAlignedBox& bounds);
+	CPointcloud( const std::string& Name, const std::string& Resourcegroup,
+		 const std::size_t VNumber, float* VArray, float* CArray );
 
 	/// Update a created pointcloud with size points.
-	void updateVertexPositions(int size, float *points);
+	void UpdateVertexPositions( std::size_t VNumber, float* Vertices );
 
 	/// Update vertex colours
-	void updateVertexColours(int size, float *colours);
+	void UpdateVertexColours( std::size_t CNumber, float* Colors );
 
-	virtual ~Pointcloud();
+	virtual ~CPointcloud();
 
 private:
-	//int mSize;
-	Ogre::HardwareVertexBufferSharedPtr vbuf;
-	Ogre::HardwareVertexBufferSharedPtr cbuf;
+	void PrepareBuffers( std::size_t VNumber );
+
+	std::size_t mNumVertices;
+
+	Ogre::HardwareVertexBufferSharedPtr mVertexBuffer;
+	Ogre::HardwareVertexBufferSharedPtr mColorBuffer;
+
+	Ogre::VertexDeclaration* mDeclaration;
+
+	Ogre::MeshPtr mMsh;
+	Ogre::SubMesh* mSub;
 };
 #endif //POINTCLOUD_H

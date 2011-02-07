@@ -42,7 +42,7 @@ bool CILCASInterface::Stop()
 
 void CILCASInterface::Poll()
 {
-	mIOService.poll();
+	mIOService.poll_one();
 	mIOService.reset();
 }
 
