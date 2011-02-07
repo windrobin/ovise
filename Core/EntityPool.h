@@ -10,21 +10,25 @@
 #include "Entity.h"
 
 /** Abstract observer for an entity pool.
-*/
+ */
 class EntityPoolObserver
 {
 public:
 	EntityPoolObserver();
 	virtual ~EntityPoolObserver();
 
-	virtual void					OnEntityInsert( Entity* Object, std::size_t Index ) = 0;
-	virtual void					OnEntityRemove( Entity* Object, std::size_t Index ) = 0;
+	virtual void                                    OnEntityInsert(
+	        Entity*     Object,
+	        std::size_t Index ) = 0;
+	virtual void                                    OnEntityRemove(
+	        Entity*     Object,
+	        std::size_t Index ) = 0;
 
 private:
 };
 
 /** A sequence of entities.
-*/
+ */
 class EntityPool
 {
 public:
@@ -32,47 +36,54 @@ public:
 	~EntityPool();
 
 	/** Insert an entity into the pool.
-		The pool takes memory ownership of the entity.
-		The next free ID is assigned to this Entity.
-		\returns The entity that was passed in.
-	*/
-	Entity*							InsertEntity( Entity* Rhs );
+	        The pool takes memory ownership of the entity.
+	        The next free ID is assigned to this Entity.
+	        \returns The entity that was passed in.
+	 */
+	Entity*                                                 InsertEntity(
+	        Entity* Rhs );
 
 	/** Create an entity.
-		This is a convenicence function that uses InsertEntity internally.
-	*/
-	inline Entity&					CreateEntity( const std::string& Name )
+	        This is a convenicence function that uses InsertEntity internally.
+	 */
+	inline Entity& CreateEntity( const std::string& Name )
 	{
-		return *InsertEntity( new Entity(Name) );
+		return *InsertEntity( new Entity( Name ) );
 	}
 
 
 	/** Remove an entity from the pool.
-		Will also delete the entity.
-	*/
-	void							RemoveEntity( Entity* Rhs );
+	        Will also delete the entity.
+	 */
+	void                                                    RemoveEntity(
+	        Entity* Rhs );
 
 	Entity*                         GetEntityById( int id );
 	template< typename T >
-	Entity*							GetEntityByAttribute( std::string Attribute, const T& Value );
+	Entity*
+	GetEntityByAttribute( std::string Attribute, const T& Value );
 	template< typename T >
-	int								RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value );
-	int								RemoveEntitiesByAttribute( const std::string& Attribute );
+	int
+	RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value );
+	int
+	RemoveEntitiesByAttribute( const std::string& Attribute );
 
-	void							InsertObserver( EntityPoolObserver* Rhs );
-	void							RemoveObserver( EntityPoolObserver* Rhs );
+	void                                                    InsertObserver(
+	        EntityPoolObserver* Rhs );
+	void                                                    RemoveObserver(
+	        EntityPoolObserver* Rhs );
 
 private:
-	std::vector<Entity*>			mData;
-	int                             mNextId;
-	std::set<EntityPoolObserver*>	mObserver;
+	std::vector<Entity*>          mData;
+	int                           mNextId;
+	std::set<EntityPoolObserver*> mObserver;
 };
 
 template< typename T> inline
 Entity* EntityPool::GetEntityByAttribute( std::string Attribute, const T& Value )
 {
 	Entity* E = NULL;
-	
+
 	BOOST_FOREACH( E, mData )
 	{
 		const EntityVariantType* A = E->GetAttribute( Attribute );
@@ -91,11 +102,12 @@ Entity* EntityPool::GetEntityByAttribute( std::string Attribute, const T& Value 
 }
 
 template< typename T > inline
-int EntityPool::RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value )
+int EntityPool::RemoveEntitiesByAttributeValue( const std::string& Attribute,
+                                                T&                 Value )
 {
 	std::vector<int> Ids;
-	Entity* E = NULL;
-		
+	Entity*          E = NULL;
+
 	BOOST_FOREACH( E, mData )
 	{
 		const EntityVariantType* A = E->GetAttribute( Attribute );

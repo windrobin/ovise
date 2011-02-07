@@ -5,12 +5,10 @@
 
 CVoodooInterface::CVoodooInterface( EntityPool& EntPool )
 	: CNetworkInterface( EntPool )
-{
-}
+{}
 
 CVoodooInterface::~CVoodooInterface()
-{
-}
+{}
 
 bool CVoodooInterface::Start()
 {
@@ -29,7 +27,8 @@ bool CVoodooInterface::Start()
 
 	mConnection = CVoodooConnection::Create( mIOService );
 
-	mConnection->MessageSignal.connect( boost::bind( &CVoodooInterface::HandleMessage, this, _1 ) );
+	mConnection->MessageSignal.connect( boost::bind( &CVoodooInterface::
+			HandleMessage, this, _1 ) );
 	mConnection->Connect();
 
 	return true;
@@ -51,9 +50,9 @@ void CVoodooInterface::HandleMessage( const std::string& Msg )
 {
 	rapidxml::xml_document<> Document;
 	Document.parse<0>( const_cast<char*>( Msg.c_str() ) );
-	
+
 	if( mVoodooParser.ParseDocument( Document ) )
-		mVoodooParser.UpdateEntity( mVoodooDude );	
+		mVoodooParser.UpdateEntity( mVoodooDude );
 }
 
 extern "C" INTERFACE_API

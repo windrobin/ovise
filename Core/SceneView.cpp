@@ -11,31 +11,33 @@
 # endif
 #endif
 
-namespace {
+namespace
+{
 	// This is the name of the attribute that is scanned to associated views
 	std::string TypeString="Type";
 }
 
-SceneView::SceneView(Ogre::SceneManager *SceneMgr, boost::function<void()> UpdateScreen )
-: mSceneManager(SceneMgr), mUpdateScreen(UpdateScreen)
-{
-}
+SceneView::SceneView( Ogre::SceneManager *    SceneMgr,
+                      boost::function<void()> UpdateScreen )
+	: mSceneManager( SceneMgr ), mUpdateScreen( UpdateScreen )
+{}
 
 SceneView::~SceneView()
 {
 	typedef ViewHashType::value_type PairType;
 
 	// Delete all entity views
-	BOOST_FOREACH( PairType& x, mViews )
+	BOOST_FOREACH( PairType & x, mViews )
 	{
 		AbstractOgreEntityView* View( x.second.View );
 
-		//View->Remove( mSceneManager );
+		// View->Remove( mSceneManager );
 		delete View;
 	}
 }
 
-void SceneView::AssociateFactory(const std::string &Typename, SceneView::FactoryType Factory)
+void SceneView::AssociateFactory( const std::string &    Typename,
+                                  SceneView::FactoryType Factory )
 {
 	// FIXME: check whether this is already set and react to it?
 
@@ -44,7 +46,7 @@ void SceneView::AssociateFactory(const std::string &Typename, SceneView::Factory
 
 void SceneView::OnEntityInsert( Entity* Object, std::size_t Index )
 {
-	OnTypeChanged(Object,Object->GetAttribute(TypeString));
+	OnTypeChanged( Object,Object->GetAttribute( TypeString ));
 	Object->InsertObserver( this );
 }
 
@@ -65,16 +67,17 @@ void SceneView::OnEntityRemove( Entity* Object, std::size_t Index )
 	mUpdateScreen();
 }
 
-void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribute )
+void SceneView::OnTypeChanged( Entity*                  Object,
+                               const EntityVariantType* Attribute )
 {
 	// lock the entity
-	//boost::lock_guard<boost::mutex> lock(Object->mutex);
+	// boost::lock_guard<boost::mutex> lock(Object->mutex);
 
 	// First check whether the 'type' attribute is set
-	const std::string* TypeString = boost::get<std::string>(Attribute);
+	const std::string* TypeString = boost::get<std::string>( Attribute );
 
 	// Find an entry
-	ViewHashType::iterator HashEntry = mViews.find(Object);
+	ViewHashType::iterator HashEntry = mViews.find( Object );
 
 	// Check for modifications of the type string tag
 	if ( !TypeString )
@@ -95,15 +98,19 @@ void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribut
 		if ( HashEntry == mViews.end() )
 		{
 			// Add
-			ViewEntry& Ve = mViews.insert( std::make_pair( Object, ViewEntry() ) ).first->second;
+			ViewEntry& Ve =
+			        mViews.insert( std::make_pair( Object,
+						ViewEntry() ) ).first->second;
 			Ve.CachedType = *TypeString;
 
-			std::map<std::string, FactoryType>::const_iterator FactoryIterator =
-				mFactories.find( *TypeString );
+			std::map<std::string,
+			         FactoryType>::const_iterator FactoryIterator =
+			        mFactories.find( *TypeString );
 
 			if ( FactoryIterator != mFactories.end() )
 			{
-				Ve.View = FactoryIterator->second(Object,mSceneManager);
+				Ve.View = FactoryIterator->second( Object,
+					mSceneManager );
 			}
 		}
 		else
@@ -112,7 +119,7 @@ void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribut
 			ViewEntry& Ve = HashEntry->second;
 
 			if ( Ve.CachedType == *TypeString )
-				//Object->mutex.unlock();
+				// Object->mutex.unlock();
 				return;
 
 			// Remove the old view
@@ -120,26 +127,28 @@ void SceneView::OnTypeChanged( Entity* Object, const EntityVariantType* Attribut
 			Ve.View = 0;
 
 			// Add a new view
-			std::map<std::string, FactoryType>::const_iterator FactoryIterator =
-				mFactories.find( *TypeString );
+			std::map<std::string,
+			         FactoryType>::const_iterator FactoryIterator =
+			        mFactories.find( *TypeString );
 
 			if ( FactoryIterator != mFactories.end() )
 			{
-				Ve.View = FactoryIterator->second(Object,mSceneManager);
+				Ve.View = FactoryIterator->second( Object,
+					mSceneManager );
 			}
 
 			Ve.CachedType = *TypeString;
 		}
 	}
-	//unlock the entity
-	//Object->mutex.unlock();
+	// unlock the entity
+	// Object->mutex.unlock();
 }
 
 void SceneView::OnEntityAttributeChanged(
-							Entity* Rhs,
-							const std::string& Name,
-							const EntityVariantType* Attribute
-						)
+        Entity*                  Rhs,
+        const std::string&       Name,
+        const EntityVariantType* Attribute
+        )
 {
 	mUpdateScreen();
 
@@ -147,5 +156,5 @@ void SceneView::OnEntityAttributeChanged(
 	if ( Name != TypeString )
 		return;
 
-	OnTypeChanged(Rhs,Attribute);
+	OnTypeChanged( Rhs,Attribute );
 }

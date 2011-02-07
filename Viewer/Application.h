@@ -20,8 +20,8 @@
 class OViSEApplication : public wxApp
 {
 private:
-	bool	SetupBasicConfiguration();
-	bool	mForceConfig;
+	bool    SetupBasicConfiguration();
+	bool mForceConfig;
 
 public:
 	virtual bool OnInit();

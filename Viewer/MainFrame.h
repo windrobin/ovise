@@ -41,7 +41,7 @@
 #include "AttributeView.h"
 #include <SceneView.h>
 #include <NetworkInterface.h>
-//#include "XMLRPCServer.h"
+// #include "XMLRPCServer.h"
 
 using boost::scoped_ptr;
 
@@ -51,74 +51,103 @@ using boost::scoped_ptr;
 class MainFrame :
 	public MainFrameBase
 {
-	public:
-		explicit						MainFrame( wxString MediaDir, wxString PluginDir, wxWindow* Parent );
-		~MainFrame();
-		void							SetStatusMessage( wxString& Msg, int field = 0 );
+public:
+	explicit MainFrame( wxString  MediaDir,
+	                    wxString  PluginDir,
+	                    wxWindow* Parent );
+	~MainFrame();
+	void
+	SetStatusMessage( wxString& Msg, int field = 0 );
 
 
-	private:
-		virtual void					OnQuit(wxCommandEvent& event);
-		virtual void					OnLoadScene(wxCommandEvent& event);
-		virtual void					OnLoadPointcloud( wxCommandEvent& event );
-		virtual void					OnClose( wxCloseEvent& event );
-		virtual void					OnAbout(wxCommandEvent& event);
-		virtual void					OnSaveScreenToFile(wxCommandEvent& event);
-		virtual void					OnShowSceneStructure( wxCommandEvent& event);
-		virtual void					OnDynamicShadowsChange(wxCommandEvent& event);
-		virtual void					OnDMPoints(wxCommandEvent &event);
-		virtual void					OnDMWire(wxCommandEvent &event);
-		virtual void					OnDMSolid(wxCommandEvent &event);
-		virtual void					OnTestStuff( wxCommandEvent& event );
-		void							OnInsertEntity( wxCommandEvent& Event );
-		void							OnRemoveEntity( wxCommandEvent& Event );
-		void							OnAddAttribute( wxCommandEvent& Event );
-		void							OnDeleteAttribute( wxCommandEvent& Event );
-		void							OnMouseEvent( wxMouseEvent& evt );
-		void							OnKeyboardEvent( wxKeyEvent& evt );
-		void							OnViewClick( wxMouseEvent& evt );
-		void							OnTreeSelectionChanged( wxTreeEvent& event );
-		void							OnIdle( wxIdleEvent& evt );
-		void							OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
-		void							OnNetworkTimer( wxTimerEvent& Event );
-		void							OnRenderTimer( wxTimerEvent& Event );
+private:
+	virtual void                                    OnQuit(
+	        wxCommandEvent& event );
+	virtual void                                    OnLoadScene(
+	        wxCommandEvent& event );
+	virtual void                                    OnLoadPointcloud(
+	        wxCommandEvent& event );
+	virtual void                                    OnClose(
+	        wxCloseEvent& event );
+	virtual void                                    OnAbout(
+	        wxCommandEvent& event );
+	virtual void                                    OnSaveScreenToFile(
+	        wxCommandEvent& event );
+	virtual void                                    OnShowSceneStructure(
+	        wxCommandEvent& event );
+	virtual void                                    OnDynamicShadowsChange(
+	        wxCommandEvent& event );
+	virtual void                                    OnDMPoints(
+	        wxCommandEvent &event );
+	virtual void                                    OnDMWire(
+	        wxCommandEvent &event );
+	virtual void                                    OnDMSolid(
+	        wxCommandEvent &event );
+	virtual void                                    OnTestStuff(
+	        wxCommandEvent& event );
+	void                                                    OnInsertEntity(
+	        wxCommandEvent& Event );
+	void                                                    OnRemoveEntity(
+	        wxCommandEvent& Event );
+	void                                                    OnAddAttribute(
+	        wxCommandEvent& Event );
+	void
+	OnDeleteAttribute( wxCommandEvent& Event );
+	void                                                    OnMouseEvent(
+	        wxMouseEvent& evt );
+	void                                                    OnKeyboardEvent(
+	        wxKeyEvent& evt );
+	void                                                    OnViewClick(
+	        wxMouseEvent& evt );
+	void
+	OnTreeSelectionChanged( wxTreeEvent& event );
+	void                                                    OnIdle(
+	        wxIdleEvent& evt );
+	void
+	OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
+	void                                                    OnNetworkTimer(
+	        wxTimerEvent& Event );
+	void                                                    OnRenderTimer(
+	        wxTimerEvent& Event );
 
-		void							SetupSceneTree();
+	void                                                    SetupSceneTree();
 
 
-		bool							InitOgre();
-		EntityPool						mEntityPool;
+	bool                                                    InitOgre();
+	EntityPool mEntityPool;
 
-	protected:
-		void							LoadVisPlugins();
-		void							LoadNWPlugins();
-		void							LoadVisualizationPlugin( wxString Filename );
-		void							LoadNetworkPlugin( wxString Filename );
+protected:
+	void                                                    LoadVisPlugins();
+	void                                                    LoadNWPlugins();
+	void
+	LoadVisualizationPlugin( wxString Filename );
+	void
+	LoadNetworkPlugin( wxString Filename );
 
-		wxString						mMediaPath;
-		wxString						mPluginPath;
+	wxString mMediaPath;
+	wxString mPluginPath;
 
-		OgreWindow*						mOgreWindow;
-		scoped_ptr<SceneView>			mSceneView;
+	OgreWindow*           mOgreWindow;
+	scoped_ptr<SceneView> mSceneView;
 
-		scoped_ptr<InputHandler>		mInputHandler;
+	scoped_ptr<InputHandler> mInputHandler;
 
-		wxListBox*						mLogBox;
-		scoped_ptr<CustomLogListener>	mLogBoxListener;
+	wxListBox*                    mLogBox;
+	scoped_ptr<CustomLogListener> mLogBoxListener;
 
-		wxAuiManager					mWindowManager;
+	wxAuiManager mWindowManager;
 
-		SceneTree*						mSceneTree;
+	SceneTree* mSceneTree;
 
-		scoped_ptr<AttributeView>		mAttributeView;
-		Entity*							mCurrentEntity;
-		Ogre::Camera*					mCamera;
+	scoped_ptr<AttributeView> mAttributeView;
+	Entity*                   mCurrentEntity;
+	Ogre::Camera*             mCamera;
 
-		//boost::asio::io_service			mIOService;
-		wxTimer							mNetworkTimer;
-		wxTimer							mRenderTimer;
+	// boost::asio::io_service			mIOService;
+	wxTimer mNetworkTimer;
+	wxTimer mRenderTimer;
 
-		scoped_ptr<CInterfaceManager>	mInterfaceManager;
+	scoped_ptr<CInterfaceManager> mInterfaceManager;
 };
 
 #endif // MAINFRAME_H

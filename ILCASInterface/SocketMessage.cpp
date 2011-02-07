@@ -5,14 +5,12 @@
 
 SocketMessage::SocketMessage( EntityPool* EntPool )
 	: mEntityPool( EntPool )
-{
-}
+{}
 
-SocketMessage::~SocketMessage(void)
-{
-}
+SocketMessage::~SocketMessage( void )
+{}
 
-int SocketMessage::HandleMessage(const char* Message) 
+int SocketMessage::HandleMessage( const char* Message )
 {
 	mDocument.parse<0>( const_cast<char*>( Message ) );
 	std::cout << "Socket Message Handling:" << std::endl;
@@ -20,53 +18,57 @@ int SocketMessage::HandleMessage(const char* Message)
 	rapidxml::xml_node<>* RootNode = mDocument.first_node();
 	if( !RootNode )
 		return -1;
-	rapidxml::xml_attribute<>* Operation = RootNode->first_attribute( "action" );
+
+	rapidxml::xml_attribute<>* Operation = RootNode->first_attribute(
+		"action" );
 	if( !Operation )
 		return -1;
+
 	std::string OpStr( Operation->value() );
-	if ( OpStr == "insert" ) 
+	if ( OpStr == "insert" )
 	{
 		return HandleInsert( RootNode );
-	} 
-	else if ( OpStr == "update" ) 
+	}
+	else if ( OpStr == "update" )
 	{
 		rapidxml::xml_node<>* EntityNode = RootNode->first_node( "Id" );
 		if( !EntityNode )
 			return -1;
 
-		HandleUpdate( EntityNode, mEntityPool->GetEntityById( 
-			boost::lexical_cast<int>( EntityNode->value() ) ) );
-	} 
-	else if ( OpStr == "delete" ) 
+		HandleUpdate( EntityNode, mEntityPool->GetEntityById(
+				boost::lexical_cast<int>( EntityNode->value() ) ) );
+	}
+	else if ( OpStr == "delete" )
 	{
 		rapidxml::xml_node<>* EntityNode = RootNode->first_node( "Id" );
 		if( !EntityNode )
 			return -1;
-		
-		RemoveEntityById( mEntityPool, 
+
+		RemoveEntityById( mEntityPool,
 			boost::lexical_cast<int>( EntityNode->value() ) );
 	}
 }
 
 
 /* peform the adding of a new entity to the entity pool
-*/
-int SocketMessage::HandleInsert( rapidxml::xml_node<>* Node ) 
+ */
+int SocketMessage::HandleInsert( rapidxml::xml_node<>* Node )
 {
-	//add the new entity to the pool
+	// add the new entity to the pool
 	rapidxml::xml_node<>* NameNode = Node->first_node( "Name" );
 	if( !NameNode )
 		return -1;
 
-	//extract attributes
+	// extract attributes
 	rapidxml::xml_node<>* AttributesNode = Node->first_node( "Attributes" );
 	if( !AttributesNode )
 		return -1;
-	
-	//create the Entity
-	Entity& NewEntity = mEntityPool->CreateEntity( std::string( NameNode->value() ) );
 
-	
+	// create the Entity
+	Entity& NewEntity =
+	        mEntityPool->CreateEntity( std::string( NameNode->value() ) );
+
+
 	if( !HandleUpdate( AttributesNode, &NewEntity ) )
 	{
 		mEntityPool->RemoveEntity( &NewEntity );
@@ -77,41 +79,52 @@ int SocketMessage::HandleInsert( rapidxml::xml_node<>* Node )
 }
 
 // perform update of an existing entity
-bool SocketMessage::HandleUpdate( rapidxml::xml_node<>* AttributeList, Entity* Rhs) 
+bool SocketMessage::HandleUpdate( rapidxml::xml_node<>* AttributeList,
+                                  Entity*               Rhs )
 {
-	for( rapidxml::xml_node<>* Child = AttributeList->first_node(); ; Child = Child->next_sibling() ) 
+	for( rapidxml::xml_node<>* Child = AttributeList->first_node();
+	     ;
+	     Child = Child->next_sibling() )
 	{
-		rapidxml::xml_attribute<>* Name = Child->first_attribute( "name" );
-		rapidxml::xml_attribute<>* Type = Child->first_attribute( "type" );
-		if( Name && Type ) 
+		rapidxml::xml_attribute<>* Name = Child->first_attribute(
+			"name" );
+		rapidxml::xml_attribute<>* Type = Child->first_attribute(
+			"type" );
+		if( Name && Type )
 		{
 			std::string NameStr( Name->value() );
 			std::string TypeStr( Type->value() );
 			std::string ValueStr( Child->value() );
 			if( TypeStr == "vec3" )
 			{
-				//input of position types
-				double pos[3];
+				// input of position types
+				double            pos[3];
 				wxStringTokenizer Tokenizer( ValueStr, "," );
-				for (int i = 0; i < 3; i++) 
+				for (int i = 0; i < 3; i++)
 				{
-					Tokenizer.GetNextToken().ToDouble( &pos[i] );
+					Tokenizer.GetNextToken().ToDouble(
+						&pos[i] );
 				}
-				Rhs->Set<vec3>( NameStr, vec3( pos[0], pos[1], pos[2] ));
-			} 
-			else if ( TypeStr == "int" ) 
+				Rhs->Set<vec3>( NameStr,
+				                vec3( pos[0], pos[1], pos[2] ));
+			}
+			else if ( TypeStr == "int" )
 			{
-				//input of integers
-				Rhs->Set<int>( NameStr, boost::lexical_cast<int>( ValueStr ) );
-			} 
-			else if( TypeStr == "double" ) 
+				// input of integers
+				Rhs->Set<int>( NameStr,
+				               boost::lexical_cast<int>(
+						       ValueStr ) );
+			}
+			else if( TypeStr == "double" )
 			{
-				//input of floating numbers
-				Rhs->Set<double>( NameStr, boost::lexical_cast<double>( ValueStr ) );
-			} 
-			else 
+				// input of floating numbers
+				Rhs->Set<double>( NameStr,
+				                  boost::lexical_cast<double>(
+							  ValueStr ) );
+			}
+			else
 			{
-				//standard is string
+				// standard is string
 				Rhs->Set<std::string>( NameStr, ValueStr );
 			}
 		}
@@ -122,7 +135,5 @@ bool SocketMessage::HandleUpdate( rapidxml::xml_node<>* AttributeList, Entity* R
 }
 
 // perform update of an existing entity
-void SocketMessage::HandleDelete() 
-{
-}
-
+void SocketMessage::HandleDelete()
+{}

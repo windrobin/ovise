@@ -8,8 +8,8 @@
 #include <wx/propgrid/propgrid.h>
 
 /** View for the attributes in an entity.
-	Uses a property grid.
-*/
+        Uses a property grid.
+ */
 class AttributeView :
 	public EntityObserver
 {
@@ -17,21 +17,25 @@ public:
 	AttributeView( wxWindow* Parent );
 	~AttributeView();
 
-	wxPropertyGrid*			GetGrid();
-	
-	void					SetEntity( Entity* Rhs );
+	wxPropertyGrid*                 GetGrid();
 
-	virtual void			OnPropertyChange( wxPropertyGridEvent& Rhs );
+	void                                    SetEntity( Entity* Rhs );
+
+	virtual void                    OnPropertyChange(
+	        wxPropertyGridEvent& Rhs );
 protected:
 	// Implements the EntityObserver interface
-	virtual void			OnEntityAttributeChanged(Entity* Rhs, const std::string& Name,
-								const EntityVariantType* Attribute);
+	virtual void                    OnEntityAttributeChanged(
+	        Entity*            Rhs,
+	        const std::string& Name,
+	        const
+	        EntityVariantType* Attribute );
 
-	virtual void			ShowAttribs();
+	virtual void                    ShowAttribs();
 
 private:
-	wxPropertyGrid*			mObjectProperties;
-	Entity*					mCurrentEntity;
+	wxPropertyGrid* mObjectProperties;
+	Entity*         mCurrentEntity;
 };
 
 #endif

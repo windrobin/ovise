@@ -1,9 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////
 
 #ifndef __MainFrameBase__
 #define __MainFrameBase__
@@ -30,7 +30,7 @@
 #include <wx/textctrl.h>
 #include <wx/statline.h>
 
-///////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////
 
 #define ID_LOAD_SCENE 1000
 #define ID_LOAD_POINTCLOUD 1001
@@ -48,180 +48,264 @@
 #define idMenuAbout 1013
 #define ID_TESTSTUFF 1014
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class MainFrameBase
-///////////////////////////////////////////////////////////////////////////////
-class MainFrameBase : public wxFrame 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class MainFrameBase
+// /////////////////////////////////////////////////////////////////////////////
+class MainFrameBase : public wxFrame
 {
-	private:
-		wxMenuItem* points;
-		wxMenuItem* wireframe;
-		wxMenuItem* solid;
-	
-	protected:
-		wxMenuBar* mbar;
-		wxMenu* fileMenu;
-		wxMenu* view;
-		wxMenu* displayMode;
-		wxMenu* scene;
-		wxMenu* network;
-		wxMenu* helpMenu;
-		wxMenu* debug;
-		wxStatusBar* statusBar;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
-		virtual void OnLoadScene( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnLoadPointcloud( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnQuit( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnShowSceneStructure( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnSaveScreenToFile( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDynamicShadowsChange( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDMPoints( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDMWire( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnDMSolid( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnTestStuff( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		MainFrameBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - powered by wxWidgets!"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
-		~MainFrameBase();
-	
+private:
+	wxMenuItem* points;
+	wxMenuItem* wireframe;
+	wxMenuItem* solid;
+
+protected:
+	wxMenuBar*   mbar;
+	wxMenu*      fileMenu;
+	wxMenu*      view;
+	wxMenu*      displayMode;
+	wxMenu*      scene;
+	wxMenu*      network;
+	wxMenu*      helpMenu;
+	wxMenu*      debug;
+	wxStatusBar* statusBar;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnClose( wxCloseEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnLoadScene( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnLoadPointcloud( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnQuit( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnShowSceneStructure( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnSaveScreenToFile( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnDynamicShadowsChange( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnDMPoints( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnDMWire( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnDMSolid( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnAbout( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnTestStuff( wxCommandEvent& event ) {
+		event.Skip();
+	}
+
+
+public:
+
+	MainFrameBase( wxWindow* parent,
+	               wxWindowID id = wxID_ANY,
+	               const wxString& title =
+	                       wxT( "OViSE - powered by wxWidgets!" ),
+	               const wxPoint& pos = wxDefaultPosition,
+	               const wxSize& size = wxSize( 800,600 ),
+	               long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL );
+	~MainFrameBase();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class AddMeshDialog
-///////////////////////////////////////////////////////////////////////////////
-class AddMeshDialog : public wxDialog 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class AddMeshDialog
+// /////////////////////////////////////////////////////////////////////////////
+class AddMeshDialog : public wxDialog
 {
-	private:
-	
-	protected:
-		wxBoxSizer* ListSizer;
-		wxListBox* mMeshList;
-		
-		wxButton* mOkButton;
-		wxButton* mApplyButton;
-		wxButton* mCancelButton;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnCloseDialog( wxCloseEvent& event ) { event.Skip(); }
-		virtual void OnMeshListSelect( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnOkClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnApplyClick( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnCancelClick( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		AddMeshDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add new mesh to scene"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 916,854 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~AddMeshDialog();
-	
+private:
+
+protected:
+	wxBoxSizer* ListSizer;
+	wxListBox*  mMeshList;
+
+	wxButton* mOkButton;
+	wxButton* mApplyButton;
+	wxButton* mCancelButton;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnCloseDialog( wxCloseEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnMeshListSelect( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnOkClick( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnApplyClick( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnCancelClick( wxCommandEvent& event ) {
+		event.Skip();
+	}
+
+
+public:
+
+	AddMeshDialog( wxWindow* parent,
+	               wxWindowID id = wxID_ANY,
+	               const wxString& title = wxT( "Add new mesh to scene" ),
+	               const wxPoint& pos = wxDefaultPosition,
+	               const wxSize& size = wxSize( 916,854 ),
+	               long style = wxDEFAULT_DIALOG_STYLE );
+	~AddMeshDialog();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class ExportMeshesDialog
-///////////////////////////////////////////////////////////////////////////////
-class ExportMeshesDialog : public wxDialog 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class ExportMeshesDialog
+// /////////////////////////////////////////////////////////////////////////////
+class ExportMeshesDialog : public wxDialog
 {
-	private:
-	
-	protected:
-		wxStaticText* mLabel;
-		
-		wxButton* mCancelButton;
-		
-		wxButton* mOkButton;
-		wxButton* mDeleteButton;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnCloseDialog( wxCloseEvent& event ) { event.Skip(); }
-		virtual void OnClickCancel( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickOk( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		ExportMeshesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Exporting meshes?"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 268,86 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~ExportMeshesDialog();
-	
+private:
+
+protected:
+	wxStaticText* mLabel;
+
+	wxButton* mCancelButton;
+
+	wxButton* mOkButton;
+	wxButton* mDeleteButton;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnCloseDialog( wxCloseEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickCancel( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickOk( wxCommandEvent& event ) {
+		event.Skip();
+	}
+
+
+public:
+
+	ExportMeshesDialog( wxWindow* parent,
+	                    wxWindowID id = wxID_ANY,
+	                    const wxString& title = wxT( "Exporting meshes?" ),
+	                    const wxPoint& pos = wxDefaultPosition,
+	                    const wxSize& size = wxSize( 268,86 ),
+	                    long style = wxDEFAULT_DIALOG_STYLE );
+	~ExportMeshesDialog();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class _PrototypeManagementDialog
-///////////////////////////////////////////////////////////////////////////////
-class _PrototypeManagementDialog : public wxDialog 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class _PrototypeManagementDialog
+// /////////////////////////////////////////////////////////////////////////////
+class _PrototypeManagementDialog : public wxDialog
 {
-	private:
-	
-	protected:
-		wxBoxSizer* MainSizer;
-		wxBoxSizer* ListBoxSizer;
-		wxListBox* mPrototypeList;
-		wxButton* mRemoveButton;
-		wxButton* mImportButton;
-		wxButton* mExportButton;
-		wxButton* mBuildButton;
-		wxButton* mAttachButton;
-		wxButton* mCloseButton;
-		
-		// Virtual event handlers, overide them in your derived class
-		virtual void OnCloseDialog( wxCloseEvent& event ) { event.Skip(); }
-		virtual void OnProtoTypeListSelect( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickRemove( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickImport( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickExport( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickBuild( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickAttach( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnClickClose( wxCommandEvent& event ) { event.Skip(); }
-		
-	
-	public:
-		
-		_PrototypeManagementDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("( dotScene ) Prototype Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 557,339 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~_PrototypeManagementDialog();
-	
+private:
+
+protected:
+	wxBoxSizer* MainSizer;
+	wxBoxSizer* ListBoxSizer;
+	wxListBox*  mPrototypeList;
+	wxButton*   mRemoveButton;
+	wxButton*   mImportButton;
+	wxButton*   mExportButton;
+	wxButton*   mBuildButton;
+	wxButton*   mAttachButton;
+	wxButton*   mCloseButton;
+
+	// Virtual event handlers, overide them in your derived class
+	virtual void OnCloseDialog( wxCloseEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnProtoTypeListSelect( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickRemove( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickImport( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickExport( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickBuild( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickAttach( wxCommandEvent& event ) {
+		event.Skip();
+	}
+	virtual void OnClickClose( wxCommandEvent& event ) {
+		event.Skip();
+	}
+
+
+public:
+
+	_PrototypeManagementDialog( wxWindow* parent,
+	                            wxWindowID id = wxID_ANY,
+	                            const wxString& title =
+	                                    wxT(
+	                                            "( dotScene ) Prototype Manager" ),
+	                            const wxPoint& pos = wxDefaultPosition,
+	                            const wxSize& size = wxSize( 557,339 ),
+	                            long style = wxDEFAULT_DIALOG_STYLE );
+	~_PrototypeManagementDialog();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class PathConfigDialog
-///////////////////////////////////////////////////////////////////////////////
-class PathConfigDialog : public wxDialog 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class PathConfigDialog
+// /////////////////////////////////////////////////////////////////////////////
+class PathConfigDialog : public wxDialog
 {
-	private:
-	
-	protected:
-		wxBoxSizer* mMainSizer;
-		wxDirPickerCtrl* mPluginDirPicker;
-		wxDirPickerCtrl* mMediaDirPicker;
-	
-	public:
-		
-		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,138 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~PathConfigDialog();
-	
+private:
+
+protected:
+	wxBoxSizer*      mMainSizer;
+	wxDirPickerCtrl* mPluginDirPicker;
+	wxDirPickerCtrl* mMediaDirPicker;
+
+public:
+
+	PathConfigDialog( wxWindow* parent,
+	                  wxWindowID id = wxID_ANY,
+	                  const wxString& title =
+	                          wxT( "OViSE - Configure Path Settings" ),
+	                  const wxPoint& pos = wxDefaultPosition,
+	                  const wxSize& size = wxSize( 596,138 ),
+	                  long style = wxDEFAULT_DIALOG_STYLE );
+	~PathConfigDialog();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-/// Class AddAttributeDialog
-///////////////////////////////////////////////////////////////////////////////
-class AddAttributeDialog : public wxDialog 
+// /////////////////////////////////////////////////////////////////////////////
+// / Class AddAttributeDialog
+// /////////////////////////////////////////////////////////////////////////////
+class AddAttributeDialog : public wxDialog
 {
-	private:
-	
-	protected:
-	
-	public:
-		wxBoxSizer* Sizer;
-		wxRadioBox* TypeRadioBox;
-		wxTextCtrl* NameCtrl;
-		wxTextCtrl* ValueCtrl;
-		
-		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE );
-		~AddAttributeDialog();
-	
+private:
+
+protected:
+
+public:
+	wxBoxSizer* Sizer;
+	wxRadioBox* TypeRadioBox;
+	wxTextCtrl* NameCtrl;
+	wxTextCtrl* ValueCtrl;
+
+	AddAttributeDialog( wxWindow* parent,
+	                    wxWindowID id = wxID_ANY,
+	                    const wxString& title = wxT( "Add Attribute" ),
+	                    const wxPoint& pos = wxDefaultPosition,
+	                    const wxSize& size = wxSize( 279,164 ),
+	                    long style = wxDEFAULT_DIALOG_STYLE );
+	~AddAttributeDialog();
 };
 
-#endif //__MainFrameBase__
+#endif // __MainFrameBase__

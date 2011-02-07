@@ -11,7 +11,7 @@ class CInterfaceManager
 {
 public:
 	explicit CInterfaceManager( EntityPool& EntPool );
-	~CInterfaceManager(void);
+	~CInterfaceManager( void );
 
 	template<class InterfaceType> inline
 	void RegisterInterface( const std::string& InterfaceName )
@@ -28,9 +28,9 @@ public:
 
 private:
 	typedef std::map<std::string, CNetworkInterface* > InterfaceMapType;
-	InterfaceMapType			mInterfaces;
+	InterfaceMapType mInterfaces;
 
-	EntityPool&					mEntityPool;
+	EntityPool& mEntityPool;
 };
 
 #endif // OVISE_INTERFACE_MANAGER_H

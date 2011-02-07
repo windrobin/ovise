@@ -4,13 +4,14 @@
 #include "RobotEntityView.h"
 
 RobotEntityView::RobotEntityView( Entity* Object, Ogre::SceneManager* Mgr )
-: BasicOgreEntityView(Object,Mgr), mNode(0), mOgreEntity(0)
+	: BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
 {
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 
-	//only if Model is set yet...
-	if (Object->GetAttribute("Model") != 0)	
-		OnEntityAttributeChanged(Object,"Model",Object->GetAttribute("Model"));
+	// only if Model is set yet...
+	if (Object->GetAttribute( "Model" ) != 0)
+		OnEntityAttributeChanged( Object,"Model",
+			Object->GetAttribute( "Model" ));
 }
 
 RobotEntityView::~RobotEntityView()
@@ -18,24 +19,22 @@ RobotEntityView::~RobotEntityView()
 	// Remove entity (if we got one)
 	if ( mOgreEntity )
 	{
-		mNode->detachObject(mOgreEntity);
-		GetSceneManager()->destroyEntity(mOgreEntity);
+		mNode->detachObject( mOgreEntity );
+		GetSceneManager()->destroyEntity( mOgreEntity );
 		mOgreEntity=0;
 	}
-
-
 }
 
 void RobotEntityView::OnEntityAttributeChanged(
-	Entity* Rhs,
-	const std::string& Name,
-	const EntityVariantType* Attribute
-)
+        Entity*                  Rhs,
+        const std::string&       Name,
+        const EntityVariantType* Attribute
+        )
 {
 	if ( Name == "Position" )
 	{
 		// Set the position, if it is available
-		const vec3*	Data = boost::get<vec3>(Attribute);
+		const vec3* Data = boost::get<vec3>( Attribute );
 
 		if ( Data )
 			mNode->setPosition( *Data );
@@ -46,31 +45,35 @@ void RobotEntityView::OnEntityAttributeChanged(
 		if ( mOgreEntity )
 		{
 			typedef Ogre::SkeletonInstance::BoneIterator iterator;
-			Ogre::SkeletonInstance* Skeleton=mOgreEntity->getSkeleton();
-			for ( iterator i=Skeleton->getBoneIterator(); i.hasMoreElements(); )
+			Ogre::SkeletonInstance* Skeleton=
+			        mOgreEntity->getSkeleton();
+			for ( iterator i=Skeleton->getBoneIterator();
+			      i.hasMoreElements();
+			      )
 			{
 				Ogre::Bone* Bone=i.getNext();
-					GetDataEntity()->RemoveAttribute(Bone->getName());
-
+				GetDataEntity()->RemoveAttribute( Bone->getName());
 			}
 
-			mNode->detachObject(mOgreEntity);
-			GetSceneManager()->destroyEntity(mOgreEntity);
+			mNode->detachObject( mOgreEntity );
+			GetSceneManager()->destroyEntity( mOgreEntity );
 			mOgreEntity=0;
 		}
 
 
 
-		const std::string* Data=boost::get<std::string>(Attribute);
+		const std::string* Data=boost::get<std::string>( Attribute );
 
 		if (!Data)
 			return;
 
 		// Create and attach the model entity
 		const std::string EntityName = "Entity:" +
-			boost::lexical_cast<std::string>( GetDataEntity() );
-		mOgreEntity = GetSceneManager()->createEntity( EntityName, *Data );
-		mNode->attachObject(mOgreEntity);
+		                               boost::lexical_cast<std::string>(
+		        GetDataEntity() );
+		mOgreEntity = GetSceneManager()->createEntity( EntityName,
+			*Data );
+		mNode->attachObject( mOgreEntity );
 
 		// Get all bones as properties
 		typedef Ogre::SkeletonInstance::BoneIterator iterator;
@@ -79,49 +82,57 @@ void RobotEntityView::OnEntityAttributeChanged(
 		for ( iterator i=Skeleton->getBoneIterator(); i.hasMoreElements(); )
 		{
 			Ogre::Bone* Bone=i.getNext();
-			Bone->setManuallyControlled(true);
+			Bone->setManuallyControlled( true );
 			const std::string Name=Bone->getName();
 
 			const quat Prefix=Bone->getInitialOrientation().Inverse();
-			const quat Delta=Prefix*Bone->getOrientation();
+			const quat Delta=Prefix * Bone->getOrientation();
 
-			//if this attribute has already a attribute, do not overwrite it and inform observers (to  get visualize the orientation here)
-			if ( GetDataEntity()->GetAttribute(Name) == 0 ) {
-				GetDataEntity()->Set<double>(Name,Delta.getPitch().valueDegrees());
-			} else {
-				GetDataEntity()->Changed(Name, GetDataEntity()->GetAttribute(Name));
+			// if this attribute has already a attribute, do not overwrite it and inform observers (to  get visualize the orientation here)
+			if ( GetDataEntity()->GetAttribute( Name ) == 0 )
+			{
+				GetDataEntity()->Set<double>( Name,
+				                              Delta.getPitch().
+				                              valueDegrees());
+			}
+			else
+			{
+				GetDataEntity()->Changed( Name,
+					GetDataEntity()->GetAttribute( Name ));
 			}
 		}
 	}
-	else if (Rhs->GetAttribute("Model") != 0)
+	else if (Rhs->GetAttribute( "Model" ) != 0)
 	{
 		const Entity::AttributeType& Attributes=Rhs->GetAttributes();
 		typedef Entity::AttributeType::value_type ValueType;
 
 		// Check if this is an angle value and a bone of this name exists
 		Ogre::SkeletonInstance* Skeleton=mOgreEntity->getSkeleton();
-		const double* Angle = boost::get<double>( Attribute );
+		const double*           Angle = boost::get<double>( Attribute );
 
-		if ( Angle && Skeleton->hasBone(Name) )
+		if ( Angle && Skeleton->hasBone( Name ) )
 		{
-			Ogre::Bone* Bone=Skeleton->getBone(Name);
+			Ogre::Bone* Bone=Skeleton->getBone( Name );
 
 			quat Delta;
-			Delta.FromAngleAxis( Ogre::Degree( (float)(*Angle) ), vec3( 0.f, 1.f, 0.f ) );
+			Delta.FromAngleAxis( Ogre::Degree(
+					(float)( *Angle ) ),
+				vec3( 0.f, 1.f, 0.f ) );
 
-			Bone->setOrientation( Bone->getInitialOrientation() * Delta );
+			Bone->setOrientation(
+				Bone->getInitialOrientation() * Delta );
 
 			// FIXME: is this really needed?
 			mOgreEntity->getAllAnimationStates()->_notifyDirty();
 		}
 	}
-
 }
 
 /** \note This has to be defined as a C function to prevent name mangling.
-*/
+ */
 extern "C" OVISE_DLLAPI
 void LoadEntityView( SceneView& View )
 {
-	View.RegisterView<RobotEntityView>("Robot");
+	View.RegisterView<RobotEntityView>( "Robot" );
 }

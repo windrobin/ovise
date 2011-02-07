@@ -13,13 +13,16 @@ class CustomLogListener :
 	public Ogre::LogListener
 {
 public:
-	CustomLogListener(void);
-	CustomLogListener(wxListBox *lBox);
-	~CustomLogListener(void);
+	CustomLogListener( void );
+	CustomLogListener( wxListBox *lBox );
+	~CustomLogListener( void );
 
-	void messageLogged(const Ogre::String& message, Ogre::LogMessageLevel level, bool maskDebug, const Ogre::String& logName);
+	void messageLogged( const Ogre::String&   message,
+	                    Ogre::LogMessageLevel level,
+	                    bool                  maskDebug,
+	                    const Ogre::String&   logName );
 
 private:
 	wxListBox *mLogBox;
 };
-#endif //LOG_LISTENER_H
+#endif // LOG_LISTENER_H

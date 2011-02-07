@@ -1,16 +1,16 @@
 /********************************************************************************
- * Name:      ScenePrototype.h													*
- * Purpose:   Code describes a class, holding all data of a prototype. A		*
- *			  prototype contains an imported dotScene xml-file as DOM-structure,*
- *			  its unique qualified name (which is generated from the native name*
- *			  of dotScene xml-file), and additional data, which is stored inside*
- *			  ScenePrototypeData.												*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
- * Created:   2009-11-12														*
- * Copyright: Henning Renartz,													*
- *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
- * License:																		*
- ********************************************************************************/
+* Name:      ScenePrototype.h													*
+* Purpose:   Code describes a class, holding all data of a prototype. A		*
+*			  prototype contains an imported dotScene xml-file as DOM-structure,*
+*			  its unique qualified name (which is generated from the native name*
+*			  of dotScene xml-file), and additional data, which is stored inside*
+*			  ScenePrototypeData.												*
+* Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+* Created:   2009-11-12														*
+* Copyright: Henning Renartz,													*
+*			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+* License:																		*
+********************************************************************************/
 
 #ifndef SCENE_PROTOTYPE_H_
 #define SCENE_PROTOTYPE_H_
@@ -35,18 +35,19 @@ class ScenePrototype
 {
 private:
 	xercesc::DOMDocument* DOMRepresentation;
-	
-	void SetDOMRepresentation(xercesc::DOMDocument* DOMRepresentation);
+
+	void SetDOMRepresentation( xercesc::DOMDocument* DOMRepresentation );
 public:
 	ScenePrototypeData Data;
 
-	xercesc::DOMDocument*	GetDOMRepresentation();
+	xercesc::DOMDocument*   GetDOMRepresentation();
 
-	bool Rename(wxString NewNativeName);
+	bool Rename( wxString NewNativeName );
 
-	ScenePrototype(wxString NativeName, xercesc::DOMDocument* DOMRepresentation);
-	ScenePrototype(const ScenePrototype& ToCopy);
-	~ScenePrototype(void);
+	ScenePrototype( wxString              NativeName,
+	                xercesc::DOMDocument* DOMRepresentation );
+	ScenePrototype( const ScenePrototype& ToCopy );
+	~ScenePrototype( void );
 };
 
 #endif /*SCENE_PROTOTYPE_H_*/

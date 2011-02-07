@@ -11,13 +11,11 @@
 
 CVoodooParser::CVoodooParser()
 	: mModelID( 0 ), mMappingLoaded( false )
-{
-}
+{}
 
 CVoodooParser::CVoodooParser( int ModelID )
 	: mModelID( ModelID ), mMappingLoaded( false )
-{
-}
+{}
 
 bool CVoodooParser::LoadBodyMapping()
 {
@@ -30,10 +28,12 @@ bool CVoodooParser::LoadBodyMapping()
 		// Read the file
 		read_xml( "BodyMapping.xml", PropTree );
 
-		BOOST_FOREACH( ptree::value_type& v, PropTree.get_child("BodyMapping.Limbs") )
+		BOOST_FOREACH( ptree::value_type & v,
+			PropTree.get_child( "BodyMapping.Limbs" ) )
 		{
 			int m = v.second.get_value<int>();
-			mBodyMapping[m] = v.second.get_child( "<xmlattr>.name" ).data();
+			mBodyMapping[m] =
+			        v.second.get_child( "<xmlattr>.name" ).data();
 		}
 	}
 	catch( boost::property_tree::xml_parser::xml_parser_error& /*e*/ )
@@ -51,24 +51,28 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 	if( !mMappingLoaded )
 		return false;
 
-	rapidxml::xml_node<>* RootNode = Document.first_node( "VooDooConnectData" );
+	rapidxml::xml_node<>* RootNode = Document.first_node(
+		"VooDooConnectData" );
 	if( !RootNode )
 		return false;
-	
+
 	rapidxml::xml_node<>* DataNode = RootNode->first_node( "humPosDataSet" );
 	if( !DataNode )
 		return false;
 
 	for( rapidxml::xml_node<>* DEntry = DataNode->first_node( "dataEntry" );
-		 DEntry; DEntry = DEntry->next_sibling( "dataEntry" ) )
+	     DEntry; DEntry = DEntry->next_sibling( "dataEntry" ) )
 	{
-		rapidxml::xml_attribute<>* LimbAttr = DEntry->first_attribute( "limb" );
+		rapidxml::xml_attribute<>* LimbAttr = DEntry->first_attribute(
+			"limb" );
 		if( !LimbAttr )
 			continue;
-		rapidxml::xml_attribute<>* NameAttr = DEntry->first_attribute( "name" );
+		rapidxml::xml_attribute<>* NameAttr = DEntry->first_attribute(
+			"name" );
 		if( !NameAttr )
 			continue;
-		rapidxml::xml_attribute<>* IDAttr = DEntry->first_attribute( "id" );
+		rapidxml::xml_attribute<>* IDAttr = DEntry->first_attribute(
+			"id" );
 		if( !IDAttr )
 			continue;
 
@@ -77,7 +81,7 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 		int ModelID;
 		std::istringstream( tmp ) >> ModelID;
 		mModelID = ModelID;
-		//if( ModelID != mModelID )
+		// if( ModelID != mModelID )
 		//	continue;
 
 		int LimbID;
@@ -108,11 +112,13 @@ bool CVoodooParser::ParseDocument( rapidxml::xml_document<>& Document )
 void CVoodooParser::UpdateEntity( Entity* Ent )
 {
 	Ent->Set<int>( "ModelID", mLimbMap.begin()->second.ModelID  );
-	for( LimbMapType::iterator i = mLimbMap.begin(); i != mLimbMap.end(); i++ )
+	for( LimbMapType::iterator i = mLimbMap.begin();
+	     i != mLimbMap.end();
+	     i++ )
 	{
 		Ent->Set<quat>( i->second.LimbName, quat( i->second.quat[0],
-												  i->second.quat[1], 
-												  i->second.quat[2], 
-												  i->second.quat[3] ) );
+					i->second.quat[1],
+					i->second.quat[2],
+					i->second.quat[3] ) );
 	}
 }

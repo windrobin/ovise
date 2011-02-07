@@ -3,13 +3,11 @@
 
 CInterfaceManager::CInterfaceManager( EntityPool& EntPool )
 	: mEntityPool( EntPool )
-{
-}
+{}
 
 
-CInterfaceManager::~CInterfaceManager(void)
-{
-}
+CInterfaceManager::~CInterfaceManager( void )
+{}
 
 CNetworkInterface* CInterfaceManager::GetInterface( const std::string& Name )
 {
@@ -19,8 +17,10 @@ CNetworkInterface* CInterfaceManager::GetInterface( const std::string& Name )
 std::set<std::string> CInterfaceManager::GetInterfaceNames() const
 {
 	std::set<std::string> RValues;
-	
-	for( InterfaceMapType::const_iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
+
+	for( InterfaceMapType::const_iterator i = mInterfaces.begin();
+	     i != mInterfaces.end();
+	     i++ )
 	{
 		RValues.insert( i->first );
 	}
@@ -30,14 +30,18 @@ std::set<std::string> CInterfaceManager::GetInterfaceNames() const
 
 void CInterfaceManager::PollInterfaces()
 {
-	for( InterfaceMapType::iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
+	for( InterfaceMapType::iterator i = mInterfaces.begin();
+	     i != mInterfaces.end();
+	     i++ )
 		i->second->Poll();
 }
 
 bool CInterfaceManager::HasInterfaceRunning()
 {
 	bool RValue = true;
-	for( InterfaceMapType::iterator i = mInterfaces.begin(); i != mInterfaces.end(); i++ )
+	for( InterfaceMapType::iterator i = mInterfaces.begin();
+	     i != mInterfaces.end();
+	     i++ )
 		RValue = RValue && i->second->IsRunning();
 
 	return RValue;
