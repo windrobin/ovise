@@ -8,19 +8,24 @@ class VoodooEntityView :
 	public BasicOgreEntityView
 {
 public:
-						VoodooEntityView( Entity* Object, Ogre::SceneManager* Mgr );
-	void				Remove( Ogre::SceneManager* Mgr );
-	void				OnEntityChanged( Entity* Rhs );
-	void				OnEntityAttributeChanged( Entity* Rhs,	const std::string& Name, const EntityVariantType* Attribute );
+	VoodooEntityView( Entity* Object, Ogre::SceneManager* Mgr );
+	void                            Remove( Ogre::SceneManager* Mgr );
+	void                            OnEntityChanged( Entity* Rhs );
+	void                            OnEntityAttributeChanged(
+	        Entity*            Rhs,
+	        const std::
+	        string&            Name,
+	        const
+	        EntityVariantType* Attribute );
 
-						~VoodooEntityView();
+	~VoodooEntityView();
 
 private:
-	Entity*				mDataEntity;
+	Entity* mDataEntity;
 
-	Ogre::SceneManager*	mSceneManager;
-	Ogre::SceneNode*	mNode;
-	Ogre::Entity*		mOgreEntity;
+	Ogre::SceneManager* mSceneManager;
+	Ogre::SceneNode*    mNode;
+	Ogre::Entity*       mOgreEntity;
 };
 
 #endif

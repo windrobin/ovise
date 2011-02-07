@@ -19,12 +19,12 @@ class CPointcloud
 {
 public:
 	CPointcloud( const std::string& Name, const std::string& Resourcegroup,
-		 const std::size_t VNumber, float* VArray, float* CArray );
+	             const std::size_t VNumber, float* VArray, float* CArray );
 
-	/// Update a created pointcloud with size points.
+	// / Update a created pointcloud with size points.
 	void UpdateVertexPositions( std::size_t VNumber, float* Vertices );
 
-	/// Update vertex colours
+	// / Update vertex colours
 	void UpdateVertexColours( std::size_t CNumber, float* Colors );
 
 	virtual ~CPointcloud();
@@ -39,7 +39,7 @@ private:
 
 	Ogre::VertexDeclaration* mDeclaration;
 
-	Ogre::MeshPtr mMsh;
+	Ogre::MeshPtr  mMsh;
 	Ogre::SubMesh* mSub;
 };
-#endif //POINTCLOUD_H
+#endif // POINTCLOUD_H

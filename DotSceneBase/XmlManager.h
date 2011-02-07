@@ -1,14 +1,14 @@
 /********************************************************************************
- * Name:      XmlManager.h														*
- * Purpose:   Code describes a class, which encapsulate the complete xml-access.*
- *			  Including operations like read and write prototypes or complete	*
- *			  object-collections.												*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
- * Created:   2009-11-13														*
- * Copyright: Henning Renartz,													*
- *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
- * License:																		*
- ********************************************************************************/
+* Name:      XmlManager.h														*
+* Purpose:   Code describes a class, which encapsulate the complete xml-access.*
+*			  Including operations like read and write prototypes or complete	*
+*			  object-collections.												*
+* Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+* Created:   2009-11-13														*
+* Copyright: Henning Renartz,													*
+*			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+* License:																		*
+********************************************************************************/
 
 #ifndef XML_MANAGER_H_
 #define XML_MANAGER_H_
@@ -62,19 +62,19 @@ private:
 
 	// Writing XML
 	DOMImplementation* mImplementation;
-	DOMDocumentType* mDocType;
+	DOMDocumentType*   mDocType;
 	::DOMDocument* mDocument;
-	
-	void MoveDOMToXML(wxFileName filename, bool doExportMeshFiles);
+
+	void MoveDOMToXML( wxFileName filename, bool doExportMeshFiles );
 
 	// Reading XML
 	XercesDOMParser *mParser;
-	ErrorHandler *mErrHandler;
+	ErrorHandler *   mErrHandler;
 
 public:
 	// General
-	XmlManager(DotSceneBaseConfiguration* Configuration);
-	~XmlManager(void);
+	XmlManager( DotSceneBaseConfiguration* Configuration );
+	~XmlManager( void );
 
 	// Get info
 	bool IsInitialized();
@@ -82,23 +82,24 @@ public:
 	bool IsReadyToImport();
 
 	// Set data
-	bool		SetURLofXSD(wxString URLofXSD);
-	bool		SetURLofExportPath(wxString URLofExportPath);
+	bool            SetURLofXSD( wxString URLofXSD );
+	bool            SetURLofExportPath( wxString URLofExportPath );
 
 	// Get data
-	wxString	GetURLofXSD();
-	wxString	GetURLofExportPath();
+	wxString        GetURLofXSD();
+	wxString        GetURLofExportPath();
 	DotSceneBaseConfiguration* GetConfiguration();
 
 	// Management of DOMDocuments
-	bool ExportScenePrototype(ScenePrototype* Prototype, wxFileName DestinationURL);
-	ScenePrototype* ImportScenePrototype(wxFileName URLofXML);
+	bool ExportScenePrototype( ScenePrototype* Prototype,
+	                           wxFileName      DestinationURL );
+	ScenePrototype* ImportScenePrototype( wxFileName URLofXML );
 
 	// Writing XML
-	//bool ExportDotScene(wxString HostingSceneManagerName, QualifiedNameCollection Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles);
-	
+	// bool ExportDotScene(wxString HostingSceneManagerName, QualifiedNameCollection Selection, wxString DestinationOfSceneXML, bool doExportNotSelectedChildsToo,  bool doExportMeshFiles);
+
 	// Reading XML
-	xercesc::DOMDocument* ImportDotScene(wxString URLofXML);
+	xercesc::DOMDocument* ImportDotScene( wxString URLofXML );
 };
 
 #endif /*XML_MANAGER_H_*/

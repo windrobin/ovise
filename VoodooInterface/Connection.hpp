@@ -7,16 +7,21 @@
 
 using namespace boost::asio;
 
-namespace {
-unsigned int DecodeInt( std::vector<char> Data )
+namespace
 {
-	unsigned int Result = 0;
-	if( Data.size() == 4 )
-		Result = (Data[0] + 128) * 16777216 + (Data[1] + 128) * 65536 + (Data[2] + 128) * 256 + (Data[3] + 128);
+	unsigned int DecodeInt( std::vector<char> Data )
+	{
+		unsigned int Result = 0;
+		if( Data.size() == 4 )
+			Result =
+			        ( Data[0] +
+			          128 ) * 16777216 +
+			        ( Data[1] +
+			          128 ) * 65536 +
+			        ( Data[2] + 128 ) * 256 + ( Data[3] + 128 );
 
-	return Result;
-}
-
+		return Result;
+	}
 }
 
 const int HEADER_SIZE = 8;
@@ -37,18 +42,19 @@ public:
 		return mSocket;
 	}
 
-	void Connect( std::string Host = "localhost", std::string Port = "22613" )
+	void Connect( std::string Host = "localhost",
+	              std::string Port = "22613" )
 	{
-		ip::tcp::resolver::query Query( Host, Port );
+		ip::tcp::resolver::query    Query( Host, Port );
 		ip::tcp::resolver::iterator I = mResolver.resolve( Query );
-		
+
 		ip::tcp::endpoint Endpoint = *I;
-		
+
 		mSocket.async_connect( Endpoint,
-							   boost::bind( &CVoodooConnection::HandleConnect,
-											this,
-											placeholders::error,
-											++I ) );
+			boost::bind( &CVoodooConnection::HandleConnect,
+				this,
+				placeholders::error,
+				++I ) );
 	}
 
 	boost::signals2::signal<void (const std::string&)> MessageSignal;
@@ -57,31 +63,31 @@ public:
 private:
 	CVoodooConnection( io_service& IOService )
 		: mResolver( IOService ), mSocket( IOService )
-	{
-	}
+	{}
 
 	void HandleConnect( const boost::system::error_code& Error,
-						ip::tcp::resolver::iterator EI )
+	                    ip::tcp::resolver::iterator      EI )
 	{
 		if( !Error )
 		{
 			mHeaderData.assign( HEADER_SIZE, '0' );
 			async_read( mSocket,
-						buffer( mHeaderData ),
-						transfer_at_least( HEADER_SIZE ),
-						boost::bind( &CVoodooConnection::HandleReadHeader,
-									 this,
-									 placeholders::error ) );
+				buffer( mHeaderData ),
+				transfer_at_least( HEADER_SIZE ),
+				boost::bind( &CVoodooConnection::
+					HandleReadHeader,
+					this,
+					placeholders::error ) );
 		}
 		else if( EI != ip::tcp::resolver::iterator() )
 		{
 			mSocket.close();
 			ip::tcp::endpoint Endpoint = *EI;
 			mSocket.async_connect( Endpoint,
-								   boost::bind( &CVoodooConnection::HandleConnect,
-												this,
-												placeholders::error,
-												++EI ) );
+				boost::bind( &CVoodooConnection::HandleConnect,
+					this,
+					placeholders::error,
+					++EI ) );
 		}
 		else
 		{
@@ -93,19 +99,20 @@ private:
 	{
 		if( !Error )
 		{
-			std::vector<char>::iterator i = mHeaderData.begin()+4;
-			std::vector<char> PacketSize;
+			std::vector<char>::iterator i = mHeaderData.begin() + 4;
+			std::vector<char>           PacketSize;
 			PacketSize.assign( mHeaderData.begin(), i );
 			std::vector<char> PacketType;
 			PacketType.assign( i, mHeaderData.end() );
-			unsigned int PSize =  DecodeInt(PacketSize);
-			
+			unsigned int PSize =  DecodeInt( PacketSize );
+
 			mPacketBuffer.resize( PSize - HEADER_SIZE );
 			async_read( mSocket,
-						buffer( mPacketBuffer ),
-						boost::bind( &CVoodooConnection::HandleReadPacket,
-									 this,
-									 placeholders::error ) );
+				buffer( mPacketBuffer ),
+				boost::bind( &CVoodooConnection::
+					HandleReadPacket,
+					this,
+					placeholders::error ) );
 		}
 		else
 		{
@@ -117,15 +124,17 @@ private:
 	{
 		if( !Error )
 		{
-			mMessage.assign( mPacketBuffer.begin(), mPacketBuffer.end() );
+			mMessage.assign(
+				mPacketBuffer.begin(), mPacketBuffer.end() );
 			MessageSignal( mMessage );
 
 			async_read( mSocket,
-						buffer( mHeaderData ),
-						transfer_at_least( HEADER_SIZE ),
-						boost::bind( &CVoodooConnection::HandleReadHeader,
-									 this,
-									 placeholders::error ) );
+				buffer( mHeaderData ),
+				transfer_at_least( HEADER_SIZE ),
+				boost::bind( &CVoodooConnection::
+					HandleReadHeader,
+					this,
+					placeholders::error ) );
 		}
 		else
 		{
@@ -134,7 +143,7 @@ private:
 	}
 
 	ip::tcp::resolver mResolver;
-	ip::tcp::socket mSocket;
+	ip::tcp::socket   mSocket;
 
 	std::vector<char> mHeaderData;
 	std::vector<char> mPacketBuffer;

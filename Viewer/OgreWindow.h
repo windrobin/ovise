@@ -16,37 +16,46 @@ class OgreWindow :
 {
 public:
 	OgreWindow( const wxString& MediaPath, wxWindow* Parent, wxWindowID id,
-				const wxPoint& pos,
-				const wxSize& size,
-				long style,
-				const wxString& name );
+	            const wxPoint& pos,
+	            const wxSize& size,
+	            long style,
+	            const wxString& name );
 
 	~OgreWindow();
 
-	void							SetGraphicsInit( boost::function<void()> Func ) { mInitFunc = Func; }
+	void                                                    SetGraphicsInit(
+	        boost::function<void()> Func ) {
+		mInitFunc = Func;
+	}
 
-	Ogre::SceneManager*				GetSceneManager() { return mSceneMgr; }
-	Ogre::RenderWindow*				GetRenderWindow() { return mRenderWindow; }
-	Ogre::Root*						GetRoot() { return mRoot.get(); }
+	Ogre::SceneManager*                             GetSceneManager() {
+		return mSceneMgr;
+	}
+	Ogre::RenderWindow*                             GetRenderWindow() {
+		return mRenderWindow;
+	}
+	Ogre::Root*                                             GetRoot() {
+		return mRoot.get();
+	}
 
 	void UpdateOgre();
 
 private:
-	void OnResize(wxSizeEvent& Event);
-	void OnPaint(wxPaintEvent& Event);
-	void OnCreate(wxWindowCreateEvent& Event);
+	void OnResize( wxSizeEvent& Event );
+	void OnPaint( wxPaintEvent& Event );
+	void OnCreate( wxWindowCreateEvent& Event );
 
 	void LoadResources();
 
-	wxString						mMediaDir;
+	wxString mMediaDir;
 
-	boost::scoped_ptr<Ogre::Root>	mRoot;
-	Ogre::RenderWindow*				mRenderWindow;
-	Ogre::SceneManager*				mSceneMgr;
+	boost::scoped_ptr<Ogre::Root> mRoot;
+	Ogre::RenderWindow*           mRenderWindow;
+	Ogre::SceneManager*           mSceneMgr;
 
-	boost::function<void()>			mInitFunc;
+	boost::function<void()> mInitFunc;
 
-	bool							mContextCreated;
+	bool mContextCreated;
 
 	DECLARE_EVENT_TABLE()
 };

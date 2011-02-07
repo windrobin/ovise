@@ -9,39 +9,42 @@
 #include <wx/string.h>
 #include <wx/textfile.h>
 
-namespace {
-
-template < class T > T* ptr( std::vector<T>& v )
+namespace
 {
-	return &(v[0]);
+	template < class T > T* ptr( std::vector<T>& v )
+	{
+		return &( v[0] );
+	}
+
+	bool ParseVector( const wxString& String,
+	                  double&         x,
+	                  double&         y,
+	                  double&         z )
+	{
+		wxStringTokenizer p( String, wxT( " " ));
+
+		// Line corrupt?
+		if ( p.CountTokens() != 3 )
+			return false;
+
+		setlocale( LC_ALL, "C" );
+
+		if (!p.GetNextToken().ToDouble( &x ) ||
+		    !p.GetNextToken().ToDouble( &y ) ||
+		    !p.GetNextToken().ToDouble( &z ) )
+			return false;
+
+		return true;
+	}
 }
 
-bool ParseVector( const wxString& String, double& x, double& y, double& z )
-{
-	wxStringTokenizer p(String, wxT(" "));
-
-	// Line corrupt?
-	if ( p.CountTokens() != 3 )
-		return false;
-
-	setlocale( LC_ALL, "C" );
-
-	if (!p.GetNextToken().ToDouble(&x) ||
-		!p.GetNextToken().ToDouble(&y) ||
-		!p.GetNextToken().ToDouble(&z) )
-		return false;
-
-	return true;
-}
-
-}
-
-PointcloudEntityView::PointcloudEntityView( Entity* Object, Ogre::SceneManager* Mgr )
-: BasicOgreEntityView(Object,Mgr), mNode(0), mOgreEntity(0)
+PointcloudEntityView::PointcloudEntityView( Entity*             Object,
+                                            Ogre::SceneManager* Mgr )
+	: BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
 {
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 
-	SyncAttribs(this);
+	SyncAttribs( this );
 }
 
 PointcloudEntityView::~PointcloudEntityView()
@@ -51,19 +54,19 @@ PointcloudEntityView::~PointcloudEntityView()
 		mNode->detachAllObjects();
 		GetSceneManager()->destroyEntity( mOgreEntity );
 	}
-	GetSceneManager()->getRootSceneNode()->removeChild(mNode);
+	GetSceneManager()->getRootSceneNode()->removeChild( mNode );
 }
 
 void PointcloudEntityView::OnEntityAttributeChanged
 (
-	Entity* Rhs,
-	const std::string& Name,
-	const EntityVariantType* Attribute
+        Entity*                  Rhs,
+        const std::string&       Name,
+        const EntityVariantType* Attribute
 )
 {
 	if ( Name == "Filename" )
 	{
-		const std::string* Str=boost::get<std::string>(Attribute);
+		const std::string* Str=boost::get<std::string>( Attribute );
 
 		if( mNode )
 		{
@@ -88,37 +91,71 @@ void PointcloudEntityView::OnEntityAttributeChanged
 		const boost::any* PAny = boost::get<boost::any>( Attribute );
 		try
 		{
-			std::vector<float>& Points = boost::any_cast<std::vector<float>>( *PAny );
+			std::vector<float>& Points = boost::any_cast<
+			                             std::vector<float >>
+			                             ( *PAny );
 			if( !mPointCloud )
 			{
-				const EntityVariantType* ColorsAttr = Rhs->GetAttribute( "Colors" );
+				const EntityVariantType* ColorsAttr =
+				        Rhs->GetAttribute( "Colors" );
 				if( !ColorsAttr )
 				{
-					mPointCloud.reset( new CPointcloud( Rhs->GetName(), "General",
-						Points.size()/3, Points.data(), 0 ) );
+					mPointCloud.reset( new CPointcloud( Rhs
+							->GetName(), "General",
+							Points.size() / 3,
+							Points.data(), 0 ) );
 
-					// Insert the model into the scene	
-					const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
-					mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Rhs->GetName());
-					mOgreEntity->setMaterialName( "Pointcloud" );
+					// Insert the model into the scene
+					const std::string EntityName =
+					        "Entity:" +
+					        boost::lexical_cast<std::string>(
+					                GetDataEntity() );
+					mOgreEntity =
+					        GetSceneManager()->createEntity(
+							EntityName.c_str(),
+							Rhs->GetName());
+					mOgreEntity->setMaterialName(
+						"Pointcloud" );
 
 					mNode->attachObject( mOgreEntity );
 				}
 				else
 				{
-					const boost::any* CAny = boost::get<boost::any>( ColorsAttr );
+					const boost::any* CAny =
+					        boost::get<boost::any>(
+					                ColorsAttr );
 					try
 					{
-						std::vector<float>& Colors = boost::any_cast<std::vector<float>>( *CAny );
-						mPointCloud.reset( new CPointcloud( Rhs->GetName(), "General",
-						Points.size()/3, Points.data(), Colors.data() ) );
+						std::vector<float>& Colors =
+						        boost::any_cast<
+						        std::vector<
+						        float >> ( *CAny );
+						mPointCloud.reset(
+							new CPointcloud( Rhs->
+								GetName(),
+								"General",
+								Points.size() /
+								3, Points.data(),
+								Colors.data() ) );
 
-						// Insert the model into the scene	
-						const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
-						mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Rhs->GetName());
-						mOgreEntity->setMaterialName( "Pointcloud" );
-						
-						mNode->attachObject( mOgreEntity );
+						// Insert the model into the scene
+						const std::string EntityName =
+						        "Entity:" +
+						        boost::lexical_cast<std
+						                            ::
+						                            string>(
+						                GetDataEntity() );
+						mOgreEntity =
+						        GetSceneManager()->
+						        createEntity(
+								EntityName.
+								c_str(),
+								Rhs->GetName());
+						mOgreEntity->setMaterialName(
+							"Pointcloud" );
+
+						mNode->attachObject(
+							mOgreEntity );
 					}
 					catch( const boost::bad_any_cast & )
 					{}
@@ -126,7 +163,8 @@ void PointcloudEntityView::OnEntityAttributeChanged
 			}
 			else if( mPointCloud)
 			{
-				mPointCloud->UpdateVertexPositions( Points.size()/3, Points.data() );
+				mPointCloud->UpdateVertexPositions( Points.size(
+					        ) / 3, Points.data() );
 			}
 		}
 		catch( const boost::bad_any_cast & )
@@ -136,11 +174,15 @@ void PointcloudEntityView::OnEntityAttributeChanged
 	{
 		if( mPointCloud )
 		{
-			const boost::any* CAny = boost::get<boost::any>( Attribute );
+			const boost::any* CAny = boost::get<boost::any>(
+			        Attribute );
 			try
 			{
-				std::vector<float>& Colors = boost::any_cast<std::vector<float>>( *CAny );
-				mPointCloud->UpdateVertexColours( Colors.size()/3, Colors.data() );
+				std::vector<float>& Colors = boost::any_cast<
+				                             std::vector<
+				                             float >> ( *CAny );
+				mPointCloud->UpdateVertexColours(
+					Colors.size() / 3, Colors.data() );
 			}
 			catch( const boost::bad_any_cast & )
 			{}
@@ -153,7 +195,8 @@ void PointcloudEntityView::OnEntityAttributeChanged
 		if( mOgreEntity && PS )
 		{
 			// values above 0.05 do not show any difference
-			mOgreEntity->getSubEntity( 0 )->getMaterial()->setPointSize( float( *PS ) );
+			mOgreEntity->getSubEntity( 0 )->getMaterial()->
+			setPointSize( float( *PS ) );
 		}
 	}
 	else if ( Name == "Position" )
@@ -179,46 +222,49 @@ void PointcloudEntityView::OnEntityAttributeChanged
 	}
 }
 
-void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename, float r, float g, float b )
+void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename,
+                                            float              r,
+                                            float              g,
+                                            float              b )
 {
 	using namespace boost::assign;
 
 	// Strip pathname and extension from the file
 	wxString Name;
-	wxFileName::SplitPath(Filename,0,0,&Name,0);
+	wxFileName::SplitPath( Filename,0,0,&Name,0 );
 
 	// Generate an entity name
-	wxString PointcloudName = wxT("Pointcloud:")+Name;
-	
+	wxString PointcloudName = wxT( "Pointcloud:" ) + Name;
+
 	// Open the source file
 	wxTextFile PCFile;
-	PCFile.Open(Filename);
+	PCFile.Open( Filename );
 
 	// Vectors to hold the data
 	std::vector<float> Points;
 	std::vector<float> Colors;
 
 	wxString Line = PCFile.GetFirstLine();
-	double x, y, z;
+	double   x, y, z;
 	x = y = z = 0.f;
 
 	float PCmin[] = {1000000.f, 1000000.f, 1000000.f};
 	float PCmax[] = {-1000000.f, -1000000.f, -1000000.f};
-	
+
 	// Start parsing the file
 	while( !PCFile.Eof() )
 	{
 		// Ignore comments
-		if( Line.StartsWith(wxT("#")) )
-			continue;		
+		if( Line.StartsWith( wxT( "#" )) )
+			continue;
 
-		if( Line.Matches(wxT("*,*")) )
+		if( Line.Matches( wxT( "*,*" )) )
 		{
 			double r=0.0,g=0.0,b=0.0;
 
 			// Try parsing
-			if (!ParseVector(Line.BeforeFirst(','),x,y,z) ||
-				!ParseVector(Line.AfterFirst(','),r,g,b) )
+			if (!ParseVector( Line.BeforeFirst( ',' ),x,y,z ) ||
+			    !ParseVector( Line.AfterFirst( ',' ),r,g,b ) )
 				continue;
 
 			if ( float(x) <= PCmin[0] ) PCmin[0] = float(x);
@@ -234,7 +280,7 @@ void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename, float r
 		else
 		{
 			// Try parsing
-			if (!ParseVector(Line,x,y,z))
+			if (!ParseVector( Line,x,y,z ))
 				continue;
 
 			if ( float(x) <= PCmin[0] ) PCmin[0] = float(x);
@@ -249,9 +295,10 @@ void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename, float r
 		}
 		Line = PCFile.GetNextLine();
 	}
-	
-	if ( Colors.size() && (Colors.size() != Points.size() ) )
-		throw std::runtime_error( "Colors were read, but a different amount of points was read." );
+
+	if ( Colors.size() && ( Colors.size() != Points.size() ) )
+		throw std::runtime_error(
+			"Colors were read, but a different amount of points was read." );
 
 	// Normalize color ranges
 	// FIXME: The conditional is a bit hacky.
@@ -260,14 +307,24 @@ void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename, float r
 		if ( Colors[i] > 1.f ) // Not already in the [0..1) range?
 			Colors[i] /= 255.f;
 
-	Ogre::AxisAlignedBox PCBounds( PCmin[0], PCmin[1], PCmin[2], PCmax[0], PCmax[1], PCmax[2] );
-	
-	mPointCloud.reset( new CPointcloud(std::string(PointcloudName.mb_str()),"General",
-		Points.size()/3, ptr(Points), Colors.size()?ptr(Colors):0) );
-	
-	// Insert the model into the scene	
-	const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
-	mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Ogre::String(PointcloudName.mb_str()));
+	Ogre::AxisAlignedBox PCBounds( PCmin[0],
+	                               PCmin[1],
+	                               PCmin[2],
+	                               PCmax[0],
+	                               PCmax[1],
+	                               PCmax[2] );
+
+	mPointCloud.reset( new CPointcloud( std::string( PointcloudName.mb_str()),
+			"General",
+			Points.size() / 3, ptr( Points ),
+			Colors.size() ? ptr( Colors ) : 0 ) );
+
+	// Insert the model into the scene
+	const std::string EntityName = "Entity:" +
+	                               boost::lexical_cast<std::string>(
+	        GetDataEntity() );
+	mOgreEntity = GetSceneManager()->createEntity(
+		EntityName.c_str(), Ogre::String( PointcloudName.mb_str()));
 	mOgreEntity->setMaterialName( "Pointcloud" );
 
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
@@ -280,14 +337,14 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 
 	// Strip pathname and extension from the file
 	wxString Name;
-	wxFileName::SplitPath(Filename,0,0,&Name,0);
+	wxFileName::SplitPath( Filename,0,0,&Name,0 );
 
 	// Generate an entity name
-	wxString PointcloudName = wxT("Pointcloud:")+Name;
-	
+	wxString PointcloudName = wxT( "Pointcloud:" ) + Name;
+
 	// Open the source file
 	wxTextFile PCFile;
-	PCFile.Open(Filename);
+	PCFile.Open( Filename );
 
 	// Vectors to hold the data
 	std::vector<float> Points;
@@ -330,34 +387,34 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 	while( !PCFile.Eof() )
 	{
 		// Ignore comments
-		if( Line.StartsWith( wxT("comment") ) )
-			continue;	
+		if( Line.StartsWith( wxT( "comment" ) ) )
+			continue;
 
-		wxStringTokenizer p( Line, wxT(" ") );
+		wxStringTokenizer p( Line, wxT( " " ) );
 
 		// only points, no colors
 		if ( p.CountTokens() == 3 )
 		{
-			if (!p.GetNextToken().ToDouble(&x) ||
-			!p.GetNextToken().ToDouble(&y) ||
-			!p.GetNextToken().ToDouble(&z) )
-			continue;
-		
+			if (!p.GetNextToken().ToDouble( &x ) ||
+			    !p.GetNextToken().ToDouble( &y ) ||
+			    !p.GetNextToken().ToDouble( &z ) )
+				continue;
+
 			// Commit
 			Points += float(x), float(y), float(z);
 		}
 		else if( p.CountTokens() == 6 )
 		{
-			if (!p.GetNextToken().ToDouble(&x) ||
-			!p.GetNextToken().ToDouble(&y) ||
-			!p.GetNextToken().ToDouble(&z) ||
-			!p.GetNextToken().ToDouble(&r) ||
-			!p.GetNextToken().ToDouble(&g) ||
-			!p.GetNextToken().ToDouble(&b) )
-			continue;
-		
+			if (!p.GetNextToken().ToDouble( &x ) ||
+			    !p.GetNextToken().ToDouble( &y ) ||
+			    !p.GetNextToken().ToDouble( &z ) ||
+			    !p.GetNextToken().ToDouble( &r ) ||
+			    !p.GetNextToken().ToDouble( &g ) ||
+			    !p.GetNextToken().ToDouble( &b ) )
+				continue;
+
 			// Commit
-			Points += float(x), float(y), float(z);			
+			Points += float(x), float(y), float(z);
 			Colors += float(r), float(g), float(b);
 		}
 		Line = PCFile.GetNextLine();
@@ -365,8 +422,9 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 
 	PCFile.Close();
 
-	if ( Colors.size() && (Colors.size() != Points.size() ) )
-		throw std::runtime_error( "Colors were read, but a different amount of points was read." );
+	if ( Colors.size() && ( Colors.size() != Points.size() ) )
+		throw std::runtime_error(
+			"Colors were read, but a different amount of points was read." );
 
 	// Normalize color ranges
 	// FIXME: The conditional is a bit hacky.
@@ -375,12 +433,17 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 		if ( Colors[i] > 1.f ) // Not already in the [0..1) range?
 			Colors[i] /= 255.f;
 
-	mPointCloud.reset( new CPointcloud( std::string(PointcloudName.mb_str()), "General",
-		Points.size()/3, Points.data(), Colors.size()?Colors.data():0) );
-	
-	// Insert the model into the scene	
-	const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
-	mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Ogre::String(PointcloudName.mb_str()));
+	mPointCloud.reset( new CPointcloud( std::string( PointcloudName.mb_str()),
+			"General",
+			Points.size() / 3, Points.data(),
+			Colors.size() ? Colors.data() : 0 ) );
+
+	// Insert the model into the scene
+	const std::string EntityName = "Entity:" +
+	                               boost::lexical_cast<std::string>(
+	        GetDataEntity() );
+	mOgreEntity = GetSceneManager()->createEntity(
+		EntityName.c_str(), Ogre::String( PointcloudName.mb_str()));
 	mOgreEntity->setMaterialName( "Pointcloud" );
 
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
@@ -388,9 +451,9 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 }
 
 /** \note This has to be defined as a C function to prevent name mangling.
-*/
+ */
 extern "C" OVISE_DLLAPI
 void LoadEntityView( SceneView& View )
 {
-	View.RegisterView<PointcloudEntityView>("Pointcloud");
+	View.RegisterView<PointcloudEntityView>( "Pointcloud" );
 }

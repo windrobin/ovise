@@ -6,14 +6,13 @@
 #include <InterfaceManager.h>
 
 
-CILCASInterface::CILCASInterface(EntityPool& EntPool )
+CILCASInterface::CILCASInterface( EntityPool& EntPool )
 	: CNetworkInterface( EntPool ),
 	mMessageHandler( &EntPool )
-{
-}
+{}
 
 
-CILCASInterface::~CILCASInterface(void)
+CILCASInterface::~CILCASInterface( void )
 {
 	mSocket->shutdown( boost::asio::ip::tcp::socket::shutdown_both );
 	mAcceptor->close();
@@ -21,8 +20,10 @@ CILCASInterface::~CILCASInterface(void)
 
 bool CILCASInterface::Start()
 {
-	mEndpoint.reset( new boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4(), 2121 ) );
-	mAcceptor.reset( new boost::asio::ip::tcp::acceptor( mIOService, *mEndpoint ) );
+	mEndpoint.reset( new boost::asio::ip::tcp::endpoint( boost::asio::ip::
+			tcp::v4(), 2121 ) );
+	mAcceptor.reset( new boost::asio::ip::tcp::acceptor( mIOService,
+			*mEndpoint ) );
 	mSocket.reset( new boost::asio::ip::tcp::socket( mIOService ) );
 
 	mAcceptor->listen();
@@ -46,24 +47,30 @@ void CILCASInterface::Poll()
 	mIOService.reset();
 }
 
-void CILCASInterface::WriteHandler( const boost::system::error_code&, std::size_t )
-{
-}
+void CILCASInterface::WriteHandler( const boost::system::error_code&,
+                                    std::                size_t )
+{}
 
-void CILCASInterface::ReadHandler( const boost::system::error_code& Error, std::size_t BytesTransferred )
+void CILCASInterface::ReadHandler(
+        const boost::system::error_code& Error,
+        std::size_t
+        BytesTransferred )
 {
 	if( Error )
 		return;
 
-	std::cout << std::string( mBuffer.data(), BytesTransferred ) << std::endl;
+	std::cout <<
+	std::string( mBuffer.data(), BytesTransferred ) << std::endl;
 
-	const char* Data = boost::asio::buffer_cast<const char*>( mStreamBuffer.data() );
+	const char* Data = boost::asio::buffer_cast<const char*>(
+	        mStreamBuffer.data() );
 	int Id = mMessageHandler.HandleMessage( Data );
 	mStreamBuffer.consume( BytesTransferred );
 
-	boost::asio::write( *mSocket, boost::asio::buffer( boost::lexical_cast<std::string>( Id ) ) );
+	boost::asio::write( *mSocket,
+		boost::asio::buffer( boost::lexical_cast<std::string>( Id ) ) );
 
-	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>", 
+	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>",
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
 }
 
@@ -73,7 +80,7 @@ void CILCASInterface::AcceptHandler( const boost::system::error_code& Error )
 		return;
 
 	boost::asio::write( *mSocket, boost::asio::buffer( "ready" ) );
-	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>", 
+	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>",
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
 }
 

@@ -34,12 +34,16 @@ class SceneTree :
 public:
 
 	// A hash map with string keys and wxTreeItemIds values
-	//WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
+	// WX_DECLARE_STRING_HASH_MAP( wxTreeItemId, HashMap_wxTreeItemId );
 
-	SceneTree(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-		const wxSize& size = wxDefaultSize, long style = wxTR_HAS_BUTTONS, const wxValidator& validator = wxDefaultValidator,
-		const wxString& name = wxT("treeCtrl"));
-	~SceneTree(void);
+	SceneTree( wxWindow*          parent,
+	           wxWindowID         id,
+	           const wxPoint&     pos = wxDefaultPosition,
+	           const wxSize&      size = wxDefaultSize,
+	           long               style = wxTR_HAS_BUTTONS,
+	           const wxValidator& validator = wxDefaultValidator,
+	           const wxString&    name = wxT( "treeCtrl" ));
+	~SceneTree( void );
 
 	Entity* GetEntity( wxTreeItemId Item );
 
@@ -48,7 +52,7 @@ private:
 	void OnEntityInsert( Entity* Object, std::size_t Position );
 	void OnEntityRemove( Entity* Object, std::size_t Position );
 
-	void	LoadImageList();
+	void    LoadImageList();
 
 	wxString RootString;
 
@@ -57,5 +61,4 @@ private:
 	void OnOgreChanged( wxCommandEvent& event );
 };
 
-#endif //SCENE_TREE_H
-
+#endif // SCENE_TREE_H

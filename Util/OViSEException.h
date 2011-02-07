@@ -9,14 +9,14 @@
 class OViSEException : std::exception
 {
 public:
-	OViSEException(const char* msg);
-	
-	virtual const char* what() const throw();
-	
-	virtual ~OViSEException() throw();
-	
+	OViSEException( const char* msg );
+
+	virtual const char* what() const throw( );
+
+	virtual ~OViSEException() throw( );
+
 private:
-	std::string mMsg;	
+	std::string mMsg;
 };
 
 #endif /*OVISEEXCEPTION_H_*/

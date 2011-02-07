@@ -1,13 +1,13 @@
 /********************************************************************************
- * Name:      DotSceneBaseConfiguration.h										*
- * Purpose:   This class holds parameters, which are neccessary for im- & export*
- *			  dotScene-files(prototypes.										*
- * Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
- * Created:   2009-11-13														*
- * Copyright: Henning Renartz,													*
- *			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
- * License:																		*
- ********************************************************************************/
+* Name:      DotSceneBaseConfiguration.h										*
+* Purpose:   This class holds parameters, which are neccessary for im- & export*
+*			  dotScene-files(prototypes.										*
+* Author:    Henning Renartz (renartz dot henning at student dot kit dot edu )	*
+* Created:   2009-11-13														*
+* Copyright: Henning Renartz,													*
+*			  Alexander Kasper (http://i61www.ira.uka.de/users/akasper)			*
+* License:																		*
+********************************************************************************/
 
 #ifndef DOTSCENE_BASE_CONFIGURATION_H_
 #define DOTSCENE_BASE_CONFIGURATION_H_
@@ -32,9 +32,9 @@ public:
 	~DotSceneBaseConfiguration();
 
 	// Attributes, import
-	bool doAttachNodes;
-	bool doAttachExternals;
-	bool doAttachEnvironment;
+	bool            doAttachNodes;
+	bool            doAttachExternals;
+	bool            doAttachEnvironment;
 	SceneNodeOffset SceneOffset;
 
 	// Attributes, export

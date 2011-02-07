@@ -11,7 +11,7 @@ class CVoodooInterface :
 {
 public:
 	CVoodooInterface( EntityPool& EntPool );
-	~CVoodooInterface(void);
+	~CVoodooInterface( void );
 
 	bool Start();
 	bool Stop();
@@ -21,8 +21,8 @@ public:
 private:
 	void HandleMessage( const std::string& Msg );
 
-	boost::asio::io_service			mIOService;
-	CVoodooConnection::CtnPointer   mConnection;
+	boost::asio::io_service       mIOService;
+	CVoodooConnection::CtnPointer mConnection;
 
 	CVoodooParser mVoodooParser;
 

@@ -27,11 +27,13 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 		return;
 
 	std::ifstream Infile( Filename.c_str() );
-	std::string Content( (std::istreambuf_iterator<char>( Infile )), std::istreambuf_iterator<char>() );
+	std::string   Content( ( std::istreambuf_iterator<char>(
+	                                 Infile )),
+	                       std::istreambuf_iterator<char>() );
 
 	xml_document<> XMLDoc;
 	XMLDoc.parse<0>( const_cast<char*>( Content.c_str() ) );
-	
+
 	xml_node<>* RootNode = XMLDoc.first_node( "scene" );
 	if( !RootNode )
 		return;
@@ -40,7 +42,9 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 	if( !MeshNodes )
 		return;
 
-	for( xml_node<>* Node = MeshNodes->first_node( "node" ); Node; Node = Node->next_sibling( "node" ) )
+	for( xml_node<>* Node = MeshNodes->first_node( "node" );
+	     Node;
+	     Node = Node->next_sibling( "node" ) )
 	{
 		if( !Node )
 			continue;
@@ -67,9 +71,12 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 		float QuatY = ToFloat( QuatNode->first_attribute( "y" )->value() );
 		float QuatZ = ToFloat( QuatNode->first_attribute( "z" )->value() );
 
-		float ScaleX = ToFloat( ScaleNode->first_attribute( "x" )->value() );
-		float ScaleY = ToFloat( ScaleNode->first_attribute( "y" )->value() );
-		float ScaleZ = ToFloat( ScaleNode->first_attribute( "z" )->value() );
+		float ScaleX = ToFloat( ScaleNode->first_attribute(
+				"x" )->value() );
+		float ScaleY = ToFloat( ScaleNode->first_attribute(
+				"y" )->value() );
+		float ScaleZ = ToFloat( ScaleNode->first_attribute(
+				"z" )->value() );
 
 		std::string Mesh( EntNode->first_attribute( "meshFile" )->value() );
 		// TODO: get more entity properties
@@ -85,8 +92,6 @@ void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 }
 
 void SaveSceneToXML( const std::string& Filename )
-{
-
-}
+{}
 
 #endif // OVISE_SCENE_LOADER_H

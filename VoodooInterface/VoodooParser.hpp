@@ -18,7 +18,10 @@ public:
 private:
 	struct Limb
 	{
-		Limb() { quat[0] = quat[1] = quat[2] = 0.f; quat[3] = 1.f; }
+		Limb() {
+			quat[0] = quat[1] = quat[2] = 0.f;
+			quat[3] = 1.f;
+		}
 		float quat[4];
 		int ModelID;
 		int LimbID;
@@ -27,8 +30,8 @@ private:
 
 	typedef std::map<int, CVoodooParser::Limb> LimbMapType;
 
-	LimbMapType mLimbMap;
-	int mModelID;
+	LimbMapType                mLimbMap;
+	int                        mModelID;
 	std::map<int, std::string> mBodyMapping;
-	bool mMappingLoaded;
+	bool                       mMappingLoaded;
 };

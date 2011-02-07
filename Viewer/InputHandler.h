@@ -26,57 +26,58 @@ public:
 	 * you have a camera focus node which has a childnode. The camera shall then be attached to
 	 * the latter. This way you can have a orbiting camera.
 	 */
-	InputHandler(Ogre::Camera *cam, Ogre::SceneNode *camnode, wxWindow *parent);
-	~InputHandler(void);
+	InputHandler( Ogre::Camera *   cam,
+	              Ogre::SceneNode *camnode,
+	              wxWindow *       parent );
+	~InputHandler( void );
 
-	/// Handles all mouse input and calls appropriate methods.
-	void handleMouseInput(wxMouseEvent& evt);
-	/// Handles all keyboard input and calls appropriate methods.
-	void handleKeyboardInput(wxKeyEvent& evt);
+	// / Handles all mouse input and calls appropriate methods.
+	void handleMouseInput( wxMouseEvent& evt );
+	// / Handles all keyboard input and calls appropriate methods.
+	void handleKeyboardInput( wxKeyEvent& evt );
 
-	/// Set the camera manually.
-	void setCamera(Ogre::Camera *cam, Ogre::SceneNode *camnode);
+	// / Set the camera manually.
+	void setCamera( Ogre::Camera *cam, Ogre::SceneNode *camnode );
 
 protected:
-	/// Translate camera.
-	void translateCamera(Ogre::Vector3 trans);
-	/// Translatae camera vertically orthogonal to view direction (positive amount is up, negative is down)
-	void translateCameraVertical(double moveSpeed);
-	/// Translatae camera horizontally orthogonal to view direction (positive amount is right, negative is left)
-	void translateCameraHorizontal(double moveSpeed);
-	/// Tranlsate camera in view direction (positive amount is back, negative is forward)
-	void translateCameraDirectional(double moveSpeed);
-	/// Zoom camera (makes most sense when using a focusnode, see constructor documentation).
-	void zoomCamera(double amount);
-	/// Yaw camera.
-	void yawCamera(Ogre::Radian angle);
-	/// Pitch camera.
-	void pitchCamera(Ogre::Radian angle);
-	/// Set distance between camera node and camera focus node
-	void setDistance(float dist);
+	// / Translate camera.
+	void translateCamera( Ogre::Vector3 trans );
+	// / Translatae camera vertically orthogonal to view direction (positive amount is up, negative is down)
+	void translateCameraVertical( double moveSpeed );
+	// / Translatae camera horizontally orthogonal to view direction (positive amount is right, negative is left)
+	void translateCameraHorizontal( double moveSpeed );
+	// / Tranlsate camera in view direction (positive amount is back, negative is forward)
+	void translateCameraDirectional( double moveSpeed );
+	// / Zoom camera (makes most sense when using a focusnode, see constructor documentation).
+	void zoomCamera( double amount );
+	// / Yaw camera.
+	void yawCamera( Ogre::Radian angle );
+	// / Pitch camera.
+	void pitchCamera( Ogre::Radian angle );
+	// / Set distance between camera node and camera focus node
+	void setDistance( float dist );
 
-	/// Show the help overlay
+	// / Show the help overlay
 	void showHelpOverlay();
 
-	/// Delete selected OgreObjects (and its childs)
+	// / Delete selected OgreObjects (and its childs)
 	void DeleteSelectedObjects();
 
-	/** Focuses the camera on the currently selected objects. 
+	/** Focuses the camera on the currently selected objects.
 	 * @todo Check that all selected objects are visible
 	 * @todo Make smooth animation for camera change?
 	 */
 	void focusCamera();
 
 private:
-	Ogre::Camera *mCamera;
+	Ogre::Camera *   mCamera;
 	Ogre::SceneNode *mCameraNode;
-	wxWindow *mParent;
+	wxWindow *       mParent;
 
-	/// Mouse position of last click.
+	// / Mouse position of last click.
 	int mX, mY;
-	/// Default move and rotate speeds.
+	// / Default move and rotate speeds.
 	double mRotateSpeed, mMoveSpeed;
-	bool mMouseCaptured;
-
+	bool   mMouseCaptured;
 };
-#endif //INPUT_HANDLER_H
+#endif // INPUT_HANDLER_H
