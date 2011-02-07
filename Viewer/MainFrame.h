@@ -60,6 +60,7 @@ class MainFrame :
 	private:
 		virtual void					OnQuit(wxCommandEvent& event);
 		virtual void					OnLoadScene(wxCommandEvent& event);
+		virtual void					OnLoadPointcloud( wxCommandEvent& event );
 		virtual void					OnClose( wxCloseEvent& event );
 		virtual void					OnAbout(wxCommandEvent& event);
 		virtual void					OnSaveScreenToFile(wxCommandEvent& event);

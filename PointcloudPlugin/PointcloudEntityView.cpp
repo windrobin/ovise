@@ -74,7 +74,14 @@ void PointcloudEntityView::OnEntityAttributeChanged
 			GetSceneManager()->destroyEntity( mOgreEntity );
 
 		if ( Str )
-			LoadFromFile(*Str);		
+		{
+			std::size_t DotPos = Str->find_last_of( '.' );
+			std::string Suffix = Str->substr( DotPos + 1 );
+			if( Suffix == "off" )
+				LoadFromFileOFF( *Str );
+			else if( Suffix == "ply" )
+				LoadFromFilePLY( *Str );
+		}
 	}
 	else if ( Name == "Points" )
 	{
@@ -172,7 +179,7 @@ void PointcloudEntityView::OnEntityAttributeChanged
 	}
 }
 
-void PointcloudEntityView::LoadFromFile( const std::string& Filename, float r, float g, float b )
+void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename, float r, float g, float b )
 {
 	using namespace boost::assign;
 
@@ -263,6 +270,120 @@ void PointcloudEntityView::LoadFromFile( const std::string& Filename, float r, f
 	mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Ogre::String(PointcloudName.mb_str()));
 	mOgreEntity->setMaterialName( "Pointcloud" );
 
+	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
+	mNode->attachObject( mOgreEntity );
+}
+
+void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
+{
+	using namespace boost::assign;
+
+	// Strip pathname and extension from the file
+	wxString Name;
+	wxFileName::SplitPath(Filename,0,0,&Name,0);
+
+	// Generate an entity name
+	wxString PointcloudName = wxT("Pointcloud:")+Name;
+	
+	// Open the source file
+	wxTextFile PCFile;
+	PCFile.Open(Filename);
+
+	// Vectors to hold the data
+	std::vector<float> Points;
+	std::vector<float> Colors;
+
+	wxString Line = PCFile.GetFirstLine();
+
+	if( Line != wxT( "ply" ) )
+	{
+		PCFile.Close();
+		return; // Error, not a ply file!
+	}
+
+	long NumVertices = 0;
+
+	// important tags
+	wxString EndOfHeader = wxT( "end_header" );
+	wxString VertexElement = wxT( "element vertex" );
+
+	Line = PCFile.GetNextLine();
+	while( Line != EndOfHeader && !PCFile.Eof() )
+	{
+		if( Line.StartsWith( VertexElement ) )
+		{
+			wxString NumStr = Line.substr( VertexElement.Length() );
+			NumStr.ToLong( &NumVertices );
+		}
+		Line = PCFile.GetNextLine();
+	}
+
+	double x, y, z;
+	x = y = z = 0.f;
+	double r, g, b;
+	r = g = b = 1.f;
+
+	Line = PCFile.GetNextLine();
+	setlocale( LC_ALL, "C" );
+
+	// Start parsing the file
+	while( !PCFile.Eof() )
+	{
+		// Ignore comments
+		if( Line.StartsWith( wxT("comment") ) )
+			continue;	
+
+		wxStringTokenizer p( Line, wxT(" ") );
+
+		// only points, no colors
+		if ( p.CountTokens() == 3 )
+		{
+			if (!p.GetNextToken().ToDouble(&x) ||
+			!p.GetNextToken().ToDouble(&y) ||
+			!p.GetNextToken().ToDouble(&z) )
+			continue;
+		
+			// Commit
+			Points += float(x), float(y), float(z);
+		}
+		else if( p.CountTokens() == 6 )
+		{
+			if (!p.GetNextToken().ToDouble(&x) ||
+			!p.GetNextToken().ToDouble(&y) ||
+			!p.GetNextToken().ToDouble(&z) ||
+			!p.GetNextToken().ToDouble(&r) ||
+			!p.GetNextToken().ToDouble(&g) ||
+			!p.GetNextToken().ToDouble(&b) )
+			continue;
+		
+			// Commit
+			Points += float(x), float(y), float(z);			
+			Colors += float(r), float(g), float(b);
+		}
+		Line = PCFile.GetNextLine();
+	}
+
+	PCFile.Close();
+
+	if ( Colors.size() && (Colors.size() != Points.size() ) )
+		throw std::runtime_error( "Colors were read, but a different amount of points was read." );
+
+	// Normalize color ranges
+	// FIXME: The conditional is a bit hacky.
+	// Don't we want color ranges to be consistent within a file format?
+	for (std::size_t i=0,ie=Colors.size(); i<ie; ++i)
+		if ( Colors[i] > 1.f ) // Not already in the [0..1) range?
+			Colors[i] /= 255.f;
+
+	mPointCloud.reset( new CPointcloud( std::string(PointcloudName.mb_str()), "General",
+		Points.size()/3, Points.data(), Colors.size()?Colors.data():0) );
+	
+	// Insert the model into the scene	
+	const std::string EntityName = "Entity:" + boost::lexical_cast<std::string>( GetDataEntity() );
+	mOgreEntity = GetSceneManager()->createEntity(EntityName.c_str(), Ogre::String(PointcloudName.mb_str()));
+	mOgreEntity->setMaterialName( "Pointcloud" );
+
+	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 	mNode->attachObject( mOgreEntity );
 }
 

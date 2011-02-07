@@ -151,6 +151,28 @@ void MainFrame::OnLoadScene( wxCommandEvent& event )
 	LoadSceneFromXML( Filename, mEntityPool );
 }
 
+void MainFrame::OnLoadPointcloud( wxCommandEvent& event )
+{
+	wxFileDialog OpenFileDialog( this,
+								 wxT( " Load pointcloud from file " ), "", "",
+								 "OFF files (*.off)|*.off|PLY files (*.ply)|*.ply",
+								 wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+
+	if( OpenFileDialog.ShowModal() == wxID_CANCEL )
+		return;
+
+	std::string Filename( OpenFileDialog.GetPath().mb_str() );
+	
+	mEntityPool.CreateEntity( Filename ).Set
+		( "Type", "Pointcloud" )
+		( "Filename", Filename )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Orientation", quat( 0.f, 0.f, 0.f, 1.f ) )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+		( "PointSize", 0.05f )
+	;
+}
+
 void MainFrame::SetStatusMessage( wxString& Msg, int field )
 {
 #if wxUSE_STATUSBAR

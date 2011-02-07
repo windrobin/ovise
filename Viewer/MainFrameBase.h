@@ -33,18 +33,18 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #define ID_LOAD_SCENE 1000
-#define idMenuQuit 1001
-#define ID_SHOW_STRUCTURE 1002
-#define ID_SAVE_SCREENSHOT_TO_FILE 1003
-#define ID_DYNAMIC_SHADOWS 1004
-#define ID_POINTS 1005
-#define ID_WIREFRAME 1006
-#define ID_SOLID 1007
-#define ID_INSERT_ENTITY 1008
-#define ID_REMOVE_ENTITY 1009
-#define ID_ADD_ATTRIBUTE 1010
-#define ID_DELETE_ATTRIBUTE 1011
-#define ID_LOAD_POINTCLOUD 1012
+#define ID_LOAD_POINTCLOUD 1001
+#define idMenuQuit 1002
+#define ID_SHOW_STRUCTURE 1003
+#define ID_SAVE_SCREENSHOT_TO_FILE 1004
+#define ID_DYNAMIC_SHADOWS 1005
+#define ID_POINTS 1006
+#define ID_WIREFRAME 1007
+#define ID_SOLID 1008
+#define ID_INSERT_ENTITY 1009
+#define ID_REMOVE_ENTITY 1010
+#define ID_ADD_ATTRIBUTE 1011
+#define ID_DELETE_ATTRIBUTE 1012
 #define idMenuAbout 1013
 #define ID_TESTSTUFF 1014
 
@@ -72,6 +72,7 @@ class MainFrameBase : public wxFrame
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnClose( wxCloseEvent& event ) { event.Skip(); }
 		virtual void OnLoadScene( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnLoadPointcloud( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnQuit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnShowSceneStructure( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnSaveScreenToFile( wxCommandEvent& event ) { event.Skip(); }
@@ -79,7 +80,6 @@ class MainFrameBase : public wxFrame
 		virtual void OnDMPoints( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMWire( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMSolid( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnLoadPointCloud( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ) { event.Skip(); }
 		
