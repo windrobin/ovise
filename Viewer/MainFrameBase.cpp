@@ -26,8 +26,12 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	mbar = new wxMenuBar( 0 );
 	fileMenu = new wxMenu();
 	wxMenuItem* loadScene;
-	loadScene = new wxMenuItem( fileMenu, ID_LOAD_SCENE, wxString( wxT("&Load scene") ) , wxT("Load scene from .scene file"), wxITEM_NORMAL );
+	loadScene = new wxMenuItem( fileMenu, ID_LOAD_SCENE, wxString( wxT("&Load scene") ) + wxT('\t') + wxT("Alt+L"), wxT("Load scene from .scene file"), wxITEM_NORMAL );
 	fileMenu->Append( loadScene );
+	
+	wxMenuItem* loadPointcloud;
+	loadPointcloud = new wxMenuItem( fileMenu, ID_LOAD_POINTCLOUD, wxString( wxT("Load pointcloud") ) , wxT("Load scene from .scene file"), wxITEM_NORMAL );
+	fileMenu->Append( loadPointcloud );
 	
 	wxMenuItem* menuFileQuit;
 	menuFileQuit = new wxMenuItem( fileMenu, idMenuQuit, wxString( wxT("&Quit") ) + wxT('\t') + wxT("Alt+F4"), wxT("Quit the application"), wxITEM_NORMAL );
@@ -86,10 +90,6 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	wxMenuItem* m_separator2;
 	m_separator2 = scene->AppendSeparator();
 	
-	wxMenuItem* loadPointcloud;
-	loadPointcloud = new wxMenuItem( scene, ID_LOAD_POINTCLOUD, wxString( wxT("Load Pointcloud") ) , wxEmptyString, wxITEM_NORMAL );
-	scene->Append( loadPointcloud );
-	
 	mbar->Append( scene, wxT("Scene") ); 
 	
 	network = new wxMenu();
@@ -118,6 +118,7 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	// Connect Events
 	this->Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrameBase::OnClose ) );
 	this->Connect( loadScene->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadScene ) );
+	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointcloud ) );
 	this->Connect( menuFileQuit->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
 	this->Connect( showStructure->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
 	this->Connect( saveScreenshotToFile->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
@@ -125,7 +126,6 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	this->Connect( points->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
 	this->Connect( wireframe->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Connect( solid->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Connect( loadPointcloud->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 }
@@ -135,6 +135,7 @@ MainFrameBase::~MainFrameBase()
 	// Disconnect Events
 	this->Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( MainFrameBase::OnClose ) );
 	this->Disconnect( ID_LOAD_SCENE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadScene ) );
+	this->Disconnect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointcloud ) );
 	this->Disconnect( idMenuQuit, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnQuit ) );
 	this->Disconnect( ID_SHOW_STRUCTURE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnShowSceneStructure ) );
 	this->Disconnect( ID_SAVE_SCREENSHOT_TO_FILE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnSaveScreenToFile ) );
@@ -142,7 +143,6 @@ MainFrameBase::~MainFrameBase()
 	this->Disconnect( ID_POINTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMPoints ) );
 	this->Disconnect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Disconnect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
-	this->Disconnect( ID_LOAD_POINTCLOUD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnLoadPointCloud ) );
 	this->Disconnect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
 	this->Disconnect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 	

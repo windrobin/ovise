@@ -142,9 +142,24 @@
                         <property name="label">&amp;Load scene</property>
                         <property name="name">loadScene</property>
                         <property name="permission">none</property>
-                        <property name="shortcut"></property>
+                        <property name="shortcut">Alt+L</property>
                         <property name="unchecked_bitmap"></property>
                         <event name="OnMenuSelection">OnLoadScene</event>
+                        <event name="OnUpdateUI"></event>
+                    </object>
+                    <object class="wxMenuItem" expanded="1">
+                        <property name="bitmap"></property>
+                        <property name="checked">0</property>
+                        <property name="enabled">1</property>
+                        <property name="help">Load scene from .scene file</property>
+                        <property name="id">ID_LOAD_POINTCLOUD</property>
+                        <property name="kind">wxITEM_NORMAL</property>
+                        <property name="label">Load pointcloud</property>
+                        <property name="name">loadPointcloud</property>
+                        <property name="permission">none</property>
+                        <property name="shortcut"></property>
+                        <property name="unchecked_bitmap"></property>
+                        <event name="OnMenuSelection">OnLoadPointcloud</event>
                         <event name="OnUpdateUI"></event>
                     </object>
                     <object class="wxMenuItem" expanded="0">
@@ -334,21 +349,6 @@
                     <object class="separator" expanded="0">
                         <property name="name">m_separator2</property>
                         <property name="permission">none</property>
-                    </object>
-                    <object class="wxMenuItem" expanded="0">
-                        <property name="bitmap"></property>
-                        <property name="checked">0</property>
-                        <property name="enabled">1</property>
-                        <property name="help"></property>
-                        <property name="id">ID_LOAD_POINTCLOUD</property>
-                        <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Load Pointcloud</property>
-                        <property name="name">loadPointcloud</property>
-                        <property name="permission">none</property>
-                        <property name="shortcut"></property>
-                        <property name="unchecked_bitmap"></property>
-                        <event name="OnMenuSelection">OnLoadPointCloud</event>
-                        <event name="OnUpdateUI"></event>
                     </object>
                 </object>
                 <object class="wxMenu" expanded="1">
