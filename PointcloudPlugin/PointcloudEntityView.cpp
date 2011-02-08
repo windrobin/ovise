@@ -91,8 +91,8 @@ void PointcloudEntityView::OnEntityAttributeChanged
 		const boost::any* PAny = boost::get<boost::any>( Attribute );
 		try
 		{
-			std::vector<float>& Points = boost::any_cast<
-			                             std::vector<float >>
+			const std::vector<float>& Points = boost::any_cast<
+			                             std::vector<float> >
 			                             ( *PAny );
 			if( !mPointCloud )
 			{
@@ -103,7 +103,7 @@ void PointcloudEntityView::OnEntityAttributeChanged
 					mPointCloud.reset( new CPointcloud( Rhs
 							->GetName(), "General",
 							Points.size() / 3,
-							Points.data(), 0 ) );
+														const_cast<float*>(Points.data()), 0 ) );
 
 					// Insert the model into the scene
 					const std::string EntityName =
@@ -126,17 +126,17 @@ void PointcloudEntityView::OnEntityAttributeChanged
 					                ColorsAttr );
 					try
 					{
-						std::vector<float>& Colors =
+						const std::vector<float>& Colors =
 						        boost::any_cast<
 						        std::vector<
-						        float >> ( *CAny );
+						        float> > ( *CAny );
 						mPointCloud.reset(
 							new CPointcloud( Rhs->
 								GetName(),
 								"General",
 								Points.size() /
-								3, Points.data(),
-								Colors.data() ) );
+								3, const_cast<float*>(Points.data()),
+								const_cast<float*>(Colors.data()) ) );
 
 						// Insert the model into the scene
 						const std::string EntityName =
@@ -164,7 +164,7 @@ void PointcloudEntityView::OnEntityAttributeChanged
 			else if( mPointCloud)
 			{
 				mPointCloud->UpdateVertexPositions( Points.size(
-					        ) / 3, Points.data() );
+																) / 3, const_cast<float*>(Points.data()) );
 			}
 		}
 		catch( const boost::bad_any_cast & )
@@ -178,11 +178,11 @@ void PointcloudEntityView::OnEntityAttributeChanged
 			        Attribute );
 			try
 			{
-				std::vector<float>& Colors = boost::any_cast<
+				const std::vector<float>& Colors = boost::any_cast<
 				                             std::vector<
-				                             float >> ( *CAny );
+				                             float> > ( *CAny );
 				mPointCloud->UpdateVertexColours(
-					Colors.size() / 3, Colors.data() );
+					Colors.size() / 3, const_cast<float*>(Colors.data()) );
 			}
 			catch( const boost::bad_any_cast & )
 			{}
