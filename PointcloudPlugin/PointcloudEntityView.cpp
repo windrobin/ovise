@@ -377,6 +377,8 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 
 	double x, y, z;
 	x = y = z = 0.f;
+	double nx, ny, nz;
+	nx = ny = nz = 0.f;
 	double r, g, b;
 	r = g = b = 1.f;
 
@@ -408,6 +410,23 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 			if (!p.GetNextToken().ToDouble( &x ) ||
 			    !p.GetNextToken().ToDouble( &y ) ||
 			    !p.GetNextToken().ToDouble( &z ) ||
+			    !p.GetNextToken().ToDouble( &r ) ||
+			    !p.GetNextToken().ToDouble( &g ) ||
+			    !p.GetNextToken().ToDouble( &b ) )
+				continue;
+
+			// Commit
+			Points += float(x), float(y), float(z);
+			Colors += float(r), float(g), float(b);
+		}
+		else if( p.CountTokens() == 9 )
+		{
+			if (!p.GetNextToken().ToDouble( &x ) ||
+			    !p.GetNextToken().ToDouble( &y ) ||
+			    !p.GetNextToken().ToDouble( &z ) ||
+				!p.GetNextToken().ToDouble( &nx ) ||
+				!p.GetNextToken().ToDouble( &ny ) ||
+				!p.GetNextToken().ToDouble( &nz ) ||
 			    !p.GetNextToken().ToDouble( &r ) ||
 			    !p.GetNextToken().ToDouble( &g ) ||
 			    !p.GetNextToken().ToDouble( &b ) )
