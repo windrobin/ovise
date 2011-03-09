@@ -9,7 +9,6 @@ include_directories( ${Boost_INCLUDE_DIR}
 include( ${wxWidgets_USE_FILE} )
 
 set( ViewerHeaders
-	 AddMeshDialog.h
 	 Application.h
 	 AttributeView.h
 	 DotSceneManager.h
@@ -24,7 +23,6 @@ set( ViewerHeaders
 	 SceneTree.h )
 	 
 set( ViewerSources
-	 AddMeshDialog.cpp
 	 Application.cpp
 	 AttributeView.cpp
 	 DotSceneManager.cpp
