@@ -11,8 +11,6 @@
 
 #include "../Util/SceneLoader.h"
 
-// #include "../OViSEAux/SocketMessage.h"
-
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
@@ -211,6 +209,7 @@ void MainFrame::SetupSceneTree()
 
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
+	mEntityPool.InsertObserver( mAttributeView.get() );
 
 	// Fill with some test content
 	/*mEntityPool.CreateEntity( "Barrel" ).Set

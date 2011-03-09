@@ -17,12 +17,8 @@ public:
 	EntityPoolObserver();
 	virtual ~EntityPoolObserver();
 
-	virtual void                                    OnEntityInsert(
-	        Entity*     Object,
-	        std::size_t Index ) = 0;
-	virtual void                                    OnEntityRemove(
-	        Entity*     Object,
-	        std::size_t Index ) = 0;
+	virtual void OnEntityInsert( Entity* Object, std::size_t Index ) = 0;
+	virtual void OnEntityRemove( Entity* Object, std::size_t Index ) = 0;
 
 private:
 };

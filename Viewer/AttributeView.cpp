@@ -267,3 +267,8 @@ void AttributeView::OnPropertyChange( wxPropertyGridEvent& event )
 	// Update the attribute
 	mCurrentEntity->SetAttribute( AttribName, Attribute );
 }
+
+void AttributeView::OnEntityRemove( Entity* Object, std::size_t Index )
+{
+	mCurrentEntity = NULL;
+}

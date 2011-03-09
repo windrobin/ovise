@@ -29,7 +29,6 @@
 #include "SceneTree.h"
 #include "LogListener.h"
 #include "InputHandler.h"
-#include "AddMeshDialog.h"
 #include "InterfaceManager.h"
 
 #include <boost/scoped_ptr.hpp>
