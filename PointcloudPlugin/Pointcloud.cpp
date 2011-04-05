@@ -9,6 +9,8 @@ CPointcloud::CPointcloud( const std::string& Name,
                           float*             CArray )
 	: mNumVertices( VNumber )
 {
+	if( Ogre::MeshManager::getSingleton().resourceExists( Name ) )
+		Ogre::MeshManager::getSingleton().remove( Name );
 	// Create the mesh via the MeshManager
 	mMsh = Ogre::MeshManager::getSingleton().createManual( Name,
 		Resourcegroup );

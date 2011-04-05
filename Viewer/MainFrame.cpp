@@ -20,13 +20,6 @@
 #include <boost/bind.hpp>
 #include <sstream>
 
-enum
-{
-	SERVER_ID = 100,
-	SOCKET_ID
-};
-
-
 namespace
 {
 	void SetSelectedIndex( wxCommandEvent& Event, int& Dst ) {
@@ -78,15 +71,10 @@ MainFrame::MainFrame( wxString  MediaDir,
 	statusBar->SetStatusText( wxT( "FPS:" ), 1 );
 #endif
 	// Connect event handlers
-	this->Connect( ID_INSERT_ENTITY, wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler( MainFrame::OnInsertEntity ) );
-	// Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnInsertEntity, this, ID_INSERT_ENTITY );
-	this->Connect( ID_REMOVE_ENTITY, wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler( MainFrame::OnRemoveEntity ) );
-	this->Connect( ID_ADD_ATTRIBUTE, wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler( MainFrame::OnAddAttribute ) );
-	this->Connect( ID_DELETE_ATTRIBUTE, wxEVT_COMMAND_MENU_SELECTED,
-		wxCommandEventHandler( MainFrame::OnDeleteAttribute ) );
+	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnInsertEntity, this, ID_INSERT_ENTITY );
+	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnRemoveEntity, this, ID_REMOVE_ENTITY );
+	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnAddAttribute, this, ID_ADD_ATTRIBUTE );
+	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnDeleteAttribute, this, ID_DELETE_ATTRIBUTE );
 
 	mWindowManager.SetManagedWindow( this );
 
