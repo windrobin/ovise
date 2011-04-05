@@ -169,7 +169,7 @@ void MainFrame::OnLoadPointcloud( wxCommandEvent& event )
 		( "Type", "Pointcloud" )
 		( "Filename", Filename )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
-		( "Orientation", quat( 0.f, 0.f, 0.f, 1.f ) )
+		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "PointSize", 0.05f )
 	;

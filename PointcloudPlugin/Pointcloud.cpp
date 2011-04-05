@@ -60,9 +60,7 @@ CPointcloud::CPointcloud( const std::string& Name,
 		     i+=3, k++)
 		{
 			// Use render system to convert colour value since colour packing varies
-			rs->convertColourValue( Ogre::ColourValue( CArray[i],
-					CArray[i + 1],
-					CArray[i + 2] ), &colours[k] );
+			rs->convertColourValue( Ogre::ColourValue( CArray[i], CArray[i + 1], CArray[i + 2] ), &colours[k] );
 		}
 		// Upload colour data
 		mColorBuffer->writeData( 0,
