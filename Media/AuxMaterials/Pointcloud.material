@@ -9,7 +9,7 @@ material Pointcloud
 			ambient vertexcolour
 			point_size 0.05
 			point_sprites on
-			point_size_attenuation on
+			point_size_attenuation on 0 1 1
 		}
 	}
 }
