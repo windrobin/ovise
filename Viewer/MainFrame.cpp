@@ -20,6 +20,16 @@
 #include <boost/bind.hpp>
 #include <sstream>
 
+COViSEFrameListener::COViSEFrameListener( CCS::CameraControlSystem* CCS )
+	: mCCS( CCS )
+{}
+
+bool COViSEFrameListener::frameStarted( const Ogre::FrameEvent& evt )
+{
+	mCCS->update( evt.timeSinceLastFrame );
+	return true;
+}
+
 namespace
 {
 	void SetSelectedIndex( wxCommandEvent& Event, int& Dst ) {
@@ -75,6 +85,7 @@ MainFrame::MainFrame( wxString  MediaDir,
 	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnRemoveEntity, this, ID_REMOVE_ENTITY );
 	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnAddAttribute, this, ID_ADD_ATTRIBUTE );
 	Bind( wxEVT_COMMAND_MENU_SELECTED, &MainFrame::OnDeleteAttribute, this, ID_DELETE_ATTRIBUTE );
+	Bind( wxEVT_IDLE, &MainFrame::OnIdle, this, wxID_ANY );
 
 	mWindowManager.SetManagedWindow( this );
 
@@ -113,12 +124,10 @@ MainFrame::MainFrame( wxString  MediaDir,
 	}
 
 	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
-	mRenderTimer.Bind( wxEVT_TIMER, &MainFrame::OnRenderTimer, this );
-
+	
 	Maximize( true );
 
 	mWindowManager.Update();
-	mRenderTimer.Start( 20 );
 }
 
 void MainFrame::OnClose( wxCloseEvent& event )
@@ -131,9 +140,10 @@ void MainFrame::OnClose( wxCloseEvent& event )
 MainFrame::~MainFrame()
 {}
 
-void MainFrame::OnRenderTimer( wxTimerEvent& event )
+void MainFrame::OnIdle( wxIdleEvent& Event )
 {
 	mOgreWindow->UpdateOgre();
+	Event.RequestMore();
 }
 
 void MainFrame::OnLoadScene( wxCommandEvent& event )
@@ -154,8 +164,7 @@ void MainFrame::OnLoadScene( wxCommandEvent& event )
 void MainFrame::OnLoadPointcloud( wxCommandEvent& event )
 {
 	wxFileDialog OpenFileDialog( this,
-	                             wxT(
-					     " Load pointcloud from file " ),
+	                             wxT( " Load pointcloud from file " ),
 	                             "", "",
 	                             "OFF files (*.off)|*.off|PLY files (*.ply)|*.ply",
 	                             wxFD_OPEN | wxFD_FILE_MUST_EXIST );
@@ -198,58 +207,10 @@ void MainFrame::SetupSceneTree()
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
 	mEntityPool.InsertObserver( mAttributeView.get() );
-
-	// Fill with some test content
-	/*mEntityPool.CreateEntity( "Barrel" ).Set
-	        ( "Type", "Simple" )
-	        ( "Model", "Barrel.mesh" )
-	        ( "Position", vec3( -5.f, -5.f, 0.f ) )
-	   ;*/
-
-	/*mEntityPool.CreateEntity( "MisterRoboto").Set
-	        ( "Type", "Robot" )
-	        ( "Model", "Albert.mesh" )
-	        ( "Position", vec3( 0.f, 0.f, 0.f ) )
-	        ;*/
-
-	/*mEntityPool.CreateEntity( "VoodooDude" ).Set
-	        ( "Type", "VoodooDoll" )
-	        ( "Model", "VoodooDude.mesh" )
-	        ( "Position", vec3( 1.f, 0.f, 0.f ) )
-	        ( "Scale", vec3( 1.f, 1.f, 1.f ) )
-	   ;*/
-
-	/*std::vector<float> Points;
-	   std::vector<float> Colors;
-	   for( int i=0; i<100; i++ )
-	   {
-	        Points.push_back( i/10.f );
-	        Points.push_back( i/10.f );
-	        Points.push_back( i/10.f );
-
-	        Colors.push_back( float(i) );
-	        Colors.push_back( float(i) );
-	        Colors.push_back( float(i) );
-	   }
-	   mEntityPool.CreateEntity( "Cloud" ).Set
-	        ( "Type", "Pointcloud" )
-	        ( "Points", boost::any( Points ) )
-	        ( "Colors", boost::any( Colors ) )
-	        ( "PointSize", 0.05 )
-	        ( "Position", vec3( 0.f, 0.f, -1.f ) )
-	        ( "Scale", vec3( 1.f, 1.f, 1.f ) )
-	        ( "Orientation", quat( 0.f, 0.f, 0.f, 1.f ) )
-	        ;*/
 }
 
 bool MainFrame::InitOgre()
 {
-	// Create logging
-	// FIXME: this causes memory leaks!
-	// Ogre::LogManager *logMgr = new Ogre::LogManager;
-	// Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("OViSE.log", true, true, false);
-	// Ogre::LogManager::getSingletonPtr()->getDefaultLog()->addListener( mLogBoxListener );
-
 	// Create camera setup
 	Ogre::SceneManager* SceneManager = mOgreWindow->GetSceneManager();
 	mCamera = SceneManager->createCamera( "MainCamera" );
@@ -258,36 +219,32 @@ bool MainFrame::InitOgre()
 	mCamera->setAutoAspectRatio( true );
 	mCamera->setQueryFlags( 0x01 );
 
-	Ogre::SceneNode* CameraFocusNode = SceneManager
-	                                   ->getRootSceneNode()->
-	                                   createChildSceneNode(
-		"CameraFocusNode" );
-	CameraFocusNode->setFixedYawAxis( true, Ogre::Vector3::UNIT_Z );
-	CameraFocusNode->yaw( Ogre::Degree( -45.f ), Ogre::Node::TS_WORLD );
-	CameraFocusNode->pitch( Ogre::Degree( 45.f ), Ogre::Node::TS_LOCAL );
-
-	typedef Ogre::Quaternion Quat;
-	Ogre::SceneNode* CameraNode = CameraFocusNode->createChildSceneNode(
-		"CameraNode" );
-	CameraNode->attachObject( mCamera );
-	CameraNode->setPosition( 0.f, 5.f, 0.f );
-	CameraNode->setOrientation( Quat( Ogre::Degree( -90.f ),
-			Ogre::Vector3::UNIT_X ) *
-		Quat( Ogre::Degree( 180.f ), Ogre::Vector3::UNIT_Z ) );
-
+	Ogre::SceneNode* CameraFocusNode = 
+		SceneManager->getRootSceneNode()->createChildSceneNode( "CameraFocusNode" );
+	CameraFocusNode->pitch( Ogre::Degree( 90.f ), Ogre::Node::TS_WORLD );
+	CameraFocusNode->setPosition( 0.f, 0.f, 1.f );
+	
 	// Create viewport for camera
-	Ogre::Viewport* Viewport = mOgreWindow->GetRenderWindow()->addViewport(
-		mCamera );
+	Ogre::Viewport* Viewport = 
+		mOgreWindow->GetRenderWindow()->addViewport( mCamera );
 	Viewport->setBackgroundColour( Ogre::ColourValue( 0.5f, 0.5f, 0.5f ) );
 
 	// Initialize resources
-	Ogre::ResourceGroupManager::getSingletonPtr()->
-	initialiseAllResourceGroups();
+	Ogre::ResourceGroupManager::getSingletonPtr()->initialiseAllResourceGroups();
 	Ogre::TextureManager::getSingleton().setDefaultNumMipmaps( 5 );
 
+	// setup camera control system
+	mCCS.reset( new CCS::CameraControlSystem( SceneManager, "CCS", mCamera, true ) );
+	mCCS->setFixedYawAxis( true, Ogre::Vector3::UNIT_Z );
+
+	mOrbitalCamMode.reset( new CCS::OrbitalCameraMode( mCCS.get(), 2.f, Ogre::Radian(), Ogre::Radian( Ogre::Degree( -45.f ) )  ) );
+	mCCS->registerCameraMode( "Orbital", mOrbitalCamMode.get() );
+	mCCS->setCameraTarget( CameraFocusNode );
+	mCCS->setCurrentCameraMode( mOrbitalCamMode.get() );
+
 	// DBG: Testscene
-	Ogre::Entity* GridPlane=SceneManager->createEntity( "GridPlane",
-		"GridPlane.mesh" );
+	Ogre::Entity* GridPlane = 
+		SceneManager->createEntity( "GridPlane", "GridPlane.mesh" );
 	GridPlane->setQueryFlags( 0x01 );
 	SceneManager->getRootSceneNode()->attachObject( GridPlane );
 
@@ -306,8 +263,8 @@ bool MainFrame::InitOgre()
 		this );
 
 	// Create input handler
-	mInputHandler.reset( new InputHandler( mCamera, CameraFocusNode,
-			mOgreWindow ) );
+	//mInputHandler.reset( new InputHandler( mCamera, CameraFocusNode, mOgreWindow ) );
+	mInputHandler.reset( new InputHandler( mCCS.get(), mOgreWindow ) );
 
 	mSceneView.reset( new SceneView( mOgreWindow->GetSceneManager(),
 			boost::bind( &OgreWindow::Refresh, mOgreWindow, false,
@@ -316,6 +273,8 @@ bool MainFrame::InitOgre()
 	LoadVisPlugins();
 
 	mEntityPool.InsertObserver( mSceneView.get() );
+
+	mOgreWindow->GetRoot()->addFrameListener( new COViSEFrameListener( mCCS.get() ) );
 
 	return true;
 }
@@ -532,11 +491,6 @@ void MainFrame::OnQuit( wxCommandEvent &event )
 	Close();
 }
 
-void MainFrame::OnIdle( wxIdleEvent& evt )
-{
-	evt.RequestMore();
-}
-
 void MainFrame::OnNetworkTimer( wxTimerEvent& Event )
 {
 	mInterfaceManager->PollInterfaces();
@@ -546,7 +500,7 @@ void MainFrame::OnAbout( wxCommandEvent &event )
 {
 	wxAboutDialogInfo info;
 	info.SetName( wxT( "OViSE" ));
-	info.SetVersion( wxT( "0.3 Beta (gnome)" ));
+	info.SetVersion( wxT( "0.4 Beta (troll)" ));
 
 	wxString description = wxT( "Institute for Anthropomatics (IfA)\n\r" );
 	description += wxT( "Humanoid and Intelligence Systems Lab (HIS)\n" );
@@ -554,41 +508,26 @@ void MainFrame::OnAbout( wxCommandEvent &event )
 	description += wxT( "http://wwwiaim.ira.uka.de\n" );
 	description += wxT( "Department of Computer Science\n" );
 	description += wxT( "Karlsruhe Institute of Technology (KIT)\n" );
-	description += wxT(
-		"Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)" );
+	description += wxT(	"Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)" );
 	info.SetDescription( description );
 
 	info.SetCopyright( wxT( "(C) 2008-2011 " ));
 
-	info.AddDeveloper( wxT(
-			"Programming - Alexander Kasper <alexander.kasper@kit.edu>" ));
-	info.AddDeveloper( wxT(
-			"Programming - Marius Elvert <marius.elvert@googlemail.com>" ));
-	info.AddDeveloper( wxT(
-			"Programming - Thorsten Engelhardt <thorsten.engelhardt@student.kit.edu>" ));
-	info.AddDeveloper( wxT(
-			"Programming - Henning Renartz <hrenart@gmx.de>" ));
+	info.AddDeveloper( wxT( "Programming - Alexander Kasper <alexander.kasper@kit.edu>" ));
+	info.AddDeveloper( wxT( "Programming - Marius Elvert <marius.elvert@googlemail.com>" ));
+	info.AddDeveloper( wxT( "Programming - Thorsten Engelhardt <thorsten.engelhardt@student.kit.edu>" ));
+	info.AddDeveloper( wxT(	"Programming - Henning Renartz <hrenart@gmx.de>" ));
 
-	wxString licenseText = wxT(
-		"Permission is hereby granted, free of charge," );
-	licenseText += wxT(
-		"to any person obtaining a copy of this software and associated documentation files (the \"Software\"), " );
-	licenseText += wxT(
-		"to deal in the Software without restriction, including without limitation the rights to use, copy, modify, " );
-	licenseText += wxT(
-		"merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the " );
-	licenseText += wxT(
-		"Software is furnished to do so, subject to the following conditions:\n\n" );
-	licenseText += wxT(
-		"The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\n" );
-	licenseText += wxT(
-		"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED " );
-	licenseText += wxT(
-		"TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE " );
-	licenseText += wxT(
-		"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, " );
-	licenseText += wxT(
-		"TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." );
+	wxString licenseText = wxT(	"Permission is hereby granted, free of charge," );
+	licenseText += wxT(	"to any person obtaining a copy of this software and associated documentation files (the \"Software\"), " );
+	licenseText += wxT(	"to deal in the Software without restriction, including without limitation the rights to use, copy, modify, " );
+	licenseText += wxT(	"merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the " );
+	licenseText += wxT(	"Software is furnished to do so, subject to the following conditions:\n\n" );
+	licenseText += wxT(	"The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\n" );
+	licenseText += wxT(	"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED " );
+	licenseText += wxT(	"TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE " );
+	licenseText += wxT(	"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, " );
+	licenseText += wxT(	"TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE." );
 	info.SetLicense( licenseText );
 
 	info.SetWebSite( wxT( "http://code.google.com/p/ovise/" ));

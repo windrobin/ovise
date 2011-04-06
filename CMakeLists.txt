@@ -40,8 +40,7 @@ option( INTERFACES_VOODOO "Build VOODOO interface" ON )
 
 add_subdirectory( Core )
 add_subdirectory( Util )
-#add_subdirectory( DotSceneBase )
-#add_subdirectory( DotSceneInterpreter )
+add_subdirectory( CameraControlSystem )
 add_subdirectory( Viewer )
 
 if( PLUGINS_SIMPLE )
