@@ -11,6 +11,8 @@
 // Include WX
 #include <wx/wx.h>
 
+#include <CCSCameraControlSystem.h>
+
 #include <OViSEException.h>
 
 
@@ -26,8 +28,7 @@ public:
 	 * you have a camera focus node which has a childnode. The camera shall then be attached to
 	 * the latter. This way you can have a orbiting camera.
 	 */
-	InputHandler( Ogre::Camera *   cam,
-	              Ogre::SceneNode *camnode,
+	InputHandler( CCS::CameraControlSystem* CCS,
 	              wxWindow *       parent );
 	~InputHandler( void );
 
@@ -36,43 +37,20 @@ public:
 	// / Handles all keyboard input and calls appropriate methods.
 	void handleKeyboardInput( wxKeyEvent& evt );
 
-	// / Set the camera manually.
-	void setCamera( Ogre::Camera *cam, Ogre::SceneNode *camnode );
-
 protected:
-	// / Translate camera.
-	void translateCamera( Ogre::Vector3 trans );
-	// / Translatae camera vertically orthogonal to view direction (positive amount is up, negative is down)
-	void translateCameraVertical( double moveSpeed );
-	// / Translatae camera horizontally orthogonal to view direction (positive amount is right, negative is left)
-	void translateCameraHorizontal( double moveSpeed );
-	// / Tranlsate camera in view direction (positive amount is back, negative is forward)
-	void translateCameraDirectional( double moveSpeed );
-	// / Zoom camera (makes most sense when using a focusnode, see constructor documentation).
-	void zoomCamera( double amount );
-	// / Yaw camera.
-	void yawCamera( Ogre::Radian angle );
-	// / Pitch camera.
-	void pitchCamera( Ogre::Radian angle );
-	// / Set distance between camera node and camera focus node
-	void setDistance( float dist );
-
 	// / Show the help overlay
 	void showHelpOverlay();
+
+	void translateCamera( Ogre::Vector3 trans );
+	void translateCameraHorizontal( int Delta );
+	void translateCameraVertical( int Delta );
 
 	// / Delete selected OgreObjects (and its childs)
 	void DeleteSelectedObjects();
 
-	/** Focuses the camera on the currently selected objects.
-	 * @todo Check that all selected objects are visible
-	 * @todo Make smooth animation for camera change?
-	 */
-	void focusCamera();
-
 private:
-	Ogre::Camera *   mCamera;
-	Ogre::SceneNode *mCameraNode;
 	wxWindow *       mParent;
+	CCS::CameraControlSystem* mCCS;
 
 	// / Mouse position of last click.
 	int mX, mY;

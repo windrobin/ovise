@@ -40,9 +40,24 @@
 #include "AttributeView.h"
 #include <SceneView.h>
 #include <NetworkInterface.h>
-// #include "XMLRPCServer.h"
+
+#include <CCSCameraControlSystem.h>
+#include <CCSBasicCameraModes.h>
+#include <CCSFreeCameraMode.h>
+#include <CCSOrbitalCameraMode.h>
 
 using boost::scoped_ptr;
+
+class COViSEFrameListener : public Ogre::FrameListener
+{
+public:
+	COViSEFrameListener( CCS::CameraControlSystem* CCS );
+
+	virtual bool frameStarted (const Ogre::FrameEvent &evt);
+
+private:
+	CCS::CameraControlSystem* mCCS;
+};
 
 /** Main window of the application.
  * @todo Documentation!
@@ -60,68 +75,41 @@ public:
 
 
 private:
-	virtual void                                    OnQuit(
-	        wxCommandEvent& event );
-	virtual void                                    OnLoadScene(
-	        wxCommandEvent& event );
-	virtual void                                    OnLoadPointcloud(
-	        wxCommandEvent& event );
-	virtual void                                    OnClose(
-	        wxCloseEvent& event );
-	virtual void                                    OnAbout(
-	        wxCommandEvent& event );
-	virtual void                                    OnSaveScreenToFile(
-	        wxCommandEvent& event );
-	virtual void                                    OnShowSceneStructure(
-	        wxCommandEvent& event );
-	virtual void                                    OnDynamicShadowsChange(
-	        wxCommandEvent& event );
-	virtual void                                    OnDMPoints(
-	        wxCommandEvent &event );
-	virtual void                                    OnDMWire(
-	        wxCommandEvent &event );
-	virtual void                                    OnDMSolid(
-	        wxCommandEvent &event );
-	virtual void                                    OnTestStuff(
-	        wxCommandEvent& event );
-	void                                                    OnInsertEntity(
-	        wxCommandEvent& Event );
-	void                                                    OnRemoveEntity(
-	        wxCommandEvent& Event );
-	void                                                    OnAddAttribute(
-	        wxCommandEvent& Event );
-	void
-	OnDeleteAttribute( wxCommandEvent& Event );
-	void                                                    OnMouseEvent(
-	        wxMouseEvent& evt );
-	void                                                    OnKeyboardEvent(
-	        wxKeyEvent& evt );
-	void                                                    OnViewClick(
-	        wxMouseEvent& evt );
-	void
-	OnTreeSelectionChanged( wxTreeEvent& event );
-	void                                                    OnIdle(
-	        wxIdleEvent& evt );
-	void
-	OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
-	void                                                    OnNetworkTimer(
-	        wxTimerEvent& Event );
-	void                                                    OnRenderTimer(
-	        wxTimerEvent& Event );
+	void OnQuit( wxCommandEvent& event );
+	void OnLoadScene( wxCommandEvent& event );
+	void OnLoadPointcloud( wxCommandEvent& event );
+	void OnClose( wxCloseEvent& event );
+	void OnAbout( wxCommandEvent& event );
+	void OnSaveScreenToFile( wxCommandEvent& event );
+	void OnShowSceneStructure( wxCommandEvent& event );
+	void OnDynamicShadowsChange( wxCommandEvent& event );
+	void OnDMPoints( wxCommandEvent &event );
+	void OnDMWire( wxCommandEvent &event );
+	void OnDMSolid( wxCommandEvent &event );
+	void OnTestStuff( wxCommandEvent& event );
+	void OnInsertEntity( wxCommandEvent& Event );
+	void OnRemoveEntity( wxCommandEvent& Event );
+	void OnAddAttribute( wxCommandEvent& Event );
+	void OnDeleteAttribute( wxCommandEvent& Event );
+	void OnMouseEvent( wxMouseEvent& evt );
+	void OnKeyboardEvent( wxKeyEvent& evt );
+	void OnViewClick( wxMouseEvent& evt );
+	void OnTreeSelectionChanged( wxTreeEvent& event );
+	void OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
+	void OnNetworkTimer( wxTimerEvent& Event );
+	void OnIdle( wxIdleEvent& Event );
 
-	void                                                    SetupSceneTree();
+	void SetupSceneTree();
 
-
-	bool                                                    InitOgre();
+	bool InitOgre();
+	
 	EntityPool mEntityPool;
 
 protected:
-	void                                                    LoadVisPlugins();
-	void                                                    LoadNWPlugins();
-	void
-	LoadVisualizationPlugin( wxString Filename );
-	void
-	LoadNetworkPlugin( wxString Filename );
+	void LoadVisPlugins();
+	void LoadNWPlugins();
+	void LoadVisualizationPlugin( wxString Filename );
+	void LoadNetworkPlugin( wxString Filename );
 
 	wxString mMediaPath;
 	wxString mPluginPath;
@@ -141,10 +129,10 @@ protected:
 	scoped_ptr<AttributeView> mAttributeView;
 	Entity*                   mCurrentEntity;
 	Ogre::Camera*             mCamera;
+	scoped_ptr<CCS::CameraControlSystem> mCCS;
+	scoped_ptr<CCS::OrbitalCameraMode> mOrbitalCamMode;
 
-	// boost::asio::io_service			mIOService;
 	wxTimer mNetworkTimer;
-	wxTimer mRenderTimer;
 
 	scoped_ptr<CInterfaceManager> mInterfaceManager;
 };

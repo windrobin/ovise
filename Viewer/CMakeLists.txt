@@ -4,7 +4,8 @@ include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIRS}
 					 ${GTK2_INCLUDE_DIRS}
 					 ${CMAKE_SOURCE_DIR}/Core 
-					 ${CMAKE_SOURCE_DIR}/Util )
+					 ${CMAKE_SOURCE_DIR}/Util
+					 ${CMAKE_SOURCE_DIR}/CameraControlSystem/include )
 					 
 include( ${wxWidgets_USE_FILE} )
 
@@ -45,11 +46,13 @@ endif()
 
 add_dependencies( Viewer
 				  Core
-				  Util )
+				  Util
+				  CCS )
 				  
 target_link_libraries( Viewer
 					   Core
 					   Util
+					   CCS
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
 					   ${GTK2_LIBRARIES}
