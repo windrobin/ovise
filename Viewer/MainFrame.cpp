@@ -24,7 +24,7 @@ COViSEFrameListener::COViSEFrameListener( CCS::CameraControlSystem* CCS )
 	: mCCS( CCS )
 {}
 
-bool COViSEFrameListener::frameStarted( const Ogre::FrameEvent& evt )
+bool COViSEFrameListener::frameEnded( const Ogre::FrameEvent& evt )
 {
 	mCCS->update( evt.timeSinceLastFrame );
 	return true;
