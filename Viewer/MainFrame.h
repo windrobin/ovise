@@ -53,7 +53,7 @@ class COViSEFrameListener : public Ogre::FrameListener
 public:
 	COViSEFrameListener( CCS::CameraControlSystem* CCS );
 
-	virtual bool frameStarted (const Ogre::FrameEvent &evt);
+	virtual bool frameEnded (const Ogre::FrameEvent &evt);
 
 private:
 	CCS::CameraControlSystem* mCCS;
