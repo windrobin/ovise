@@ -23,38 +23,36 @@
 class InputHandler
 {
 public:
-	/** Constructor with camera and camera node.
-	 * The class needs at least a camera. If you provide a camera node as well, make sure that
-	 * you have a camera focus node which has a childnode. The camera shall then be attached to
-	 * the latter. This way you can have a orbiting camera.
+	/** Constructor with camera control system and parent window.
+	 * The received user input is forwarded to the camera control system.
 	 */
 	InputHandler( CCS::CameraControlSystem* CCS,
 	              wxWindow *       parent );
 	~InputHandler( void );
 
-	// / Handles all mouse input and calls appropriate methods.
+	/// Handles all mouse input and calls appropriate methods.
 	void handleMouseInput( wxMouseEvent& evt );
-	// / Handles all keyboard input and calls appropriate methods.
+	/// Handles all keyboard input and calls appropriate methods.
 	void handleKeyboardInput( wxKeyEvent& evt );
 
 protected:
-	// / Show the help overlay
+	/// Show the help overlay
 	void showHelpOverlay();
 
 	void translateCamera( Ogre::Vector3 trans );
 	void translateCameraHorizontal( int Delta );
 	void translateCameraVertical( int Delta );
 
-	// / Delete selected OgreObjects (and its childs)
+	/// Delete selected OgreObjects (and its childs)
 	void DeleteSelectedObjects();
 
 private:
 	wxWindow *       mParent;
 	CCS::CameraControlSystem* mCCS;
 
-	// / Mouse position of last click.
+	/// Mouse position of last click.
 	int mX, mY;
-	// / Default move and rotate speeds.
+	/// Default move and rotate speeds.
 	double mRotateSpeed, mMoveSpeed;
 	bool   mMouseCaptured;
 };
