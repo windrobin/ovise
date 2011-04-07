@@ -204,6 +204,12 @@ void MainFrame::SetupSceneTree()
 	this->mWindowManager.AddPane( mSceneTree, wxRIGHT,
 		wxT( "Scene structure" ));
 
+	mEntityPool.CreateEntity( "MisterRoboto" ).Set
+		( "Type", "Robot" )
+		( "Model", "Albert.mesh" )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
+	;
+
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
 	mEntityPool.InsertObserver( mAttributeView.get() );
@@ -236,11 +242,7 @@ bool MainFrame::InitOgre()
 	// setup camera control system
 	mCCS.reset( new CCS::CameraControlSystem( SceneManager, "CCS", mCamera, true ) );
 	mCCS->setFixedYawAxis( true, Ogre::Vector3::UNIT_Z );
-
-	mOrbitalCamMode.reset( new CCS::OrbitalCameraMode( mCCS.get(), 2.f, Ogre::Radian(), Ogre::Radian( Ogre::Degree( -45.f ) )  ) );
-	mCCS->registerCameraMode( "Orbital", mOrbitalCamMode.get() );
 	mCCS->setCameraTarget( CameraFocusNode );
-	mCCS->setCurrentCameraMode( mOrbitalCamMode.get() );
 
 	// DBG: Testscene
 	Ogre::Entity* GridPlane = 
@@ -263,7 +265,6 @@ bool MainFrame::InitOgre()
 		this );
 
 	// Create input handler
-	//mInputHandler.reset( new InputHandler( mCamera, CameraFocusNode, mOgreWindow ) );
 	mInputHandler.reset( new InputHandler( mCCS.get(), mOgreWindow ) );
 
 	mSceneView.reset( new SceneView( mOgreWindow->GetSceneManager(),
@@ -274,6 +275,9 @@ bool MainFrame::InitOgre()
 
 	mEntityPool.InsertObserver( mSceneView.get() );
 
+	mOrbitalCamMode.reset( new CCS::OrbitalCameraMode( mCCS.get(), 2.f, Ogre::Radian(), Ogre::Radian( Ogre::Degree( -45.f ) )  ) );
+	mCCS->registerCameraMode( "Orbital", mOrbitalCamMode.get() );
+	mCCS->setCurrentCameraMode( mCCS->getCameraMode("Orbital") );
 	mOgreWindow->GetRoot()->addFrameListener( new COViSEFrameListener( mCCS.get() ) );
 
 	return true;
