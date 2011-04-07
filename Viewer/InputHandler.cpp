@@ -13,6 +13,7 @@ InputHandler::InputHandler( CCS::CameraControlSystem* CCS,
 	parent->Bind( wxEVT_MIDDLE_DOWN, &InputHandler::handleMouseInput, this );
 	parent->Bind( wxEVT_MOTION, &InputHandler::handleMouseInput, this );
 	parent->Bind( wxEVT_MOUSEWHEEL, &InputHandler::handleMouseInput, this );
+	parent->Bind( wxEVT_ENTER_WINDOW, &InputHandler::handleMouseInput, this );
 }
 
 InputHandler::~InputHandler( void )
@@ -20,6 +21,12 @@ InputHandler::~InputHandler( void )
 
 void InputHandler::handleMouseInput( wxMouseEvent &evt )
 {
+	if( evt.Entering() )
+	{
+		mParent->SetFocus();
+		return;
+	}
+
 	CCS::OrbitalCameraMode* OCM = 
 		static_cast<CCS::OrbitalCameraMode*>( mCCS->getCameraMode( "Orbital" ) );
 	
@@ -70,32 +77,8 @@ void InputHandler::handleMouseInput( wxMouseEvent &evt )
 
 void InputHandler::handleKeyboardInput( wxKeyEvent &evt )
 {
-	/*switch(evt.GetKeyCode())
+	switch(evt.GetKeyCode())
 	{
-	case 'a':
-	case 'A':
-		translateCameraHorizontal( mMoveSpeed );
-		break;
-	case 'd':
-	case 'D':
-		translateCameraHorizontal( -mMoveSpeed );
-		break;
-	case 'w':
-	case 'W':
-		translateCameraDirectional( -mMoveSpeed );
-		break;
-	case 's':
-	case 'S':
-		translateCameraDirectional( mMoveSpeed );
-		break;
-	case 'q':
-	case 'Q':
-		translateCameraVertical( mMoveSpeed );
-		break;
-	case 'e':
-	case 'E':
-		translateCameraVertical( -mMoveSpeed );
-		break;
 	case 'f':
 	case 'F':
 		//focusCamera();
@@ -104,14 +87,12 @@ void InputHandler::handleKeyboardInput( wxKeyEvent &evt )
 	case 'T':
 		showHelpOverlay();
 		break;
-
 	case WXK_DELETE:
 		this->DeleteSelectedObjects();
 		break;
-
 	default:
 		break;
-	}*/
+	}
 	evt.Skip();
 }
 
