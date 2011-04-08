@@ -48,9 +48,14 @@ namespace CCS
             : ChaseFreeYawAxisCameraMode(cam, Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY)
 			, mZoomFactor(1.f)
             , mRotationFactor(0.13f)
+			, mRotHorizontal( 0.f )
+			, mRotVertical( 0.f )
+			, mZoom( 1.f )
 			, mInitialRotHorizontal(initialHorizontalRotation)
 			, mInitialRotVertical(initialVerticalRotation)
-			, mInitialZoom(initialZoom)			
+			, mInitialZoom(initialZoom)
+			, mRotHorizontalDisplacement( 0.f )
+			, mRotVerticalDisplacement( 0.f )
 			, mZoomDisplacement(0.f)
         {
 			this->setCameraTightness(1.f);
