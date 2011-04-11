@@ -12,7 +12,7 @@ namespace
 		Entity& E = Pool.CreateEntity( Obj.getName() );
 		E.Set
 			( "Type", "Simple" )
-			( "Model", "Unknown.mesh" )
+			( "Model", Obj.getName() + ".mesh" )
 			( "SharomeId", Obj.getId() )
 		;
 
@@ -28,6 +28,15 @@ namespace
 					vec3( L.m_Position.m_Value[0],
 						L.m_Position.m_Value[1],
 						L.m_Position.m_Value[2] ) );
+				E.SetAttribute( "Orientation",
+					quat( L.m_Orientation.m_Value[0],
+					L.m_Orientation.m_Value[1],
+					L.m_Orientation.m_Value[2],
+					L.m_Orientation.m_Value[3] ) );
+				E.SetAttribute( "Scale",
+					vec3( L.m_Scale.m_Value[0],
+					L.m_Scale.m_Value[1],
+					L.m_Scale.m_Value[2] ) );
 			}
 		}
 	}
