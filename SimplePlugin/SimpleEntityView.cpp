@@ -67,9 +67,20 @@ void SimpleEntityView::OnEntityAttributeChanged(
 		        GetDataEntity() );
 
 		if ( ModelName )
-			mOgreEntity = GetSceneManager()->createEntity(
-				EntityName,
-				*ModelName );
+		{
+			if( Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup( *ModelName ) )
+			{
+				mOgreEntity = GetSceneManager()->createEntity(
+					EntityName,
+					*ModelName );
+			}
+			else
+			{
+				mOgreEntity = GetSceneManager()->createEntity(
+					EntityName,
+					"Unknown.mesh" );
+			}
+		}
 		else
 			mOgreEntity = GetSceneManager()->createEntity(
 				EntityName,
