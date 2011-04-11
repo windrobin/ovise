@@ -28,8 +28,13 @@ find_library(Mem_LIBRARY
   PATHS $ENV{SHAROME_HOME}/lib
 )
 
+find_library(replay_LIBRARY
+  NAMES replay
+  PATHS $ENV{SHAROME_HOME}/lib
+)
+
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set( Sharome_PROCESS_INCLUDES Sharome_INCLUDE_DIR )
-set( Sharome_PROCESS_LIBS Util_LIBRARY Mem_LIBRARY )
+set( Sharome_PROCESS_LIBS Util_LIBRARY Mem_LIBRARY replay_LIBRARY )
 libfind_process( Sharome )
