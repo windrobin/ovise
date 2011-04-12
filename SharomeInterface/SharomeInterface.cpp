@@ -1,5 +1,7 @@
 #include "SharomeInterface.h"
 
+#include <boost/foreach.hpp>
+
 #include <InterfaceManager.h>
 #include <Mem/Serialization.hpp>
 #include <Mem/Location.h>
@@ -25,18 +27,89 @@ namespace
 			if( L.FromAttribute( A ) )
 			{
 				E.SetAttribute( "Position",
-					vec3( L.m_Position.m_Value[0],
-						L.m_Position.m_Value[1],
-						L.m_Position.m_Value[2] ) );
+					vec3( float(L.m_Position.m_Value[0]),
+					float(L.m_Position.m_Value[1]),
+					float(L.m_Position.m_Value[2] ) ) );
 				E.SetAttribute( "Orientation",
-					quat( L.m_Orientation.m_Value[0],
-					L.m_Orientation.m_Value[1],
-					L.m_Orientation.m_Value[2],
-					L.m_Orientation.m_Value[3] ) );
+					quat( float(L.m_Orientation.m_Value[0]),
+					float(L.m_Orientation.m_Value[1]),
+					float(L.m_Orientation.m_Value[2]),
+					float(L.m_Orientation.m_Value[3] ) ) );
 				E.SetAttribute( "Scale",
-					vec3( L.m_Scale.m_Value[0],
-					L.m_Scale.m_Value[1],
-					L.m_Scale.m_Value[2] ) );
+					vec3( float(L.m_Scale.m_Value[0]),
+					float(L.m_Scale.m_Value[1]),
+					float(L.m_Scale.m_Value[2] ) ) );
+			}
+		}
+	}
+
+	void SyncAttribs( Entity* OldEnt, const OOWM::Mem::CObj& Obj )
+	{
+		// check if we need to remove any attributes
+		const Entity::AttributeType& Atts = OldEnt->GetAttributes();
+		std::vector<std::string> ToRemove;
+		for( Entity::AttributeType::const_iterator i = Atts.begin();
+			i != Atts.end(); i++ )
+		{
+			OOWM::Mem::CAttribute Attrib;
+			OOWM::SResult Result;
+			Obj.getFirstByName( Attrib, i->first, &Result );
+			if( Result.m_nCode != R_OK )
+				ToRemove.push_back( i->first );
+		}
+		BOOST_FOREACH( std::string s, ToRemove )
+		{
+			OldEnt->RemoveAttribute( s );
+		}
+		// go through all attributes of updated object and add/update as necessary
+		std::set<std::string> Ids;
+		OOWM::SResult Result;
+		Obj.getIdsByName( Ids, "*", &Result );
+		if( Result.m_nCode != R_OK ) return;
+
+		for( std::set<std::string>::iterator i = Ids.begin(); i != Ids.end(); i++ )
+		{
+			OOWM::Mem::CAttribute CurrentAttribute;
+			Obj.getById( CurrentAttribute, *i, &Result );
+
+			if( CurrentAttribute.getName() == "Location" )
+			{
+				OOWM::Mem::CLocation L;
+				if( L.FromAttribute( CurrentAttribute ) )
+				{
+					OldEnt->SetAttribute( "Position",
+						vec3( float(L.m_Position.m_Value[0]),
+							float(L.m_Position.m_Value[1]),
+							float(L.m_Position.m_Value[2] ) ) );
+					OldEnt->SetAttribute( "Orientation",
+						quat( float(L.m_Orientation.m_Value[0]),
+						float(L.m_Orientation.m_Value[1]),
+						float(L.m_Orientation.m_Value[2]),
+						float(L.m_Orientation.m_Value[3] ) ) );
+					OldEnt->SetAttribute( "Scale",
+						vec3( float(L.m_Scale.m_Value[0]),
+						float(L.m_Scale.m_Value[1]),
+						float(L.m_Scale.m_Value[2] ) ) );
+				}
+			}
+			else
+			{
+				if( Result.m_nCode != R_OK ) continue;
+				std::set<std::string> ValueIds;
+				CurrentAttribute.getIdsByName( ValueIds, "*", &Result );
+				if( Result.m_nCode != R_OK ) continue;
+				for( std::set<std::string>::iterator i = ValueIds.begin(); i != ValueIds.end(); i++ )
+				{
+					OOWM::Mem::CValue Val;
+					CurrentAttribute.getById( Val, *i, &Result );
+					if( Result.m_nCode != R_OK ) continue;
+					OOWM::Mem::ValueType Value;
+					OOWM::Mem::DeviationType Dev;
+					OOWM::Mem::WeightType Weights;
+					Val.get( Value, Dev, Weights, &Result );
+					if( Result.m_nCode != R_OK ) continue;
+					OldEnt->SetAttribute( Val.getName(), Value );
+				}
 			}
 		}
 	}
@@ -215,9 +288,16 @@ void SharomeInterface::HandleObjectCreated( const OOWM::Mem::CObj& Obj )
 
 void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj )
 {
-	mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId",
-	                                                         Obj.getId() );
-	CreateEntityFromCObj( mEntityPool, Obj );
+	Entity* OldEnt = mEntityPool.GetEntityByAttribute( "SharomeId", Obj.getId() );
+	if( OldEnt )
+	{
+		if( OldEnt->GetName() != Obj.getName() )
+			mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId", Obj.getId() );
+		else
+			SyncAttribs( OldEnt, Obj );
+	}
+	else
+		CreateEntityFromCObj( mEntityPool, Obj );
 }
 
 void SharomeInterface::HandleObjectDeleted( const OOWM::Mem::CObj& Obj )

@@ -7,6 +7,16 @@
 #include "Message.h"
 #include "Connection.h"
 
+/**
+  Interface for Shared Robot Memory.
+  Implements the network interface to communicate with the Shared Robot
+  Memory system. Receives scene updates and tries to represent them within
+  the visualization.
+  @remark Changes to the entities within OViSE will currently not be communicated
+  back to ShaRoMe!
+  @remark Only CValues will be represented as Entity attributes, CAttribute layer
+  is not supported.
+*/
 class SharomeInterface :
 	public CNetworkInterface
 {
