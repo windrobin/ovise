@@ -1,0 +1,42 @@
+material BlueZ
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.058210 0.039579 0.264059 1.000000
+			diffuse 0.093136 0.063326 0.422495 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material RedX
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.291270 0.077238 0.024636 1.000000
+			diffuse 0.466032 0.123580 0.039417 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material GreenY
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.038915 0.234127 0.094956 1.000000
+			diffuse 0.062264 0.374603 0.151929 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
