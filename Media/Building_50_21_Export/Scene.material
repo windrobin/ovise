@@ -1,0 +1,352 @@
+
+material _missing_material_ 
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			ambient 0.1 0.1 0.1 1.0
+			diffuse 0.8 0.0 0.0 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.3 0.3 0.3 1.0
+		}
+	}
+}
+
+material ArbeitsplatteMaterial 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture platte-textur.png
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material DoorFrameMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.428149670362 0.482456684113 0.909070730209 1.0
+			diffuse 0.342519741394 0.385965353041 0.727256595004 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material KeyboardMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture Keyboard.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material AisleFloor 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture FloorTileable.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material LabDrawerGrip 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.850000023842 0.850000023842 0.850000023842 1.0
+			diffuse 0.849752581113 0.849752581113 0.849752581113 1.0
+			specular 1.49854433537 1.49854433537 1.49854433537 1.0 8.75
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material LabDrawerMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.850000023842 0.850000023842 0.850000023842 1.0
+			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material LabFloor 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture Floor2Tileable.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material TableMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.850000023842 0.850000023842 0.850000023842 1.0
+			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material TableMat2 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.560000002384 0.560000002384 0.560000002384 1.0
+			diffuse 0.448000008583 0.448000008583 0.448000008583 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material TableMat.001 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.850000023842 0.850000023842 0.850000023842 1.0
+			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material TableMat2.001 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.560000002384 0.560000002384 0.560000002384 1.0
+			diffuse 0.448000008583 0.448000008583 0.448000008583 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material TableMat.002 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.850000023842 0.850000023842 0.850000023842 1.0
+			diffuse 0.680000029206 0.680000029206 0.680000029206 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material TableMat2.002 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.560000002384 0.560000002384 0.560000002384 1.0
+			diffuse 0.448000008583 0.448000008583 0.448000008583 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material Monitor204BMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture Monitor.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material BoschProfilMaterial 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material SVSMaterial 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.0750568509102 0.047093488276 0.047093488276 1.0
+			diffuse 0.0600454816229 0.0376747911822 0.0376747911822 1.0
+			specular 0.140000000596 0.140000000596 0.140000000596 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material RoundTableMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture RoundTable.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material Wall 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture Wall.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}
+material White 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 1.0 1.0 1.0 1.0
+			diffuse 0.800000011921 0.800000011921 0.800000011921 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material Wood 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.800000011921 0.800000011921 1.0
+			diffuse 0.640000019073 0.640000019073 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			texture_unit
+			{
+				texture WoodenChairTex.jpg
+				tex_address_mode wrap
+				scale 1.0 1.0
+				colour_op_ex blend_manual src_current src_texture 0.0
+			}
+		}
+	}
+}

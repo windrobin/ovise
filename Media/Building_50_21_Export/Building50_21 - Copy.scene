@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<scene>
+	<nodes>
+		<node name="Arbeitsplatte">
+			<position x="23.481453" y="0.994953" z="0.951772"/>
+			<quaternion w="0.000000" x="0.000000" y="0.000000" z="1.000000"/>
+			<scale x="0.095040" y="0.095040" z="0.095040"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.180000007153" damping_trans="0.025399999693" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="Arbeitsplatte.mesh" name="Arbeitsplatte" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+		<node name="DoorFrame">
+			<position x="30.072496" y="6.282500" z="0.996875"/>
+			<quaternion w="1.000000" x="0.000000" y="0.000000" z="0.000000"/>
+			<scale x="1.000000" y="1.000000" z="1.000000"/>
+			<user_data name="YafRay" type="Blender IDProperty" value="&lt;bpy ID property from &quot;OBDoorFrame&quot;&gt;"/>
+			<game>
+				<sensors/>
+				<actuators/>
+			</game>
+			<entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149" damping_trans="0.0399999991059" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.40000000596" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="DoorFrame.mesh" name="DoorFrame" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0"/>
+		</node>
+	</nodes>
+	<externals>
+		<item type="material">
+			<file name="Scene.material"/>
+		</item>
+	</externals>
+	<environment>
+		<colorDiffuse b="0.600000023842" g="0.0" r="0.0"/>
+		<colorBackground b="0.600000023842" g="0.0" r="0.0"/>
+		<colorAmbient b="0.0" g="0.0" r="0.0"/>
+	</environment>
+</scene>

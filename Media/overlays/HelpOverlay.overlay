@@ -1,0 +1,15 @@
+GeneralOverlays/HelpOverlay
+{
+	zorder 500
+	
+	container Panel(Main)
+	{
+		metrics_mode pixels
+		left 0
+		top 0
+		width 600
+		height 135
+		
+		material AuxMaterials/Help
+	}
+}
