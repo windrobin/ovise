@@ -12,7 +12,8 @@ SocketMessage::~SocketMessage( void )
 
 int SocketMessage::HandleMessage( const char* Message )
 {
-	mDocument.parse<0>( const_cast<char*>( Message ) );
+        std::cout << Message <<std::endl;
+        mDocument.parse<0>( const_cast<char*>( Message ) );
 	std::cout << "Socket Message Handling:" << std::endl;
 
 	rapidxml::xml_node<>* RootNode = mDocument.first_node();
@@ -71,7 +72,7 @@ int SocketMessage::HandleInsert( rapidxml::xml_node<>* Node )
 
 	if( !HandleUpdate( AttributesNode, &NewEntity ) )
 	{
-		mEntityPool->RemoveEntity( &NewEntity );
+	  //qmEntityPool->RemoveEntity( &NewEntity );
 		return -1;
 	}
 
@@ -82,56 +83,60 @@ int SocketMessage::HandleInsert( rapidxml::xml_node<>* Node )
 bool SocketMessage::HandleUpdate( rapidxml::xml_node<>* AttributeList,
                                   Entity*               Rhs )
 {
-	for( rapidxml::xml_node<>* Child = AttributeList->first_node();
-	     ;
-	     Child = Child->next_sibling() )
-	{
-		rapidxml::xml_attribute<>* Name = Child->first_attribute(
-			"name" );
-		rapidxml::xml_attribute<>* Type = Child->first_attribute(
-			"type" );
-		if( Name && Type )
-		{
-			std::string NameStr( Name->value() );
-			std::string TypeStr( Type->value() );
-			std::string ValueStr( Child->value() );
-			if( TypeStr == "vec3" )
-			{
-				// input of position types
-				double            pos[3];
-				wxStringTokenizer Tokenizer( ValueStr, "," );
-				for (int i = 0; i < 3; i++)
-				{
-					Tokenizer.GetNextToken().ToDouble(
-						&pos[i] );
-				}
-				Rhs->Set<vec3>( NameStr,
-				                vec3( pos[0], pos[1], pos[2] ));
-			}
-			else if ( TypeStr == "int" )
-			{
-				// input of integers
-				Rhs->Set<int>( NameStr,
-				               boost::lexical_cast<int>(
-						       ValueStr ) );
-			}
-			else if( TypeStr == "double" )
-			{
-				// input of floating numbers
-				Rhs->Set<double>( NameStr,
-				                  boost::lexical_cast<double>(
-							  ValueStr ) );
-			}
-			else
-			{
-				// standard is string
-				Rhs->Set<std::string>( NameStr, ValueStr );
-			}
-		}
-		else
-			return false;
-	}
-	return true;
+  for( rapidxml::xml_node<>* Child = AttributeList->first_node();
+       ;
+       Child = Child->next_sibling() )
+    {
+      if (Child) {
+	
+	std::cout << "loop" << std::endl;
+	rapidxml::xml_attribute<>* Name = Child->first_attribute(
+								 "name" );
+	rapidxml::xml_attribute<>* Type = Child->first_attribute(
+								 "type" );
+	if( Name && Type )
+	  {
+	    std::string NameStr( Name->value() );
+	    std::string TypeStr( Type->value() );
+	    std::string ValueStr( Child->value() );
+	    if( TypeStr == "vec3" )
+	      {
+		// input of position types
+		double            pos[3];
+		wxStringTokenizer Tokenizer( ValueStr, "," );
+		for (int i = 0; i < 3; i++)
+		  {
+		    Tokenizer.GetNextToken().ToDouble(
+						      &pos[i] );
+		  }
+		Rhs->Set<vec3>( NameStr,
+				vec3( pos[0], pos[1], pos[2] ));
+	      }
+	    else if ( TypeStr == "int" )
+	      {
+		// input of integers
+		Rhs->Set<int>( NameStr,
+			       boost::lexical_cast<int>(
+							ValueStr ) );
+	      }
+	    else if( TypeStr == "double" )
+	      {
+		// input of floating numbers
+		Rhs->Set<double>( NameStr,
+				  boost::lexical_cast<double>(
+							      ValueStr ) );
+	      }
+	    else
+	      {
+		// standard is string
+		Rhs->Set<std::string>( NameStr, ValueStr );
+	      }
+	   
+	  } 
+      } else break;
+      
+    }
+  return true;
 }
 
 // perform update of an existing entity
