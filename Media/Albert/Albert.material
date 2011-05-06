@@ -1,0 +1,126 @@
+material Body
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.400000 0.400000 0.400000 1.000000
+			diffuse 0.640000 0.640000 0.640000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+			texture_unit
+			{
+				texture BodyTexture.jpg
+				tex_address_mode wrap
+				filtering trilinear
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+material HalveBlue
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.000000 0.000000 0.330000 1.000000
+			diffuse 0.000000 0.000000 0.528000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material MediumGrey
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.350000 0.346442 0.346500 1.000000
+			diffuse 0.560000 0.554306 0.554400 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material BlackMetal
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.070000 0.070000 0.070000 1.000000
+			diffuse 0.125980 0.125980 0.125980 1.000000
+			specular 0.899418 0.899418 0.899418 1.000000 16.000000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Grey
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.500000 0.500000 0.500000 1.000000
+			diffuse 0.800000 0.800000 0.800000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+			texture_unit
+			{
+				texture BodyTexture.jpg
+				tex_address_mode wrap
+				filtering trilinear
+				colour_op alpha_blend
+			}
+		}
+	}
+}
+material Yellow
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.500000 0.430000 0.000000 1.000000
+			diffuse 0.800000 0.688000 0.000000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material Black
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.070000 0.070000 0.070000 1.000000
+			diffuse 0.112000 0.112000 0.112000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 12.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material White
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.500000 0.500000 0.500000 1.000000
+			diffuse 0.899854 0.899854 0.899854 1.000000
+			specular 0.899418 0.899418 0.899418 1.000000 16.000000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}

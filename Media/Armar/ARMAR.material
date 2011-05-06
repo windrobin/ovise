@@ -1,0 +1,70 @@
+material BlackCloth
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.000000 0.000000 0.000000 1.000000
+			diffuse 0.000000 0.000000 0.000000 1.000000
+			specular 0.215615 0.215615 0.215615 1.000000 14.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material BlackPlastic
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.028000 0.028000 0.028000 1.000000
+			diffuse 0.112000 0.112000 0.112000 1.000000
+			specular 0.500000 0.500000 0.500000 1.000000 25.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material BrushedMetal
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.000000 0.000000 0.000000 1.000000
+			diffuse 0.850000 0.850000 0.850000 1.000000
+			specular 1.000000 1.000000 1.000000 1.000000 25.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material WhitePlastic
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.200000 0.200000 0.189800 1.000000
+			diffuse 0.800000 0.800000 0.759200 1.000000
+			specular 0.812823 0.812823 0.812823 1.000000 25.750000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
+material BlueSkin
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.016300 0.010061 0.155531 1.000000
+			diffuse 0.073388 0.045298 0.700251 1.000000
+			specular 1.000000 1.000000 1.000000 1.000000 36.500000
+			emissive 0.000000 0.000000 0.000000 1.000000
+		}
+	}
+}
