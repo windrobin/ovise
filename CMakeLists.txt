@@ -32,11 +32,12 @@ endif( UNIX )
 option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
 option( PLUGINS_ROBOT "Build robot plugin" ON )
 option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
-option( PLUGINS_VOODOO "Build Voodoo plugin" ON )
+option( PLUGINS_TRAJECTORY "Build trajectory plugin" ON )
+option( PLUGINS_VOODOO "Build Voodoo plugin" OFF )
 
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
-option( INTERFACES_SHAROME "Build SHAROME interface" ON )
-option( INTERFACES_VOODOO "Build VOODOO interface" ON )
+option( INTERFACES_SHAROME "Build SHAROME interface" OFF )
+option( INTERFACES_VOODOO "Build VOODOO interface" OFF )
 
 add_subdirectory( Core )
 add_subdirectory( Util )
@@ -57,6 +58,10 @@ endif()
 
 if( PLUGINS_VOODOO )
 add_subdirectory( VoodooPlugin )
+endif()
+
+if( PLUGINS_TRAJECTORY )
+add_subdirectory( TrajectoryPlugin )
 endif()
 
 if( INTERFACES_ILCAS )

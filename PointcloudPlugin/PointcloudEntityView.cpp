@@ -85,6 +85,81 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 			}
 		}
 	}
+	else if ( Name == "Points" )
+	{
+		const boost::any* PAny = boost::get<boost::any>( Attribute );
+		try
+		{
+			const std::vector<float>& Points = boost::any_cast<std::vector<float> >( *PAny );
+			if( !mPointCloud )
+			{
+				const EntityVariantType* ColorsAttr = Rhs->GetAttribute( "Colors" );
+				if( !ColorsAttr )
+				{
+					mPointCloud.reset( new CPointcloud( Rhs->GetName(), "General",
+							Points.size() / 3, 
+							const_cast<float*>(Points.data()), 0 ) );
+
+					// Insert the model into the scene
+					const std::string EntityName = "Entity:" + 
+						boost::lexical_cast<std::string>( GetDataEntity() );
+					mOgreEntity = GetSceneManager()->createEntity( 
+						EntityName.c_str(), Rhs->GetName());
+					mOgreEntity->setMaterialName( "Pointcloud" );
+
+					mNode->attachObject( mOgreEntity );
+				}
+				else
+				{
+					const boost::any* CAny = boost::get<boost::any>( ColorsAttr );
+					try
+					{
+						const std::vector<float>& Colors = 
+							boost::any_cast<std::vector<float> > ( *CAny );
+						mPointCloud.reset( new CPointcloud( Rhs->GetName(), 
+							"General",
+							Points.size() / 3, 
+							const_cast<float*>(Points.data()),
+							const_cast<float*>(Colors.data()) ) );
+
+						// Insert the model into the scene
+						const std::string EntityName = "Entity:" + 
+							boost::lexical_cast<std::string>( GetDataEntity() );
+						mOgreEntity = GetSceneManager()->createEntity( EntityName.c_str(), 
+							Rhs->GetName());
+						mOgreEntity->setMaterialName( "Pointcloud" );
+
+						mNode->attachObject( mOgreEntity );
+					}
+					catch( const boost::bad_any_cast & )
+					{}
+				}
+ 			}
+			else if( mPointCloud)
+			{
+				mPointCloud->UpdateVertexPositions( Points.size() / 3, 
+					const_cast<float*>(Points.data()) );
+			}
+		}
+		catch( const boost::bad_any_cast & )
+		{}
+	}
+	else if ( Name == "Colors" )
+	{
+		if( mPointCloud )
+		{
+			const boost::any* CAny = boost::get<boost::any>( Attribute );
+			try
+			{
+				const std::vector<float>& Colors = 
+					boost::any_cast<std::vector<float> > ( *CAny );
+				mPointCloud->UpdateVertexColours( Colors.size() / 3, 
+					const_cast<float*>(Colors.data()) );
+			}
+			catch( const boost::bad_any_cast & )
+			{}
+ 		}
+ 	}
 	else if ( Name == "PointSize" )
 	{
 		const double* PS = boost::get<double>( Attribute );
