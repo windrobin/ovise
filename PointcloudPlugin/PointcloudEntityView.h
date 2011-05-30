@@ -13,12 +13,8 @@ public:
 	PointcloudEntityView( Entity* Object, Ogre::SceneManager* Mgr );
 	~PointcloudEntityView();
 
-
-	void OnEntityAttributeChanged(
-	        Entity*                  Rhs,
-	        const std::string&       Name,
-	        const EntityVariantType* Attribute
-	        );
+	void OnEntityAttributeChanged( Entity* Rhs, const std::string& Name, 
+		const EntityVariantType* Attribute );
 
 private:
 	Ogre::SceneNode* mNode;
@@ -26,13 +22,9 @@ private:
 
 	boost::scoped_ptr<CPointcloud> mPointCloud;
 
-	void                                                    LoadFromFileOFF(
-	        const std::string& Filename,
-	        float              r = 1.f,
-	        float              g = 1.f,
-	        float              b = 1.f );
-	void                                                    LoadFromFilePLY(
-	        const std::string& Filename );
+	void LoadFromFileOFF( const std::string& Filename, 
+		float r = 1.f, float g = 1.f, float b = 1.f );
+	void LoadFromFilePLY( const std::string& Filename );
 };
 
 #endif
