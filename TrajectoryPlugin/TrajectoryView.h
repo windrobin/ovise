@@ -4,6 +4,8 @@
 #include "../Core/SceneView.h"
 #include "Trajectory.h"
 
+#include <boost/scoped_ptr.hpp>
+
 /** View for a trajectory consisting of a number of points in space.
  */
 class TrajectoryView :

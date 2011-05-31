@@ -6,6 +6,8 @@ TrajectoryView::TrajectoryView( Entity* Object, Ogre::SceneManager* Mgr ) :
 {
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 
+	mTrajectory.reset( new CTrajectory( GetSceneManager() ) );
+
 	SyncAttribs( this );
 }
 
@@ -14,7 +16,6 @@ TrajectoryView::~TrajectoryView()
 	if( mTrajectory )
 	{
 		mNode->detachAllObjects();
-		mTrajectory.reset();
 	}
 	GetSceneManager()->getRootSceneNode()->removeChild( mNode );
 }
@@ -43,6 +44,20 @@ void TrajectoryView::OnEntityAttributeChanged( Entity* Rhs,
 		if( Data )
 			mNode->setScale( *Data );
 	}
+	else if ( Name == "Color" )
+	{
+		const vec3* Data = boost::get<vec3>( Attribute );
+
+		if( Data )
+			mTrajectory->SetColour( Ogre::ColourValue( Data->x, Data->y, Data->z ) );
+	}
+	else if ( Name == "PointSize" )
+	{
+		const float* Data = boost::get<float>( Attribute );
+
+		if ( Data )
+			mTrajectory->SetPointSize( *Data );
+	}
 	else if ( Name == "Points" )
 	{
 		const boost::any* PAny = boost::get<boost::any>( Attribute );
@@ -51,8 +66,10 @@ void TrajectoryView::OnEntityAttributeChanged( Entity* Rhs,
 			const std::vector<Ogre::Vector3>& Points = 
 				boost::any_cast<std::vector<Ogre::Vector3> >( *PAny );
 
-			if( !mTrajectory )
-				mTrajectory.reset( new CTrajectory( GetSceneManager(), Points ) );
+			if( mTrajectory )
+				mNode->detachObject( mTrajectory->GetManualObject() );
+
+			mTrajectory.reset( new CTrajectory( GetSceneManager(), Points ) );
 
 			mNode->attachObject( mTrajectory->GetManualObject() );
 		}
