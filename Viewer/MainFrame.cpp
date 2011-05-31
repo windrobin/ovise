@@ -210,17 +210,6 @@ void MainFrame::SetupSceneTree()
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;*/
 
-	std::vector<Ogre::Vector3> TestTrajectory;
-	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
-	TestTrajectory.push_back( vec3(2.f, 0.f, 0.f) );
-	TestTrajectory.push_back( vec3(3.f, 0.f, 1.f) );
-
-	mEntityPool.CreateEntity( "TestTrajectory" ).Set
-		( "Type", "Trajectory" )
-		( "Position", vec3( 0.f, 0.f, 0.f ) )
-		( "Points", boost::any<std::vector<Ogre::Vector3> >(TestTrajectory))
-	;
-
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
 	mEntityPool.InsertObserver( mAttributeView.get() );
@@ -740,4 +729,17 @@ void MainFrame::OnDMSolid( wxCommandEvent &evt )
 }
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
-{}
+{
+	std::vector<Ogre::Vector3> TestTrajectory;
+	TestTrajectory.push_back( vec3(0.f, 0.f, 1.f) );
+	TestTrajectory.push_back( vec3(2.f, 1.f, 1.f) );
+	TestTrajectory.push_back( vec3(3.f, 2.f, 2.f) );
+
+	mEntityPool.CreateEntity( "TestTrajectory" ).Set
+		( "Type", "Trajectory" )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Color", vec3( 1.f, 0.1f, 0.f ) )
+		( "PointSize", 0.25f )
+		( "Points", TestTrajectory )
+	;
+}
