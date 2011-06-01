@@ -9,6 +9,7 @@
 #include <wx/filefn.h>
 #include <wx/dir.h>
 
+/// Deprecated.
 class OViSEPathProvider
 {
 private:

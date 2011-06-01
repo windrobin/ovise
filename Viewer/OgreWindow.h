@@ -9,7 +9,11 @@
 #include <wx/window.h>
 #include <OgrePrerequisites.h>
 
-
+/**
+  Represents an Ogre render window for wxWidgets.
+  Derived from wxWindow this widget allows embedding a Ogre render window
+  inside a wxWidgets application. Heavily tailored to the needs of OViSE.
+*/
 class OgreWindow :
 	public wxWindow,
 	public boost::noncopyable
@@ -23,20 +27,11 @@ public:
 
 	~OgreWindow();
 
-	void                                                    SetGraphicsInit(
-	        boost::function<void()> Func ) {
-		mInitFunc = Func;
-	}
+	void SetGraphicsInit( boost::function<void()> Func ) { mInitFunc = Func; }
 
-	Ogre::SceneManager*                             GetSceneManager() {
-		return mSceneMgr;
-	}
-	Ogre::RenderWindow*                             GetRenderWindow() {
-		return mRenderWindow;
-	}
-	Ogre::Root*                                             GetRoot() {
-		return mRoot.get();
-	}
+	Ogre::SceneManager* GetSceneManager() { return mSceneMgr; }
+	Ogre::RenderWindow* GetRenderWindow() {	return mRenderWindow; }
+	Ogre::Root* GetRoot() { return mRoot.get();	}
 
 	void UpdateOgre();
 

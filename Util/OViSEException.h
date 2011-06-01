@@ -6,6 +6,10 @@
 #include <string>
 #include <exception>
 
+/**
+  Custom exception class.
+  @note Currently not used.
+*/
 class OViSEException : std::exception
 {
 public:

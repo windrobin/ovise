@@ -9,14 +9,15 @@
 #include <Ogre.h>
 #include "../Core/EntityPool.h"
 
-/** Interface to handle specific types of entities.
-        Is set according to the 'Type' variable.
+/** 
+  Interface to handle specific types of entities.
+  Is set according to the 'Type' variable.
 
-        Derived classes are instanciated by a factory:
-        their constructor must take the Entity and the Ogre::SceneManager.
-        \see SceneView::FactoryType
-        \see BasicOgreEntityView
- */
+  Derived classes are instanciated by a factory:
+  their constructor must take the Entity and the Ogre::SceneManager.
+  \see SceneView::FactoryType
+  \see BasicOgreEntityView
+*/
 class AbstractOgreEntityView :
 	public boost::noncopyable
 {
@@ -40,34 +41,26 @@ public:
 	        \param DataEntity The entity to be stored and observed.
 	        \param SceneManager The scene manager associated with this view.
 	 */
-	BasicOgreEntityView( Entity*             DataEntity,
-	                     Ogre::SceneManager* SceneManager )
+	BasicOgreEntityView( Entity* DataEntity, Ogre::SceneManager* SceneManager )
 		: mSceneManager( SceneManager ), mDataEntity( DataEntity )
 	{
 		mDataEntity->InsertObserver( this );
 	}
 
-	~BasicOgreEntityView()
-	{
-		mDataEntity->RemoveObserver( this );
-	}
+	~BasicOgreEntityView() { mDataEntity->RemoveObserver( this ); }
 
-	Ogre::SceneManager* GetSceneManager() {
-		return mSceneManager;
-	}
-	Entity*                         GetDataEntity() {
-		return mDataEntity;
-	}
+	Ogre::SceneManager* GetSceneManager() {	return mSceneManager; }
+	Entity* GetDataEntity() { return mDataEntity; }
 
 private:
 	Ogre::SceneManager* mSceneManager;
 	Entity*             mDataEntity;
 };
 
-/** Convenience function that calls the attribute change handler for all attributes in the entity.
-        This is useful after insertion of the view.
-
- */
+/** 
+  Convenience function that calls the attribute change handler for all attributes in the entity.
+  This is useful after insertion of the view.
+*/
 template < class T >
 void SyncAttribs( T* BasicEntityView )
 {
@@ -95,40 +88,35 @@ class SceneView :
 {
 public:
 	typedef AbstractOgreEntityView Node;
-	typedef boost::function<Node*( Entity* Object,
-	                               Ogre::SceneManager* Mgr )> FactoryType;
+	typedef boost::function<Node*( Entity* Object, Ogre::SceneManager* Mgr )> FactoryType;
 
 	template <typename T>
 	struct SimpleFactoryType
 	{
-		T* operator()( Entity* Object, Ogre::SceneManager* Mgr ) {
+		T* operator()( Entity* Object, Ogre::SceneManager* Mgr ) 
+		{
 			return new T( Object,Mgr );
 		}
 	};
 
-	SceneView( Ogre::SceneManager*     SceneMgr,
-	           boost::function<void()> UpdateFunction );
+	SceneView( Ogre::SceneManager* SceneMgr, boost::function<void()> UpdateFunction );
 	~SceneView();
 
 	/** Associates a factory with a specific type string.
 	        Entities with that type string are associated with an entity view generated from that factory.
 	 */
-	void                                            AssociateFactory(
-	        const std::string& Typename,
-	        FactoryType        Factory );
+	void AssociateFactory( const std::string& Typename, FactoryType Factory );
 
 	/** Register an entity view type for a specific type string.
 	        This uses AssociateFactory internally, but automatically constructs a factory for the given type.
 	 */
 	template < class EntityViewType > inline
-	void                                            RegisterView(
-	        const std::string& Typename )
+	void RegisterView( const std::string& Typename )
 	{
 		AssociateFactory( Typename, SimpleFactoryType<EntityViewType>() );
 	}
 
 private:
-
 	Ogre::SceneManager* mSceneManager;
 	std::map<std::string, FactoryType>
 	mFactories;
@@ -146,24 +134,13 @@ private:
 
 	boost::function<void()> mUpdateScreen;
 
-	virtual void                            OnEntityInsert(
-	        Entity* Object,
-	        std::size_t
-	        Index );
-	virtual void                            OnEntityRemove(
-	        Entity* Object,
-	        std::size_t
-	        Index );
+	virtual void OnEntityInsert( Entity* Object, std::size_t Index );
+	virtual void OnEntityRemove( Entity* Object, std::size_t Index );
 
-	virtual void                            OnEntityAttributeChanged(
-	        Entity*                  Rhs,
-	        const std::string&       Name,
-	        const EntityVariantType* Attribute
-	        );
+	virtual void OnEntityAttributeChanged( Entity* Rhs, 
+		const std::string& Name, const EntityVariantType* Attribute );
 
-	void                                            OnTypeChanged(
-	        Entity*                  Rhs,
-	        const EntityVariantType* Attribute );
+	void OnTypeChanged( Entity* Rhs, const EntityVariantType* Attribute );
 };
 
 #endif // SCENEVIEW_H
