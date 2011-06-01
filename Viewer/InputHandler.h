@@ -17,7 +17,7 @@
 
 
 /** Class to handle input from the user for a render widget.
- * This calls handles all the keyboard and mouse input for a render widget. It is
+ * This handles all the keyboard and mouse input for a render widget. It is
  * mainly used for navigation in 3D and object selection.
  */
 class InputHandler
@@ -36,9 +36,6 @@ public:
 	void handleKeyboardInput( wxKeyEvent& evt );
 
 protected:
-	/// Show the help overlay
-	void showHelpOverlay();
-
 	void translateCamera( Ogre::Vector3 trans );
 	void translateCameraHorizontal( int Delta );
 	void translateCameraVertical( int Delta );

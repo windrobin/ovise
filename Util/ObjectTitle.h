@@ -4,9 +4,11 @@
 #include "Ogre.h"
 #include <OgreFontManager.h>
 
-/** Class for displaying object titles as 2D text in 3D.
- * @remark This class is taken out of the OgreWiki at http://www.ogre3d.org/wiki/index.php/ObjectTitle
- */
+/** 
+  Class for displaying object titles as 2D text in 3D.
+  
+  @remark This class is taken out of the OgreWiki at http://www.ogre3d.org/wiki/index.php/ObjectTitle
+*/
 class ObjectTitle
 {
 private:

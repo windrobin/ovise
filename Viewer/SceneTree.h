@@ -26,7 +26,10 @@ enum SceneTreeDataType
 	ENTITY
 };
 
-
+/**
+  Represents the current scene in form of a flat tree.
+  Lists all entities currently in the scene.
+*/
 class SceneTree :
 	public wxTreeCtrl,
 	public EntityPoolObserver

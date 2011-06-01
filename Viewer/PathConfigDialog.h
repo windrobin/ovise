@@ -8,6 +8,12 @@
 
 #include "MainFrameBase.h"
 
+/**
+  Dialog class for first time setup.
+  This dialog is displayed on first start of OViSE. It asks for the paths
+  to the media and plugins folders. These values are then written to the
+  application configuration (registry on Windows, config file in Linux).
+*/
 class OViSEPathConfigDialog : public PathConfigDialog
 {
 public:

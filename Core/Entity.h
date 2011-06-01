@@ -27,8 +27,9 @@ class Entity;
 typedef boost::variant<int,double,vec2,vec3,vec4,quat,std::string,Entity*,
 					   boost::any> EntityVariantType;
 
-/** Abstract observer for the entity type.
-								The observer is supposed to be triggered for all attribute changes and a name change.
+/** 
+  Abstract observer for the entity type.
+  The observer is supposed to be triggered for all attribute changes and a name change.
  */
 class EntityObserver
 {

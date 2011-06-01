@@ -17,6 +17,7 @@
 // Include Ogre
 #include <Ogre.h>
 
+/// Deprecated.
 class SceneNodeOffset
 {
 private:

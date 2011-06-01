@@ -83,10 +83,6 @@ void InputHandler::handleKeyboardInput( wxKeyEvent &evt )
 	case 'F':
 		//focusCamera();
 		break;
-	case 't':
-	case 'T':
-		showHelpOverlay();
-		break;
 	case WXK_DELETE:
 		this->DeleteSelectedObjects();
 		break;
@@ -117,18 +113,6 @@ void InputHandler::translateCameraHorizontal( int Delta )
 	horizontal.normalise();
 
 	translateCamera( -Delta/100.f * horizontal );
-}
-
-void InputHandler::showHelpOverlay()
-{
-	Ogre::OverlayManager *overlayMgr =
-	        Ogre::OverlayManager::getSingletonPtr();
-	Ogre::Overlay *hlpOverlay = overlayMgr->getByName(
-		"GeneralOverlays/HelpOverlay" );
-	if(!hlpOverlay) throw OViSEException( "Help Overlay not found!" );
-	if(hlpOverlay->isVisible())
-		hlpOverlay->hide();
-	else hlpOverlay->show();
 }
 
 void InputHandler::DeleteSelectedObjects()

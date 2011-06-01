@@ -9,6 +9,10 @@
 #include <wx/wx.h>
 #include <wx/datetime.h>
 
+
+/**
+  Was used for display of the Ogre log in a textbox, currently unused.
+*/
 class CustomLogListener :
 	public Ogre::LogListener
 {

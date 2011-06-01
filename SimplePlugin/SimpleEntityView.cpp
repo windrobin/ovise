@@ -36,11 +36,11 @@ void SimpleEntityView::OnEntityAttributeChanged(
 	else if ( Name == "Orientation" )
 	{
 		// Set the orientation, if it is available
-		if ( const vec4 * Data = boost::get<vec4>( Attribute ) )
+		if ( const quat * Data = boost::get<quat>( Attribute ) )
+			mNode->setOrientation( *Data );
+		else if( const vec4 * Data = boost::get<vec4>( Attribute ) )
 			mNode->setOrientation( Data->w,
-				Data->x,
-				Data->y,
-				Data->z );
+			Data->x, Data->y, Data->z );
 	}
 	else if ( Name == "Scale" )
 	{

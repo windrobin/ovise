@@ -204,11 +204,24 @@ void MainFrame::SetupSceneTree()
 	this->mWindowManager.AddPane( mSceneTree, wxRIGHT,
 		wxT( "Scene structure" ));
 
-	mEntityPool.CreateEntity( "MisterRoboto" ).Set
+	/*mEntityPool.CreateEntity( "MisterRoboto" ).Set
 		( "Type", "Robot" )
 		( "Model", "Albert.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
-	;
+	;*/
+
+	/*std::vector<Ogre::Vector3> TestTrajectory;
+	TestTrajectory.push_back( vec3(0.f, 0.f, 1.f) );
+	TestTrajectory.push_back( vec3(2.f, 1.f, 1.f) );
+	TestTrajectory.push_back( vec3(3.f, 2.f, 2.f) );
+
+	mEntityPool.CreateEntity( "TestTrajectory" ).Set
+		( "Type", "Trajectory" )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Color", vec3( 1.f, 0.1f, 0.f ) )
+		( "PointSize", 0.02f )
+		( "Points", TestTrajectory )
+	;*/
 
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
@@ -729,4 +742,34 @@ void MainFrame::OnDMSolid( wxCommandEvent &evt )
 }
 
 void MainFrame::OnTestStuff( wxCommandEvent& event )
-{}
+{
+	/*	
+	// This code shows updating a trajectory
+	std::vector<Ogre::Vector3> Points;
+
+	Entity* ent = mEntityPool.GetEntityByName( "TestTrajectory" );
+	if( !ent )
+		return;
+
+	const Entity::VariantType* Att = ent->GetAttribute( "Points" );
+	if( !Att )
+		return;
+
+	const boost::any* PAny = boost::get<boost::any>( Att );
+	if( PAny )
+	{
+		try
+		{
+			const std::vector<Ogre::Vector3>& OldPoints =
+				boost::any_cast<std::vector<Ogre::Vector3> >(*PAny);
+
+			Points.assign( OldPoints.begin(), OldPoints.end() );
+			Points.push_back( Ogre::Vector3( 1.f, 2.f, 2.f ) );
+			Points.push_back( Ogre::Vector3( 1.f, 3.f, 2.f ) );
+
+			ent->SetAttribute( "Points", Points );
+		}
+		catch( boost::bad_any_cast & )
+		{}
+	}*/
+}

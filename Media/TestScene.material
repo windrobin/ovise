@@ -1,0 +1,58 @@
+
+material _missing_material_ 
+{
+	receive_shadows off
+	technique
+	{
+		pass
+		{
+			ambient 0.1 0.1 0.1 1.0
+			diffuse 0.8 0.0 0.0 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.3 0.3 0.3 1.0
+		}
+	}
+}
+
+material CubeMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.0185272227973 0.800000011921 0.0 1.0
+			diffuse 0.0148217784587 0.640000019073 0.0 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material CylinderMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.187875375152 0.170034214854 0.800000011921 1.0
+			diffuse 0.150300302361 0.13602737391 0.640000019073 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
+material SphereMat 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			ambient 0.800000011921 0.253685235977 0.223111778498 1.0
+			diffuse 0.640000019073 0.202948191806 0.178489425458 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+		}
+	}
+}
