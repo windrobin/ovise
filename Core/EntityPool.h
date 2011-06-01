@@ -36,8 +36,7 @@ public:
 	        The next free ID is assigned to this Entity.
 	        \returns The entity that was passed in.
 	 */
-	Entity*                                                 InsertEntity(
-	        Entity* Rhs );
+	Entity* InsertEntity( Entity* Rhs );
 
 	/** Create an entity.
 	        This is a convenicence function that uses InsertEntity internally.
@@ -51,23 +50,23 @@ public:
 	/** Remove an entity from the pool.
 	        Will also delete the entity.
 	 */
-	void                                                    RemoveEntity(
-	        Entity* Rhs );
+	void RemoveEntity( Entity* Rhs );
 
-	Entity*                         GetEntityById( int id );
-	template< typename T >
-	Entity*
-	GetEntityByAttribute( std::string Attribute, const T& Value );
-	template< typename T >
-	int
-	RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value );
-	int
-	RemoveEntitiesByAttribute( const std::string& Attribute );
+	Entity* GetEntityById( int id );
 
-	void                                                    InsertObserver(
-	        EntityPoolObserver* Rhs );
-	void                                                    RemoveObserver(
-	        EntityPoolObserver* Rhs );
+	/// Returns first enitity with the given name
+	Entity* GetEntityByName( const std::string& Name );
+
+	template< typename T >
+	Entity*	GetEntityByAttribute( std::string Attribute, const T& Value );
+
+	template< typename T >
+	int	RemoveEntitiesByAttributeValue( const std::string& Attribute, T& Value );
+
+	int	RemoveEntitiesByAttribute( const std::string& Attribute );
+
+	void InsertObserver( EntityPoolObserver* Rhs );
+	void RemoveObserver( EntityPoolObserver* Rhs );
 
 private:
 	std::vector<Entity*>          mData;

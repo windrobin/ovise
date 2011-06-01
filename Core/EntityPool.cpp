@@ -75,6 +75,19 @@ Entity* EntityPool::GetEntityById( int Id )
 	return NULL;
 }
 
+Entity* EntityPool::GetEntityByName( const std::string& Name )
+{
+	Entity* E = NULL;
+
+	BOOST_FOREACH( E, mData )
+	{
+		if( E->GetName() == Name )
+			return E;
+	}
+
+	return NULL;
+}
+
 void EntityPool::InsertObserver( EntityPoolObserver* Rhs )
 {
 	mObserver.insert( Rhs );
