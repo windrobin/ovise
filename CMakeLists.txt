@@ -13,7 +13,7 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREAD ON )
 find_package( Boost 1.44 REQUIRED )
 else( WIN32 )
-find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem )
+find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem serialization)
 endif( WIN32 )
 
 # Ogre

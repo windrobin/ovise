@@ -102,15 +102,18 @@ void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj )
 	Entity* OldEnt = mEntityPool.GetEntityByAttribute( "SharomeId", Obj.getId() );
 	if( OldEnt )
 	{
-		mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId", Obj.getId() );
+		const std::string AttName = "SharomeId";
+		std::string ObjID = Obj.getId();
+		mEntityPool.RemoveEntitiesByAttributeValue( AttName, ObjID );
 	}
 	CreateEntityFromCObj( mEntityPool, Obj );
 }
 
 void SharomeInterface::HandleObjectDeleted( const OOWM::Mem::CObj& Obj )
 {
-	mEntityPool.RemoveEntitiesByAttributeValue<std::string>( "SharomeId",
-	                                                         Obj.getId() );
+	const std::string AttName = "SharomeId";
+	std::string ObjID = Obj.getId();
+	mEntityPool.RemoveEntitiesByAttributeValue( AttName, ObjID );
 }
 
 void SharomeInterface::HandleSceneChanged( const OOWM::Mem::CScene& Scene )
