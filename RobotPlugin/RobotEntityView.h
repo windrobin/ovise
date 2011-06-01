@@ -4,19 +4,18 @@
 
 #include "../Core/SceneView.h"
 
+/**
+  Specialized visualization for robots.
+*/
 class RobotEntityView :
 	public BasicOgreEntityView
 {
 public:
 	RobotEntityView( Entity* Object, Ogre::SceneManager* Mgr );
-	void                            Remove( Ogre::SceneManager* Mgr );
-	void                            OnEntityChanged( Entity* Rhs );
-	void                            OnEntityAttributeChanged(
-	        Entity*            Rhs,
-	        const std::
-	        string&            Name,
-	        const
-	        EntityVariantType* Attribute );
+	void Remove( Ogre::SceneManager* Mgr );
+	void OnEntityChanged( Entity* Rhs );
+	void OnEntityAttributeChanged( Entity* Rhs, const std::string& Name,
+		const EntityVariantType* Attribute );
 
 	~RobotEntityView();
 

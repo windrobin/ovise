@@ -17,15 +17,23 @@
 #include <wx/app.h>
 #include <wx/cmdline.h>
 
+/**
+  Main application class of the OViSE Viewer.
+  This class is the backbone of the OViSE Viewer as required by
+  wxWidgets.
+*/
 class OViSEApplication : public wxApp
 {
 private:
-	bool    SetupBasicConfiguration();
+	bool SetupBasicConfiguration();
 	bool mForceConfig;
 
 public:
+	/// Stuff to be done on initialization.
 	virtual bool OnInit();
+	/// Command line parsing
 	virtual void OnInitCmdLine( wxCmdLineParser& Parser );
+	/// Stuff to do when the command line has been parsed.
 	virtual bool OnCmdLineParsed( wxCmdLineParser& Parser );
 	virtual ~OViSEApplication();
 };

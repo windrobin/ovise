@@ -48,6 +48,11 @@
 
 using boost::scoped_ptr;
 
+/**
+  Small frame listener needed for the camera control system.
+  Updates the position and orientation of the camera at the end of
+  each frame as is required by the CCS.
+*/
 class COViSEFrameListener : public Ogre::FrameListener
 {
 public:
@@ -59,9 +64,11 @@ private:
 	CCS::CameraControlSystem* mCCS;
 };
 
-/** Main window of the application.
- * @todo Documentation!
- */
+/** 
+  Main window of the application.
+  Implements the main frame of the viewer. Derived fromt the class created
+  by wxFormBuilder. 
+*/
 class MainFrame :
 	public MainFrameBase
 {

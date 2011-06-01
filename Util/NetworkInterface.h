@@ -22,15 +22,21 @@ public:
 	CNetworkInterface( EntityPool& EntPool );
 	virtual ~CNetworkInterface();
 
-	// / Should implement intialization and starting of the interface
+	/// Should implement intialization and starting of the interface
 	virtual bool Start() = 0;
-	// / Should implement unitialization and stopping of interface
+	/// Should implement unitialization and stopping of interface
 	virtual bool Stop() = 0;
 
 	bool IsRunning() {
 		return mRunning;
 	}
 
+	/**
+	  Poll the interface for updates.
+	  This will be periodically called by the interface manager. This call
+	  should process a small batch of network events in the interface and
+	  then return (like boost::io_service::poll_once())
+	*/
 	virtual void Poll() = 0;
 
 protected:
