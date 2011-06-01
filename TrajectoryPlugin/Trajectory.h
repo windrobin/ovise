@@ -6,26 +6,40 @@
 
 typedef std::pair<Ogre::Vector3, Ogre::ColourValue> VertexPair;
 
+/**
+  Represents a trajectory in 3D space.
+  This class is used to draw a trajectory in 3D space given by a series of
+  points. Points are drawn as boxes while inbetween the points a line is drawn
+  to show the connection. Size of the points as well as the colour of the
+  trajectory can be set.
+*/
 class CTrajectory
 {
 public:
+	/// Empty constructor
 	CTrajectory( Ogre::SceneManager* Mgr );
+	/**
+	  Constructor with list of points.
+	  Construct with a series of points given as a float array in the form
+	  p1x p1y p1z p2x p2y p2z .... pnx pny pnz
+	*/
 	CTrajectory( Ogre::SceneManager* Mgr, std::vector<float> Points );
+	/// Construct with a list of Ogre-Points.
 	CTrajectory( Ogre::SceneManager* Mgr, std::vector<Ogre::Vector3> Points );
 	~CTrajectory();
 
-	void AddSinglePoint( const float x, const float y, const float z );
-	void AddSinglePoint( const Ogre::Vector3& Point );
-	void AddPoints( const std::vector<float>& Points );
-	void AddPoints( const std::vector<Ogre::Vector3>& Points );
-	void RemovePoint( const int Index );
+	/// Clear all points in the trajectory.
 	void Clear();
 
+	/// Set colour of visualization
 	void SetColour( const Ogre::ColourValue& Colour ) { mColour = Colour; Update(); }
 
+	/// Set size of points
 	void SetPointSize( float Size ) { mPointSize = Size; Update(); }
+	/// Get points size
 	float GetPointSize() const { return mPointSize; }
 
+	/// Internal: pointer to the Ogre::ManualObject used for visualization
 	Ogre::ManualObject* GetManualObject() { return mMesh; }
 
 private:

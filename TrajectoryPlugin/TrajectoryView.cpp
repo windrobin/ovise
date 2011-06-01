@@ -53,10 +53,10 @@ void TrajectoryView::OnEntityAttributeChanged( Entity* Rhs,
 	}
 	else if ( Name == "PointSize" )
 	{
-		const float* Data = boost::get<float>( Attribute );
+		const double* Data = boost::get<double>( Attribute );
 
 		if ( Data )
-			mTrajectory->SetPointSize( *Data );
+			mTrajectory->SetPointSize( float(*Data) );
 	}
 	else if ( Name == "Points" )
 	{
@@ -73,7 +73,7 @@ void TrajectoryView::OnEntityAttributeChanged( Entity* Rhs,
 
 			mNode->attachObject( mTrajectory->GetManualObject() );
 		}
-		catch( const boost::bad_any_cast& e )
+		catch( const boost::bad_any_cast & )
 		{}
 	}
 }

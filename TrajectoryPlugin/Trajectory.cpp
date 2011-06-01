@@ -41,54 +41,14 @@ CTrajectory::~CTrajectory()
 	}
 }
 
-void CTrajectory::AddSinglePoint( const float x, const float y, const float z )
-{
-	mPoints.push_back( Ogre::Vector3( x, y, z ) );
-	Update();
-}
-
-void CTrajectory::AddSinglePoint( const Ogre::Vector3& Point )
-{
-	mPoints.push_back( Point );
-	Update();
-}
-
-void CTrajectory::AddPoints( const std::vector<float>& Points )
-{
-	for( unsigned int i=0; i<Points.size(); i+=3 )
-		if( i+2 < Points.size() )
-			mPoints.push_back( Ogre::Vector3( Points[i], Points[i+1], Points[i+2] ) );
-	Update();
-}
-
-void CTrajectory::AddPoints( const std::vector<Ogre::Vector3>& Points )
-{
-	for( std::vector<Ogre::Vector3>::const_iterator i = Points.begin(); i != Points.end(); i++ )
-		mPoints.push_back( *i );
-	Update();
-}
-
-void CTrajectory::RemovePoint( const int Index )
-{
-	if( Index >= int(mPoints.size()) )
-		return;
-	std::vector<Ogre::Vector3>::iterator Del = mPoints.begin();
-	int i = Index;
-	while( i > 0 )
-	{
-		Del++;
-		i--;
-	}
-	mPoints.erase( Del );
-	Update();
-}
-
 void CTrajectory::Clear()
 {
 	mPoints.clear();
 	mLineVertices.clear();
 	mQuadVertices.clear();
 	mMesh->clear();
+
+	Init();
 }
 
 void CTrajectory::BuildLine( const Ogre::Vector3& Start, const Ogre::Vector3& End,
