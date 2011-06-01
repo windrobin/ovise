@@ -13,12 +13,8 @@ public:
 	SimpleEntityView( Entity* Object, Ogre::SceneManager* Mgr );
 	~SimpleEntityView();
 
-	void                            OnEntityAttributeChanged(
-	        Entity*            Rhs,
-	        const std::string& Name,
-	        const
-	        EntityVariantType* Attribute );
-
+	void OnEntityAttributeChanged( Entity* Rhs, const std::string& Name,
+		const EntityVariantType* Attribute );
 
 private:
 	Ogre::SceneNode* mNode;

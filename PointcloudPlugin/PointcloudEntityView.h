@@ -6,6 +6,9 @@
 #include "../Core/SceneView.h"
 #include "Pointcloud.h"
 
+/**
+  Specialized visualization for pointclouds.
+*/
 class PointcloudEntityView :
 	public BasicOgreEntityView
 {

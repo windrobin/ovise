@@ -20,6 +20,10 @@ float ToFloat( char* C )
 	return F;
 }
 
+/**
+  Loads a scene from a dotScene xml file.
+  See the bundled Blender exporter for details on the dotscene format.
+*/
 void LoadSceneFromXML( const std::string& Filename, EntityPool& EntPool )
 {
 	bf::path FilePath( Filename );

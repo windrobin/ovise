@@ -7,6 +7,11 @@
 
 class EntityPool;
 
+/**
+  Manages the various network interface plugins.
+  This class is responsible for loading and unloading of the network
+  interface plugins. Also polls all interfaces for updates.
+*/
 class CInterfaceManager
 {
 public:

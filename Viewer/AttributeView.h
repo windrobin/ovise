@@ -7,9 +7,10 @@
 #include <wx/setup.h>
 #include <wx/propgrid/propgrid.h>
 
-/** View for the attributes in an entity.
-        Uses a property grid.
- */
+/** 
+  View for the attributes in an entity.
+  Uses a property grid.
+*/
 class AttributeView :
 	public EntityObserver, public EntityPoolObserver
 {
@@ -19,11 +20,15 @@ public:
 
 	wxPropertyGrid* GetGrid();
 
+	/// Set the entity to display.
 	void SetEntity( Entity* Rhs );
 
+	/// Handler for reacting to property changes
 	virtual void OnPropertyChange( wxPropertyGridEvent& Rhs );
 
+	/// Handler for insertion of an entity.
 	virtual void OnEntityInsert( Entity* Object, std::size_t Index ) {}
+	/// Handler for removal of an entity.
 	virtual void OnEntityRemove( Entity* Object, std::size_t Index );
 
 protected:
