@@ -33,6 +33,7 @@ option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
 option( PLUGINS_ROBOT "Build robot plugin" ON )
 option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
 option( PLUGINS_TRAJECTORY "Build trajectory plugin" ON )
+option( PLUGINS_SKELETAL "Build skeletal animated mesh plugin" ON )
 option( PLUGINS_VOODOO "Build Voodoo plugin" OFF )
 
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
@@ -62,6 +63,10 @@ endif()
 
 if( PLUGINS_TRAJECTORY )
 add_subdirectory( TrajectoryPlugin )
+endif()
+
+if( PLUGINS_SKELETAL )
+add_subdirectory( SkeletalPlugin )
 endif()
 
 if( INTERFACES_ILCAS )
