@@ -223,6 +223,13 @@ void MainFrame::SetupSceneTree()
 		( "Points", TestTrajectory )
 	;*/
 
+	mEntityPool.CreateEntity( "TestHand" ).Set
+		( "Type", "Skeletal" )
+		( "Position", Ogre::Vector3::ZERO )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+		( "Model", "RainerHand.mesh" )
+	;
+
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
 	mEntityPool.InsertObserver( mAttributeView.get() );
