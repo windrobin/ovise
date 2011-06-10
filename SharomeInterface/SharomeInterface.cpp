@@ -31,10 +31,10 @@ namespace
 					float(L.m_Position.m_Value[1]),
 					float(L.m_Position.m_Value[2] ) ) );
 				E.SetAttribute( "Orientation",
-					quat( float(L.m_Orientation.m_Value[0]),
-					float(L.m_Orientation.m_Value[1]),
-					float(L.m_Orientation.m_Value[2]),
-					float(L.m_Orientation.m_Value[3] ) ) );
+					quat( float(L.m_Orientation.m_Value.w),
+					float(L.m_Orientation.m_Value.x),
+					float(L.m_Orientation.m_Value.y),
+					float(L.m_Orientation.m_Value.z ) ) );
 				E.SetAttribute( "Scale",
 					vec3( float(L.m_Scale.m_Value[0]),
 					float(L.m_Scale.m_Value[1]),
@@ -53,19 +53,15 @@ SharomeInterface::SharomeInterface( EntityPool& EntPool )
 SharomeInterface::~SharomeInterface( void )
 {}
 
-bool SharomeInterface::Start()
+bool SharomeInterface::Start( const std::string& Host, const std::string& Service )
 {
 	std::cout << "SharomeInterface init." << std::endl;
-
-	// FIXME: to be set by dialog
-	std::string Host = "localhost";
-	std::string Service = "12345";
 
 	LegacyClient.reset( new CAsyncClient( Host, Service, true ) );
 	LegacyClient->ObjectCreatedSignal.connect(
 		boost::bind( &SharomeInterface::HandleObjectCreated, this, _1 ) );
 	LegacyClient->ObjectChangedSignal.connect(
-		boost::bind( &SharomeInterface::HandleObjectChanged, this, _1 ) );
+		boost::bind( &SharomeInterface::HandleObjectChanged, this, _1, _2 ) );
 	LegacyClient->ObjectDeletedSignal.connect(
 		boost::bind( &SharomeInterface::HandleObjectDeleted, this, _1 ) );
 	LegacyClient->SceneChangedSignal.connect(
@@ -97,7 +93,8 @@ void SharomeInterface::HandleObjectCreated( const OOWM::Mem::CObj& Obj )
 	CreateEntityFromCObj( mEntityPool, Obj );
 }
 
-void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj )
+void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj,
+	const OOWM::Mem::CObj& OldObj )
 {
 	Entity* OldEnt = mEntityPool.GetEntityByAttribute( "SharomeId", Obj.getId() );
 	if( OldEnt )

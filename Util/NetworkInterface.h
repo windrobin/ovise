@@ -23,7 +23,7 @@ public:
 	virtual ~CNetworkInterface();
 
 	/// Should implement intialization and starting of the interface
-	virtual bool Start() = 0;
+	virtual bool Start( const std::string& Host, const std::string& Service ) = 0;
 	/// Should implement unitialization and stopping of interface
 	virtual bool Stop() = 0;
 

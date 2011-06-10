@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -27,6 +27,8 @@
 #include <wx/radiobox.h>
 #include <wx/textctrl.h>
 #include <wx/statline.h>
+#include <wx/checkbox.h>
+#include <wx/button.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +87,7 @@ class MainFrameBase : public wxFrame
 	public:
 		
 		MainFrameBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - powered by wxWidgets!"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 800,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		
 		~MainFrameBase();
 	
 };
@@ -103,7 +106,7 @@ class PathConfigDialog : public wxDialog
 	
 	public:
 		
-		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,138 ), long style = wxDEFAULT_DIALOG_STYLE );
+		PathConfigDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("OViSE - Configure Path Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 596,138 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~PathConfigDialog();
 	
 };
@@ -123,8 +126,32 @@ class AddAttributeDialog : public wxDialog
 		wxTextCtrl* NameCtrl;
 		wxTextCtrl* ValueCtrl;
 		
-		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE );
+		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~AddAttributeDialog();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class CSettingsDlg
+///////////////////////////////////////////////////////////////////////////////
+class CSettingsDlg : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_staticText8;
+		wxStaticText* m_staticText9;
+		wxStdDialogButtonSizer* m_sdbSizer1;
+		wxButton* m_sdbSizer1OK;
+		wxButton* m_sdbSizer1Cancel;
+	
+	public:
+		wxTextCtrl* HostTextCtrl;
+		wxTextCtrl* PortTextCtrl;
+		wxCheckBox* RememberSettingsCheckBox;
+		
+		CSettingsDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Network settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 378,146 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		~CSettingsDlg();
 	
 };
 

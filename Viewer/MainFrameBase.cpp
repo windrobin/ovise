@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Mar 22 2011)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -229,5 +229,57 @@ AddAttributeDialog::AddAttributeDialog( wxWindow* parent, wxWindowID id, const w
 }
 
 AddAttributeDialog::~AddAttributeDialog()
+{
+}
+
+CSettingsDlg::CSettingsDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText8 = new wxStaticText( this, wxID_ANY, wxT("Host:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8->Wrap( -1 );
+	bSizer6->Add( m_staticText8, 0, wxALL, 5 );
+	
+	HostTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer6->Add( HostTextCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer4->Add( bSizer6, 1, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_staticText9 = new wxStaticText( this, wxID_ANY, wxT("Port:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9->Wrap( -1 );
+	bSizer7->Add( m_staticText9, 0, wxALL, 5 );
+	
+	PortTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer7->Add( PortTextCtrl, 1, wxALL|wxEXPAND, 5 );
+	
+	bSizer4->Add( bSizer7, 1, wxEXPAND, 5 );
+	
+	RememberSettingsCheckBox = new wxCheckBox( this, wxID_ANY, wxT("Remember settings"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( RememberSettingsCheckBox, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
+	
+	m_sdbSizer1 = new wxStdDialogButtonSizer();
+	m_sdbSizer1OK = new wxButton( this, wxID_OK );
+	m_sdbSizer1->AddButton( m_sdbSizer1OK );
+	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
+	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
+	m_sdbSizer1->Realize();
+	bSizer4->Add( m_sdbSizer1, 1, wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer4 );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+CSettingsDlg::~CSettingsDlg()
 {
 }
