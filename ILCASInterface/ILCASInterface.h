@@ -19,7 +19,7 @@ public:
 	void AcceptHandler( const boost::system::error_code& );
 	void ReadHandler( const boost::system::error_code&, std::size_t );
 
-	bool Start();
+	bool Start( const std::string& Host, const std::string& Service );
 	bool Stop();
 
 	void Poll();

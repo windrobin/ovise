@@ -4,13 +4,13 @@
 #include "../rapidxml-1.13/rapidxml.hpp"
 
 CVoodooInterface::CVoodooInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool )
+	: CNetworkInterface( EntPool, true )
 {}
 
 CVoodooInterface::~CVoodooInterface()
 {}
 
-bool CVoodooInterface::Start()
+bool CVoodooInterface::Start( const std::string& Host, const std::string& Service )
 {
 	if( !mVoodooParser.LoadBodyMapping() )
 		return false;
@@ -29,7 +29,13 @@ bool CVoodooInterface::Start()
 
 	mConnection->MessageSignal.connect( boost::bind( &CVoodooInterface::
 			HandleMessage, this, _1 ) );
-	mConnection->Connect();
+
+	std::string ServerAdress = "localhost";
+	std::string ServerPort = "22613";
+	if( !Host.empty() ) ServerAdress = Host;
+	if( !Service.empty() ) ServerPort = Service;
+
+	mConnection->Connect( ServerAdress, ServerPort );
 
 	return true;
 }

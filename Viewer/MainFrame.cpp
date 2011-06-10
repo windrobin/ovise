@@ -311,31 +311,41 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 
 	if( Event.IsChecked() )
 	{
-		CSettingsDlg Settings( this );
+		std::string Host, Port;
 
-		wxConfig Config( "OViSE" );
-		if( Config.HasGroup( wxString(Name.c_str()) ) )
+		if( Interface->NeedsConfig() )
 		{
-			wxString ConfHost = Config.Read( wxString(Name.c_str()) + wxT("/Host") );
-			wxString ConfPort = Config.Read( wxString(Name.c_str()) + wxT("/Port") );
+			CSettingsDlg Settings( this );
 
-			Settings.HostTextCtrl->SetValue( ConfHost );
-			Settings.PortTextCtrl->SetValue( ConfPort );
-			Settings.RememberSettingsCheckBox->SetValue( true );
+			wxConfig Config( "OViSE" );
+			if( Config.HasGroup( wxString(Name.c_str()) ) )
+			{
+				wxString ConfHost = Config.Read( wxString(Name.c_str()) + wxT("/Host") );
+				wxString ConfPort = Config.Read( wxString(Name.c_str()) + wxT("/Port") );
+
+				Settings.HostTextCtrl->SetValue( ConfHost );
+				Settings.PortTextCtrl->SetValue( ConfPort );
+				Settings.RememberSettingsCheckBox->SetValue( true );
+			}
+
+			if( Settings.ShowModal() != wxID_OK )
+				return;
+
+			if( Settings.RememberSettingsCheckBox->IsChecked() )
+			{
+				Config.Write( wxString(Name.c_str()) + wxT("/Host"), 
+					Settings.HostTextCtrl->GetValue() );
+				Config.Write( wxString(Name.c_str()) + wxT("/Port"), 
+					Settings.PortTextCtrl->GetValue() );
+			}
+			Host = std::string( Settings.HostTextCtrl->GetValue().mb_str() );
+			Port = std::string( Settings.PortTextCtrl->GetValue().mb_str() );
 		}
-
-		if( Settings.ShowModal() != wxID_OK )
-			return;
-
-		if( Settings.RememberSettingsCheckBox->IsChecked() )
+		else
 		{
-			Config.Write( wxString(Name.c_str()) + wxT("/Host"), 
-				Settings.HostTextCtrl->GetValue() );
-			Config.Write( wxString(Name.c_str()) + wxT("/Port"), 
-				Settings.PortTextCtrl->GetValue() );
+			Host = "";
+			Port = "";
 		}
-		std::string Host( Settings.HostTextCtrl->GetValue().mb_str() );
-		std::string Port( Settings.PortTextCtrl->GetValue().mb_str() );
 
 		wxString msg = wxT( "Starting interface " ) + wxString( Name );
 		SetStatusMessage( msg );
