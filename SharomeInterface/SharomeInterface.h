@@ -25,13 +25,13 @@ public:
 	SharomeInterface( EntityPool& EntPool );
 	~SharomeInterface( void );
 
-	bool Start();
+	bool Start( const std::string& Host, const std::string& Service );
 	bool Stop();
 
 	void Poll();
 
 	void HandleObjectCreated( const OOWM::Mem::CObj& Obj );
-	void HandleObjectChanged( const OOWM::Mem::CObj& Obj );
+	void HandleObjectChanged( const OOWM::Mem::CObj& Obj, const OOWM::Mem::CObj& OldObj );
 	void HandleObjectDeleted( const OOWM::Mem::CObj& Obj );
 	void HandleSceneChanged( const OOWM::Mem::CScene& Scene );
 	void HandleSceneDeleted();

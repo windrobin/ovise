@@ -14,6 +14,7 @@
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <wx/dir.h>
+#include <wx/config.h>
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -223,12 +224,12 @@ void MainFrame::SetupSceneTree()
 		( "Points", TestTrajectory )
 	;*/
 
-	mEntityPool.CreateEntity( "TestHand" ).Set
+	/*mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
 		( "Position", Ogre::Vector3::ZERO )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "Model", "RainerHand.mesh" )
-	;
+	;*/
 
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );
@@ -310,11 +311,37 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 
 	if( Event.IsChecked() )
 	{
+		CSettingsDlg Settings( this );
+
+		wxConfig Config( "OViSE" );
+		if( Config.HasGroup( wxString(Name.c_str()) ) )
+		{
+			wxString ConfHost = Config.Read( wxString(Name.c_str()) + wxT("/Host") );
+			wxString ConfPort = Config.Read( wxString(Name.c_str()) + wxT("/Port") );
+
+			Settings.HostTextCtrl->SetValue( ConfHost );
+			Settings.PortTextCtrl->SetValue( ConfPort );
+			Settings.RememberSettingsCheckBox->SetValue( true );
+		}
+
+		if( Settings.ShowModal() != wxID_OK )
+			return;
+
+		if( Settings.RememberSettingsCheckBox->IsChecked() )
+		{
+			Config.Write( wxString(Name.c_str()) + wxT("/Host"), 
+				Settings.HostTextCtrl->GetValue() );
+			Config.Write( wxString(Name.c_str()) + wxT("/Port"), 
+				Settings.PortTextCtrl->GetValue() );
+		}
+		std::string Host( Settings.HostTextCtrl->GetValue().mb_str() );
+		std::string Port( Settings.PortTextCtrl->GetValue().mb_str() );
+
 		wxString msg = wxT( "Starting interface " ) + wxString( Name );
 		SetStatusMessage( msg );
 		if( Interface )
 		{
-			if( Interface->Start() && !mNetworkTimer.IsRunning() )
+			if( Interface->Start( Host, Port ) && !mNetworkTimer.IsRunning() )
 				mNetworkTimer.Start( 50 );
 		}
 	}
