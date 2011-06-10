@@ -13,7 +13,7 @@ public:
 	CVoodooInterface( EntityPool& EntPool );
 	~CVoodooInterface( void );
 
-	bool Start();
+	bool Start( const std::string& Host, const std::string& Service );
 	bool Stop();
 
 	void Poll();

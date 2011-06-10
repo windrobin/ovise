@@ -7,7 +7,7 @@
 
 
 CILCASInterface::CILCASInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool ),
+	: CNetworkInterface( EntPool, false ),
 	mMessageHandler( &EntPool )
 {}
 
@@ -18,10 +18,13 @@ CILCASInterface::~CILCASInterface( void )
 	mAcceptor->close();
 }
 
-bool CILCASInterface::Start()
+bool CILCASInterface::Start( const std::string& Host, const std::string& Service )
 {
-	mEndpoint.reset( new boost::asio::ip::tcp::endpoint( boost::asio::ip::
-			tcp::v4(), 2121 ) );
+	// currently we don't care about different ports or host adresses
+	// since this interface is listening passively
+	mEndpoint.reset( 
+		new boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4(), 2121 ) );
+	
 	mAcceptor.reset( new boost::asio::ip::tcp::acceptor( mIOService,
 			*mEndpoint ) );
 	mSocket.reset( new boost::asio::ip::tcp::socket( mIOService ) );

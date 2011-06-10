@@ -19,7 +19,7 @@
 class CNetworkInterface
 {
 public:
-	CNetworkInterface( EntityPool& EntPool );
+	CNetworkInterface( EntityPool& EntPool, bool NeedsConfigDialog = true );
 	virtual ~CNetworkInterface();
 
 	/// Should implement intialization and starting of the interface
@@ -27,9 +27,8 @@ public:
 	/// Should implement unitialization and stopping of interface
 	virtual bool Stop() = 0;
 
-	bool IsRunning() {
-		return mRunning;
-	}
+	bool IsRunning() { return mRunning; }
+	bool NeedsConfig() { return mNeedsConfigDialog; }
 
 	/**
 	  Poll the interface for updates.
@@ -43,6 +42,7 @@ protected:
 	EntityPool& mEntityPool;
 	std::string mName;
 	bool        mRunning;
+	bool        mNeedsConfigDialog;
 };
 
 

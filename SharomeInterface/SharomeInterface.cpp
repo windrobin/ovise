@@ -46,7 +46,7 @@ namespace
 
 
 SharomeInterface::SharomeInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool )
+	: CNetworkInterface( EntPool, true )
 {}
 
 
@@ -57,7 +57,13 @@ bool SharomeInterface::Start( const std::string& Host, const std::string& Servic
 {
 	std::cout << "SharomeInterface init." << std::endl;
 
-	LegacyClient.reset( new CAsyncClient( Host, Service, true ) );
+	std::string ServerAdress = "localhost";
+	std::string ServerPort = "12345";
+	if( !Host.empty() ) ServerAdress = Host;
+	if( !Service.empty() ) ServerPort = Service;
+
+	LegacyClient.reset( new CAsyncClient( ServerAdress, ServerPort, true ) );
+
 	LegacyClient->ObjectCreatedSignal.connect(
 		boost::bind( &SharomeInterface::HandleObjectCreated, this, _1 ) );
 	LegacyClient->ObjectChangedSignal.connect(
