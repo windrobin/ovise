@@ -10,6 +10,7 @@ include_directories( ${Boost_INCLUDE_DIR}
 include( ${wxWidgets_USE_FILE} )
 
 set( ViewerHeaders
+	 AppContext.h
 	 Application.h
 	 AttributeView.h
 	 DotSceneManager.h
@@ -24,6 +25,7 @@ set( ViewerHeaders
 	 SceneTree.h )
 	 
 set( ViewerSources
+	 AppContext.cpp
 	 Application.cpp
 	 AttributeView.cpp
 	 DotSceneManager.cpp

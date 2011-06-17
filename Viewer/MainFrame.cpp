@@ -74,8 +74,7 @@ MainFrame::MainFrame( wxString  MediaDir,
 	mMediaPath( MediaDir ),
 	mPluginPath( PluginDir ),
 	mOgreWindow( 0 ),
-	mInputHandler( 0 ),
-	mCurrentEntity( 0 )
+	mInputHandler( 0 )
 {
 #if wxUSE_STATUSBAR
 	statusBar->SetStatusText( _( "OViSE started up." ), 0 );
@@ -566,7 +565,7 @@ void MainFrame::OnAbout( wxCommandEvent &event )
 	wxString description = wxT( "Institute for Anthropomatics (IfA)\n\r" );
 	description += wxT( "Humanoid and Intelligence Systems Lab (HIS)\n" );
 	description += wxT( "Prof. Dr. R. Dillmann\n" );
-	description += wxT( "http://wwwiaim.ira.uka.de\n" );
+	description += wxT( "http://his.anthropomatik.kit.edu\n" );
 	description += wxT( "Department of Computer Science\n" );
 	description += wxT( "Karlsruhe Institute of Technology (KIT)\n" );
 	description += wxT(	"Ogre Framework for scene visualization. Uses Ogre3D (http://www.ogre3d.org)" );
@@ -599,10 +598,11 @@ void MainFrame::OnAbout( wxCommandEvent &event )
 void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 {
 	wxFileDialog fDialog( this, wxT( "Save screen to file" ),
-	                      wxGetHomeDir(), wxT( "OViSEScreenshot.png" ),
+	                      wxGetHomeDir(),  
+						  wxFileName::CreateTempFileName(wxT("OViSE")),
 	                      wxT( "PNG files (*.png)|*.png" ), wxFD_SAVE );
 	int rval = fDialog.ShowModal();
-	wxSafeYield();
+	wxYieldIfNeeded();
 	if(rval == wxID_OK)
 	{
 		wxString fullPath = fDialog.GetPath();
@@ -613,18 +613,16 @@ void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 
 void MainFrame::OnViewClick( wxMouseEvent& event )
 {
-	/*wxPoint p = event.GetPosition();
-	   wxPoint t = mMainRenderWin->GetScreenPosition();
-	   int width = mRenderWin->getWidth();
-	   int height = mRenderWin->getHeight();
-	   wxPoint s = p;
-	   float sx = (float)s.x / (float)width;
-	   float sy = (float)s.y / (float)height;
-	   float d = -1;
+	wxPoint p = event.GetPosition();
+	wxPoint t = mOgreWindow->GetScreenPosition();
+	int width = mOgreWindow->GetRenderWindow()->getWidth();
+	int height = mOgreWindow->GetRenderWindow()->getHeight();
+	wxPoint s = p;
+	float sx = (float)s.x / (float)width;
+	float sy = (float)s.y / (float)height;
+	float d = -1;
 
-	   Ogre::Ray tRay = OgreMediator::GetSingletonPtr()->iSceneManager.Assist_GetRayForRaySceneQuery(sx, sy, mCam);
-	   QualifiedNameCollection QNames = OgreMediator::GetSingletonPtr()->iSceneManager.QueryObjectsByRay(tRay, OgreMediator::GetSingletonPtr()->iSceneManager.GetActiveSceneManager());
-	 */
+	
 }
 
 void MainFrame::OnDynamicShadowsChange( wxCommandEvent& event )
@@ -659,30 +657,26 @@ void MainFrame::OnInsertEntity( wxCommandEvent& Event )
 
 void MainFrame::OnRemoveEntity( wxCommandEvent& Event )
 {
-	if ( mCurrentEntity )
-		mEntityPool.RemoveEntity( mCurrentEntity );
+	if ( CAppContext::instance().HasSelection() )
+		mEntityPool.RemoveEntity( CAppContext::instance().GetSelected() );
 
-	mCurrentEntity = 0;
+	CAppContext::instance().ClearSelection();
 }
 
 
 void MainFrame::OnAddAttribute( wxCommandEvent& Event )
 {
-	if ( !mCurrentEntity )
-		return;
+	if ( !CAppContext::instance().HasSelection() ) return;
 
 	// Setup the "add attribute" dialog
 	AddAttributeDialog Dialog( this );
-	int                SelectedType = 0;
-	Dialog.Sizer->Add( Dialog.CreateButtonSizer(
-			wxOK | wxCANCEL ), 0, wxEXPAND,5 );
+	int SelectedType = 0;
+	Dialog.Sizer->Add( Dialog.CreateButtonSizer( wxOK | wxCANCEL ), 0, wxEXPAND,5 );
 	Dialog.Sizer->Fit( &Dialog );
 
 	// Bind selection events to change 'SelectedType'
-	boost::function<void(wxCommandEvent&)> Func = boost::bind(
-		&SetSelectedIndex,
-		_1,
-		boost::ref( SelectedType ) );
+	boost::function<void(wxCommandEvent&)> Func = boost::bind( &SetSelectedIndex,
+		_1,	boost::ref( SelectedType ) );
 	Dialog.TypeRadioBox->Bind( wxEVT_COMMAND_RADIOBOX_SELECTED,Func );
 
 	if ( Dialog.ShowModal() == wxID_OK )
@@ -692,7 +686,7 @@ void MainFrame::OnAddAttribute( wxCommandEvent& Event )
 
 		// FIXME: use type information, not just strings!
 
-		if ( mCurrentEntity->GetAttribute( AttribName ) )
+		if ( CAppContext::instance().GetSelected()->GetAttribute( AttribName ) )
 		{
 			wxMessageBox( "Attribute of that name already exists!",
 				"Error while adding attribute",
@@ -703,27 +697,23 @@ void MainFrame::OnAddAttribute( wxCommandEvent& Event )
 
 		try
 		{
+			Entity* Selected = CAppContext::instance().GetSelected();
 			switch( SelectedType )
 			{
 			default:
 			case 0:
 				// Int
-				mCurrentEntity->Set<int>( AttribName,
-				                          boost::lexical_cast<
-				                                  int>(
-								  AttribValue ) );
+				Selected->Set<int>( AttribName, 
+					boost::lexical_cast<int>( AttribValue ) );
 				break;
 			case 1:
 				// String
-				mCurrentEntity->Set<std::string>( AttribName,
-				                                  AttribValue );
+				Selected->Set<std::string>( AttribName, AttribValue );
 				break;
 			case 2:
 				// Float
-				mCurrentEntity->Set<double>(
-				        AttribName,
-				        boost::
-				        lexical_cast<double>( AttribValue ) );
+				Selected->Set<double>( AttribName, 
+					boost::lexical_cast<double>( AttribValue ) );
 				break;
 			}
 		}
@@ -740,26 +730,24 @@ void MainFrame::OnAddAttribute( wxCommandEvent& Event )
 
 void MainFrame::OnDeleteAttribute( wxCommandEvent& Event )
 {
-	if ( !mCurrentEntity )
-		return;
+	if ( !CAppContext::instance().HasSelection() ) return;
 
 	wxPropertyGrid* Grid = mAttributeView->GetGrid();
 	wxPGProperty*   Selected = Grid->GetSelection();
 
-	if ( !Selected )
-		return;
+	if ( !Selected ) return;
 
 	std::string Name( Selected->GetName().mb_str() );
-	mCurrentEntity->RemoveAttribute( Name );
+	CAppContext::instance().GetSelected()->RemoveAttribute( Name );
 }
 
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 {
 	wxTreeItemId Item = Event.GetItem();
-	Entity*      Selected = mSceneTree->GetEntity( Item );
+	Entity* Selected = mSceneTree->GetEntity( Item );
 
-	mCurrentEntity = Selected;
+	CAppContext::instance().SetSelection( Selected );
 	mAttributeView->SetEntity( Selected );
 }
 

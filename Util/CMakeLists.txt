@@ -13,6 +13,7 @@ set( UtilHeaders
 	OViSEException.h
 	SceneLoader.h
 	SceneNodeOffset.h
+	Singleton.hpp
 	StringConverter.h )
 	
 set( UtilSources
