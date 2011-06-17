@@ -1,6 +1,7 @@
 #include "InputHandler.h"
 
 #include <CCSOrbitalCameraMode.h>
+#include "AppContext.h"
 
 InputHandler::InputHandler( CCS::CameraControlSystem* CCS,
                             wxWindow *       parent )

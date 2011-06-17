@@ -24,22 +24,21 @@
 #include <wx/imaglist.h>
 #include <wx/timer.h>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "MainFrameBase.h"
 #include "SceneHandling.h"
 #include "SceneTree.h"
 #include "LogListener.h"
 #include "InputHandler.h"
-#include "InterfaceManager.h"
-
-#include <boost/scoped_ptr.hpp>
-
-#include <Logging.h>
-
+#include "AppContext.h"
+#include "AttributeView.h"
 #include "OgreWindow.h"
 
-#include "AttributeView.h"
+#include <Logging.h>
 #include <SceneView.h>
 #include <NetworkInterface.h>
+#include <InterfaceManager.h>
 
 #include <CCSCameraControlSystem.h>
 #include <CCSBasicCameraModes.h>
@@ -134,10 +133,10 @@ protected:
 	SceneTree* mSceneTree;
 
 	scoped_ptr<AttributeView> mAttributeView;
-	Entity*                   mCurrentEntity;
-	Ogre::Camera*             mCamera;
+	
+	Ogre::Camera*                        mCamera;
 	scoped_ptr<CCS::CameraControlSystem> mCCS;
-	scoped_ptr<CCS::OrbitalCameraMode> mOrbitalCamMode;
+	scoped_ptr<CCS::OrbitalCameraMode>   mOrbitalCamMode;
 
 	wxTimer mNetworkTimer;
 
