@@ -102,6 +102,8 @@ MainFrame::MainFrame( wxString  MediaDir,
 	// Initialize SelectionManager
 	SetupSceneTree();
 
+	mRaySceneQuery.reset( new Ogre::DefaultRaySceneQuery( mOgreWindow->GetSceneManager() ) );
+
 	mInterfaceManager.reset( new CInterfaceManager( mEntityPool ) );
 
 	LoadNWPlugins();
@@ -620,9 +622,16 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 	wxPoint s = p;
 	float sx = (float)s.x / (float)width;
 	float sy = (float)s.y / (float)height;
-	float d = -1;
-
 	
+	Ogre::Ray MouseRay = mCamera->getCameraToViewportRay( sx, sy );
+	mRaySceneQuery->setRay( MouseRay );
+	mRaySceneQuery->setSortByDistance( true );
+
+	Ogre::RaySceneQueryResult& QueryResult = mRaySceneQuery->execute();
+
+	if( QueryResult.size() == 0 ) return;
+
+	Ogre::MovableObject* SelectedObject = QueryResult[0].movable;
 }
 
 void MainFrame::OnDynamicShadowsChange( wxCommandEvent& event )

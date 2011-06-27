@@ -138,6 +138,8 @@ protected:
 	scoped_ptr<CCS::CameraControlSystem> mCCS;
 	scoped_ptr<CCS::OrbitalCameraMode>   mOrbitalCamMode;
 
+	scoped_ptr<Ogre::DefaultRaySceneQuery> mRaySceneQuery;
+
 	wxTimer mNetworkTimer;
 
 	scoped_ptr<CInterfaceManager> mInterfaceManager;
