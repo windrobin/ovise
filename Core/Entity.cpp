@@ -3,19 +3,19 @@
 #include <boost/foreach.hpp>
 
 Entity::Entity()
-	: Id( -1 )
+	: Id( -1 ), OgreEntity( NULL )
 {}
 
 Entity::Entity( const std::string& Name )
-	: Name( Name ), Id( -1 )
+	: Name( Name ), Id( -1 ), OgreEntity( NULL )
 {}
 
 Entity::Entity( int id )
-	: Id( id )
+	: Id( id ), OgreEntity( NULL )
 {}
 
 Entity::Entity( const std::string& Name, int id )
-	: Name( Name ), Id( id )
+	: Name( Name ), Id( id ), OgreEntity( NULL )
 {}
 
 Entity::~Entity()

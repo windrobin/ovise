@@ -88,6 +88,22 @@ Entity* EntityPool::GetEntityByName( const std::string& Name )
 	return NULL;
 }
 
+Entity* EntityPool::GetEntityByOgreEntity( Ogre::Entity* OgreEnt )
+{
+	if( OgreEnt == NULL )
+		return NULL;
+
+	Entity* E = NULL;
+
+	BOOST_FOREACH( E, mData )
+	{
+		if( E->GetOgreEntity() == OgreEnt )
+			return E;
+	}
+
+	return NULL;
+}
+
 void EntityPool::InsertObserver( EntityPoolObserver* Rhs )
 {
 	mObserver.insert( Rhs );
