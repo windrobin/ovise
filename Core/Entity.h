@@ -151,6 +151,15 @@ public:
        return Id;
 	}
 
+	inline void SetOgreEntity( Ogre::Entity* OgreEnt )
+	{
+		OgreEntity = OgreEnt;
+	}
+
+	inline Ogre::Entity* GetOgreEntity() const
+	{
+		return OgreEntity;
+	}
 
 	/** Set the ID of this entity.
 		The ID should only be modified by the EntityPool. 
@@ -193,6 +202,8 @@ private:
 	AttributeType Attribute;
 
 	std::set<EntityObserver*> Observer;
+
+	Ogre::Entity* OgreEntity;
 };
 
 #endif

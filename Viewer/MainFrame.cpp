@@ -94,6 +94,8 @@ MainFrame::MainFrame( wxString  MediaDir,
 	mOgreWindow->SetGraphicsInit( boost::bind( &MainFrame::InitOgre, this )  );
 	mWindowManager.AddPane( mOgreWindow, wxCENTER, wxT( "RenderWindow" ) );
 
+	mOgreWindow->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnViewClick, this );
+
 	// Initialize PropertyGrid
 	mAttributeView.reset( new AttributeView( this ) );
 	mWindowManager.AddPane( mAttributeView->GetGrid(), wxRIGHT,
@@ -102,30 +104,26 @@ MainFrame::MainFrame( wxString  MediaDir,
 	// Initialize SelectionManager
 	SetupSceneTree();
 
-	mRaySceneQuery.reset( new Ogre::DefaultRaySceneQuery( mOgreWindow->GetSceneManager() ) );
-
 	mInterfaceManager.reset( new CInterfaceManager( mEntityPool ) );
 
 	LoadNWPlugins();
 
 	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
 	for( std::set<std::string>::iterator i = Interfaces.begin();
-	     i != Interfaces.end();
-	     i++ )
+	     i != Interfaces.end(); i++ )
 	{
-		wxMenuItem* InterfaceItem =
-		        network->AppendCheckItem( wxID_ANY, *i );
+		wxMenuItem* InterfaceItem = network->AppendCheckItem( wxID_ANY, *i );
 		boost::function< void ( wxCommandEvent& ) > InitHandler(
 		        boost::bind( &MainFrame::OnNetworkInterfaceCheck,
-				this,
-				_1,
-				*i ) );
-		Bind( wxEVT_COMMAND_MENU_SELECTED,
-			InitHandler,
-			InterfaceItem->GetId() );
+				this, _1, *i ) );
+
+		Bind( wxEVT_COMMAND_MENU_SELECTED, InitHandler,	InterfaceItem->GetId() );
 	}
 
 	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
+
+	CAppContext::instance().SelectionChangedSignal.connect(
+		boost::bind( &MainFrame::OnSelectionChange, this, _1, _2 ) );
 	
 	Maximize( true );
 
@@ -186,6 +184,23 @@ void MainFrame::OnLoadPointcloud( wxCommandEvent& event )
 	;
 }
 
+void MainFrame::OnSelectionChange( Entity* NewSel, Entity* OldSel )
+{
+	if( NewSel == NULL )
+	{
+		// need to clear the selection here
+		mSceneTree->SelectItem( mSceneTree->GetRootItem() );
+	}
+	else
+	{
+		wxTreeItemId Item;
+		if( mSceneTree->GetTreeItem( NewSel, Item ) )
+		{
+			mSceneTree->SelectItem( Item );
+		}
+	}
+}
+
 void MainFrame::SetStatusMessage( wxString& Msg, int field )
 {
 #if wxUSE_STATUSBAR
@@ -211,6 +226,22 @@ void MainFrame::SetupSceneTree()
 		( "Model", "Albert.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;*/
+
+	mEntityPool.CreateEntity( "Barrel" ).Set
+		( "Type", "Simple" )
+		( "Model", "Barrel.mesh" )
+		( "Position", vec3( 0.f, 0.f, 0.5f ) )
+		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
+		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
+	;
+
+	mEntityPool.CreateEntity( "Barrel2" ).Set
+		( "Type", "Simple" )
+		( "Model", "Barrel.mesh" )
+		( "Position", vec3( 0.f, -1.f, 0.5f ) )
+		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
+		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
+	;
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
 	TestTrajectory.push_back( vec3(0.f, 0.f, 1.f) );
@@ -301,6 +332,8 @@ bool MainFrame::InitOgre()
 	mCCS->registerCameraMode( "Orbital", mOrbitalCamMode.get() );
 	mCCS->setCurrentCameraMode( mCCS->getCameraMode("Orbital") );
 	mOgreWindow->GetRoot()->addFrameListener( new COViSEFrameListener( mCCS.get() ) );
+
+	mRaySceneQuery.reset( new Ogre::DefaultRaySceneQuery( SceneManager ) );
 
 	return true;
 }
@@ -616,12 +649,10 @@ void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 void MainFrame::OnViewClick( wxMouseEvent& event )
 {
 	wxPoint p = event.GetPosition();
-	wxPoint t = mOgreWindow->GetScreenPosition();
 	int width = mOgreWindow->GetRenderWindow()->getWidth();
 	int height = mOgreWindow->GetRenderWindow()->getHeight();
-	wxPoint s = p;
-	float sx = (float)s.x / (float)width;
-	float sy = (float)s.y / (float)height;
+	float sx = (float)p.x / (float)width;
+	float sy = (float)p.y / (float)height;
 	
 	Ogre::Ray MouseRay = mCamera->getCameraToViewportRay( sx, sy );
 	mRaySceneQuery->setRay( MouseRay );
@@ -629,9 +660,25 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 
 	Ogre::RaySceneQueryResult& QueryResult = mRaySceneQuery->execute();
 
-	if( QueryResult.size() == 0 ) return;
+	if( QueryResult.size() == 0 ) 
+	{
+		CAppContext::instance().ClearSelection();
+		return;
+	}
 
 	Ogre::MovableObject* SelectedObject = QueryResult[0].movable;
+
+	Ogre::Entity* SelectedEntity = static_cast<Ogre::Entity*>( SelectedObject );
+	if( SelectedEntity )
+	{
+		Entity* Selection = mEntityPool.GetEntityByOgreEntity( SelectedEntity );
+		if( Selection )
+			CAppContext::instance().SetSelection( Selection );
+		else
+			CAppContext::instance().ClearSelection();
+	}
+
+	event.Skip();
 }
 
 void MainFrame::OnDynamicShadowsChange( wxCommandEvent& event )

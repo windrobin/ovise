@@ -73,6 +73,26 @@ Entity* SceneTree::GetEntity( wxTreeItemId Item )
 	return Data ? Data->mEntity : 0;
 }
 
+bool SceneTree::GetTreeItem( Entity* Ent, wxTreeItemId& ItemId )
+{
+	// find corresponding tree item and return true
+	wxTreeItemId Root = GetRootItem();
+	wxTreeItemIdValue Cookie;
+	wxTreeItemId Item = GetFirstChild( Root, Cookie );
+	while( Item.IsOk() )
+	{
+		EntityTreeData* Data = static_cast<EntityTreeData*>( GetItemData( Item ) );
+		if( Data->mEntity == Ent )
+		{
+			ItemId = Item;
+			return true;
+		}
+		Item = GetNextChild( Root, Cookie );
+	}
+
+	return false;
+}
+
 void SceneTree::LoadImageList()
 {
 	wxConfig OviseConfig( "OViSE" );

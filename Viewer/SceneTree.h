@@ -49,13 +49,14 @@ public:
 	~SceneTree( void );
 
 	Entity* GetEntity( wxTreeItemId Item );
+	bool GetTreeItem( Entity* Ent, wxTreeItemId& ItemId );
 
 private:
 
 	void OnEntityInsert( Entity* Object, std::size_t Position );
 	void OnEntityRemove( Entity* Object, std::size_t Position );
 
-	void    LoadImageList();
+	void LoadImageList();
 
 	wxString RootString;
 

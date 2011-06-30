@@ -59,6 +59,7 @@ void SimpleEntityView::OnEntityAttributeChanged(
 			mNode->detachObject( mOgreEntity );
 			GetSceneManager()->destroyEntity( mOgreEntity );
 			mOgreEntity = 0;
+			Rhs->SetOgreEntity( NULL );
 		}
 
 		// Generate a name for the (OViSE) entity pointer
@@ -70,23 +71,19 @@ void SimpleEntityView::OnEntityAttributeChanged(
 		{
 			if( Ogre::ResourceGroupManager::getSingleton().resourceExistsInAnyGroup( *ModelName ) )
 			{
-				mOgreEntity = GetSceneManager()->createEntity(
-					EntityName,
-					*ModelName );
+				mOgreEntity = GetSceneManager()->createEntity( EntityName, *ModelName );
 			}
 			else
 			{
-				mOgreEntity = GetSceneManager()->createEntity(
-					EntityName,
-					"Unknown.mesh" );
+				mOgreEntity = GetSceneManager()->createEntity( EntityName, "Unknown.mesh" );
 			}
 		}
 		else
-			mOgreEntity = GetSceneManager()->createEntity(
-				EntityName,
-				Ogre::SceneManager::PT_CUBE );
+			mOgreEntity = GetSceneManager()->createEntity( EntityName,
+			Ogre::SceneManager::PT_CUBE );
 
 		mNode->attachObject( mOgreEntity );
+		Rhs->SetOgreEntity( mOgreEntity );
 	}
 }
 

@@ -105,6 +105,8 @@ private:
 	void OnNetworkTimer( wxTimerEvent& Event );
 	void OnIdle( wxIdleEvent& Event );
 
+	void OnSelectionChange( Entity* NewSel, Entity* OldSel );
+
 	void SetupSceneTree();
 
 	bool InitOgre();
@@ -138,7 +140,7 @@ protected:
 	scoped_ptr<CCS::CameraControlSystem> mCCS;
 	scoped_ptr<CCS::OrbitalCameraMode>   mOrbitalCamMode;
 
-	scoped_ptr<Ogre::DefaultRaySceneQuery> mRaySceneQuery;
+	scoped_ptr<Ogre::RaySceneQuery> mRaySceneQuery;
 
 	wxTimer mNetworkTimer;
 

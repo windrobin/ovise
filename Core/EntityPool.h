@@ -57,6 +57,8 @@ public:
 	/// Returns first enitity with the given name
 	Entity* GetEntityByName( const std::string& Name );
 
+	Entity* GetEntityByOgreEntity( Ogre::Entity* OgreEnt );
+
 	template< typename T >
 	Entity*	GetEntityByAttribute( std::string Attribute, const T& Value );
 
