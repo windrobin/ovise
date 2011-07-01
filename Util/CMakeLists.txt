@@ -14,7 +14,8 @@ set( UtilHeaders
 	SceneLoader.h
 	SceneNodeOffset.h
 	Singleton.hpp
-	StringConverter.h )
+	StringConverter.h
+	VertexData.h )
 	
 set( UtilSources
 	InterfaceManager.cpp
@@ -23,7 +24,8 @@ set( UtilSources
 	ObjectTitle.cpp
 	OViSEException.cpp
 	SceneNodeOffset.cpp
-	StringConverter.cpp )
+	StringConverter.cpp
+	VertexData.cpp )
 	
 add_library( Util STATIC ${UtilHeaders} ${UtilSources} )
 

@@ -10,6 +10,7 @@
 #include "MainFrame.h"
 
 #include "../Util/SceneLoader.h"
+#include "../Util/VertexData.h"
 
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
@@ -666,12 +667,90 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 		return;
 	}
 
-	Ogre::MovableObject* SelectedObject = QueryResult[0].movable;
+	// Taken from: http://www.ogre3d.org/tikiwiki/Raycasting+to+the+polygon+level&structure=Cookbook
+	// at this point we have raycast to a series of different objects bounding boxes. 
+	// we need to test these different objects to see which is the first polygon hit. 
+	// there are some minor optimizations (distance based) that mean we wont have to 
+	// check all of the objects most of the time, but the worst case scenario is that 
+	// we need to test every triangle of every object. 
+	Ogre::Real ClosestDistance = -1.0f;
+	Ogre::Entity* ClosestResult;
 
-	Ogre::Entity* SelectedEntity = static_cast<Ogre::Entity*>( SelectedObject );
-	if( SelectedEntity )
+	for( size_t QRIndex = 0; QRIndex < QueryResult.size(); QRIndex++ ) 
+	{ 
+		// stop checking if we have found a raycast hit that is closer 
+		// than all remaining entities 
+		if( ( ClosestDistance >= 0.0f ) && 
+			( ClosestDistance < QueryResult[QRIndex].distance ) )
+			break; 
+		
+		// only check this result if its a hit against an entity 
+		if( ( QueryResult[QRIndex].movable != NULL ) && 
+			( QueryResult[QRIndex].movable->getMovableType().compare("Entity") == 0 ) ) 
+		{ 
+			// get the entity to check 
+			Ogre::Entity* PEntity = static_cast<Ogre::Entity*>(QueryResult[QRIndex].movable);   
+			
+			// mesh data to retrieve
+			size_t VertexCount; 
+			size_t IndexCount; 
+			Ogre::Vector3* Vertices; 
+			unsigned long* Indices;  
+			
+			// get the mesh information 
+			Util::GetMeshInformation( PEntity->getMesh(), 
+				VertexCount, 
+				Vertices, 
+				IndexCount, 
+				Indices, 
+				PEntity->getParentSceneNode()->_getDerivedPosition(),
+				PEntity->getParentSceneNode()->_getDerivedOrientation(), 
+				PEntity->getParentSceneNode()->_getDerivedScale() );
+
+			// test for hitting individual triangles on the mesh 
+			bool NewClosestFound = false; 
+			for( int i = 0; i < static_cast<int>(IndexCount); i += 3 ) 
+			{ 
+				// check for a hit against this triangle 
+				std::pair<bool, Ogre::Real> Hit = 
+					Ogre::Math::intersects( MouseRay, 
+					Vertices[Indices[i]], 
+					Vertices[Indices[i+1]], 
+					Vertices[Indices[i+2]], 
+					true, false);  
+				// if it was a hit check if its the closest 
+				if( Hit.first ) 
+				{ 
+					if( ( ClosestDistance < 0.0f ) || 
+						( Hit.second < ClosestDistance ) ) 
+					{ 
+						// this is the closest so far, save it off 
+						ClosestDistance = Hit.second; 
+						NewClosestFound = true; 
+					} 
+				} 
+			}
+
+			// free the verticies and indicies memory 
+			delete[] Vertices;
+			delete[] Indices;
+
+			// if we found a new closest raycast for this object, update the 
+			// closest_result before moving on to the next object. 
+			if( NewClosestFound ) 
+				ClosestResult = PEntity;
+		}  
+	}
+
+	if( ClosestDistance < 0.0f ) 
 	{
-		Entity* Selection = mEntityPool.GetEntityByOgreEntity( SelectedEntity );
+		// raycast failed 
+		ClosestResult = NULL;
+	} 
+	
+	if( ClosestResult )
+	{
+		Entity* Selection = mEntityPool.GetEntityByOgreEntity( ClosestResult );
 		if( Selection )
 			CAppContext::instance().SetSelection( Selection );
 		else
