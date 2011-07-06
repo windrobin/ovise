@@ -32,7 +32,7 @@ SceneView::~SceneView()
 		AbstractOgreEntityView* View( x.second.View );
 
 		// View->Remove( mSceneManager );
-		delete View;
+		if( View ) delete View;
 	}
 }
 

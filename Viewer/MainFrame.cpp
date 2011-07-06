@@ -68,6 +68,24 @@ wxString wxbuildinfo( wxbuildinfoformat format )
 	return wxbuild;
 }
 
+namespace {
+bool GetDLLDetails( wxString Name, 
+	wxDynamicLibraryDetails& Details, 
+	const wxDynamicLibraryDetailsArray& List )
+{
+	for( std::size_t i=0; i<List.GetCount(); i++ )
+	{
+		if( List.Item(i).GetName().Contains( Name ) )
+		{
+			Details = List.Item(i);
+			return true;
+		}
+	}
+	
+	return false;
+}
+}
+
 MainFrame::MainFrame( wxString  MediaDir,
                       wxString  PluginDir,
                       wxWindow* ParentWindow )
@@ -107,22 +125,6 @@ MainFrame::MainFrame( wxString  MediaDir,
 
 	mInterfaceManager.reset( new CInterfaceManager( mEntityPool ) );
 
-	LoadNWPlugins();
-
-	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
-	for( std::set<std::string>::iterator i = Interfaces.begin();
-	     i != Interfaces.end(); i++ )
-	{
-		wxMenuItem* InterfaceItem = network->AppendCheckItem( wxID_ANY, *i );
-		boost::function< void ( wxCommandEvent& ) > InitHandler(
-		        boost::bind( &MainFrame::OnNetworkInterfaceCheck,
-				this, _1, *i ) );
-
-		Bind( wxEVT_COMMAND_MENU_SELECTED, InitHandler,	InterfaceItem->GetId() );
-	}
-
-	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
-
 	CAppContext::instance().SelectionChangedSignal.connect(
 		boost::bind( &MainFrame::OnSelectionChange, this, _1, _2 ) );
 	
@@ -139,7 +141,11 @@ void MainFrame::OnClose( wxCloseEvent& event )
 }
 
 MainFrame::~MainFrame()
-{}
+{
+	// need to manually delete this to make sure it gets cleaned up before
+	// the plugins are unloaded
+	mSceneView.reset();
+}
 
 void MainFrame::OnIdle( wxIdleEvent& Event )
 {
@@ -325,7 +331,23 @@ bool MainFrame::InitOgre()
 			boost::bind( &OgreWindow::Refresh, mOgreWindow, false,
 				(wxRect*) 0 ) ) );
 
-	LoadVisPlugins();
+	mPluginManager.LoadPlugins( mPluginPath );
+	mPluginManager.InitNWPlugins( *mInterfaceManager );
+	mPluginManager.InitVIPlugins( *mSceneView );
+
+	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
+	for( std::set<std::string>::iterator i = Interfaces.begin();
+	     i != Interfaces.end(); i++ )
+	{
+		wxMenuItem* InterfaceItem = network->AppendCheckItem( wxID_ANY, *i );
+		boost::function< void ( wxCommandEvent& ) > InitHandler(
+		        boost::bind( &MainFrame::OnNetworkInterfaceCheck,
+				this, _1, *i ) );
+
+		Bind( wxEVT_COMMAND_MENU_SELECTED, InitHandler,	InterfaceItem->GetId() );
+	}
+
+	mNetworkTimer.Bind( wxEVT_TIMER, &MainFrame::OnNetworkTimer, this );
 
 	mEntityPool.InsertObserver( mSceneView.get() );
 
@@ -403,185 +425,6 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 	}
 }
 
-void MainFrame::LoadVisualizationPlugin( wxString Filename )
-{
-	typedef void ( *FunctionType )( SceneView& );
-	const wxString InitFunctionName( "LoadEntityView" ); // The function to load from the dynamic library
-
-	wxString Extension;
-	wxFileName::SplitPath( Filename,0,0,0,&Extension );
-
-#ifdef WIN32
-	if ( Extension != "dll" )
-		return;
-
-	// Attempt to load it.
-	HMODULE Plugin=LoadLibrary( Filename.c_str());
-
-	if ( Plugin==NULL )
-	{
-		DWORD Error=GetLastError(); // FIXME
-		return;
-	}
-
-	FARPROC Function=GetProcAddress( Plugin,InitFunctionName.c_str());
-
-	if ( Function )
-	{
-		FunctionType f = reinterpret_cast<FunctionType>( Function );
-		f( *mSceneView );
-	}
-
-#else // Linux
-	if ( Extension != "so" )
-		return;
-
-	void* Plugin=dlopen( Filename.c_str(), RTLD_NOW );
-
-	if ( Plugin==NULL )
-	{
-		// FIXME
-		std::cout << "Plugin " << " " << Filename <<
-		" failed to load:\n" << dlerror() << std::endl;
-		return;
-	}
-
-	FunctionType Function=
-	        reinterpret_cast<FunctionType>( dlsym( Plugin,
-							InitFunctionName.c_str()));
-
-	if ( !Function )
-	{
-		std::cout << "Plugin entry point not found." << std::endl;
-		return;
-	}
-
-	Function( *mSceneView );
-#endif
-}
-
-void MainFrame::LoadNetworkPlugin( wxString Filename )
-{
-	typedef void ( *FunctionType )( CInterfaceManager& );
-	const wxString InitFunctionName( "LoadInterface" ); // The function to load from the dynamic library
-
-	wxString Extension;
-	wxFileName::SplitPath( Filename,0,0,0,&Extension );
-
-#ifdef WIN32
-	if ( Extension != "dll" )
-		return;
-
-	// Attempt to load it.
-	HMODULE Plugin=LoadLibrary( Filename.c_str());
-
-	if ( Plugin==NULL )
-	{
-		DWORD Error=GetLastError(); // FIXME
-		return;
-	}
-
-	FARPROC Function=GetProcAddress( Plugin,InitFunctionName.c_str());
-
-	if ( Function )
-	{
-		FunctionType f = reinterpret_cast<FunctionType>( Function );
-		f( *mInterfaceManager );
-	}
-
-#else // Linux
-	if ( Extension != "so" )
-		return;
-
-	void* Plugin=dlopen( Filename.c_str(), RTLD_NOW );
-
-	if ( Plugin==NULL )
-	{
-		// FIXME
-		std::cout << "Plugin " << " " << Filename <<
-		" failed to load:\n" << dlerror() << std::endl;
-		return;
-	}
-
-	FunctionType Function=
-	        reinterpret_cast<FunctionType>( dlsym( Plugin,
-							InitFunctionName.c_str()));
-
-	if ( !Function )
-	{
-		std::cout << "Plugin entry point not found." << std::endl;
-		return;
-	}
-
-	Function( *mInterfaceManager );
-#endif
-}
-
-/** Load plugins.
- */
-void MainFrame::LoadVisPlugins()
-{
-	wxString PluginPath;
-
-#ifdef WIN32
-#ifdef NDEBUG
-	PluginPath = mPluginPath + "/Visualization/Release/";
-#else
-	PluginPath = mPluginPath + "/Visualization/Debug/";
-#endif
-#else
-	PluginPath = mPluginPath + "/Visualization/";
-#endif
-	wxDir Directory( PluginPath );
-
-	if ( !Directory.IsOpened() )
-	{
-		// FIXME: no plugins
-		return;
-	}
-
-	// Check for DLL files
-	wxString Filename;
-	for ( bool c=Directory.GetFirst( &Filename );
-	      c;
-	      c=Directory.GetNext( &Filename ) )
-	{
-		LoadVisualizationPlugin( PluginPath + Filename );
-	}
-}
-
-void MainFrame::LoadNWPlugins()
-{
-	wxString PluginPath;
-
-#ifdef WIN32
-#ifdef NDEBUG
-	PluginPath = mPluginPath + "/Interfaces/Release/";
-#else
-	PluginPath = mPluginPath + "/Interfaces/Debug/";
-#endif
-#else
-	PluginPath = mPluginPath + "/Interfaces/";
-#endif
-	wxDir Directory( PluginPath );
-
-	if ( !Directory.IsOpened() )
-	{
-		// FIXME: no plugins
-		return;
-	}
-
-	// Check for DLL files
-	wxString Filename;
-	for ( bool c=Directory.GetFirst( &Filename );
-	      c;
-	      c=Directory.GetNext( &Filename ) )
-	{
-		std::cout << "Loading network plugin " << Filename << std::endl;
-		LoadNetworkPlugin( PluginPath + Filename );
-	}
-}
-
 void MainFrame::OnQuit( wxCommandEvent &event )
 {
 	Close();
@@ -629,6 +472,72 @@ void MainFrame::OnAbout( wxCommandEvent &event )
 	info.SetWebSite( wxT( "http://code.google.com/p/ovise/" ));
 
 	wxAboutBox( info );
+}
+
+void MainFrame::OnPluginsSummary( wxCommandEvent& event )
+{
+	PluginsDialog PDlg( this );
+	PDlg.PluginList->InsertColumn( 0, wxT( "Plugin" ) );
+	PDlg.PluginList->InsertColumn( 1, wxT( "Version" ) );
+	PDlg.PluginList->InsertColumn( 2, wxT( "Type" ) );
+	PDlg.PluginList->InsertColumn( 3, wxT( "Path" ) );
+	PDlg.PluginList->SetColumnWidth( 0, 150 );
+	PDlg.PluginList->SetColumnWidth( 1, 55 );
+	PDlg.PluginList->SetColumnWidth( 3, 600 );
+
+	long Index = 0;
+	wxDynamicLibraryDetailsArray DLLDetails = 
+		wxDynamicLibrary::ListLoaded();
+
+	const std::vector<CPluginManager::DllEntry> NetworkPlugins =
+		mPluginManager.GetNetworkPlugins();
+	for( std::size_t i = 0; i < NetworkPlugins.size(); i++ )
+	{
+		Index = PDlg.PluginList->InsertItem( 0, NetworkPlugins[i].first );
+		wxDynamicLibraryDetails Details;
+		if( GetDLLDetails( NetworkPlugins[i].first, Details, DLLDetails ) )
+		{
+			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
+			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
+		}
+		else
+			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
+		PDlg.PluginList->SetItem( Index, 2, wxT( "Network" ) );
+	}
+
+	const std::vector<CPluginManager::DllEntry> VisualizationPlugins =
+		mPluginManager.GetVisualizationPlugins();
+	for( std::size_t i = 0; i < VisualizationPlugins.size(); i++ )
+	{
+		Index = PDlg.PluginList->InsertItem( PDlg.PluginList->GetItemCount(), VisualizationPlugins[i].first );
+		wxDynamicLibraryDetails Details;
+		if( GetDLLDetails( VisualizationPlugins[i].first, Details, DLLDetails ) )
+		{
+			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
+			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
+		}
+		else
+			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
+		PDlg.PluginList->SetItem( Index, 2, wxT( "Visualization" ) );
+	}
+
+	const std::vector<CPluginManager::DllEntry> SensorPlugins =
+		mPluginManager.GetSensorPlugins();
+	for( std::size_t i = 0; i < SensorPlugins.size(); i++ )
+	{
+		Index = PDlg.PluginList->InsertItem( PDlg.PluginList->GetItemCount(), SensorPlugins[i].first );
+		wxDynamicLibraryDetails Details;
+		if( GetDLLDetails( SensorPlugins[i].first, Details, DLLDetails ) )
+		{
+			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
+			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
+		}
+		else
+			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
+		PDlg.PluginList->SetItem( Index, 2, wxT( "Sensor" ) );
+	}
+
+	PDlg.ShowModal();
 }
 
 void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )

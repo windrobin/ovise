@@ -1,5 +1,12 @@
 # PointcloudPlugin
 
+set( PointcloudPlugin_VERSION_MAJOR 0 )
+set( PointcloudPlugin_VERSION_MINOR 1 )
+set( PointcloudPlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/PointcloudPlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/PointcloudPlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
@@ -10,9 +17,16 @@ set( PointcloudPluginHeaders
 	 PointcloudEntityView.h
 	 Pointcloud.h )
 	 
+if( WIN32 )
+set( PointcloudPluginSources
+	 PointcloudEntityView.cpp
+	 Pointcloud.cpp
+	 PointcloudPlugin.rc )
+else( WIN32 )
 set( PointcloudPluginSources
 	 PointcloudEntityView.cpp
 	 Pointcloud.cpp )
+endif( WIN32 )
 	 
 add_library( PointcloudPlugin SHARED ${PointcloudPluginHeaders} ${PointcloudPluginSources} )
 

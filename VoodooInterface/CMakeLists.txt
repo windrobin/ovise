@@ -1,4 +1,11 @@
-# ILCASInterface
+# VoodooInterface
+
+set( VoodooInterfacePlugin_VERSION_MAJOR 0 )
+set( VoodooInterfacePlugin_VERSION_MINOR 1 )
+set( VoodooInterfacePlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/VoodooInterfacePlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/VoodooInterfacePlugin.rc )
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
@@ -12,9 +19,16 @@ set( VoodooInterfaceHeaders
 	 Connection.hpp
 	 VoodooParser.hpp )
 	 
+if( WIN32 )
+set( VoodooInterfaceSources
+	 VoodooInterface.cpp
+	 VoodooParser.cpp
+	 VoodooInterfacePlugin.rc )
+else( WIN32 )
 set( VoodooInterfaceSources
 	 VoodooInterface.cpp
 	 VoodooParser.cpp )
+endif( WIN32 )
 	 
 add_library( VoodooInterface SHARED ${VoodooInterfaceHeaders} ${VoodooInterfaceSources} )
 

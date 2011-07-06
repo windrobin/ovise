@@ -1,5 +1,12 @@
 # SkeletalPlugin
 
+set( SkeletalPlugin_VERSION_MAJOR 0 )
+set( SkeletalPlugin_VERSION_MINOR 1 )
+set( SkeletalPlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/SkeletalPlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/SkeletalPlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
@@ -7,8 +14,14 @@ include_directories( ${Boost_INCLUDE_DIR}
 set( SkeletalPluginHeaders
 	 SkeletalEntityView.h )
 	 
+if( WIN32 )
+set( SkeletalPluginSources
+	 SkeletalEntityView.cpp
+	 SkeletalPlugin.rc )
+else( WIN32 )
 set( SkeletalPluginSources
 	 SkeletalEntityView.cpp )
+endif( WIN32 )
 	 
 add_library( SkeletalPlugin SHARED ${SkeletalPluginHeaders} ${SkeletalPluginSources} )
 

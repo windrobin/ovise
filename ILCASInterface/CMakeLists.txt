@@ -1,5 +1,12 @@
 # ILCASInterface
 
+set( ILCASPlugin_VERSION_MAJOR 0 )
+set( ILCASPlugin_VERSION_MINOR 1 )
+set( ILCASPlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/ILCASPlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/ILCASPlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core
@@ -11,9 +18,16 @@ set( ILCASInterfaceHeaders
 	 ILCASInterface.h
 	 SocketMessage.h )
 	 
+if( WIN32 )
+set( ILCASInterfaceSources
+	 ILCASInterface.cpp
+	 SocketMessage.cpp
+	 ILCASPlugin.rc )
+else( WIN32 )
 set( ILCASInterfaceSources
 	 ILCASInterface.cpp
 	 SocketMessage.cpp )
+endif( WIN32 )
 	 
 add_library( ILCASInterface SHARED ${ILCASInterfaceHeaders} ${ILCASInterfaceSources} )
 

@@ -21,6 +21,7 @@ set( ViewerHeaders
 	 OgreWindow.h
 	 PathConfigDialog.h
 	 PathProvider.h
+	 PluginManager.h
 	 SceneHandling.h
 	 SceneTree.h )
 	 
@@ -36,12 +37,14 @@ set( ViewerSources
 	 OgreWindow.cpp
 	 PathConfigDialog.cpp
 	 PathProvider.cpp
+	 PluginManager.cpp
 	 SceneHandling.cpp
 	 SceneTree.cpp )
 	 
 add_executable( Viewer WIN32 ${ViewerHeaders} ${ViewerSources} )
 
 set_property( TARGET Viewer PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+set_target_properties( Viewer PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_SOVERSION} )
 if( WIN32 )
 set_target_properties( Viewer PROPERTIES COMPILE_FLAGS "/D_CRT_SECURE_NO_WARNINGS" )
 endif()

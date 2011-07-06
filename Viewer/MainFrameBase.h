@@ -29,6 +29,7 @@
 #include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/button.h>
+#include <wx/listctrl.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +47,8 @@
 #define ID_ADD_ATTRIBUTE 1011
 #define ID_DELETE_ATTRIBUTE 1012
 #define idMenuAbout 1013
-#define ID_TESTSTUFF 1014
+#define ID_PLUGINS 1014
+#define ID_TESTSTUFF 1015
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrameBase
@@ -81,6 +83,7 @@ class MainFrameBase : public wxFrame
 		virtual void OnDMWire( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnDMSolid( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAbout( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnPluginsSummary( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnTestStuff( wxCommandEvent& event ) { event.Skip(); }
 		
 	
@@ -152,6 +155,25 @@ class CSettingsDlg : public wxDialog
 		
 		CSettingsDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Network settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 378,146 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~CSettingsDlg();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PluginsDialog
+///////////////////////////////////////////////////////////////////////////////
+class PluginsDialog : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStdDialogButtonSizer* m_sdbSizer2;
+		wxButton* m_sdbSizer2OK;
+	
+	public:
+		wxListCtrl* PluginList;
+		
+		PluginsDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Plugin summary"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 781,359 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		~PluginsDialog();
 	
 };
 
