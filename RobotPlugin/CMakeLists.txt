@@ -31,9 +31,10 @@ set_property( TARGET RobotPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( RobotPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET RobotPlugin PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Visualization )
+set_target_properties( RobotPlugin PROPERTIES COMPILE_FLAGS "-fPIC"
+                                              LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization
+					      VERSION ${RobotPlugin_VERSION_MAJOR}.${RobotPlugin_VERSION_MINOR}.${RobotPlugin_VERSION_PATCH} 
+					      SOVERSION ${RobotPlugin_VERSION_MAJOR}.${RobotPlugin_VERSION_MINOR}.${RobotPlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( RobotPlugin

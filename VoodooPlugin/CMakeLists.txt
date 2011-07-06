@@ -31,9 +31,10 @@ set_property( TARGET VoodooPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( VoodooPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET VoodooPlugin PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Visualization )
+set_target_properties( VoodooPlugin PROPERTIES COMPILE_FLAGS "-fPIC"
+                                               LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization 
+					       VERSION ${VoodooPlugin_VERSION_MAJOR}.${VoodooPlugin_VERSION_MINOR}.${VoodooPlugin_VERSION_PATCH} 
+					       SOVERSION ${VoodooPlugin_VERSION_MAJOR}.${VoodooPlugin_VERSION_MINOR}.${VoodooPlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( VoodooPlugin

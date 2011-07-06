@@ -34,9 +34,10 @@ set_property( TARGET TrajectoryPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( TrajectoryPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET TrajectoryPlugin PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Visualization )
+set_target_properties( TrajectoryPlugin PROPERTIES COMPILE_FLAGS "-fPIC"
+                                                   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization 
+						   VERSION ${TrajectoryPlugin_VERSION_MAJOR}.${TrajectoryPlugin_VERSION_MINOR}.${TrajectoryPlugin_VERSION_PATCH} 
+						   SOVERSION ${TrajectoryPlugin_VERSION_MAJOR}.${TrajectoryPlugin_VERSION_MINOR}.${TrajectoryPlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( TrajectoryPlugin

@@ -135,7 +135,7 @@ void CPluginManager::InitNWPlugins( CInterfaceManager& IManager )
 	{
 		bool Success;
 		void* Function = i->second->GetSymbol( wxT( "LoadInterface" ), &Success );
-		if( Success )
+		if( Success && Function )
 		{
 			FunctionType f = reinterpret_cast<FunctionType>( Function );
 			f( IManager );
@@ -153,7 +153,7 @@ void CPluginManager::InitVIPlugins( SceneView& View )
 	{
 		bool Success;
 		void* Function = i->second->GetSymbol( wxT( "LoadEntityView" ), &Success );
-		if( Success )
+		if( Success && Function )
 		{
 			FunctionType f = reinterpret_cast<FunctionType>( Function );
 			f( View );

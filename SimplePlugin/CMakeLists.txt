@@ -31,9 +31,9 @@ endif( WIN32 )
 
 if( UNIX )
 set_target_properties( SimplePlugin PROPERTIES COMPILE_FLAGS "-fPIC"
-											   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization
-											   VERSION ${SimplePlugin_VERSION_MAJOR}.${SimplePlugin_VERSION_MINOR}.${SimplePlugin_VERSION_PATCH} 
-											   SOVERSION ${SimplePlugin_VERSION_MAJOR}.${SimplePlugin_VERSION_MINOR}.${SimplePlugin_VERSION_PATCH} )
+                                               LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization
+					       VERSION ${SimplePlugin_VERSION_MAJOR}.${SimplePlugin_VERSION_MINOR}.${SimplePlugin_VERSION_PATCH}
+					       SOVERSION ${SimplePlugin_VERSION_MAJOR}.${SimplePlugin_VERSION_MINOR}.${SimplePlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( SimplePlugin
