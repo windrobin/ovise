@@ -54,8 +54,8 @@ endif( WIN32 )
 	 
 add_executable( Viewer WIN32 ${ViewerHeaders} ${ViewerSources} )
 
-set_target_properties( Viewer PROPERTIES VERSION ${VIEWER_VERSION_MAJOR}.${VIEWER_VERSION_MINOR}.${VIEWER_VERSION_PATCH} 
-										 SOVERSION ${VIEWER_VERSION_MAJOR}.${VIEWER_VERSION_MINOR}.${VIEWER_VERSION_PATCH}
+set_target_properties( Viewer PROPERTIES VERSION ${Viewer_VERSION_MAJOR}.${Viewer_VERSION_MINOR}.${Viewer_VERSION_PATCH} 
+										 SOVERSION ${Viewer_VERSION_MAJOR}.${Viewer_VERSION_MINOR}.${Viewer_VERSION_PATCH}
 										 RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 if( WIN32 )
 set_target_properties( Viewer PROPERTIES COMPILE_FLAGS "/D_CRT_SECURE_NO_WARNINGS" )

@@ -31,9 +31,10 @@ set_property( TARGET SkeletalPlugin PROPERTY RUNTIME_OUTPUT_DIRECTORY
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( SkeletalPlugin PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET SkeletalPlugin PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Visualization )
+set_target_properties( SkeletalPlugin PROPERTIES COMPILE_FLAGS "-fPIC" 
+                                                 LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Visualization 
+						 VERSION ${SkeletalPlugin_VERSION_MAJOR}.${SkeletalPlugin_VERSION_MINOR}.${SkeletalPlugin_VERSION_PATCH} 
+						 SOVERSION ${SkeletalPlugin_VERSION_MAJOR}.${SkeletalPlugin_VERSION_MINOR}.${SkeletalPlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( SkeletalPlugin

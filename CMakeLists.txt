@@ -6,7 +6,7 @@ SET( OVISE_VERSION_MAJOR 0 )
 SET( OVISE_VERSION_MINOR 5 )
 SET( OVISE_VERSION_PATCH 0 )
 
-message( "Version info: ${OVISE_VERSION_MAJOR}.${OVISE_VERSION_MINOR}.${OVISE_VERSION_PATCH}" )
+message( "OViSE version info: ${OVISE_VERSION_MAJOR}.${OVISE_VERSION_MINOR}.${OVISE_VERSION_PATCH}" )
 
 cmake_minimum_required( VERSION 2.8 )
 
@@ -19,7 +19,7 @@ set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREAD ON )
 find_package( Boost 1.44 REQUIRED )
 else( WIN32 )
-find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem serialization)
+find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem serialization signals)
 endif( WIN32 )
 
 # Ogre

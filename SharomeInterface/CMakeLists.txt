@@ -35,15 +35,15 @@ endif( WIN32 )
 add_library( SharomeInterface SHARED ${SharomeInterfaceHeaders} ${SharomeInterfaceSources} )
 
 if( WIN32 )
-set_property( TARGET SharomeInterface PROPERTY RUNTIME_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
-set_target_properties( SharomeInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP" )
+set_target_properties( SharomeInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP"
+                                                   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( SharomeInterface PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET SharomeInterface PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
+set_target_properties( SharomeInterface PROPERTIES COMPILE_FLAGS "-fPIC"
+                                                   LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Interfaces 
+						   VERSION ${SharomePlugin_VERSION_MAJOR}.${SharomePlugin_VERSION_MINOR}.${SharomePlugin_VERSION_PATCH} 
+						   SOVERSION ${SharomePlugin_VERSION_MAJOR}.${SharomePlugin_VERSION_MINOR}.${SharomePlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( SharomeInterface

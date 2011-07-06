@@ -38,9 +38,10 @@ set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET ILCASInterface PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
+set_target_properties( ILCASInterface PROPERTIES COMPILE_FLAGS "-fPIC"
+                                                 LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Interfaces 
+						 VERSION ${ILCASPlugin_VERSION_MAJOR}.${ILCASPlugin_VERSION_MINOR}.${ILCASPlugin_VERSION_PATCH} 
+						 SOVERSION ${ILCASPlugin_VERSION_MAJOR}.${ILCASPlugin_VERSION_MINOR}.${ILCASPlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( ILCASInterface

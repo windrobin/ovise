@@ -33,15 +33,15 @@ endif( WIN32 )
 add_library( VoodooInterface SHARED ${VoodooInterfaceHeaders} ${VoodooInterfaceSources} )
 
 if( WIN32 )
-set_property( TARGET VoodooInterface PROPERTY RUNTIME_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
-set_target_properties( VoodooInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP" )
+set_target_properties( VoodooInterface PROPERTIES COMPILE_FLAGS "/D_WIN32_WINNT=_WIN32_WINNT_WINXP"
+                                                  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
 endif( WIN32 )
 
 if( UNIX )
-set_target_properties( VoodooInterface PROPERTIES COMPILE_FLAGS "-fPIC" )
-set_property( TARGET VoodooInterface PROPERTY LIBRARY_OUTPUT_DIRECTORY
-			  ${CMAKE_BINARY_DIR}/Plugins/Interfaces )
+set_target_properties( VoodooInterface PROPERTIES COMPILE_FLAGS "-fPIC" 
+                                                  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Plugins/Interfaces 
+						  VERSION ${VoodooInterfacePlugin_VERSION_MAJOR}.${VoodooInterfacePlugin_VERSION_MINOR}.${VoodooInterfacePlugin_VERSION_PATCH} 
+						  SOVERSION ${VoodooInterfacePlugin_VERSION_MAJOR}.${VoodooInterfacePlugin_VERSION_MINOR}.${VoodooInterfacePlugin_VERSION_PATCH} )
 endif( UNIX )
 			  
 add_dependencies( VoodooInterface
