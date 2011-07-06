@@ -1,5 +1,12 @@
 # Viewer
 
+set( Viewer_VERSION_MAJOR 0 )
+set( Viewer_VERSION_MINOR 5 )
+set( Viewer_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Viewer.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/Viewer.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIRS}
 					 ${GTK2_INCLUDE_DIRS}
@@ -40,6 +47,10 @@ set( ViewerSources
 	 PluginManager.cpp
 	 SceneHandling.cpp
 	 SceneTree.cpp )
+	 
+if( WIN32 )
+set( ViewerSources ${ViewerSources} Viewer.rc )
+endif( WIN32 )
 	 
 add_executable( Viewer WIN32 ${ViewerHeaders} ${ViewerSources} )
 
