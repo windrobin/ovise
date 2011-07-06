@@ -34,6 +34,7 @@
 #include "AppContext.h"
 #include "AttributeView.h"
 #include "OgreWindow.h"
+#include "PluginManager.h"
 
 #include <Logging.h>
 #include <SceneView.h>
@@ -86,6 +87,7 @@ private:
 	void OnLoadPointcloud( wxCommandEvent& event );
 	void OnClose( wxCloseEvent& event );
 	void OnAbout( wxCommandEvent& event );
+	void OnPluginsSummary( wxCommandEvent& event );
 	void OnSaveScreenToFile( wxCommandEvent& event );
 	void OnShowSceneStructure( wxCommandEvent& event );
 	void OnDynamicShadowsChange( wxCommandEvent& event );
@@ -114,37 +116,33 @@ private:
 	EntityPool mEntityPool;
 
 protected:
-	void LoadVisPlugins();
-	void LoadNWPlugins();
-	void LoadVisualizationPlugin( wxString Filename );
-	void LoadNetworkPlugin( wxString Filename );
+	wxString                             mMediaPath;
+	wxString                             mPluginPath;
 
-	wxString mMediaPath;
-	wxString mPluginPath;
+	OgreWindow*                          mOgreWindow;
+	scoped_ptr<SceneView>                mSceneView;
 
-	OgreWindow*           mOgreWindow;
-	scoped_ptr<SceneView> mSceneView;
+	scoped_ptr<InputHandler>             mInputHandler;
 
-	scoped_ptr<InputHandler> mInputHandler;
+	wxListBox*                           mLogBox;
+	scoped_ptr<CustomLogListener>        mLogBoxListener;
 
-	wxListBox*                    mLogBox;
-	scoped_ptr<CustomLogListener> mLogBoxListener;
+	wxAuiManager                         mWindowManager;
 
-	wxAuiManager mWindowManager;
+	SceneTree*                           mSceneTree;
 
-	SceneTree* mSceneTree;
-
-	scoped_ptr<AttributeView> mAttributeView;
+	scoped_ptr<AttributeView>            mAttributeView;
 	
 	Ogre::Camera*                        mCamera;
 	scoped_ptr<CCS::CameraControlSystem> mCCS;
 	scoped_ptr<CCS::OrbitalCameraMode>   mOrbitalCamMode;
 
-	scoped_ptr<Ogre::RaySceneQuery> mRaySceneQuery;
+	scoped_ptr<Ogre::RaySceneQuery>      mRaySceneQuery;
 
-	wxTimer mNetworkTimer;
+	wxTimer                              mNetworkTimer;
 
-	scoped_ptr<CInterfaceManager> mInterfaceManager;
+	CPluginManager                       mPluginManager;
+	scoped_ptr<CInterfaceManager>        mInterfaceManager;
 };
 
 #endif // MAINFRAME_H

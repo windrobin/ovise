@@ -1,5 +1,12 @@
 # TrajectoryPlugin
 
+set( TrajectoryPlugin_VERSION_MAJOR 0 )
+set( TrajectoryPlugin_VERSION_MINOR 1 )
+set( TrajectoryPlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/TrajectoryPlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/TrajectoryPlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
@@ -8,9 +15,16 @@ set( TrajectoryPluginHeaders
 	 Trajectory.h
 	 TrajectoryView.h )
 	 
+if( WIN32 )
+set( TrajectoryPluginSources
+	 Trajectory.cpp
+	 TrajectoryView.cpp
+	 TrajectoryPlugin.rc )
+else( WIN32 )
 set( TrajectoryPluginSources
 	 Trajectory.cpp
 	 TrajectoryView.cpp )
+endif( WIN32 )
 	 
 add_library( TrajectoryPlugin SHARED ${TrajectoryPluginHeaders} ${TrajectoryPluginSources} )
 

@@ -1,14 +1,27 @@
 # VoodooPlugin
 
+set( VoodooPlugin_VERSION_MAJOR 0 )
+set( VoodooPlugin_VERSION_MINOR 1 )
+set( VoodooPlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/VoodooPlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/VoodooPlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
 					 
 set( VoodooPluginHeaders
 	 VoodooEntityView.h )
-	 
+
+if( WIN32 )
+set( VoodooPluginSources
+	 VoodooEntityView.cpp
+	 VoodooPlugin.rc )
+else( WIN32 )
 set( VoodooPluginSources
 	 VoodooEntityView.cpp )
+endif( WIN32 )
 	 
 add_library( VoodooPlugin SHARED ${VoodooPluginHeaders} ${VoodooPluginSources} )
 

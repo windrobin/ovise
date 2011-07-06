@@ -2,6 +2,13 @@
 
 find_package( Sharome REQUIRED )
 
+set( SharomePlugin_VERSION_MAJOR 0 )
+set( SharomePlugin_VERSION_MINOR 1 )
+set( SharomePlugin_VERSION_PATCH 0 )
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/SharomePlugin.rc.in
+				${CMAKE_CURRENT_SOURCE_DIR}/SharomePlugin.rc )
+
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${Sharome_INCLUDE_DIRS}
@@ -15,9 +22,15 @@ set( SharomeInterfaceHeaders
 	 SharomeInterface.h
 	 Message.h
 	 Connection.h )
-	 
+
+if( WIN32 )
+set( SharomeInterfaceSources
+	 SharomePlugin.rc
+	 SharomeInterface.cpp )
+else( WIN32 )
 set( SharomeInterfaceSources
 	 SharomeInterface.cpp )
+endif( WIN32 )
 	 
 add_library( SharomeInterface SHARED ${SharomeInterfaceHeaders} ${SharomeInterfaceSources} )
 

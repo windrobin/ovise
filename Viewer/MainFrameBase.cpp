@@ -100,6 +100,10 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	menuHelpAbout = new wxMenuItem( helpMenu, idMenuAbout, wxString( wxT("&About") ) + wxT('\t') + wxT("F1"), wxT("Show info about this application"), wxITEM_NORMAL );
 	helpMenu->Append( menuHelpAbout );
 	
+	wxMenuItem* plugins;
+	plugins = new wxMenuItem( helpMenu, ID_PLUGINS, wxString( wxT("Plugins...") ) , wxEmptyString, wxITEM_NORMAL );
+	helpMenu->Append( plugins );
+	
 	mbar->Append( helpMenu, wxT("&Help") ); 
 	
 	debug = new wxMenu();
@@ -127,6 +131,7 @@ MainFrameBase::MainFrameBase( wxWindow* parent, wxWindowID id, const wxString& t
 	this->Connect( wireframe->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Connect( solid->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
 	this->Connect( menuHelpAbout->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
+	this->Connect( plugins->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnPluginsSummary ) );
 	this->Connect( teststuff->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 }
 
@@ -144,6 +149,7 @@ MainFrameBase::~MainFrameBase()
 	this->Disconnect( ID_WIREFRAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMWire ) );
 	this->Disconnect( ID_SOLID, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnDMSolid ) );
 	this->Disconnect( idMenuAbout, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnAbout ) );
+	this->Disconnect( ID_PLUGINS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnPluginsSummary ) );
 	this->Disconnect( ID_TESTSTUFF, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MainFrameBase::OnTestStuff ) );
 	
 }
@@ -281,5 +287,31 @@ CSettingsDlg::CSettingsDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 }
 
 CSettingsDlg::~CSettingsDlg()
+{
+}
+
+PluginsDialog::PluginsDialog( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+	
+	PluginList = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_VRULES );
+	bSizer7->Add( PluginList, 1, wxALL|wxEXPAND, 5 );
+	
+	m_sdbSizer2 = new wxStdDialogButtonSizer();
+	m_sdbSizer2OK = new wxButton( this, wxID_OK );
+	m_sdbSizer2->AddButton( m_sdbSizer2OK );
+	m_sdbSizer2->Realize();
+	bSizer7->Add( m_sdbSizer2, 0, wxEXPAND, 5 );
+	
+	this->SetSizer( bSizer7 );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+}
+
+PluginsDialog::~PluginsDialog()
 {
 }
