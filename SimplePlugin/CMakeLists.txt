@@ -4,8 +4,10 @@ set( SimplePlugin_VERSION_MAJOR 0 )
 set( SimplePlugin_VERSION_MINOR 1 )
 set( SimplePlugin_VERSION_PATCH 0 )
 
+if( WIN32 )
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/SimplePlugin.rc.in
 				${CMAKE_CURRENT_SOURCE_DIR}/SimplePlugin.rc )
+endif( WIN32 )
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}

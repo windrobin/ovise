@@ -4,8 +4,10 @@ set( TrajectoryPlugin_VERSION_MAJOR 0 )
 set( TrajectoryPlugin_VERSION_MINOR 1 )
 set( TrajectoryPlugin_VERSION_PATCH 0 )
 
+if( WIN32 )
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/TrajectoryPlugin.rc.in
 				${CMAKE_CURRENT_SOURCE_DIR}/TrajectoryPlugin.rc )
+endif( WIN32 )
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
