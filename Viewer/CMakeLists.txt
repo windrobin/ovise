@@ -4,8 +4,10 @@ set( Viewer_VERSION_MAJOR 0 )
 set( Viewer_VERSION_MINOR 5 )
 set( Viewer_VERSION_PATCH 0 )
 
+if( WIN32 )
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Viewer.rc.in
 				${CMAKE_CURRENT_SOURCE_DIR}/Viewer.rc )
+endif( WIN32 )
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIRS}
