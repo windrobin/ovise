@@ -27,9 +27,8 @@
 #include <wx/radiobox.h>
 #include <wx/textctrl.h>
 #include <wx/statline.h>
-#include <wx/checkbox.h>
-#include <wx/button.h>
 #include <wx/listctrl.h>
+#include <wx/button.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -131,30 +130,6 @@ class AddAttributeDialog : public wxDialog
 		
 		AddAttributeDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Add Attribute"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 279,164 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~AddAttributeDialog();
-	
-};
-
-///////////////////////////////////////////////////////////////////////////////
-/// Class CSettingsDlg
-///////////////////////////////////////////////////////////////////////////////
-class CSettingsDlg : public wxDialog 
-{
-	private:
-	
-	protected:
-		wxStaticText* m_staticText8;
-		wxStaticText* m_staticText9;
-		wxStdDialogButtonSizer* m_sdbSizer1;
-		wxButton* m_sdbSizer1OK;
-		wxButton* m_sdbSizer1Cancel;
-	
-	public:
-		wxTextCtrl* HostTextCtrl;
-		wxTextCtrl* PortTextCtrl;
-		wxCheckBox* RememberSettingsCheckBox;
-		
-		CSettingsDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Network settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 378,146 ), long style = wxDEFAULT_DIALOG_STYLE ); 
-		~CSettingsDlg();
 	
 };
 

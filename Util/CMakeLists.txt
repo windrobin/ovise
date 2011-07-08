@@ -6,11 +6,13 @@ include_directories( ${Boost_INCLUDE_DIR}
 include( ${wxWidgets_USE_FILE} )
 					 
 set( UtilHeaders
+	DefaultInterfaceConfigDlg.h
 	InterfaceManager.h
 	Logging.h
 	NetworkInterface.h
 	ObjectTitle.h
 	OViSEException.h
+	Plugin.h
 	SceneLoader.h
 	SceneNodeOffset.h
 	Singleton.hpp
@@ -18,11 +20,13 @@ set( UtilHeaders
 	VertexData.h )
 	
 set( UtilSources
+	DefaultInterfaceConfigDlg.cpp
 	InterfaceManager.cpp
 	Logging.cpp
 	NetworkInterface.cpp
 	ObjectTitle.cpp
 	OViSEException.cpp
+	Plugin.cpp
 	SceneNodeOffset.cpp
 	StringConverter.cpp
 	VertexData.cpp )

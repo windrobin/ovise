@@ -25,8 +25,10 @@ public:
 	SharomeInterface( EntityPool& EntPool );
 	~SharomeInterface( void );
 
-	bool Start( const std::string& Host, const std::string& Service );
+	bool Start();
 	bool Stop();
+
+	virtual void CreateConfigDialog( wxWindow* Parent );
 
 	void Poll();
 
@@ -39,6 +41,14 @@ public:
 
 private:
 	boost::scoped_ptr<CAsyncClient> LegacyClient;
+
+	struct SSettings
+	{
+		std::string Host;
+		std::string Port;
+	};
+
+	SSettings mSettings;
 };
 
 #endif // LEGACY_INTERFACE_H
