@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 
 #include <InterfaceManager.h>
+#include <DefaultInterfaceConfigDlg.h>
 #include <Mem/Serialization.hpp>
 #include <Mem/Location.h>
 #include <Result.h>
@@ -46,23 +47,21 @@ namespace
 
 
 SharomeInterface::SharomeInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool, true )
-{}
+	: CNetworkInterface( EntPool )
+{
+	mSettings.Host = "localhost";
+	mSettings.Port = "12345";
+}
 
 
 SharomeInterface::~SharomeInterface( void )
 {}
 
-bool SharomeInterface::Start( const std::string& Host, const std::string& Service )
+bool SharomeInterface::Start()
 {
 	std::cout << "SharomeInterface init." << std::endl;
 
-	std::string ServerAdress = "localhost";
-	std::string ServerPort = "12345";
-	if( !Host.empty() ) ServerAdress = Host;
-	if( !Service.empty() ) ServerPort = Service;
-
-	LegacyClient.reset( new CAsyncClient( ServerAdress, ServerPort, true ) );
+	LegacyClient.reset( new CAsyncClient( mSettings.Host, mSettings.Port, true ) );
 
 	LegacyClient->ObjectCreatedSignal.connect(
 		boost::bind( &SharomeInterface::HandleObjectCreated, this, _1 ) );
@@ -86,6 +85,13 @@ bool SharomeInterface::Stop()
 	LegacyClient.reset();
 
 	return true;
+}
+
+void SharomeInterface::CreateConfigDialog( wxWindow* Parent )
+{
+	CDefaultInterfaceConfigDlg* Config = new CDefaultInterfaceConfigDlg( Parent,
+		wxT( "ShaRoMe Interface Settings" ) );
+	mConfigDlg = static_cast<wxPropertySheetDialog*>( Config );
 }
 
 void SharomeInterface::Poll()

@@ -331,7 +331,7 @@ bool MainFrame::InitOgre()
 			boost::bind( &OgreWindow::Refresh, mOgreWindow, false,
 				(wxRect*) 0 ) ) );
 
-	mPluginManager.LoadPlugins( mPluginPath );
+	mPluginManager.LoadPlugins( mPluginPath, this );
 	mPluginManager.InitNWPlugins( *mInterfaceManager );
 	mPluginManager.InitVIPlugins( *mSceneView );
 
@@ -368,9 +368,7 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 
 	if( Event.IsChecked() )
 	{
-		std::string Host, Port;
-
-		if( Interface->NeedsConfig() )
+		/*if( Interface->NeedsConfig() )
 		{
 			CSettingsDlg Settings( this );
 
@@ -402,13 +400,16 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 		{
 			Host = "";
 			Port = "";
-		}
+		}*/
+
+		if( Interface->mConfigDlg->ShowModal() != wxID_OK )
+			return;
 
 		wxString msg = wxT( "Starting interface " ) + wxString( Name );
 		SetStatusMessage( msg );
 		if( Interface )
 		{
-			if( Interface->Start( Host, Port ) && !mNetworkTimer.IsRunning() )
+			if( Interface->Start() && !mNetworkTimer.IsRunning() )
 				mNetworkTimer.Start( 50 );
 		}
 	}
@@ -489,52 +490,35 @@ void MainFrame::OnPluginsSummary( wxCommandEvent& event )
 	wxDynamicLibraryDetailsArray DLLDetails = 
 		wxDynamicLibrary::ListLoaded();
 
-	const std::vector<CPluginManager::DllEntry> NetworkPlugins =
-		mPluginManager.GetNetworkPlugins();
-	for( std::size_t i = 0; i < NetworkPlugins.size(); i++ )
-	{
-		Index = PDlg.PluginList->InsertItem( 0, NetworkPlugins[i].first );
-		wxDynamicLibraryDetails Details;
-		if( GetDLLDetails( NetworkPlugins[i].first, Details, DLLDetails ) )
-		{
-			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
-			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
-		}
-		else
-			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
-		PDlg.PluginList->SetItem( Index, 2, wxT( "Network" ) );
-	}
+	const std::vector<CPlugin>& Plugins = mPluginManager.GetPlugins();
 
-	const std::vector<CPluginManager::DllEntry> VisualizationPlugins =
-		mPluginManager.GetVisualizationPlugins();
-	for( std::size_t i = 0; i < VisualizationPlugins.size(); i++ )
+	for( std::size_t i = 0; i < Plugins.size(); i++ )
 	{
-		Index = PDlg.PluginList->InsertItem( PDlg.PluginList->GetItemCount(), VisualizationPlugins[i].first );
+		Index = PDlg.PluginList->InsertItem( 0, Plugins[i].mName );
 		wxDynamicLibraryDetails Details;
-		if( GetDLLDetails( VisualizationPlugins[i].first, Details, DLLDetails ) )
+		if( GetDLLDetails( Plugins[i].mName, Details, DLLDetails ) )
 		{
 			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
 			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
 		}
 		else
 			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
-		PDlg.PluginList->SetItem( Index, 2, wxT( "Visualization" ) );
-	}
 
-	const std::vector<CPluginManager::DllEntry> SensorPlugins =
-		mPluginManager.GetSensorPlugins();
-	for( std::size_t i = 0; i < SensorPlugins.size(); i++ )
-	{
-		Index = PDlg.PluginList->InsertItem( PDlg.PluginList->GetItemCount(), SensorPlugins[i].first );
-		wxDynamicLibraryDetails Details;
-		if( GetDLLDetails( SensorPlugins[i].first, Details, DLLDetails ) )
+		switch( Plugins[i].mType )
 		{
-			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
-			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
+		case Plugin::TYPE_NETWORK:
+			PDlg.PluginList->SetItem( Index, 2, wxT( "Network" ) );
+			break;
+		case Plugin::TYPE_VISUAL:
+			PDlg.PluginList->SetItem( Index, 2, wxT( "Visualization" ) );
+			break;
+		case Plugin::TYPE_SENSOR:
+			PDlg.PluginList->SetItem( Index, 2, wxT( "Sensor" ) );
+			break;
+		default:
+			PDlg.PluginList->SetItem( Index, 2, wxT( "Unknown" ) );
+			break;
 		}
-		else
-			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
-		PDlg.PluginList->SetItem( Index, 2, wxT( "Sensor" ) );
 	}
 
 	PDlg.ShowModal();

@@ -1,9 +1,11 @@
 #ifndef NETWORK_INTERFACE_H
 #define NETWORK_INTERFACE_H
 
-
 #include "../Core/EntityPool.h"
+#include "../Util/Plugin.h"
+
 #include <boost/asio.hpp>
+#include <wx/propdlg.h>
 
 #ifdef WIN32
 #define INTERFACE_API __declspec( dllexport )
@@ -12,23 +14,26 @@
 #endif
 
 /** Base class for network interfaces.
-        Network plugins shall derive from this. The given io_service object will be polled
-        from the main loop enabling interfaces to manipulate the entity pool in a
-        synchronized fashion.
+    Network plugins shall derive from this. The Poll() method will be called
+	from the main applications main loop repeatedly to poll the interface for
+	work. The call must return as soon as possible! 
+	(see boost::asio::io_service::poll_one())
  */
-class CNetworkInterface
+class CNetworkInterface : public CPlugin
 {
 public:
-	CNetworkInterface( EntityPool& EntPool, bool NeedsConfigDialog = true );
+	CNetworkInterface( EntityPool& EntPool );
 	virtual ~CNetworkInterface();
 
-	/// Should implement intialization and starting of the interface
-	virtual bool Start( const std::string& Host, const std::string& Service ) = 0;
+	/**
+	  Should implement intialization and starting of the interface.
+	*/
+	virtual bool Start() = 0;
 	/// Should implement unitialization and stopping of interface
 	virtual bool Stop() = 0;
 
+	/// Checks if the interface is running
 	bool IsRunning() { return mRunning; }
-	bool NeedsConfig() { return mNeedsConfigDialog; }
 
 	/**
 	  Poll the interface for updates.
@@ -39,10 +44,8 @@ public:
 	virtual void Poll() = 0;
 
 protected:
-	EntityPool& mEntityPool;
-	std::string mName;
-	bool        mRunning;
-	bool        mNeedsConfigDialog;
+	EntityPool&            mEntityPool;
+	bool                   mRunning;
 };
 
 

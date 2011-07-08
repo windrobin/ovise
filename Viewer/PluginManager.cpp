@@ -13,6 +13,7 @@ bool CheckFileName( const wxString& Filename )
 }
 }
 
+
 CPluginManager::CPluginManager()
 {
 }
@@ -21,7 +22,7 @@ CPluginManager::~CPluginManager()
 {
 }
 
-void CPluginManager::LoadPlugins( const wxString& BasePath )
+void CPluginManager::LoadPlugins( const wxString& BasePath, wxWindow* Parent )
 {
 	wxString NWPluginPath; // network
 	wxString VIPluginPath; // visualization
@@ -58,9 +59,9 @@ void CPluginManager::LoadPlugins( const wxString& BasePath )
 			if( !CheckFileName( NWFilename ) )
 				continue;
 
-			DllPtr NWLibPtr( new wxDynamicLibrary() );
-			NWLibPtr->Load( NWPluginPath + NWFilename );
-			mNetworkPlugins.push_back( std::make_pair( NWFilename, NWLibPtr ) );
+			CPlugin Plugin;
+			Plugin.Load( NWPluginPath + NWFilename, Plugin::TYPE_NETWORK, Parent );
+			mPlugins.push_back( Plugin );
 		}
 	}
 
@@ -76,9 +77,9 @@ void CPluginManager::LoadPlugins( const wxString& BasePath )
 			if( !CheckFileName( VIFilename ) )
 				continue;
 
-			DllPtr VILibPtr( new wxDynamicLibrary() );
-			VILibPtr->Load( VIPluginPath + VIFilename );
-			mVisualizationPlugins.push_back( std::make_pair( VIFilename, VILibPtr ) );
+			CPlugin Plugin;
+			Plugin.Load( VIPluginPath + VIFilename, Plugin::TYPE_VISUAL, Parent );
+			mPlugins.push_back( Plugin );
 		}
 	}
 
@@ -94,47 +95,36 @@ void CPluginManager::LoadPlugins( const wxString& BasePath )
 			if( !CheckFileName( SSFilename ) )
 				continue;
 
-			DllPtr SSLibPtr( new wxDynamicLibrary() );
-			SSLibPtr->Load( SSPluginPath + SSFilename );
-			mSensorPlugins.push_back( std::make_pair( SSFilename, SSLibPtr ) );
+			CPlugin Plugin;
+			Plugin.Load( SSPluginPath + SSFilename, Plugin::TYPE_SENSOR, Parent );
+			mPlugins.push_back( Plugin );
 		}
 	}
 }
 
 void CPluginManager::UnloadPlugins()
 {
-	for( std::vector<DllEntry>::iterator i = mNetworkPlugins.begin();
-		i != mNetworkPlugins.end();
+	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
+		i != mPlugins.end();
 		i++ )
 	{
-		i->second.reset();
+		i->Unload();
 	}
-
-	for( std::vector<DllEntry>::iterator i = mVisualizationPlugins.begin();
-		i != mVisualizationPlugins.end();
-		i++ )
-	{
-		i->second.reset();
-	}
-
-	for( std::vector<DllEntry>::iterator i = mSensorPlugins.begin();
-		i != mSensorPlugins.end();
-		i++ )
-	{
-		i->second.reset();
-	}
+	mPlugins.clear();
 }
 
 void CPluginManager::InitNWPlugins( CInterfaceManager& IManager )
 {
 	typedef void ( *FunctionType )( CInterfaceManager& );
 
-	for( std::vector<DllEntry>::iterator i = mNetworkPlugins.begin();
-		i != mNetworkPlugins.end();
+	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
+		i != mPlugins.end();
 		i++ )
 	{
+		if( i->mType != Plugin::TYPE_NETWORK ) continue;
+		
 		bool Success;
-		void* Function = i->second->GetSymbol( wxT( "LoadInterface" ), &Success );
+		void* Function = i->mDllPointer->GetSymbol( wxT( "LoadInterface" ), &Success );
 		if( Success && Function )
 		{
 			FunctionType f = reinterpret_cast<FunctionType>( Function );
@@ -147,12 +137,14 @@ void CPluginManager::InitVIPlugins( SceneView& View )
 {
 	typedef void ( *FunctionType )( SceneView& );
 
-	for( std::vector<DllEntry>::iterator i = mVisualizationPlugins.begin();
-		i != mVisualizationPlugins.end();
+	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
+		i != mPlugins.end();
 		i++ )
 	{
+		if( i->mType != Plugin::TYPE_VISUAL ) continue;
+		
 		bool Success;
-		void* Function = i->second->GetSymbol( wxT( "LoadEntityView" ), &Success );
+		void* Function = i->mDllPointer->GetSymbol( wxT( "LoadEntityView" ), &Success );
 		if( Success && Function )
 		{
 			FunctionType f = reinterpret_cast<FunctionType>( Function );
@@ -166,17 +158,8 @@ void CPluginManager::InitSSPlugins()
 
 }
 
-const std::vector<CPluginManager::DllEntry> CPluginManager::GetNetworkPlugins() const
+const std::vector<CPlugin>& CPluginManager::GetPlugins() const
 {
-	return mNetworkPlugins;
-}
-
-const std::vector<CPluginManager::DllEntry> CPluginManager::GetVisualizationPlugins() const
-{
-	return mVisualizationPlugins;
-}
-
-const std::vector<CPluginManager::DllEntry> CPluginManager::GetSensorPlugins() const
-{
-	return mSensorPlugins;
+	
+	return mPlugins;
 }

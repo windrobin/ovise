@@ -1,10 +1,8 @@
 #include "NetworkInterface.h"
 
-CNetworkInterface::CNetworkInterface( EntityPool& EntPool, bool NeedsConfigDialog )
+CNetworkInterface::CNetworkInterface( EntityPool& EntPool )
 	: mEntityPool( EntPool ), 
-	mName( "Default" ), 
-	mRunning( false ), 
-	mNeedsConfigDialog( NeedsConfigDialog )
+	mRunning( false )
 {}
 
 CNetworkInterface::~CNetworkInterface()
