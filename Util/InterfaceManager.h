@@ -15,14 +15,10 @@ class EntityPool;
 class CInterfaceManager
 {
 public:
-	explicit CInterfaceManager( EntityPool& EntPool );
+	CInterfaceManager();
 	~CInterfaceManager( void );
 
-	template<class InterfaceType> inline
-	void RegisterInterface( const std::string& InterfaceName )
-	{
-		mInterfaces[InterfaceName] = new InterfaceType( mEntityPool );
-	}
+	void AddInterface( const std::string& Name, CNetworkInterface* Interface );
 
 	CNetworkInterface* GetInterface( const std::string& Name );
 	std::set<std::string> GetInterfaceNames() const;
@@ -34,8 +30,6 @@ public:
 private:
 	typedef std::map<std::string, CNetworkInterface* > InterfaceMapType;
 	InterfaceMapType mInterfaces;
-
-	EntityPool& mEntityPool;
 };
 
 #endif // OVISE_INTERFACE_MANAGER_H

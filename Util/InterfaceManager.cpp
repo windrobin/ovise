@@ -1,13 +1,17 @@
 #include "InterfaceManager.h"
 
 
-CInterfaceManager::CInterfaceManager( EntityPool& EntPool )
-	: mEntityPool( EntPool )
+CInterfaceManager::CInterfaceManager( void )
 {}
 
 
 CInterfaceManager::~CInterfaceManager( void )
 {}
+
+void CInterfaceManager::AddInterface( const std::string& Name, CNetworkInterface* Interface )
+{
+	mInterfaces[Name] = Interface;
+}
 
 CNetworkInterface* CInterfaceManager::GetInterface( const std::string& Name )
 {

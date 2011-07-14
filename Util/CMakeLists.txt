@@ -12,7 +12,7 @@ set( UtilHeaders
 	NetworkInterface.h
 	ObjectTitle.h
 	OViSEException.h
-	Plugin.h
+	PluginBase.h
 	SceneLoader.h
 	SceneNodeOffset.h
 	Singleton.hpp
@@ -26,7 +26,7 @@ set( UtilSources
 	NetworkInterface.cpp
 	ObjectTitle.cpp
 	OViSEException.cpp
-	Plugin.cpp
+	PluginBase.cpp
 	SceneNodeOffset.cpp
 	StringConverter.cpp
 	VertexData.cpp )

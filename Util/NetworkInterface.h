@@ -2,27 +2,21 @@
 #define NETWORK_INTERFACE_H
 
 #include "../Core/EntityPool.h"
-#include "../Util/Plugin.h"
+#include "PluginBase.h"
 
 #include <boost/asio.hpp>
 #include <wx/propdlg.h>
 
-#ifdef WIN32
-#define INTERFACE_API __declspec( dllexport )
-#else
-#define INTERFACE_API
-#endif
-
 /** Base class for network interfaces.
-    Network plugins shall derive from this. The Poll() method will be called
+	Network plugins shall derive from this. The Poll() method will be called
 	from the main applications main loop repeatedly to poll the interface for
 	work. The call must return as soon as possible! 
 	(see boost::asio::io_service::poll_one())
  */
-class CNetworkInterface : public CPlugin
+class CNetworkInterface : public CPluginBase
 {
 public:
-	CNetworkInterface( EntityPool& EntPool );
+	explicit CNetworkInterface( EntityPool& EntPool, const wxString& Name );
 	virtual ~CNetworkInterface();
 
 	/**

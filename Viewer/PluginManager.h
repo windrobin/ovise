@@ -2,30 +2,60 @@
 #define OVISE_PLUGIN_MANAGER_H
 
 #include <wx/propdlg.h>
-#include <vector>
-#include "../Util/Plugin.h"
+#include <wx/dynlib.h>
 
-class CInterfaceManager;
+#include <map>
+
+#include "../Util/PluginBase.h"
+#include "../Util/InterfaceManager.h"
+
+class EntityPool;
 class SceneView;
 
+typedef boost::shared_ptr<CPluginBase> DllPtr;
 
 class CPluginManager
 {
 public:
-	CPluginManager();
+	explicit CPluginManager( EntityPool& EntPool, wxWindow* Parent );
 	~CPluginManager();
 
-	void LoadPlugins( const wxString& BasePath, wxWindow* Parent );
+	void LoadPlugins( const wxString& BasePath );
 	void UnloadPlugins();
 
-	void InitNWPlugins( CInterfaceManager& IManager );
-	void InitVIPlugins( SceneView& View );
-	void InitSSPlugins();
+	template<class PluginType> inline
+	void RegisterPlugin( const std::string& Name, const int Type )
+	{
+		switch( Type )
+		{
+		case CPluginBase::PLUGIN_TYPE_NETWORK:
+			mPlugins[Name].reset( new PluginType( mEntityPool, Name ) );
+			mInterfaceManager.AddInterface( Name, dynamic_cast<CNetworkInterface*>( mPlugins[Name].get() ) );
+			mPlugins[Name]->CreateConfigDialog( mParentWindow );
+			break;
+		case CPluginBase::PLUGIN_TYPE_VISUAL:
+			mPlugins[Name].reset( new PluginType( Name ) );
+			break;
+		case CPluginBase::PLUGIN_TYPE_SENSOR:
+			break;
+		default: break;
+		}
+	}
 
-	const std::vector<CPlugin>& GetPlugins() const;
+	const std::map<std::string, DllPtr>& GetPlugins() const;
 
-private:	
-	std::vector<CPlugin> mPlugins;
+	const CInterfaceManager& GetInterfaceManager();
+
+private:
+	void LoadPlugin( const wxString& Path, const wxString& FileName );
+
+	std::map<std::string, DllPtr> mPlugins;
+	std::map<wxString, boost::shared_ptr<wxDynamicLibrary> > mPluginHandles;
+	
+	EntityPool& mEntityPool;
+	CInterfaceManager mInterfaceManager;
+	
+	wxWindow* mParentWindow;
 };
 
 #endif // OVISE_PLUGIN_MANAGER_H

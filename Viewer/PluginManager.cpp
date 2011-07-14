@@ -14,7 +14,8 @@ bool CheckFileName( const wxString& Filename )
 }
 
 
-CPluginManager::CPluginManager()
+CPluginManager::CPluginManager( EntityPool& EntPool, wxWindow* Parent )
+	: mEntityPool( EntPool ), mParentWindow( Parent )
 {
 }
 
@@ -22,7 +23,29 @@ CPluginManager::~CPluginManager()
 {
 }
 
-void CPluginManager::LoadPlugins( const wxString& BasePath, wxWindow* Parent )
+void CPluginManager::LoadPlugin( const wxString& Path, const wxString& Filename )
+{
+	typedef void ( *FunctionType )( CPluginManager& );
+
+	mPluginHandles[Filename].reset( new wxDynamicLibrary( Path + Filename ) );
+	if( !mPluginHandles[Filename]->IsLoaded() )
+	{
+		mPluginHandles.erase( Filename );
+		return;
+	}
+			
+	void* InitFunction = mPluginHandles[Filename]->GetSymbol( wxT( "InitPlugin" ) );
+	if( !InitFunction )
+	{
+		mPluginHandles.erase( Filename );
+		return;
+	}
+
+	FunctionType f = reinterpret_cast<FunctionType>( InitFunction );
+	f( *this );
+}
+
+void CPluginManager::LoadPlugins( const wxString& BasePath )
 {
 	wxString NWPluginPath; // network
 	wxString VIPluginPath; // visualization
@@ -59,9 +82,7 @@ void CPluginManager::LoadPlugins( const wxString& BasePath, wxWindow* Parent )
 			if( !CheckFileName( NWFilename ) )
 				continue;
 
-			CPlugin Plugin;
-			Plugin.Load( NWPluginPath + NWFilename, Plugin::TYPE_NETWORK, Parent );
-			mPlugins.push_back( Plugin );
+			LoadPlugin(  NWPluginPath, NWFilename );
 		}
 	}
 
@@ -77,9 +98,7 @@ void CPluginManager::LoadPlugins( const wxString& BasePath, wxWindow* Parent )
 			if( !CheckFileName( VIFilename ) )
 				continue;
 
-			CPlugin Plugin;
-			Plugin.Load( VIPluginPath + VIFilename, Plugin::TYPE_VISUAL, Parent );
-			mPlugins.push_back( Plugin );
+			LoadPlugin( VIPluginPath, VIFilename );
 		}
 	}
 
@@ -95,71 +114,19 @@ void CPluginManager::LoadPlugins( const wxString& BasePath, wxWindow* Parent )
 			if( !CheckFileName( SSFilename ) )
 				continue;
 
-			CPlugin Plugin;
-			Plugin.Load( SSPluginPath + SSFilename, Plugin::TYPE_SENSOR, Parent );
-			mPlugins.push_back( Plugin );
+			LoadPlugin( SSPluginPath, SSFilename );
 		}
 	}
 }
 
 void CPluginManager::UnloadPlugins()
 {
-	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
-		i != mPlugins.end();
+	for( std::map<wxString, boost::shared_ptr<wxDynamicLibrary> >::iterator i = mPluginHandles.begin();
+		i != mPluginHandles.end();
 		i++ )
 	{
-		i->Unload();
+		i->second.reset();
 	}
-	mPlugins.clear();
-}
 
-void CPluginManager::InitNWPlugins( CInterfaceManager& IManager )
-{
-	typedef void ( *FunctionType )( CInterfaceManager& );
-
-	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
-		i != mPlugins.end();
-		i++ )
-	{
-		if( i->mType != Plugin::TYPE_NETWORK ) continue;
-		
-		bool Success;
-		void* Function = i->mDllPointer->GetSymbol( wxT( "LoadInterface" ), &Success );
-		if( Success && Function )
-		{
-			FunctionType f = reinterpret_cast<FunctionType>( Function );
-			f( IManager );
-		}
-	}
-}
-
-void CPluginManager::InitVIPlugins( SceneView& View )
-{
-	typedef void ( *FunctionType )( SceneView& );
-
-	for( std::vector<CPlugin>::iterator i = mPlugins.begin();
-		i != mPlugins.end();
-		i++ )
-	{
-		if( i->mType != Plugin::TYPE_VISUAL ) continue;
-		
-		bool Success;
-		void* Function = i->mDllPointer->GetSymbol( wxT( "LoadEntityView" ), &Success );
-		if( Success && Function )
-		{
-			FunctionType f = reinterpret_cast<FunctionType>( Function );
-			f( View );
-		}
-	}
-}
-
-void CPluginManager::InitSSPlugins()
-{
-
-}
-
-const std::vector<CPlugin>& CPluginManager::GetPlugins() const
-{
-	
-	return mPlugins;
+	mPluginHandles.clear();
 }
