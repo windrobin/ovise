@@ -7,7 +7,7 @@
 
 
 CILCASInterface::CILCASInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool, false ),
+	: CNetworkInterface( EntPool, wxT( "ILCAS" ) ),
 	mMessageHandler( &EntPool )
 {}
 
@@ -51,13 +51,13 @@ void CILCASInterface::Poll()
 }
 
 void CILCASInterface::WriteHandler( const boost::system::error_code&,
-                                    std::                size_t )
+									std::                size_t )
 {}
 
 void CILCASInterface::ReadHandler(
-        const boost::system::error_code& Error,
-        std::size_t
-        BytesTransferred )
+		const boost::system::error_code& Error,
+		std::size_t
+		BytesTransferred )
 {
 	if( Error )
 		return;
@@ -66,7 +66,7 @@ void CILCASInterface::ReadHandler(
 	std::string( mBuffer.data(), BytesTransferred ) << std::endl;
 
 	const char* Data = boost::asio::buffer_cast<const char*>(
-	        mStreamBuffer.data() );
+			mStreamBuffer.data() );
 	int Id = mMessageHandler.HandleMessage( Data );
 	mStreamBuffer.consume( BytesTransferred );
 
@@ -87,8 +87,8 @@ void CILCASInterface::AcceptHandler( const boost::system::error_code& Error )
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
 }
 
-extern "C" INTERFACE_API
-void LoadInterface( CInterfaceManager& InterfaceManager )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	InterfaceManager.RegisterInterface<CILCASInterface>( "ILCAS" );
+	PluginManager.RegisterPlugin<CILCASInterface>( "ILCAS", CPluginBase::PLUGIN_TYPE_NETWORK );
 }
