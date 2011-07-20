@@ -24,7 +24,9 @@ SceneView::SceneView( Ogre::SceneManager *    SceneMgr,
 
 SceneView::~SceneView()
 {
-	typedef ViewHashType::value_type PairType;
+	// FIXME: verify if this is needed? Doesn't seem so, but not sure if we have
+	// a memory leak here
+	/*typedef ViewHashType::value_type PairType;
 
 	// Delete all entity views
 	BOOST_FOREACH( PairType & x, mViews )
@@ -32,8 +34,8 @@ SceneView::~SceneView()
 		AbstractOgreEntityView* View( x.second.View );
 
 		// View->Remove( mSceneManager );
-		if( View ) delete View;
-	}
+		//if( View ) delete View;
+	}*/
 }
 
 void SceneView::AssociateFactory( const std::string &    Typename,

@@ -3,6 +3,8 @@
 #include <boost/foreach.hpp>
 #include "RobotEntityView.h"
 
+#include "../Util/PluginManager.h"
+
 RobotEntityView::RobotEntityView( Entity* Object, Ogre::SceneManager* Mgr )
 	: BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
 {
@@ -131,8 +133,8 @@ void RobotEntityView::OnEntityAttributeChanged(
 
 /** \note This has to be defined as a C function to prevent name mangling.
  */
-extern "C" OVISE_DLLAPI
-void LoadEntityView( SceneView& View )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	View.RegisterView<RobotEntityView>( "Robot" );
+	PluginManager.RegisterVisualPlugin<RobotEntityView>( "Robot" );
 }

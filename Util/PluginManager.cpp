@@ -14,13 +14,19 @@ bool CheckFileName( const wxString& Filename )
 }
 
 
-CPluginManager::CPluginManager( EntityPool& EntPool, wxWindow* Parent )
-	: mEntityPool( EntPool ), mParentWindow( Parent )
+CPluginManager::CPluginManager( EntityPool& EntPool, SceneView* SView, wxWindow* Parent )
+	: mEntityPool( EntPool ), mSceneView( SView ), mParentWindow( Parent )
 {
 }
 
 CPluginManager::~CPluginManager()
 {
+	// need to make sure plugins are deleted before dlls are unloaded
+	for( std::map<std::string, DllPtr>::iterator i = mPlugins.begin();
+		i != mPlugins.end(); i++ )
+	{
+		i->second.reset();
+	}
 }
 
 void CPluginManager::LoadPlugin( const wxString& Path, const wxString& Filename )
@@ -129,4 +135,9 @@ void CPluginManager::UnloadPlugins()
 	}
 
 	mPluginHandles.clear();
+}
+
+const std::map<std::string, DllPtr>& CPluginManager::GetPlugins() const
+{
+	return mPlugins;
 }

@@ -11,6 +11,8 @@
 #include <wx/txtstrm.h>
 #include <wx/sstream.h>
 
+#include "../Util/PluginManager.h"
+
 namespace
 {
 	template < class T > T* ptr( std::vector<T>& v )
@@ -410,8 +412,8 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 
 /** \note This has to be defined as a C function to prevent name mangling.
  */
-extern "C" OVISE_DLLAPI
-void LoadEntityView( SceneView& View )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	View.RegisterView<PointcloudEntityView>( "Pointcloud" );
+	PluginManager.RegisterVisualPlugin<PointcloudEntityView>( "Pointcloud" );
 }

@@ -13,6 +13,8 @@ include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
 					 
+include( ${wxWidgets_USE_FILE} )
+					 
 set( SkeletalPluginHeaders
 	 SkeletalEntityView.h )
 	 
@@ -44,5 +46,7 @@ add_dependencies( SkeletalPlugin
 				  
 target_link_libraries( SkeletalPlugin
 					   Core
+					   Util
 					   ${OGRE_LIBRARIES}
-					   ${Boost_LIBRARIES} )
+					   ${Boost_LIBRARIES}
+					   ${wxWidgets_LIBRARIES} )

@@ -8,18 +8,17 @@
 
 using namespace boost::asio;
 
-class CILCASInterface :
-	public CNetworkInterface
+class CILCASInterface :	public CNetworkInterface
 {
 public:
-	CILCASInterface( EntityPool& EntPool );
+	CILCASInterface( EntityPool& EntPool, const wxString& Name );
 	~CILCASInterface( void );
 
 	void WriteHandler( const boost::system::error_code&, std::size_t );
 	void AcceptHandler( const boost::system::error_code& );
 	void ReadHandler( const boost::system::error_code&, std::size_t );
 
-	bool Start( const std::string& Host, const std::string& Service );
+	bool Start();
 	bool Stop();
 
 	void Poll();

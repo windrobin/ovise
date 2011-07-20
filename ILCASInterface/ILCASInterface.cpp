@@ -3,22 +3,19 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 
-#include <InterfaceManager.h>
+#include <PluginManager.h>
 
 
-CILCASInterface::CILCASInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool, wxT( "ILCAS" ) ),
-	mMessageHandler( &EntPool )
+CILCASInterface::CILCASInterface( EntityPool& EntPool, const wxString& Name )
+	: CNetworkInterface( EntPool, Name ), mMessageHandler( &EntPool )
 {}
 
 
-CILCASInterface::~CILCASInterface( void )
+CILCASInterface::~CILCASInterface()
 {
-	mSocket->shutdown( boost::asio::ip::tcp::socket::shutdown_both );
-	mAcceptor->close();
 }
 
-bool CILCASInterface::Start( const std::string& Host, const std::string& Service )
+bool CILCASInterface::Start()
 {
 	// currently we don't care about different ports or host adresses
 	// since this interface is listening passively
@@ -39,8 +36,12 @@ bool CILCASInterface::Start( const std::string& Host, const std::string& Service
 bool CILCASInterface::Stop()
 {
 	// FIXME: Is this the way to do it?
-	mAcceptor->close();
+	if( mSocket )
+		mSocket->shutdown( boost::asio::ip::tcp::socket::shutdown_both );
+	if( mAcceptor )
+		mAcceptor->close();
 	mRunning = false;
+	
 	return true;
 }
 
@@ -90,5 +91,5 @@ void CILCASInterface::AcceptHandler( const boost::system::error_code& Error )
 extern "C" OVISE_PLUGIN_API
 void InitPlugin( CPluginManager& PluginManager )
 {
-	PluginManager.RegisterPlugin<CILCASInterface>( "ILCAS", CPluginBase::PLUGIN_TYPE_NETWORK );
+	PluginManager.RegisterNetworkPlugin<CILCASInterface>( "ILCAS" );
 }

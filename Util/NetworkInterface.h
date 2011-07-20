@@ -27,7 +27,7 @@ public:
 	virtual bool Stop() = 0;
 
 	/// Checks if the interface is running
-	bool IsRunning() { return mRunning; }
+	bool IsRunning() const { return mRunning; }
 
 	/**
 	  Poll the interface for updates.

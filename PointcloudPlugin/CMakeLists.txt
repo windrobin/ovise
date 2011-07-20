@@ -50,6 +50,8 @@ add_dependencies( PointcloudPlugin
 				  
 target_link_libraries( PointcloudPlugin
 					   Core
+					   Util
 					   ${OGRE_LIBRARIES}
 					   ${wxWidgets_LIBRARIES}
-					   ${Boost_LIBRARIES} )
+					   ${Boost_LIBRARIES}
+					   ${wxWidgets_LIBRARIES} )

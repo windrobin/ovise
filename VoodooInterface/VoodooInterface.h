@@ -6,14 +6,13 @@
 
 #include "VoodooParser.hpp"
 
-class CVoodooInterface :
-	public CNetworkInterface
+class CVoodooInterface : public CNetworkInterface
 {
 public:
-	CVoodooInterface( EntityPool& EntPool );
+	CVoodooInterface( EntityPool& EntPool, const wxString& Name );
 	~CVoodooInterface( void );
 
-	bool Start( const std::string& Host, const std::string& Service );
+	bool Start();
 	bool Stop();
 
 	void Poll();

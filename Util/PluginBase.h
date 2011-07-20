@@ -18,9 +18,12 @@ public:
 	explicit CPluginBase( const wxString& Name, const int Type );
 	virtual ~CPluginBase();
 
-	static const int PLUGIN_TYPE_NETWORK;
-	static const int PLUGIN_TYPE_VISUAL;
-	static const int PLUGIN_TYPE_SENSOR;
+	enum PluginType
+	{
+		PLUGIN_TYPE_NETWORK,
+		PLUGIN_TYPE_VISUAL,
+		PLUGIN_TYPE_SENSOR
+	};
 
 	const wxString& GetName();
 	const int GetType();
@@ -28,11 +31,12 @@ public:
 	virtual void CreateConfigDialog( wxWindow* Parent ) {}
 	wxPropertySheetDialog* GetConfigDialog();
 
+protected:
+	wxPropertySheetDialog*	mConfigDlg;
+
 private:
 	wxString				mName;
 	int						mType;
-	
-	wxPropertySheetDialog*	mConfigDlg;
 };
 
 #endif // OVISE_PLUGIN_BASE_H

@@ -1,6 +1,7 @@
 # Util
 
 include_directories( ${Boost_INCLUDE_DIR}
+					 ${CMAKE_SOURCE_DIR}/Core
 					 ${OGRE_INCLUDE_DIRS} )
 					 
 include( ${wxWidgets_USE_FILE} )
@@ -13,6 +14,7 @@ set( UtilHeaders
 	ObjectTitle.h
 	OViSEException.h
 	PluginBase.h
+	PluginManager.h
 	SceneLoader.h
 	SceneNodeOffset.h
 	Singleton.hpp
@@ -27,6 +29,7 @@ set( UtilSources
 	ObjectTitle.cpp
 	OViSEException.cpp
 	PluginBase.cpp
+	PluginManager.cpp
 	SceneNodeOffset.cpp
 	StringConverter.cpp
 	VertexData.cpp )

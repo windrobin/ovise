@@ -13,6 +13,8 @@ include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
 					 
+include( ${wxWidgets_USE_FILE} )
+					 
 set( TrajectoryPluginHeaders
 	 Trajectory.h
 	 TrajectoryView.h )
@@ -47,5 +49,7 @@ add_dependencies( TrajectoryPlugin
 				  
 target_link_libraries( TrajectoryPlugin
 					   Core
+					   Util
 					   ${OGRE_LIBRARIES}
-					   ${Boost_LIBRARIES} )
+					   ${Boost_LIBRARIES}
+					   ${wxWidgets_LIBRARIES} )
