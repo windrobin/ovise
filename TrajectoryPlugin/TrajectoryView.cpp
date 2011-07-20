@@ -1,5 +1,7 @@
 #include "TrajectoryView.h"
 
+#include "../Util/PluginManager.h"
+
 TrajectoryView::TrajectoryView( Entity* Object, Ogre::SceneManager* Mgr ) :
 	BasicOgreEntityView( Object,Mgr ),
 	mNode( 0 )
@@ -81,8 +83,8 @@ void TrajectoryView::OnEntityAttributeChanged( Entity* Rhs,
 
 /** \note This has to be defined as a C function to prevent name mangling.
  */
-extern "C" OVISE_DLLAPI
-void LoadEntityView( SceneView& View )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	View.RegisterView<TrajectoryView>( "Trajectory" );
+	PluginManager.RegisterVisualPlugin<TrajectoryView>( "Trajectory" );
 }

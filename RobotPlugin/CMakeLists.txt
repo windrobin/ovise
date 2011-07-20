@@ -13,6 +13,8 @@ include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
 					 ${CMAKE_SOURCE_DIR}/Core )
 					 
+include( ${wxWidgets_USE_FILE} )
+					 
 set( RobotPluginHeaders
 	 RobotEntityView.h )
 	 
@@ -44,5 +46,7 @@ add_dependencies( RobotPlugin
 				  
 target_link_libraries( RobotPlugin
 					   Core
+					   Util
 					   ${OGRE_LIBRARIES}
-					   ${Boost_LIBRARIES} )
+					   ${Boost_LIBRARIES}
+					   ${wxWidgets_LIBRARIES} )

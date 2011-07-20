@@ -18,17 +18,16 @@
   @remark Only CValues will be represented as Entity attributes, CAttribute layer
   is not supported.
 */
-class SharomeInterface :
-	public CNetworkInterface
+class SharomeInterface : public CNetworkInterface
 {
 public:
-	SharomeInterface( EntityPool& EntPool );
+	SharomeInterface( EntityPool& EntPool, const wxString& Name );
 	~SharomeInterface( void );
 
 	bool Start();
 	bool Stop();
 
-	virtual void CreateConfigDialog( wxWindow* Parent );
+	void CreateConfigDialog( wxWindow* Parent );
 
 	void Poll();
 

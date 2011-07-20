@@ -3,21 +3,23 @@
 
 #include "../rapidxml-1.13/rapidxml.hpp"
 
-CVoodooInterface::CVoodooInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool, true )
+#include <PluginManager.h>
+
+CVoodooInterface::CVoodooInterface( EntityPool& EntPool, const wxString& Name )
+	: CNetworkInterface( EntPool, Name )
 {}
 
 CVoodooInterface::~CVoodooInterface()
 {}
 
-bool CVoodooInterface::Start( const std::string& Host, const std::string& Service )
+bool CVoodooInterface::Start()
 {
 	if( !mVoodooParser.LoadBodyMapping() )
 		return false;
 
 	mVoodooDude = new Entity( "VoodooDude" );
 	mVoodooDude->Set
-		( "Type", "VoodooDoll" )
+		( "Type", "VoodooPlugin" )
 		( "Model", "VoodooDude.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
@@ -32,8 +34,6 @@ bool CVoodooInterface::Start( const std::string& Host, const std::string& Servic
 
 	std::string ServerAdress = "localhost";
 	std::string ServerPort = "22613";
-	if( !Host.empty() ) ServerAdress = Host;
-	if( !Service.empty() ) ServerPort = Service;
 
 	mConnection->Connect( ServerAdress, ServerPort );
 
@@ -61,8 +61,8 @@ void CVoodooInterface::HandleMessage( const std::string& Msg )
 		mVoodooParser.UpdateEntity( mVoodooDude );
 }
 
-extern "C" INTERFACE_API
-void LoadInterface( CInterfaceManager& InterfaceManager )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	InterfaceManager.RegisterInterface<CVoodooInterface>( "Voodoo" );
+	PluginManager.RegisterNetworkPlugin<CVoodooInterface>( "VoodooInterface" );
 }

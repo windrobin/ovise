@@ -2,8 +2,10 @@
 #include "SimpleEntityView.h"
 #include <boost/lexical_cast.hpp>
 
-SimpleEntityView::SimpleEntityView( Entity* Object, Ogre::SceneManager* Mgr ) :
-	BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
+#include "../Util/PluginManager.h"
+
+SimpleEntityView::SimpleEntityView( Entity* Object, Ogre::SceneManager* Mgr ) 
+	: BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
 {
 	mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
 
@@ -89,8 +91,8 @@ void SimpleEntityView::OnEntityAttributeChanged(
 
 /** \note This has to be defined as a C function to prevent name mangling.
  */
-extern "C" OVISE_DLLAPI
-void LoadEntityView( SceneView& View )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	View.RegisterView<SimpleEntityView>( "Simple" );
+	PluginManager.RegisterVisualPlugin<SimpleEntityView>( "Simple" );
 }

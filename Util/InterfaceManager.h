@@ -5,8 +5,6 @@
 
 #include "NetworkInterface.h"
 
-class EntityPool;
-
 /**
   Manages the various network interface plugins.
   This class is responsible for loading and unloading of the network
@@ -20,12 +18,12 @@ public:
 
 	void AddInterface( const std::string& Name, CNetworkInterface* Interface );
 
-	CNetworkInterface* GetInterface( const std::string& Name );
+	CNetworkInterface& GetInterface( const std::string& Name );
 	std::set<std::string> GetInterfaceNames() const;
 
-	bool HasInterfaceRunning();
+	bool HasInterfaceRunning() const;
 
-	void PollInterfaces();
+	void PollInterfaces() const;
 
 private:
 	typedef std::map<std::string, CNetworkInterface* > InterfaceMapType;

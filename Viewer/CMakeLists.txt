@@ -30,7 +30,6 @@ set( ViewerHeaders
 	 OgreWindow.h
 	 PathConfigDialog.h
 	 PathProvider.h
-	 PluginManager.h
 	 SceneHandling.h
 	 SceneTree.h )
 	 
@@ -46,7 +45,6 @@ set( ViewerSources
 	 OgreWindow.cpp
 	 PathConfigDialog.cpp
 	 PathProvider.cpp
-	 PluginManager.cpp
 	 SceneHandling.cpp
 	 SceneTree.cpp )
 	 

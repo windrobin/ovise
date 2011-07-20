@@ -8,6 +8,8 @@
 #include <Mem/Location.h>
 #include <Result.h>
 
+#include <PluginManager.h>
+
 namespace
 {
 	void CreateEntityFromCObj( EntityPool& Pool, const OOWM::Mem::CObj& Obj )
@@ -46,8 +48,8 @@ namespace
 }
 
 
-SharomeInterface::SharomeInterface( EntityPool& EntPool )
-	: CNetworkInterface( EntPool )
+SharomeInterface::SharomeInterface( EntityPool& EntPool, const wxString& Name )
+	: CNetworkInterface( EntPool, Name )
 {
 	mSettings.Host = "localhost";
 	mSettings.Port = "12345";
@@ -152,8 +154,8 @@ void SharomeInterface::HandleSceneDeleted()
 void SharomeInterface::HandleError( std::string Msg )
 {}
 
-extern "C" INTERFACE_API
-void LoadInterface( CInterfaceManager& InterfaceManager  )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager  )
 {
-	InterfaceManager.RegisterInterface<SharomeInterface>( "Sharome" );
+	PluginManager.RegisterNetworkPlugin<SharomeInterface>( "Sharome" );
 }

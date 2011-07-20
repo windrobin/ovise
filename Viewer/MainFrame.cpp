@@ -123,8 +123,6 @@ MainFrame::MainFrame( wxString  MediaDir,
 	// Initialize SelectionManager
 	SetupSceneTree();
 
-	mInterfaceManager.reset( new CInterfaceManager( mEntityPool ) );
-
 	CAppContext::instance().SelectionChangedSignal.connect(
 		boost::bind( &MainFrame::OnSelectionChange, this, _1, _2 ) );
 	
@@ -144,7 +142,7 @@ MainFrame::~MainFrame()
 {
 	// need to manually delete this to make sure it gets cleaned up before
 	// the plugins are unloaded
-	mSceneView.reset();
+	//mSceneView.reset();
 }
 
 void MainFrame::OnIdle( wxIdleEvent& Event )
@@ -331,11 +329,10 @@ bool MainFrame::InitOgre()
 			boost::bind( &OgreWindow::Refresh, mOgreWindow, false,
 				(wxRect*) 0 ) ) );
 
-	mPluginManager.LoadPlugins( mPluginPath, this );
-	mPluginManager.InitNWPlugins( *mInterfaceManager );
-	mPluginManager.InitVIPlugins( *mSceneView );
+	mPluginManager.reset( new CPluginManager( mEntityPool, mSceneView.get(), this ) );
+	mPluginManager->LoadPlugins( mPluginPath );
 
-	std::set<std::string> Interfaces = mInterfaceManager->GetInterfaceNames();
+	std::set<std::string> Interfaces = mPluginManager->GetInterfaceManager().GetInterfaceNames();
 	for( std::set<std::string>::iterator i = Interfaces.begin();
 	     i != Interfaces.end(); i++ )
 	{
@@ -364,7 +361,7 @@ bool MainFrame::InitOgre()
 void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
                                          std::string&    Name )
 {
-	CNetworkInterface* Interface = mInterfaceManager->GetInterface( Name );
+	CNetworkInterface& Interface = mPluginManager->GetInterfaceManager().GetInterface( Name );
 
 	if( Event.IsChecked() )
 	{
@@ -402,14 +399,19 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 			Port = "";
 		}*/
 
-		if( Interface->mConfigDlg->ShowModal() != wxID_OK )
-			return;
-
-		wxString msg = wxT( "Starting interface " ) + wxString( Name );
-		SetStatusMessage( msg );
-		if( Interface )
+		wxPropertySheetDialog* ConfDlg = Interface.GetConfigDialog();
+		if( ConfDlg && ConfDlg->ShowModal() == wxID_OK )
 		{
-			if( Interface->Start() && !mNetworkTimer.IsRunning() )
+			wxString msg = wxT( "Starting interface " ) + wxString( Name );
+			SetStatusMessage( msg );
+			if( Interface.Start() && !mNetworkTimer.IsRunning() )
+				mNetworkTimer.Start( 50 );
+		}
+		else if( !ConfDlg ) // no config dialog, try to start anyway
+		{
+			wxString msg = wxT( "Starting interface " ) + wxString( Name );
+			SetStatusMessage( msg );
+			if( Interface.Start() && !mNetworkTimer.IsRunning() )
 				mNetworkTimer.Start( 50 );
 		}
 	}
@@ -417,12 +419,10 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 	{
 		wxString msg = wxT( "Stopping interface " ) + wxString( Name );
 		SetStatusMessage( msg );
-		if( Interface )
-		{
-			if( Interface->Stop() &&
-			    !mInterfaceManager->HasInterfaceRunning() )
-				mNetworkTimer.Stop();
-		}
+		Interface.Stop();
+		
+		if( !mPluginManager->GetInterfaceManager().HasInterfaceRunning() )
+			mNetworkTimer.Stop();
 	}
 }
 
@@ -433,7 +433,10 @@ void MainFrame::OnQuit( wxCommandEvent &event )
 
 void MainFrame::OnNetworkTimer( wxTimerEvent& Event )
 {
-	mInterfaceManager->PollInterfaces();
+	if( mPluginManager->GetInterfaceManager().HasInterfaceRunning() )
+		mPluginManager->GetInterfaceManager().PollInterfaces();
+	else
+		mNetworkTimer.Stop();
 }
 
 void MainFrame::OnAbout( wxCommandEvent &event )
@@ -490,13 +493,14 @@ void MainFrame::OnPluginsSummary( wxCommandEvent& event )
 	wxDynamicLibraryDetailsArray DLLDetails = 
 		wxDynamicLibrary::ListLoaded();
 
-	const std::vector<CPlugin>& Plugins = mPluginManager.GetPlugins();
+	const std::map<std::string, DllPtr>& Plugins = mPluginManager->GetPlugins();
 
-	for( std::size_t i = 0; i < Plugins.size(); i++ )
+	for( std::map<std::string, DllPtr>::const_iterator i = Plugins.begin();
+		 i != Plugins.end(); i++ )
 	{
-		Index = PDlg.PluginList->InsertItem( 0, Plugins[i].mName );
+		Index = PDlg.PluginList->InsertItem( 0, i->first );
 		wxDynamicLibraryDetails Details;
-		if( GetDLLDetails( Plugins[i].mName, Details, DLLDetails ) )
+		if( GetDLLDetails( i->second->GetName(), Details, DLLDetails ) )
 		{
 			PDlg.PluginList->SetItem( Index, 1, Details.GetVersion() );
 			PDlg.PluginList->SetItem( Index, 3, Details.GetPath() );
@@ -504,15 +508,15 @@ void MainFrame::OnPluginsSummary( wxCommandEvent& event )
 		else
 			PDlg.PluginList->SetItem( Index, 1, wxT( "N/A" ) );
 
-		switch( Plugins[i].mType )
+		switch( i->second->GetType() )
 		{
-		case Plugin::TYPE_NETWORK:
+		case CPluginBase::PLUGIN_TYPE_NETWORK:
 			PDlg.PluginList->SetItem( Index, 2, wxT( "Network" ) );
 			break;
-		case Plugin::TYPE_VISUAL:
+		case CPluginBase::PLUGIN_TYPE_VISUAL:
 			PDlg.PluginList->SetItem( Index, 2, wxT( "Visualization" ) );
 			break;
-		case Plugin::TYPE_SENSOR:
+		case CPluginBase::PLUGIN_TYPE_SENSOR:
 			PDlg.PluginList->SetItem( Index, 2, wxT( "Sensor" ) );
 			break;
 		default:

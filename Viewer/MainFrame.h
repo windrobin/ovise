@@ -141,8 +141,7 @@ protected:
 
 	wxTimer                              mNetworkTimer;
 
-	CPluginManager                       mPluginManager;
-	scoped_ptr<CInterfaceManager>        mInterfaceManager;
+	scoped_ptr<CPluginManager>           mPluginManager;
 };
 
 #endif // MAINFRAME_H

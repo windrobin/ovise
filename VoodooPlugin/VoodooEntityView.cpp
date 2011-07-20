@@ -1,7 +1,8 @@
-
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 #include "VoodooEntityView.h"
+
+#include "../Util/PluginManager.h"
 
 VoodooEntityView::VoodooEntityView( Entity* Object, Ogre::SceneManager* Mgr )
 	: BasicOgreEntityView( Object,Mgr ), mNode( 0 ), mOgreEntity( 0 )
@@ -142,8 +143,8 @@ void VoodooEntityView::OnEntityAttributeChanged(
 
 /** \note This has to be defined as a C function to prevent name mangling.
  */
-extern "C" OVISE_DLLAPI
-void LoadEntityView( SceneView& View )
+extern "C" OVISE_PLUGIN_API
+void InitPlugin( CPluginManager& PluginManager )
 {
-	View.RegisterView<VoodooEntityView>( "VoodooDoll" );
+	PluginManager.RegisterVisualPlugin<VoodooEntityView>( "VoodooPlugin" );
 }
