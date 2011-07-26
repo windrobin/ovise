@@ -32,7 +32,7 @@ public:
 	void Poll();
 
 	void HandleObjectCreated( const OOWM::Mem::CObj& Obj );
-	void HandleObjectChanged( const OOWM::Mem::CObj& Obj, const OOWM::Mem::CObj& OldObj );
+	void HandleObjectChanged( const OOWM::Mem::CObj& OldObj, const OOWM::Mem::CObj& NewObj );
 	void HandleObjectDeleted( const OOWM::Mem::CObj& Obj );
 	void HandleSceneChanged( const OOWM::Mem::CScene& Scene );
 	void HandleSceneDeleted();
