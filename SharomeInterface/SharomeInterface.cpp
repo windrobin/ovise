@@ -19,6 +19,7 @@ namespace
 			( "Type", "Simple" )
 			( "Model", Obj.getName() + ".mesh" )
 			( "SharomeId", Obj.getId() )
+			( "ExistProb", Obj.getExistProb() )
 		;
 
 		OOWM::Mem::CAttribute A;
@@ -78,7 +79,8 @@ bool SharomeInterface::Start()
 	LegacyClient->ErrorSignal.connect(
 		boost::bind( &SharomeInterface::HandleError, this, _1 ) );
 
-	return true;
+	std::string ErrMsg;
+	return LegacyClient->Start( ErrMsg, 5000, true );
 }
 
 bool SharomeInterface::Stop()
@@ -107,17 +109,18 @@ void SharomeInterface::HandleObjectCreated( const OOWM::Mem::CObj& Obj )
 	CreateEntityFromCObj( mEntityPool, Obj );
 }
 
-void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& Obj,
-	const OOWM::Mem::CObj& OldObj )
+void SharomeInterface::HandleObjectChanged( const OOWM::Mem::CObj& OldObj,
+	const OOWM::Mem::CObj& NewObj )
 {
-	Entity* OldEnt = mEntityPool.GetEntityByAttribute( "SharomeId", Obj.getId() );
+	Entity* OldEnt = mEntityPool.GetEntityByAttribute( "SharomeId", OldObj.getId() );
 	if( OldEnt )
 	{
 		const std::string AttName = "SharomeId";
-		std::string ObjID = Obj.getId();
+		std::string ObjID = OldObj.getId();
 		mEntityPool.RemoveEntitiesByAttributeValue( AttName, ObjID );
 	}
-	CreateEntityFromCObj( mEntityPool, Obj );
+	
+	CreateEntityFromCObj( mEntityPool, NewObj );
 }
 
 void SharomeInterface::HandleObjectDeleted( const OOWM::Mem::CObj& Obj )
