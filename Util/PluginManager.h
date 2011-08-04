@@ -28,7 +28,7 @@ public:
 	{
 		mPlugins[Name].reset( new PluginType( mEntityPool, Name ) );
 		mInterfaceManager.AddInterface( Name, static_cast<CNetworkInterface*>( mPlugins[Name].get() ) );
-		mInterfaceManager.GetInterface( Name ).CreateConfigDialog( mParentWindow );
+		//mInterfaceManager.GetInterface( Name ).CreateConfigDialog( mParentWindow );
 	}
 
 	template<class PluginType> inline

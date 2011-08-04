@@ -13,8 +13,8 @@ endif( WIN32 )
 
 include_directories( ${Boost_INCLUDE_DIR}
 					 ${OGRE_INCLUDE_DIR}
-					 ${Sharome_INCLUDE_DIRS}
-					 ${Sharome_INCLUDE_DIRS}/replay
+					 ${Sharome_INCLUDE_DIR}
+					 ${Sharome_INCLUDE_DIR}/replay
 					 ${CMAKE_SOURCE_DIR}/Core
 					 ${CMAKE_SOURCE_DIR}/Util )
 					 

@@ -91,12 +91,17 @@ bool SharomeInterface::Stop()
 	return true;
 }
 
-void SharomeInterface::CreateConfigDialog( wxWindow* Parent )
+/*void SharomeInterface::CreateConfigDialog( wxWindow* Parent )
 {
-	CDefaultInterfaceConfigDlg* Config = new CDefaultInterfaceConfigDlg( Parent,
-		wxT( "ShaRoMe Interface Settings" ) );
-	mConfigDlg = static_cast<wxPropertySheetDialog*>( Config );
-}
+	CDefaultInterfaceConfigDlg* Config = new CDefaultInterfaceConfigDlg();
+	if( Config->Create(  Parent, wxID_ANY, wxT( "ShaRoMe Interface Settings" ) ) )
+		mConfigDlg = static_cast<wxPropertySheetDialog*>( Config );
+	else
+	{
+		delete Config;
+		mConfigDlg = NULL;
+	}
+}*/
 
 void SharomeInterface::Poll()
 {

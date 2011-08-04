@@ -399,6 +399,9 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 			Port = "";
 		}*/
 
+		/*if( Interface.GetConfigDialog() == NULL )
+			Interface.CreateConfigDialog( this );
+
 		wxPropertySheetDialog* ConfDlg = Interface.GetConfigDialog();
 		if( ConfDlg && ConfDlg->ShowModal() == wxID_OK )
 		{
@@ -413,7 +416,12 @@ void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
 			SetStatusMessage( msg );
 			if( Interface.Start() && !mNetworkTimer.IsRunning() )
 				mNetworkTimer.Start( 50 );
-		}
+		}*/
+
+		wxString msg = wxT( "Starting interface " ) + wxString( Name );
+		SetStatusMessage( msg );
+		if( Interface.Start() && !mNetworkTimer.IsRunning() )
+			mNetworkTimer.Start( 50 );
 	}
 	else
 	{
