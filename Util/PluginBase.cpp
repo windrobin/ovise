@@ -1,7 +1,7 @@
 #include "PluginBase.h"
 
 CPluginBase::CPluginBase( const wxString& Name, const int Type )
-	: mName( Name ), mType( Type ), mConfigDlg( NULL )
+	: mName( Name ), mType( Type )
 {
 }
 
@@ -19,7 +19,7 @@ const int CPluginBase::GetType()
 	return mType;
 }
 
-wxPropertySheetDialog* CPluginBase::GetConfigDialog()
+/*wxPropertySheetDialog* CPluginBase::GetConfigDialog()
 {
 	return mConfigDlg;
-}
+}*/

@@ -28,11 +28,12 @@ public:
 	const wxString& GetName();
 	const int GetType();
 	
-	virtual void CreateConfigDialog( wxWindow* Parent ) {}
-	wxPropertySheetDialog* GetConfigDialog();
+	// TODO: make hook for GUI stuff work
+	//virtual void CreateConfigDialog( wxWindow* Parent ) {}
+	//wxPropertySheetDialog* GetConfigDialog();
 
 protected:
-	wxPropertySheetDialog*	mConfigDlg;
+	//wxPropertySheetDialog*	mConfigDlg;
 
 private:
 	wxString				mName;

@@ -6,11 +6,13 @@ SET( OVISE_VERSION_MAJOR 0 )
 SET( OVISE_VERSION_MINOR 5 )
 SET( OVISE_VERSION_PATCH 0 )
 
-message( "OViSE version info: ${OVISE_VERSION_MAJOR}.${OVISE_VERSION_MINOR}.${OVISE_VERSION_PATCH}" )
+message( STATUS "OViSE version info: ${OVISE_VERSION_MAJOR}.${OVISE_VERSION_MINOR}.${OVISE_VERSION_PATCH}" )
 
 cmake_minimum_required( VERSION 2.8 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/Scripts/")
+
+set(CMAKE_DEBUG_POSTFIX "_d")
 
 set( Boost_ADDITIONAL_VERSIONS "1.44.0" "1.44" )
 
@@ -35,6 +37,7 @@ if( UNIX )
 find_package( GTK2 2.10 REQUIRED gtk )
 endif( UNIX )
 
+# Plugins (Visualization)
 option( PLUGINS_SIMPLE "Build simple mesh plugin" ON )
 option( PLUGINS_ROBOT "Build robot plugin" ON )
 option( PLUGINS_POINTCLOUD "Build pointcloud plugin" ON )
@@ -42,6 +45,7 @@ option( PLUGINS_TRAJECTORY "Build trajectory plugin" ON )
 option( PLUGINS_SKELETAL "Build skeletal animated mesh plugin" ON )
 option( PLUGINS_VOODOO "Build Voodoo plugin" OFF )
 
+# Plugins (Network)
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
 option( INTERFACES_SHAROME "Build SHAROME interface" OFF )
 option( INTERFACES_VOODOO "Build VOODOO interface" OFF )

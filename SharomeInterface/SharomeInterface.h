@@ -27,7 +27,7 @@ public:
 	bool Start();
 	bool Stop();
 
-	void CreateConfigDialog( wxWindow* Parent );
+	//void CreateConfigDialog( wxWindow* Parent );
 
 	void Poll();
 

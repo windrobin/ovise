@@ -10,15 +10,22 @@ IMPLEMENT_CLASS( CDefaultInterfaceConfigDlg, wxPropertySheetDialog )
 BEGIN_EVENT_TABLE( CDefaultInterfaceConfigDlg, wxPropertySheetDialog )
 END_EVENT_TABLE()
 
-CDefaultInterfaceConfigDlg::CDefaultInterfaceConfigDlg( wxWindow* Parent, wxString Title )
+CDefaultInterfaceConfigDlg::CDefaultInterfaceConfigDlg()
+{	
+}
+
+bool CDefaultInterfaceConfigDlg::Create( wxWindow* Parent, wxWindowID Id, 
+	const wxString& Title, const wxPoint& Pos, 
+	const wxSize& Size, long Style, const wxString& Name )
 {
 	SetSheetStyle( wxPROPSHEET_SHRINKTOFIT );
 
 	SetSheetInnerBorder(0);
     SetSheetOuterBorder(0);
 
-	Create( Parent, wxID_ANY, Title, wxDefaultPosition, wxDefaultSize, 
-		wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+	if( !wxPropertySheetDialog::Create( Parent, Id, Title, Pos, Size, 
+		Style, Name ) )
+		return false;
 
 	CreateButtons( wxOK | wxCANCEL );
 
@@ -29,6 +36,8 @@ CDefaultInterfaceConfigDlg::CDefaultInterfaceConfigDlg( wxWindow* Parent, wxStri
 	Notebook->AddPage( GeneralSettings, wxT( "General" ), true );
 
 	LayoutDialog();
+
+	return true;
 }
 
 wxPanel* CDefaultInterfaceConfigDlg::CreateGeneralSettingsPage( wxWindow* Parent )
