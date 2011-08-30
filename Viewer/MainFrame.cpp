@@ -248,18 +248,20 @@ void MainFrame::SetupSceneTree()
 		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
 	;
 
-	/*std::vector<Ogre::Vector3> TestTrajectory;
-	TestTrajectory.push_back( vec3(0.f, 0.f, 1.f) );
-	TestTrajectory.push_back( vec3(2.f, 1.f, 1.f) );
-	TestTrajectory.push_back( vec3(3.f, 2.f, 2.f) );
+	std::vector<Ogre::Vector3> TestTrajectory;
+	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
+	TestTrajectory.push_back( vec3(1.f, 0.f, 0.f) );
+	TestTrajectory.push_back( vec3(1.f, 1.f, 0.f) );
+	TestTrajectory.push_back( vec3(1.f, 1.f, 1.f) );
+
 
 	mEntityPool.CreateEntity( "TestTrajectory" ).Set
 		( "Type", "Trajectory" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
-		( "Color", vec3( 1.f, 0.1f, 0.f ) )
+		( "Color", vec3( 0.f, 0.f, 0.f ) )
 		( "PointSize", 0.02f )
 		( "Points", TestTrajectory )
-	;*/
+	;
 
 	/*mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
