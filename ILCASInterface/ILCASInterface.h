@@ -31,7 +31,7 @@ private:
 	boost::asio::io_service mIOService;
 
 	boost::array<char, 4096> mBuffer;
-	boost::asio::streambuf   mStreamBuffer;
+	//boost::asio::streambuf   mStreamBuffer;
 
 	SocketMessage mMessageHandler;
 };
