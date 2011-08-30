@@ -34,15 +34,14 @@ int SocketMessage::HandleMessage( const char* Message )
 	{
 		rapidxml::xml_node<>* EntityNode = RootNode->first_node( "Id" );
 		rapidxml::xml_node<>* NameNode = RootNode->first_node( "Name" );
-		if( !EntityNode )
-		  return -1;
+		
 		if( EntityNode )
 		  HandleUpdate( EntityNode, mEntityPool->GetEntityById(
 								       boost::lexical_cast<int>( EntityNode->value() ) ) );
 		else if ( NameNode ) 
 		  {
 		    HandleUpdate( EntityNode, mEntityPool->GetEntityByName( NameNode->value() ) );
-		    std::cout << "Removing ent by name" << std::endl;
+		    std::cout << "Updating ent by name" << std::endl;
 		  }
 	}
 	else if ( OpStr == "delete" )
