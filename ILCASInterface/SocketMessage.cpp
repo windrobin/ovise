@@ -40,7 +40,7 @@ int SocketMessage::HandleMessage( const char* Message )
 								       boost::lexical_cast<int>( EntityNode->value() ) ) );
 		else if ( NameNode ) 
 		  {
-		    HandleUpdate( EntityNode, mEntityPool->GetEntityByName( NameNode->value() ) );
+		    HandleUpdate( NameNode, mEntityPool->GetEntityByName( NameNode->value() ) );
 		    std::cout << "Updating ent by name" << std::endl;
 		  }
 	}
