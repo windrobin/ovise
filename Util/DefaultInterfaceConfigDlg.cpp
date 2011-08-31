@@ -3,6 +3,7 @@
 #include <wx/bookctrl.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/panel.h>
 #include <wx/checkbox.h>
 
 IMPLEMENT_CLASS( CDefaultInterfaceConfigDlg, wxPropertySheetDialog )

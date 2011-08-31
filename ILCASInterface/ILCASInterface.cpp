@@ -5,6 +5,8 @@
 
 #include <PluginManager.h>
 
+#include <iostream>
+
 
 CILCASInterface::CILCASInterface( EntityPool& EntPool, const wxString& Name )
 	: CNetworkInterface( EntPool, Name ), mMessageHandler( &EntPool )
@@ -30,6 +32,12 @@ bool CILCASInterface::Start()
 	mAcceptor->async_accept( *mSocket,
 		boost::bind( &CILCASInterface::AcceptHandler, this, _1 ) );
 	mRunning = true;
+
+
+
+
+
+	std::cout << "starting interface" << std::endl;
 	return true;
 }
 
@@ -63,28 +71,41 @@ void CILCASInterface::ReadHandler(
 	if( Error )
 		return;
 
-	std::cout <<
-	std::string( mBuffer.data(), BytesTransferred ) << std::endl;
+	//std::cout << "-------------------" << std::endl;
 
-	const char* Data = boost::asio::buffer_cast<const char*>(
-			mStreamBuffer.data() );
-	int Id = mMessageHandler.HandleMessage( Data );
-	mStreamBuffer.consume( BytesTransferred );
+	//std::cout <<
+	//std::string( mBuffer.data(), BytesTransferred ) << std::endl;
+	//std::cout << "-------------------" << std::endl;
+
+	//std::cout << std::string(mBuffer.data(), BytesTransferred) << std::endl; 
+
+	//std::cout << "-------------------" << std::endl;
+
+	//const char* Data = boost::asio::buffer_cast<const char*>(
+	//		mStreamBuffer.data() );
+	int Id = mMessageHandler.HandleMessage( std::string(mBuffer.data(), BytesTransferred).c_str()  );
+	//mStreamBuffer.consume( BytesTransferred );
+
+	std::string ready = "ready\n";
 
 	boost::asio::write( *mSocket,
-		boost::asio::buffer( boost::lexical_cast<std::string>( Id ) ) );
+			    boost::asio::buffer( ready ) );//boost::lexical_cast<std::string>( Id ) ) );
 
-	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>",
+
+	mSocket->async_read_some( boost::asio::buffer(mBuffer), 
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
+
+	//boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>",
+	//	boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
 }
 
 void CILCASInterface::AcceptHandler( const boost::system::error_code& Error )
 {
 	if( Error )
 		return;
-
+	std::cout << "accept handler called" << std::endl;
 	boost::asio::write( *mSocket, boost::asio::buffer( "ready" ) );
-	boost::asio::async_read_until( *mSocket, mStreamBuffer, "</Entity>",
+	mSocket->async_read_some( boost::asio::buffer(mBuffer),
 		boost::bind( &CILCASInterface::ReadHandler, this, _1, _2 ) );
 }
 
