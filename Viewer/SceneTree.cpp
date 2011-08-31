@@ -98,19 +98,17 @@ void SceneTree::LoadImageList()
 	wxConfig OviseConfig( "OViSE" );
 	wxString MediaPath=OviseConfig.Read( wxT( "MediaDirStr" ));
 
-	std::auto_ptr<wxImageList> List( new wxImageList( 16, 16, true, 2 ));
+        std::auto_ptr<wxImageList> List( new wxImageList( 16, 16, true, 2 ));
 
 	// index 0 = Folder
-	wxBitmap nodeIcon( MediaPath + wxT(
-				   "/data/folder_16.png" ), wxBITMAP_TYPE_PNG );
+        wxBitmap nodeIcon( MediaPath + wxT( "/data/folder_16.png" ), wxBITMAP_TYPE_PNG );
 	List->Add( nodeIcon );
 	// index 1 = MESH
-	wxBitmap meshIcon( MediaPath + wxT(
-				   "/data/box_16.png" ), wxBITMAP_TYPE_PNG );
+        wxBitmap meshIcon( MediaPath + wxT( "/data/box_16.png" ), wxBITMAP_TYPE_PNG );
 	List->Add( meshIcon );
 
 	// Transfer ownership to the tree control
-	this->AssignImageList( List.release());
+        AssignImageList( List.release());
 }
 
 SceneTree::~SceneTree( void )

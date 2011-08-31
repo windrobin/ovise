@@ -86,16 +86,16 @@ bool OViSEApplication::OnInit()
 	wxString MediaPath = OviseConfig.Read( wxT( "MediaDirStr" ) );
 	wxString PluginPath = OviseConfig.Read( wxT( "PluginDirStr" ) );
 
-	wxImage::AddHandler( new wxPNGHandler );
-	wxBitmap        Bitmap;
+        wxInitAllImageHandlers();
+        wxBitmap        Bitmap;
 	wxSplashScreen* Splash = NULL;
 
 	// Check whether the the Splash image can be loaded
 	// This works also as a test to check whether path configuration was successful
-	if( Bitmap.LoadFile( MediaPath + wxT( "/Splash/OViSESplash.png" ),
-		    wxBITMAP_TYPE_PNG ) )
+        if( Bitmap.LoadFile( MediaPath + wxT( "/Splash/OViSESplash.png" ),
+                    wxBITMAP_TYPE_PNG ) )
 	{
-#ifndef _DEBUG
+//#ifndef _DEBUG
 		Splash = new wxSplashScreen( Bitmap,
 			wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
 			0,
@@ -104,23 +104,24 @@ bool OViSEApplication::OnInit()
 			wxDefaultPosition,
 			wxDefaultSize,
 			wxBORDER_NONE | wxSTAY_ON_TOP );
-#endif
+//#endif
 	}
 	else
 	{
 		// Exit gracefully if loading failed - and allow reconfiguration
 		OviseConfig.Write( "ConfigurationDone", false );
 		return false;
-	}
+        }
 
 	MainFrame* frame = new MainFrame( MediaPath, PluginPath, NULL );
 
 	frame->Show();
 	SetTopWindow( frame );
 
+
 	// Remove and delete the spash window
 	if ( Splash != 0 )
-		Splash->Destroy();
+                Splash->Destroy();
 
 	return true;
 }
@@ -128,11 +129,9 @@ bool OViSEApplication::OnInit()
 void OViSEApplication::OnInitCmdLine( wxCmdLineParser& Parser )
 {
 	Parser.AddSwitch( wxT( "h" ), wxT( "help" ),
-		wxT(
-			"displays help on the command line parameters" ),
-		wxCMD_LINE_OPTION_HELP );
-	Parser.AddSwitch( wxT( "c" ), wxT( "configure" ),
-		wxT( "forces configuration dialog" ) );
+                wxT("displays help on the command line parameters" ), wxCMD_LINE_OPTION_HELP );
+        Parser.AddSwitch( wxT( "c" ), wxT( "configure" ),
+                wxT( "forces configuration dialog" ) );
 	// must refuse '/' as parameter starter or cannot use "/path" style paths
 	Parser.SetSwitchChars( wxT( "-" ) );
 }

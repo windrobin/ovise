@@ -3,6 +3,7 @@
 
 #include <wx/propdlg.h>
 #include <wx/textctrl.h>
+#include <wx/panel.h>
 
 class CDefaultInterfaceConfigDlg : public wxPropertySheetDialog
 {
