@@ -588,7 +588,7 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 			( QueryResult[QRIndex].movable->getMovableType().compare("Entity") == 0 ) ) 
 		{ 
 			// get the entity to check 
-			Ogre::Entity* PEntity = static_cast<Ogre::Entity*>(QueryResult[QRIndex].movable);   
+			Ogre::Entity* PEntity = static_cast<Ogre::Entity*>(QueryResult[QRIndex].movable);
 			
 			// mesh data to retrieve
 			size_t VertexCount; 
@@ -607,27 +607,35 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 				PEntity->getParentSceneNode()->_getDerivedScale() );
 
 			// test for hitting individual triangles on the mesh 
-			bool NewClosestFound = false; 
-			for( int i = 0; i < static_cast<int>(IndexCount); i += 3 ) 
-			{ 
-				// check for a hit against this triangle 
-				std::pair<bool, Ogre::Real> Hit = 
-					Ogre::Math::intersects( MouseRay, 
-					Vertices[Indices[i]], 
-					Vertices[Indices[i+1]], 
-					Vertices[Indices[i+2]], 
-					true, false);  
-				// if it was a hit check if its the closest 
-				if( Hit.first ) 
+			bool NewClosestFound = false;
+			if( IndexCount == 0 ) // no triangles, e.g. pointcloud
+			{
+				NewClosestFound = true;
+				ClosestDistance = QueryResult[QRIndex].distance;
+			}
+			else
+			{
+				for( int i = 0; i < static_cast<int>(IndexCount); i += 3 ) 
 				{ 
-					if( ( ClosestDistance < 0.0f ) || 
-						( Hit.second < ClosestDistance ) ) 
+					// check for a hit against this triangle 
+					std::pair<bool, Ogre::Real> Hit = 
+						Ogre::Math::intersects( MouseRay, 
+						Vertices[Indices[i]], 
+						Vertices[Indices[i+1]], 
+						Vertices[Indices[i+2]], 
+						true, false);  
+					// if it was a hit check if its the closest 
+					if( Hit.first ) 
 					{ 
-						// this is the closest so far, save it off 
-						ClosestDistance = Hit.second; 
-						NewClosestFound = true; 
+						if( ( ClosestDistance < 0.0f ) || 
+							( Hit.second < ClosestDistance ) ) 
+						{ 
+							// this is the closest so far, save it off 
+							ClosestDistance = Hit.second; 
+							NewClosestFound = true; 
+						} 
 					} 
-				} 
+				}
 			}
 
 			// free the verticies and indicies memory 

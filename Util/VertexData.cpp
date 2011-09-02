@@ -87,7 +87,10 @@ void GetMeshInformation( const Ogre::MeshPtr mesh,
 		
 		Ogre::IndexData* index_data = submesh->indexData; 
 		size_t numTris = index_data->indexCount / 3; 
-		Ogre::HardwareIndexBufferSharedPtr ibuf = index_data->indexBuffer;  
+		
+		Ogre::HardwareIndexBufferSharedPtr ibuf = index_data->indexBuffer;
+		if( ibuf.isNull() ) continue;
+
 		bool use32bitindexes = (ibuf->getType() == Ogre::HardwareIndexBuffer::IT_32BIT);  
 		unsigned long* pLong = static_cast<unsigned long*>(ibuf->lock(Ogre::HardwareBuffer::HBL_READ_ONLY)); 
 		unsigned short* pShort = reinterpret_cast<unsigned short*>(pLong);   
