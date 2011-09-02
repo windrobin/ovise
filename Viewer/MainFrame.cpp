@@ -232,42 +232,34 @@ void MainFrame::SetupSceneTree()
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;*/
 
-	mEntityPool.CreateEntity( "Barrel" ).Set
-		( "Type", "Simple" )
-		( "Model", "Barrel.mesh" )
-		( "Position", vec3( 0.f, 0.f, 0.5f ) )
-		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
-		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
-	;
-
-	mEntityPool.CreateEntity( "Barrel2" ).Set
-		( "Type", "Simple" )
-		( "Model", "Barrel.mesh" )
-		( "Position", vec3( 0.f, -1.f, 0.5f ) )
-		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
-		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
-	;
-
-	std::vector<Ogre::Vector3> TestTrajectory;
+	/*std::vector<Ogre::Vector3> TestTrajectory;
 	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
 	TestTrajectory.push_back( vec3(1.f, 0.f, 0.f) );
 	TestTrajectory.push_back( vec3(1.f, 1.f, 0.f) );
 	TestTrajectory.push_back( vec3(1.f, 1.f, 1.f) );
-
-
+	
 	mEntityPool.CreateEntity( "TestTrajectory" ).Set
 		( "Type", "Trajectory" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
 		( "Color", vec3( 0.f, 0.f, 0.f ) )
 		( "PointSize", 0.02f )
 		( "Points", TestTrajectory )
-	;
+	;*/
 
 	/*mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
 		( "Position", Ogre::Vector3::ZERO )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "Model", "RainerHand.mesh" )
+	;*/
+
+	/*mEntityPool.CreateEntity( "TestCloud" ).Set
+		( "Type", "Pointcloud" )
+		( "Filename", "C:/Dev/Test.ply" )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+		( "PointSize", 0.05f )
 	;*/
 
 	// Link the Ogre visualization
