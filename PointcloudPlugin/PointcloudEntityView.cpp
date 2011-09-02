@@ -97,6 +97,7 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 			{
 				LoadFromFilePLY( *Str );
 			}
+			Rhs->SetOgreEntity( mOgreEntity );
 		}
 	}
 	else if ( Name == "Points" )
@@ -122,6 +123,8 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 					mOgreEntity->setMaterialName( "Pointcloud" );
 
 					mNode->attachObject( mOgreEntity );
+
+					Rhs->SetOgreEntity( mOgreEntity );
 				}
 				else
 				{
@@ -144,6 +147,8 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 						mOgreEntity->setMaterialName( "Pointcloud" );
 
 						mNode->attachObject( mOgreEntity );
+
+						Rhs->SetOgreEntity( mOgreEntity );
 					}
 					catch( const boost::bad_any_cast & )
 					{}
