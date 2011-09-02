@@ -1,6 +1,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/assign.hpp>
+#include <boost/filesystem.hpp>
 #include "PointcloudEntityView.h"
 #include <wx/dir.h>
 #include <wx/tokenzr.h>
@@ -66,6 +67,17 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 	if ( Name == "Filename" )
 	{
 		const std::string* Str=boost::get<std::string>( Attribute );
+
+		if(!Str) return;
+
+		if( !boost::filesystem::exists( *Str ) )
+		{
+			Ogre::String LogMessage = Ogre::String( "WARNING: Pointcloud file doesn't exist: " ) +
+				Ogre::String( *Str );
+			Ogre::LogManager::getSingleton().logMessage( Ogre::LML_CRITICAL,
+				 LogMessage );
+			return;
+		}
 
 		if( mNode )
 		{
