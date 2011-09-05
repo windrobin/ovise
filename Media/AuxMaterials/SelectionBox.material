@@ -1,0 +1,16 @@
+material __SelectionBoxMat
+{
+   technique
+   {
+      pass
+      {
+         lighting off
+         scene_blend alpha_blend
+         depth_check on
+         depth_write off
+         ambient 1 1 1 1
+         diffuse 1 1 1 1
+         specular 1 1 1 1
+      }
+   }
+}

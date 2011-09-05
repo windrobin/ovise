@@ -40,6 +40,7 @@
 #include <SceneView.h>
 #include <NetworkInterface.h>
 #include <InterfaceManager.h>
+#include <SelectionBox.h>
 
 #include <CCSCameraControlSystem.h>
 #include <CCSBasicCameraModes.h>
@@ -136,6 +137,8 @@ protected:
 	Ogre::Camera*                        mCamera;
 	scoped_ptr<CCS::CameraControlSystem> mCCS;
 	scoped_ptr<CCS::OrbitalCameraMode>   mOrbitalCamMode;
+
+	scoped_ptr<CSelectionBox>            mSelectionBox;
 
 	scoped_ptr<Ogre::RaySceneQuery>      mRaySceneQuery;
 

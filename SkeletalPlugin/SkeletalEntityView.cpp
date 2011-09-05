@@ -75,6 +75,7 @@ void SkeletalEntityView::OnEntityAttributeChanged(
 			mNode->detachObject( mOgreEntity );
 			GetSceneManager()->destroyEntity( mOgreEntity );
 			mOgreEntity=0;
+			Rhs->SetOgreEntity( NULL );
 		}
 
 
@@ -89,6 +90,7 @@ void SkeletalEntityView::OnEntityAttributeChanged(
 			boost::lexical_cast<std::string>( GetDataEntity() );
 		mOgreEntity = GetSceneManager()->createEntity( EntityName, *Data );
 		mNode->attachObject( mOgreEntity );
+		Rhs->SetOgreEntity( mOgreEntity );
 
 		// Get all bones as properties
 		typedef Ogre::SkeletonInstance::BoneIterator iterator;

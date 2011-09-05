@@ -95,7 +95,7 @@ bool OViSEApplication::OnInit()
         if( Bitmap.LoadFile( MediaPath + wxT( "/Splash/OViSESplash.png" ),
                     wxBITMAP_TYPE_PNG ) )
 	{
-//#ifndef _DEBUG
+#ifndef _DEBUG
 		Splash = new wxSplashScreen( Bitmap,
 			wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
 			0,
@@ -104,7 +104,7 @@ bool OViSEApplication::OnInit()
 			wxDefaultPosition,
 			wxDefaultSize,
 			wxBORDER_NONE | wxSTAY_ON_TOP );
-//#endif
+#endif
 	}
 	else
 	{
