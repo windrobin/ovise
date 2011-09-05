@@ -60,9 +60,8 @@ void RobotEntityView::OnEntityAttributeChanged(
 			mNode->detachObject( mOgreEntity );
 			GetSceneManager()->destroyEntity( mOgreEntity );
 			mOgreEntity=0;
+			Rhs->SetOgreEntity( NULL );
 		}
-
-
 
 		const std::string* Data=boost::get<std::string>( Attribute );
 
@@ -76,6 +75,7 @@ void RobotEntityView::OnEntityAttributeChanged(
 		mOgreEntity = GetSceneManager()->createEntity( EntityName,
 			*Data );
 		mNode->attachObject( mOgreEntity );
+		Rhs->SetOgreEntity( mOgreEntity );
 
 		// Get all bones as properties
 		typedef Ogre::SkeletonInstance::BoneIterator iterator;

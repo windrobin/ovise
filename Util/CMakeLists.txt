@@ -17,6 +17,7 @@ set( UtilHeaders
 	PluginManager.h
 	SceneLoader.h
 	SceneNodeOffset.h
+	SelectionBox.h
 	Singleton.hpp
 	StringConverter.h
 	VertexData.h )
@@ -31,6 +32,7 @@ set( UtilSources
 	PluginBase.cpp
 	PluginManager.cpp
 	SceneNodeOffset.cpp
+	SelectionBox.cpp
 	StringConverter.cpp
 	VertexData.cpp )
 	

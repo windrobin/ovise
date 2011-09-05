@@ -195,6 +195,7 @@ void MainFrame::OnSelectionChange( Entity* NewSel, Entity* OldSel )
 	{
 		// need to clear the selection here
 		mSceneTree->SelectItem( mSceneTree->GetRootItem() );
+		mSelectionBox->Hide();
 	}
 	else
 	{
@@ -203,6 +204,7 @@ void MainFrame::OnSelectionChange( Entity* NewSel, Entity* OldSel )
 		{
 			mSceneTree->SelectItem( Item );
 		}
+		mSelectionBox->Show( NewSel->GetOgreEntity() );
 	}
 }
 
@@ -226,11 +228,11 @@ void MainFrame::SetupSceneTree()
 	this->mWindowManager.AddPane( mSceneTree, wxRIGHT,
 		wxT( "Scene structure" ));
 
-	/*mEntityPool.CreateEntity( "MisterRoboto" ).Set
+	mEntityPool.CreateEntity( "MisterRoboto" ).Set
 		( "Type", "Robot" )
 		( "Model", "Albert.mesh" )
-		( "Position", vec3( 0.f, 0.f, 0.f ) )
-	;*/
+		( "Position", vec3( 0.f, 2.f, 0.f ) )
+	;
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
 	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
@@ -246,12 +248,12 @@ void MainFrame::SetupSceneTree()
 		( "Points", TestTrajectory )
 	;*/
 
-	/*mEntityPool.CreateEntity( "TestHand" ).Set
+	mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
 		( "Position", Ogre::Vector3::ZERO )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "Model", "RainerHand.mesh" )
-	;*/
+	;
 
 	/*mEntityPool.CreateEntity( "TestCloud" ).Set
 		( "Type", "Pointcloud" )
@@ -310,6 +312,8 @@ bool MainFrame::InitOgre()
 	SunLight->setCastShadows( true );
 	SunLight->setDirection( -1.f, -1.f, -1.f );
 	SunLight->setPosition( 100.f, 100.f, 100.f );
+
+	mSelectionBox.reset( new CSelectionBox( SceneManager ) );
 
 	// When selection in OViSESceneTree changed, call MainFrame::OnSelectionChanged(...) !
 	mSceneTree->Bind( wxEVT_COMMAND_TREE_SEL_CHANGED,
@@ -585,7 +589,8 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 		
 		// only check this result if its a hit against an entity 
 		if( ( QueryResult[QRIndex].movable != NULL ) && 
-			( QueryResult[QRIndex].movable->getMovableType().compare("Entity") == 0 ) ) 
+			( QueryResult[QRIndex].movable->getMovableType().compare("Entity") == 0 ) &&
+			QueryResult[QRIndex].movable->getName() != OVISE_SelectionBoxName ) 
 		{ 
 			// get the entity to check 
 			Ogre::Entity* PEntity = static_cast<Ogre::Entity*>(QueryResult[QRIndex].movable);
