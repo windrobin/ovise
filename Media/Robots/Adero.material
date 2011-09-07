@@ -1,0 +1,80 @@
+
+material _missing_material_ 
+{
+    receive_shadows off
+    technique
+    {
+        pass
+        {
+            ambient 0.1 0.1 0.1 1.0
+            diffuse 0.8 0.0 0.0 1.0
+            specular 0.5 0.5 0.5 1.0 12.5
+            emissive 0.3 0.3 0.3 1.0
+        }
+    }
+}
+
+material Body 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.800000011920929 0.800000011920929 0.800000011920929 1.0
+			diffuse 0.6400000190734865 0.6400000190734865 0.6400000190734865 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material White 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.9222539663314819 0.9235028028488159 1.0 1.0
+			diffuse 0.8109979389292192 0.8120961221613783 0.879365086555481 1.0
+			specular 0.3015872836112976 0.3015872836112976 0.3015872836112976 1.0 3.25
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material DarkGray 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.09462213516235352 0.09462213516235352 0.09462213516235352 1.0
+			diffuse 0.07569770925786656 0.07569770925786656 0.07569770925786656 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material FZIGreen 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.0694904699921608 0.25293681025505066 0.059878282248973846 1.0
+			diffuse 0.055592376822119594 0.20234945121928227 0.047902626512983826 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
