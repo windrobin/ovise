@@ -230,8 +230,8 @@ void MainFrame::SetupSceneTree()
 
 	mEntityPool.CreateEntity( "MisterRoboto" ).Set
 		( "Type", "Robot" )
-		( "Model", "Albert.mesh" )
-		( "Position", vec3( 0.f, 2.f, 0.f ) )
+		( "Model", "Adero.mesh" )
+		( "Position", vec3( 0.f, 0.f, 0.f ) )
 	;
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
@@ -248,12 +248,12 @@ void MainFrame::SetupSceneTree()
 		( "Points", TestTrajectory )
 	;*/
 
-	mEntityPool.CreateEntity( "TestHand" ).Set
+	/*mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
 		( "Position", Ogre::Vector3::ZERO )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "Model", "RainerHand.mesh" )
-	;
+	;*/
 
 	/*mEntityPool.CreateEntity( "TestCloud" ).Set
 		( "Type", "Pointcloud" )
