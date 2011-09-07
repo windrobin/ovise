@@ -23,10 +23,9 @@ void CSelectionBox::Show( Ogre::Entity* Target )
 	}
 
 	// resize
-	Resize( Target->getBoundingBox().getSize() * 1.1f );
+	Resize( Target->getParentSceneNode()->_getWorldAABB().getSize() * 1.1f );
 	// set to target's position
-	mParent->setPosition( Target->getParentSceneNode()->getPosition() +
-		Target->getBoundingBox().getCenter() );
+	mParent->setPosition( Target->getParentSceneNode()->_getWorldAABB().getCenter() );
 	mParent->setVisible( true );
 }
 
