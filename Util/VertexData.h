@@ -1,3 +1,6 @@
+#ifndef OVISE_VERTEX_DATA_H
+#define OVISE_VERTEX_DATA_H
+
 #include <Ogre.h>
 
 namespace Util {
@@ -10,3 +13,5 @@ void GetMeshInformation( const Ogre::MeshPtr mesh,
 	const Ogre::Quaternion &orient, const Ogre::Vector3 &scale );
 
 }
+
+#endif // OVISE_VERTEX_DATA_H

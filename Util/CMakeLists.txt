@@ -7,7 +7,9 @@ include_directories( ${Boost_INCLUDE_DIR}
 include( ${wxWidgets_USE_FILE} )
 					 
 set( UtilHeaders
+	AxisDisplay.h
 	DefaultInterfaceConfigDlg.h
+	Definitions.h
 	InterfaceManager.h
 	Logging.h
 	NetworkInterface.h
@@ -23,6 +25,7 @@ set( UtilHeaders
 	VertexData.h )
 	
 set( UtilSources
+	AxisDisplay.cpp
 	DefaultInterfaceConfigDlg.cpp
 	InterfaceManager.cpp
 	Logging.cpp

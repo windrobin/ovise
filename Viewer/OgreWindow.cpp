@@ -31,8 +31,8 @@ namespace
 #ifdef __WXMSW__
 		// Handle for Windows systems
 		handle =
-		        Ogre::StringConverter::toString((size_t)((HWND)Wnd->
-				                                 GetHWND()));
+				Ogre::StringConverter::toString((size_t)((HWND)Wnd->
+												 GetHWND()));
 #elif defined( __WXGTK__ )
 		GtkWidget* widget = Wnd->GetHandle();
 		gtk_widget_realize( widget ); // Mandatory. Otherwise, a segfault happens.
@@ -46,7 +46,7 @@ namespace
 		// Get the right display (DisplayString() returns ":display.screen")
 		std::string displayStr = DisplayString( display );
 		displayStr =
-		        displayStr.substr( 1, ( displayStr.find( ".", 0 ) - 1 ) );
+				displayStr.substr( 1, ( displayStr.find( ".", 0 ) - 1 ) );
 
 		// Put all together
 		handleStream << displayStr << ':' <<
@@ -67,23 +67,20 @@ namespace
 #ifdef _WIN32
 #ifdef _DEBUG
 			Root->loadPlugin( "Plugin_ParticleFX_d" );
-			Root->loadPlugin( "Plugin_BSPSceneManager_d" );
-			Root->loadPlugin( "Plugin_OctreeSceneManager_d" );
+			//Root->loadPlugin( "Plugin_OctreeSceneManager_d" );
 			Root->loadPlugin( "Plugin_CgProgramManager_d" );
 			Root->loadPlugin( "RenderSystem_Direct3D9_d" );
 #else
 			Root->loadPlugin( "RenderSystem_Direct3D9" );
 			Root->loadPlugin( "Plugin_ParticleFX" );
-			Root->loadPlugin( "Plugin_BSPSceneManager" );
-			Root->loadPlugin( "Plugin_OctreeSceneManager" );
+			//Root->loadPlugin( "Plugin_OctreeSceneManager" );
 			Root->loadPlugin( "Plugin_CgProgramManager" );
 #endif
 #else
 			Root->loadPlugin( "RenderSystem_GL" );
 			Root->loadPlugin( "Plugin_ParticleFX" );
-			Root->loadPlugin( "Plugin_BSPSceneManager" );
-			Root->loadPlugin( "Plugin_OctreeSceneManager" );
-			// Root->loadPlugin("Plugin_CgProgramManager");
+			//Root->loadPlugin( "Plugin_OctreeSceneManager" );
+			Root->loadPlugin("Plugin_CgProgramManager");
 #endif
 		}
 		catch (Ogre::InternalErrorException e)
@@ -100,10 +97,10 @@ namespace
 		// Find and set rendersystem
 #if OGRE_VERSION_MAJOR >= 1 && OGRE_VERSION_MINOR >= 7
 		const Ogre::RenderSystemList *rsList =
-		        &Root->getAvailableRenderers();
+				&Root->getAvailableRenderers();
 #else
 		const Ogre::RenderSystemList *rsList =
-		        Root->getAvailableRenderers();
+				Root->getAvailableRenderers();
 #endif
 
 		Ogre::RenderSystemList::const_iterator it = rsList->begin();
@@ -112,7 +109,7 @@ namespace
 		{
 			selectedRenderSystem = *( it++ );
 			Ogre::String lMsg = "Found rendersystem: " +
-			                    selectedRenderSystem->getName();
+								selectedRenderSystem->getName();
 			Ogre::LogManager::getSingletonPtr()->logMessage( lMsg );
 #ifdef _WIN32
 			if(selectedRenderSystem->getName().find( "Direct3D9" )
@@ -177,14 +174,14 @@ END_EVENT_TABLE()
 
 
 OgreWindow::OgreWindow( const wxString& MediaPath,
-                        wxWindow*       Parent,
-                        wxWindowID      id,
-                        const wxPoint&  pos,
-                        const wxSize&   size,
-                        long            style,
-                        const wxString& name )
+						wxWindow*       Parent,
+						wxWindowID      id,
+						const wxPoint&  pos,
+						const wxSize&   size,
+						long            style,
+						const wxString& name )
 	: wxWindow( Parent,id,pos,size,style,
-	            name ), mMediaDir( MediaPath ), mRenderWindow( 0 ),
+				name ), mMediaDir( MediaPath ), mRenderWindow( 0 ),
 	mSceneMgr( 0 ), mContextCreated( false )
 {
 	/*this->Bind(wxEVT_CREATE, &OgreWindow::OnCreate, this);
@@ -207,7 +204,7 @@ void OgreWindow::LoadResources()
 	{
 		secName = seci.peekNextKey();
 		Ogre::ConfigFile::SettingsMultiMap* settings =
-		        seci.getNext();
+				seci.getNext();
 		Ogre::ConfigFile::SettingsMultiMap::iterator i;
 		for(i=settings->begin(); i!=settings->end(); ++i)
 		{
@@ -235,7 +232,7 @@ void OgreWindow::OnCreate( wxWindowCreateEvent& Event )
 		std::cout << __FILE__ << ": " << __LINE__ << std::endl;
 		std::cout <<
 		( mContextCreated ? "Context created" : "Context NOT created" )
-		          << std::endl;
+				  << std::endl;
 
 		Ogre::NameValuePairList Params = GetRenderWindowParams( this );
 
@@ -286,8 +283,8 @@ void OgreWindow::OnPaint( wxPaintEvent& Event )
 {
 	/*if ( !mContextCreated )
 	   {
-	        wxWindowCreateEvent Event;
-	        OnCreate(Event);
+			wxWindowCreateEvent Event;
+			OnCreate(Event);
 	   }*/
 
 	wxPaintDC Context( this );
