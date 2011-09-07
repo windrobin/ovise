@@ -6,8 +6,15 @@ CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 	mVisual = SceneMgr->createManualObject( OVISE_SelectionBoxName );
 	mParent = SceneMgr->getRootSceneNode()->createChildSceneNode( OVISE_SelectionBoxName );
 	mParent->attachObject( mVisual );
-	mParent->setVisible( false );
+
 	Resize( mSize );
+
+	Ogre::Entity* MoveManip = SceneMgr->createEntity(
+		"MoveManip", "MoveManip.mesh" );
+	mParent->attachObject( MoveManip );
+	MoveManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+
+	mParent->setVisible( false );
 }
 
 CSelectionBox::~CSelectionBox()
@@ -26,6 +33,7 @@ void CSelectionBox::Show( Ogre::Entity* Target )
 	Resize( Target->getParentSceneNode()->_getWorldAABB().getSize() * 1.1f );
 	// set to target's position
 	mParent->setPosition( Target->getParentSceneNode()->_getWorldAABB().getCenter() );
+	mParent->setOrientation( Target->getParentSceneNode()->getOrientation() );
 	mParent->setVisible( true );
 }
 
