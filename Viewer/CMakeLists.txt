@@ -2,7 +2,7 @@
 
 set( Viewer_VERSION_MAJOR 0 )
 set( Viewer_VERSION_MINOR 5 )
-set( Viewer_VERSION_PATCH 0 )
+set( Viewer_VERSION_PATCH 1 )
 
 if( WIN32 )
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Viewer.rc.in

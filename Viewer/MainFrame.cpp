@@ -140,13 +140,15 @@ void MainFrame::OnClose( wxCloseEvent& event )
 
 MainFrame::~MainFrame()
 {
-	// need to manually delete this to make sure it gets cleaned up before
-	// the plugins are unloaded
-	//mSceneView.reset();
 }
 
 void MainFrame::OnIdle( wxIdleEvent& Event )
 {
+	if( CAppContext::instance().HasSelection() )
+	{
+		mSelectionBox->Show( 
+			CAppContext::instance().GetSelected()->GetOgreEntity() );
+	}
 	mOgreWindow->UpdateOgre();
 	Event.RequestMore();
 }
