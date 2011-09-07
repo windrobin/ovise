@@ -1,5 +1,7 @@
 #include "SelectionBox.h"
 
+#include "Definitions.h"
+
 CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 	: mSize( 1.f, 1.f, 1.f ), mParent( NULL )
 {
@@ -9,10 +11,14 @@ CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 
 	Resize( mSize );
 
-	Ogre::Entity* MoveManip = SceneMgr->createEntity(
+	mMoveManip = SceneMgr->createEntity(
 		"MoveManip", "MoveManip.mesh" );
-	mParent->attachObject( MoveManip );
-	MoveManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+	mParent->attachObject( mMoveManip );
+	mMoveManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+
+	mAxisDisplay.reset( new CAxisDisplay( SceneMgr ) );
+	//mAxisDisplay->Attach( mParent );
+	mAxisDisplay->Disable();
 
 	mParent->setVisible( false );
 }
@@ -35,11 +41,31 @@ void CSelectionBox::Show( Ogre::Entity* Target )
 	mParent->setPosition( Target->getParentSceneNode()->_getWorldAABB().getCenter() );
 	mParent->setOrientation( Target->getParentSceneNode()->getOrientation() );
 	mParent->setVisible( true );
+	mAxisDisplay->SetPosition( mParent->getPosition() );
+	mAxisDisplay->SetOrientation( mParent->getOrientation() );
 }
 
 void CSelectionBox::Hide()
 {
 	mParent->setVisible( false );
+	mAxisDisplay->Disable();
+}
+
+const int& CSelectionBox::GetToolAxis( Ogre::Camera* Cam, 
+	const Ogre::Real& ScreenLeft, const Ogre::Real& ScreenTop,
+	const Ogre::Real& ScreenRight, const Ogre::Real& ScreenBottom )
+{
+	// Get box from camera into world around mouse position
+	Ogre::PlaneBoundedVolume SelectionTube = Cam->getCameraToViewportBoxVolume(
+		ScreenLeft, ScreenTop, ScreenRight, ScreenBottom );
+
+	// setup three spheres on tips of move manipulator tool
+
+	// intersect with SelectionTube
+
+	// return axis
+
+	return OVISE::TOOLAXIS_NONE;
 }
 
 void CSelectionBox::Resize( const Ogre::Vector3& Size )

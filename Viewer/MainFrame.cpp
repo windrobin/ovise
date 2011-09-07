@@ -87,8 +87,8 @@ bool GetDLLDetails( wxString Name,
 }
 
 MainFrame::MainFrame( wxString  MediaDir,
-                      wxString  PluginDir,
-                      wxWindow* ParentWindow )
+					  wxString  PluginDir,
+					  wxWindow* ParentWindow )
 	: MainFrameBase( ParentWindow ),
 	mMediaPath( MediaDir ),
 	mPluginPath( PluginDir ),
@@ -156,9 +156,9 @@ void MainFrame::OnIdle( wxIdleEvent& Event )
 void MainFrame::OnLoadScene( wxCommandEvent& event )
 {
 	wxFileDialog OpenFileDialog( this,
-	                             wxT( " Load .scene file " ), "", "",
-	                             "scene files (*.scene)|*.scene",
-	                             wxFD_OPEN | wxFD_FILE_MUST_EXIST );
+								 wxT( " Load .scene file " ), "", "",
+								 "scene files (*.scene)|*.scene",
+								 wxFD_OPEN | wxFD_FILE_MUST_EXIST );
 
 	if( OpenFileDialog.ShowModal() == wxID_CANCEL )
 		return;
@@ -171,10 +171,10 @@ void MainFrame::OnLoadScene( wxCommandEvent& event )
 void MainFrame::OnLoadPointcloud( wxCommandEvent& event )
 {
 	wxFileDialog OpenFileDialog( this,
-	                             wxT( " Load pointcloud from file " ),
-	                             "", "",
-	                             "OFF files (*.off)|*.off|PLY files (*.ply)|*.ply",
-	                             wxFD_OPEN | wxFD_FILE_MUST_EXIST );
+								 wxT( " Load pointcloud from file " ),
+								 "", "",
+								 "OFF files (*.off)|*.off|PLY files (*.ply)|*.ply",
+								 wxFD_OPEN | wxFD_FILE_MUST_EXIST );
 
 	if( OpenFileDialog.ShowModal() == wxID_CANCEL )
 		return;
@@ -243,7 +243,7 @@ void MainFrame::SetupSceneTree()
 		( "Model", "Barrel.mesh" )
 		( "Position", vec3( 1.f, 0.f, 1.f ) )
 		( "Orientation", quat() )
-		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
 	;
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
@@ -344,11 +344,11 @@ bool MainFrame::InitOgre()
 
 	std::set<std::string> Interfaces = mPluginManager->GetInterfaceManager().GetInterfaceNames();
 	for( std::set<std::string>::iterator i = Interfaces.begin();
-	     i != Interfaces.end(); i++ )
+		 i != Interfaces.end(); i++ )
 	{
 		wxMenuItem* InterfaceItem = network->AppendCheckItem( wxID_ANY, *i );
 		boost::function< void ( wxCommandEvent& ) > InitHandler(
-		        boost::bind( &MainFrame::OnNetworkInterfaceCheck,
+				boost::bind( &MainFrame::OnNetworkInterfaceCheck,
 				this, _1, *i ) );
 
 		Bind( wxEVT_COMMAND_MENU_SELECTED, InitHandler,	InterfaceItem->GetId() );
@@ -369,7 +369,7 @@ bool MainFrame::InitOgre()
 }
 
 void MainFrame::OnNetworkInterfaceCheck( wxCommandEvent& Event,
-                                         std::string&    Name )
+										 std::string&    Name )
 {
 	CNetworkInterface& Interface = mPluginManager->GetInterfaceManager().GetInterface( Name );
 
@@ -549,9 +549,9 @@ void MainFrame::OnPluginsSummary( wxCommandEvent& event )
 void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 {
 	wxFileDialog fDialog( this, wxT( "Save screen to file" ),
-	                      wxGetHomeDir(),  
+						  wxGetHomeDir(),  
 						  wxFileName::CreateTempFileName(wxT("OViSE")),
-	                      wxT( "PNG files (*.png)|*.png" ), wxFD_SAVE );
+						  wxT( "PNG files (*.png)|*.png" ), wxFD_SAVE );
 	int rval = fDialog.ShowModal();
 	wxYieldIfNeeded();
 	if(rval == wxID_OK)

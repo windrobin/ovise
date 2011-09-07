@@ -17,6 +17,12 @@ public:
 	void ClearSelection();
 	Entity* GetSelected() { return mSelection; }
 	bool HasSelection() { return mSelection != NULL; }
+
+	void SetToolmode( const int& Mode ) { mToolmode = Mode; }
+	const int& GetToolmode() { return mToolmode; }
+
+	void SetToolaxis( const int& Axis ) { mToolaxis = Axis; }
+	const int& GetToolaxis() { return mToolaxis; }
 	
 	/**
 	  Signal selection change.
@@ -26,6 +32,9 @@ public:
 
 private:
 	Entity* mSelection;
+
+	int		mToolmode;
+	int		mToolaxis;
 };
 
 
