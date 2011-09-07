@@ -230,11 +230,19 @@ void MainFrame::SetupSceneTree()
 	this->mWindowManager.AddPane( mSceneTree, wxRIGHT,
 		wxT( "Scene structure" ));
 
-	mEntityPool.CreateEntity( "MisterRoboto" ).Set
+	/*mEntityPool.CreateEntity( "MisterRoboto" ).Set
 		( "Type", "Robot" )
 		( "Model", "Adero.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
-	;
+	;*/
+
+	/*mEntityPool.CreateEntity( "Test" ).Set
+		( "Type", "Simple" )
+		( "Model", "CoS.mesh" )
+		( "Position", vec3( 1.f, 0.f, 1.f ) )
+		( "Orientation", quat() )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
+	;*/		
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
 	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
