@@ -234,15 +234,17 @@ void MainFrame::SetupSceneTree()
 		( "Type", "Robot" )
 		( "Model", "Adero.mesh" )
 		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Orientation", quat() )
+		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 	;*/
 
-	/*mEntityPool.CreateEntity( "Test" ).Set
+	mEntityPool.CreateEntity( "Test" ).Set
 		( "Type", "Simple" )
-		( "Model", "CoS.mesh" )
+		( "Model", "Barrel.mesh" )
 		( "Position", vec3( 1.f, 0.f, 1.f ) )
 		( "Orientation", quat() )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
-	;*/		
+	;
 
 	/*std::vector<Ogre::Vector3> TestTrajectory;
 	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
@@ -670,6 +672,7 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 		ClosestResult = NULL;
 	} 
 	
+	// TODO: grid, coordinate system, selection box etc. should be exluded via query mask
 	if( ClosestResult )
 	{
 		Entity* Selection = mEntityPool.GetEntityByOgreEntity( ClosestResult );
@@ -678,6 +681,8 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 		else
 			CAppContext::instance().ClearSelection();
 	}
+	else
+		CAppContext::instance().ClearSelection();
 
 	event.Skip();
 }
