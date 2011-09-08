@@ -128,7 +128,7 @@ MainFrame::MainFrame( wxString  MediaDir,
 	CAppContext::instance().SelectionChangedSignal.connect(
 		boost::bind( &MainFrame::OnSelectionChange, this, _1, _2 ) );
 	CAppContext::instance().DragObjectSignal.connect(
-		boost::bind( &MainFrame::OnDragObject, this ) );
+		boost::bind( &MainFrame::OnDragObject, this, _1 ) );
 	
 	Maximize( true );
 
@@ -700,10 +700,13 @@ void MainFrame::OnViewClick( wxMouseEvent& evt )
 
 void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 {
-	if( !CAppContext::instance().HasSelection() )
-		return;
-
 	wxPoint p = evt.GetPosition();
+
+	if( !CAppContext::instance().HasSelection() )
+	{
+		CAppContext::instance().MousePos = std::pair<int,int>(p.x, p.y);
+		return;
+	}
 	
 	// just moving the mouse around, do nothing
 	if( evt.Moving() ) 
@@ -723,6 +726,7 @@ void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 		CAppContext::instance().SetToolaxis( Axis );
 	
 		evt.Skip();
+		CAppContext::instance().MousePos = std::pair<int,int>(p.x, p.y);
 		return;
 	}
 	
@@ -730,12 +734,15 @@ void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 	if( evt.Dragging() && evt.LeftIsDown()
 		&& CAppContext::instance().GetToolaxis() != OVISE::TOOLAXIS_NONE )
 	{
+		
 		CAppContext::instance().Dragging = true;
-		CAppContext::instance().DragObjectSignal();
+		CAppContext::instance().DragObjectSignal( std::pair<int,int>(p.x, p.y) );
+		CAppContext::instance().MousePos = std::pair<int,int>(p.x, p.y);
 		evt.Skip();
 		return;
 	}
 
+	CAppContext::instance().MousePos = std::pair<int,int>(p.x, p.y);
 	evt.Skip();
 }
 
@@ -865,9 +872,42 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 	mAttributeView->SetEntity( Selected );
 }
 
-void MainFrame::OnDragObject()
+void MainFrame::OnDragObject( std::pair<int,int> MousePos )
 {
 	// move the selected object according to mouse movement
+	Entity* Target = CAppContext::instance().GetSelected();
+	if( !Target ) return;
+
+	Ogre::Entity* TargetEntity = Target->GetOgreEntity();
+	if( !TargetEntity )	return;
+
+	Ogre::SceneNode* TargetNode = TargetEntity->getParentSceneNode();
+	if( !TargetNode ) return;
+
+	float Delta;
+	if( MousePos.first > CAppContext::instance().MousePos.first )
+		Delta = 0.01f;
+	else Delta = -0.01f;
+
+	switch( CAppContext::instance().GetToolaxis() )
+	{
+	case OVISE::TOOLAXIS_X:
+		TargetNode->translate( Delta, 0.f, 0.f, Ogre::Node::TS_LOCAL );
+		break;
+	case OVISE::TOOLAXIS_Y:
+		TargetNode->translate( 0.f, Delta, 0.f, Ogre::Node::TS_LOCAL );
+		break;
+	case OVISE::TOOLAXIS_Z:
+		TargetNode->translate( 0.f, 0.f, Delta, Ogre::Node::TS_LOCAL );
+		break;
+	default:break;
+	}
+
+	const Entity::VariantType* PosAttrib = Target->GetAttribute( "Position" );
+	if( PosAttrib )
+	{
+		Target->SetAttribute( "Position", TargetNode->getPosition() );
+	}
 }
 
 void MainFrame::OnShowSceneStructure( wxCommandEvent &event )

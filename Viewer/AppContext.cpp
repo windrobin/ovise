@@ -2,7 +2,7 @@
 
 
 CAppContext::CAppContext()
-	: mSelection( NULL ), Dragging( false )
+	: mSelection( NULL ), Dragging( false ), MousePos(0,0)
 {
 }
 
