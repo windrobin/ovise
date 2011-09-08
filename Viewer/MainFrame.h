@@ -109,7 +109,7 @@ private:
 	void OnIdle( wxIdleEvent& Event );
 
 	void OnSelectionChange( Entity* NewSel, Entity* OldSel );
-	void OnDragObject();
+	void OnDragObject( float Delta );
 
 	void SetupSceneTree();
 

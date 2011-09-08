@@ -30,9 +30,10 @@ public:
 	*/
 	boost::signal<void ( Entity*, Entity* )> SelectionChangedSignal;
 
-	boost::signal<void ( void )> DragObjectSignal;
+	boost::signal<void ( float )> DragObjectSignal;
 
 	bool Dragging;
+	std::pair<int, int> MousePos;
 
 private:
 	Entity* mSelection;
