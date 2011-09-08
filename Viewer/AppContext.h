@@ -30,6 +30,10 @@ public:
 	*/
 	boost::signal<void ( Entity*, Entity* )> SelectionChangedSignal;
 
+	boost::signal<void ( void )> DragObjectSignal;
+
+	bool Dragging;
+
 private:
 	Entity* mSelection;
 

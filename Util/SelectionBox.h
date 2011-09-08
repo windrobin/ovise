@@ -25,12 +25,14 @@ public:
 	void Hide();
 
 	/** Get the axis of the manipulator tool.
-	    Given an area of screen space, this returns if (and which)
+	    Given an area of screen space, this checks if (and which)
 		axis of the manipulator tool is below the cursor.
 	*/
-	const int& GetToolAxis( Ogre::Camera* Cam, 
+	const int GetToolAxis( Ogre::Camera* Cam, 
 		const Ogre::Real& ScreenLeft, const Ogre::Real& ScreenTop,
 		const Ogre::Real& ScreenRight, const Ogre::Real& ScreenBottom );
+
+	int mCurrentToolAxis;
 
 private:
 	Ogre::Vector3					mSize;
@@ -43,6 +45,7 @@ private:
 	boost::scoped_ptr<CAxisDisplay> mAxisDisplay;
 
 	void Resize( const Ogre::Vector3& Size );
+	void ColorMoveManipAxis( const int& Axis );
 };
 
 #endif // OVISE_SELECTIONBOX_H

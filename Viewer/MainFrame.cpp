@@ -11,6 +11,7 @@
 
 #include "../Util/SceneLoader.h"
 #include "../Util/VertexData.h"
+#include "../Util/Definitions.h"
 
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
@@ -113,7 +114,8 @@ MainFrame::MainFrame( wxString  MediaDir,
 	mOgreWindow->SetGraphicsInit( boost::bind( &MainFrame::InitOgre, this )  );
 	mWindowManager.AddPane( mOgreWindow, wxCENTER, wxT( "RenderWindow" ) );
 
-	mOgreWindow->Bind( wxEVT_LEFT_DOWN, &MainFrame::OnViewClick, this );
+	mOgreWindow->Bind( wxEVT_LEFT_UP, &MainFrame::OnViewClick, this );
+	mOgreWindow->Bind( wxEVT_MOTION, &MainFrame::OnMouseEvent, this );
 
 	// Initialize PropertyGrid
 	mAttributeView.reset( new AttributeView( this ) );
@@ -125,6 +127,8 @@ MainFrame::MainFrame( wxString  MediaDir,
 
 	CAppContext::instance().SelectionChangedSignal.connect(
 		boost::bind( &MainFrame::OnSelectionChange, this, _1, _2 ) );
+	CAppContext::instance().DragObjectSignal.connect(
+		boost::bind( &MainFrame::OnDragObject, this ) );
 	
 	Maximize( true );
 
@@ -562,9 +566,16 @@ void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 	}
 }
 
-void MainFrame::OnViewClick( wxMouseEvent& event )
+void MainFrame::OnViewClick( wxMouseEvent& evt )
 {
-	wxPoint p = event.GetPosition();
+	if( CAppContext::instance().Dragging )
+	{
+		CAppContext::instance().Dragging = false;
+		evt.Skip();
+		return;
+	}
+
+	wxPoint p = evt.GetPosition();
 	int width = mOgreWindow->GetRenderWindow()->getWidth();
 	int height = mOgreWindow->GetRenderWindow()->getHeight();
 	float sx = (float)p.x / (float)width;
@@ -684,7 +695,48 @@ void MainFrame::OnViewClick( wxMouseEvent& event )
 	else
 		CAppContext::instance().ClearSelection();
 
-	event.Skip();
+	evt.Skip();
+}
+
+void MainFrame::OnMouseEvent( wxMouseEvent& evt )
+{
+	if( !CAppContext::instance().HasSelection() )
+		return;
+
+	wxPoint p = evt.GetPosition();
+	
+	// just moving the mouse around, do nothing
+	if( evt.Moving() ) 
+	{
+		int w = mOgreWindow->GetRenderWindow()->getWidth();
+		int h = mOgreWindow->GetRenderWindow()->getHeight();
+
+		int WindowSize = 3;
+		float TopLeftX = (float)(p.x-WindowSize) / (float)w;
+		float TopLeftY = (float)(p.y-WindowSize) / (float)h;
+		float BottomRightX = (float)(p.x+WindowSize) /(float)w;
+		float BottomRightY = (float)(p.y+WindowSize) /(float)h;
+
+		int Axis = mSelectionBox->GetToolAxis( mCamera, 
+			TopLeftX, TopLeftY, BottomRightX, BottomRightY );
+
+		CAppContext::instance().SetToolaxis( Axis );
+	
+		evt.Skip();
+		return;
+	}
+	
+	// actually dragging with left mouse button down
+	if( evt.Dragging() && evt.LeftIsDown()
+		&& CAppContext::instance().GetToolaxis() != OVISE::TOOLAXIS_NONE )
+	{
+		CAppContext::instance().Dragging = true;
+		CAppContext::instance().DragObjectSignal();
+		evt.Skip();
+		return;
+	}
+
+	evt.Skip();
 }
 
 void MainFrame::OnDynamicShadowsChange( wxCommandEvent& event )
@@ -813,6 +865,10 @@ void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 	mAttributeView->SetEntity( Selected );
 }
 
+void MainFrame::OnDragObject()
+{
+	// move the selected object according to mouse movement
+}
 
 void MainFrame::OnShowSceneStructure( wxCommandEvent &event )
 {}
