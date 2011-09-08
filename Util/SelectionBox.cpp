@@ -3,7 +3,7 @@
 #include "Definitions.h"
 
 CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
-	: mSize( 1.f, 1.f, 1.f ), mParent( NULL )
+	: mSize( 1.f, 1.f, 1.f ), mParent( NULL ), mCurrentToolAxis( OVISE::TOOLAXIS_NONE )
 {
 	mVisual = SceneMgr->createManualObject( OVISE_SelectionBoxName );
 	mParent = SceneMgr->getRootSceneNode()->createChildSceneNode( OVISE_SelectionBoxName );
@@ -51,7 +51,7 @@ void CSelectionBox::Hide()
 	mAxisDisplay->Disable();
 }
 
-const int& CSelectionBox::GetToolAxis( Ogre::Camera* Cam, 
+const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam, 
 	const Ogre::Real& ScreenLeft, const Ogre::Real& ScreenTop,
 	const Ogre::Real& ScreenRight, const Ogre::Real& ScreenBottom )
 {
@@ -60,12 +60,57 @@ const int& CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 		ScreenLeft, ScreenTop, ScreenRight, ScreenBottom );
 
 	// setup three spheres on tips of move manipulator tool
+	Ogre::Sphere XSphere, YSphere, ZSphere;
+	Ogre::Matrix3 LocalAxes = mParent->getLocalAxes();
+	XSphere.setCenter( mParent->_getDerivedPosition() + LocalAxes.GetColumn(0)*0.45f );
+	XSphere.setRadius( 0.03f );
+	YSphere.setCenter( mParent->_getDerivedPosition() + LocalAxes.GetColumn(1)*0.45f );
+	YSphere.setRadius( 0.03f );
+	ZSphere.setCenter( mParent->_getDerivedPosition() + LocalAxes.GetColumn(2)*0.45f );
+	ZSphere.setRadius( 0.03f );
 
-	// intersect with SelectionTube
+	int Axis = OVISE::TOOLAXIS_NONE;
+	// intersect with SelectionTube, color selected axis and return axis
+	if( SelectionTube.intersects( XSphere ) )
+		Axis = OVISE::TOOLAXIS_X;
+	else if( SelectionTube.intersects( YSphere ) )
+		Axis = OVISE::TOOLAXIS_Y;
+	else if( SelectionTube.intersects( ZSphere ) )
+		Axis = OVISE::TOOLAXIS_Z;
+	
+	ColorMoveManipAxis( Axis );
+	return Axis;
+}
 
-	// return axis
+void CSelectionBox::ColorMoveManipAxis( const int& Axis )
+{
+	Ogre::MaterialPtr SelectedAxisMat = 
+		Ogre::MaterialManager::getSingleton().getByName( "SelectedAxisMaterial", "General" );
+	if( SelectedAxisMat.isNull() )
+	{
+		SelectedAxisMat = Ogre::MaterialManager::getSingleton().create( "SelectedAxisMaterial", "General");
+		SelectedAxisMat->setAmbient( 0.8f, 0.8f, 0.1f );
+		SelectedAxisMat->setDiffuse( 0.8f, 0.8f, 0.1f, 1.f );
+		SelectedAxisMat->setDepthCheckEnabled( false );
+	}
 
-	return OVISE::TOOLAXIS_NONE;
+	switch( Axis )
+	{
+	case OVISE::TOOLAXIS_X:
+		mMoveManip->getSubEntity(0)->setMaterial( SelectedAxisMat );
+		break;
+	case OVISE::TOOLAXIS_Y:
+		mMoveManip->getSubEntity(1)->setMaterial( SelectedAxisMat );
+		break;
+	case OVISE::TOOLAXIS_Z:
+		mMoveManip->getSubEntity(2)->setMaterial( SelectedAxisMat );
+		break;
+	default: 
+		mMoveManip->getSubEntity(0)->setMaterialName( "XAxis" );
+		mMoveManip->getSubEntity(1)->setMaterialName( "YAxis" );
+		mMoveManip->getSubEntity(2)->setMaterialName( "ZAxis" );
+		break;
+	}
 }
 
 void CSelectionBox::Resize( const Ogre::Vector3& Size )
