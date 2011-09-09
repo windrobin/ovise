@@ -6,9 +6,17 @@ namespace {
 bool CheckFileName( const wxString& Filename )
 {
 #ifdef WIN32
+#ifndef NDEBUG
+	return Filename.EndsWith( wxT("_D.dll" ) );
+#else
 	return Filename.EndsWith( wxT(".dll") );
+#endif
+#else
+#ifndef NDEBUG
+	return Filename.EndsWith( wxT("_D.so" ) );
 #else
 	return Filename.EndsWith( wxT(".so") );
+#endif
 #endif
 }
 }
