@@ -38,6 +38,22 @@ namespace
 
 		return true;
 	}
+
+	Ogre::MaterialPtr GeneratePointcloudMaterial( const std::string& BaseName )
+	{
+		Ogre::MaterialPtr Mat = 
+			Ogre::MaterialManager::getSingleton().create(
+			BaseName + std::string("_PCMat"), "General" );
+
+		Mat->getTechnique(0)->getPass(0)->setVertexColourTracking(
+			Ogre::TVC_AMBIENT | Ogre::TVC_DIFFUSE | Ogre::TVC_SPECULAR );
+		Mat->setPointSize( 0.05f );
+		Mat->getTechnique(0)->getPass(0)->setPointAttenuation( true,
+			0.f, 1.f, 1.f );
+		Mat->getTechnique(0)->getPass(0)->setPointSpritesEnabled( true );
+
+		return Mat;
+	}
 }
 
 PointcloudEntityView::PointcloudEntityView( Entity* Object,
@@ -120,7 +136,9 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 						boost::lexical_cast<std::string>( GetDataEntity() );
 					mOgreEntity = GetSceneManager()->createEntity( 
 						EntityName.c_str(), Rhs->GetName());
-					mOgreEntity->setMaterialName( "Pointcloud" );
+					
+					Ogre::MaterialPtr Mat = GeneratePointcloudMaterial( EntityName );
+					mOgreEntity->setMaterial( Mat );
 
 					mNode->attachObject( mOgreEntity );
 
@@ -144,7 +162,8 @@ void PointcloudEntityView::OnEntityAttributeChanged( Entity* Rhs,
 							boost::lexical_cast<std::string>( GetDataEntity() );
 						mOgreEntity = GetSceneManager()->createEntity( EntityName.c_str(), 
 							Rhs->GetName());
-						mOgreEntity->setMaterialName( "Pointcloud" );
+						Ogre::MaterialPtr Mat = GeneratePointcloudMaterial( EntityName );
+						mOgreEntity->setMaterial( Mat );
 
 						mNode->attachObject( mOgreEntity );
 
@@ -314,7 +333,9 @@ void PointcloudEntityView::LoadFromFileOFF( const std::string& Filename,
 			GetDataEntity() );
 	mOgreEntity = GetSceneManager()->createEntity(
 			EntityName.c_str(), Ogre::String( PointcloudName.mb_str()));
-	mOgreEntity->setMaterialName( "Pointcloud" );
+	
+	Ogre::MaterialPtr Mat = GeneratePointcloudMaterial( EntityName );
+	mOgreEntity->setMaterial( Mat );
 
 	if( !mNode )
 		mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();
@@ -420,7 +441,9 @@ void PointcloudEntityView::LoadFromFilePLY( const std::string& Filename )
 			GetDataEntity() );
 	mOgreEntity = GetSceneManager()->createEntity(
 			EntityName.c_str(), Ogre::String( PointcloudName.mb_str()));
-	mOgreEntity->setMaterialName( "Pointcloud" );
+	
+	Ogre::MaterialPtr Mat = GeneratePointcloudMaterial( EntityName );
+	mOgreEntity->setMaterial( Mat );
 
 	if( !mNode )
 		mNode = GetSceneManager()->getRootSceneNode()->createChildSceneNode();

@@ -171,5 +171,5 @@ void CPointcloud::UpdateVertexColours( std::size_t CNumber, float* Colors )
 
 CPointcloud::~CPointcloud()
 {
-	delete mSub->vertexData;
+	//delete mSub->vertexData;
 }
