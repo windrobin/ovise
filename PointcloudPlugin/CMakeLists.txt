@@ -1,7 +1,7 @@
 # PointcloudPlugin
 
 set( PointcloudPlugin_VERSION_MAJOR 0 )
-set( PointcloudPlugin_VERSION_MINOR 1 )
+set( PointcloudPlugin_VERSION_MINOR 2 )
 set( PointcloudPlugin_VERSION_PATCH 0 )
 
 if( WIN32 )
