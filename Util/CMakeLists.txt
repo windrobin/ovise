@@ -22,6 +22,7 @@ set( UtilHeaders
 	SelectionBox.h
 	Singleton.hpp
 	StringConverter.h
+	UtilityFunctions.h
 	VertexData.h )
 	
 set( UtilSources
@@ -37,6 +38,7 @@ set( UtilSources
 	SceneNodeOffset.cpp
 	SelectionBox.cpp
 	StringConverter.cpp
+	UtilityFunctions.cpp
 	VertexData.cpp )
 	
 add_library( Util STATIC ${UtilHeaders} ${UtilSources} )

@@ -34,6 +34,8 @@ public:
 
 	int mCurrentToolAxis;
 
+	const Ogre::SceneNode* GetSceneNode() { return mParent; }
+
 private:
 	Ogre::Vector3					mSize;
 	Ogre::SceneNode*				mParent;
