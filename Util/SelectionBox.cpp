@@ -1,9 +1,8 @@
 #include "SelectionBox.h"
 
-#include "Definitions.h"
-
 CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
-	: mSize( 1.f, 1.f, 1.f ), mParent( NULL ), mCurrentToolAxis( OVISE::TOOLAXIS_NONE )
+	: mSize( 1.f, 1.f, 1.f ), mParent( NULL ), 
+	mCurrentToolAxis( OVISE::TOOLAXIS_NONE ), mCurrentToolMode( OVISE::TOOLMODE_MOVE )
 {
 	mVisual = SceneMgr->createManualObject( OVISE_SelectionBoxName );
 	mParent = SceneMgr->getRootSceneNode()->createChildSceneNode( OVISE_SelectionBoxName );
@@ -11,10 +10,17 @@ CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 
 	Resize( mSize );
 
-	mMoveManip = SceneMgr->createEntity(
-		"MoveManip", "MoveManip.mesh" );
-	mParent->attachObject( mMoveManip );
+	mMoveManip = SceneMgr->createEntity( "MoveManip", "MoveManip.mesh" );
+	mMoveNode = mParent->createChildSceneNode("Move");
+	mMoveNode->attachObject( mMoveManip );
 	mMoveManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+	mMoveNode->setVisible( false );
+
+	mScaleManip = SceneMgr->createEntity( "ScaleManip", "ScaleManipulator.mesh" );
+	mScaleNode = mParent->createChildSceneNode("Scale");
+	mScaleNode->attachObject( mScaleManip );
+	mScaleManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+	mScaleNode->setVisible( false );	
 
 	mAxisDisplay.reset( new CAxisDisplay( SceneMgr ) );
 	//mAxisDisplay->Attach( mParent );
@@ -40,7 +46,23 @@ void CSelectionBox::Show( Ogre::Entity* Target )
 	// set to target's position
 	mParent->setPosition( Target->getParentSceneNode()->_getWorldAABB().getCenter() );
 	mParent->setOrientation( Target->getParentSceneNode()->getOrientation() );
-	mParent->setVisible( true );
+	mParent->setVisible( true, false );
+
+	switch( mCurrentToolMode )
+	{
+	case OVISE::TOOLMODE_MOVE:
+		mMoveNode->setVisible( true );
+		mScaleNode->setVisible( false );
+		break;
+	case OVISE::TOOLMODE_SCALE:
+		mScaleNode->setVisible( true );
+		mMoveNode->setVisible( false );
+		break;
+	default: mMoveNode->setVisible( false );
+		mScaleNode->setVisible( false );
+		break;
+	}
+
 	mAxisDisplay->SetPosition( mParent->getPosition() );
 	mAxisDisplay->SetOrientation( mParent->getOrientation() );
 }
@@ -78,11 +100,11 @@ const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 	else if( SelectionTube.intersects( ZSphere ) )
 		Axis = OVISE::TOOLAXIS_Z;
 	
-	ColorMoveManipAxis( Axis );
+	ColorManipAxis( mMoveManip, Axis );
 	return Axis;
 }
 
-void CSelectionBox::ColorMoveManipAxis( const int& Axis )
+void CSelectionBox::ColorManipAxis( Ogre::Entity* Manip, const int& Axis )
 {
 	Ogre::MaterialPtr SelectedAxisMat = 
 		Ogre::MaterialManager::getSingleton().getByName( "SelectedAxisMaterial", "General" );
@@ -97,18 +119,18 @@ void CSelectionBox::ColorMoveManipAxis( const int& Axis )
 	switch( Axis )
 	{
 	case OVISE::TOOLAXIS_X:
-		mMoveManip->getSubEntity(0)->setMaterial( SelectedAxisMat );
+		Manip->getSubEntity(0)->setMaterial( SelectedAxisMat );
 		break;
 	case OVISE::TOOLAXIS_Y:
-		mMoveManip->getSubEntity(1)->setMaterial( SelectedAxisMat );
+		Manip->getSubEntity(1)->setMaterial( SelectedAxisMat );
 		break;
 	case OVISE::TOOLAXIS_Z:
-		mMoveManip->getSubEntity(2)->setMaterial( SelectedAxisMat );
+		Manip->getSubEntity(2)->setMaterial( SelectedAxisMat );
 		break;
 	default: 
-		mMoveManip->getSubEntity(0)->setMaterialName( "XAxis" );
-		mMoveManip->getSubEntity(1)->setMaterialName( "YAxis" );
-		mMoveManip->getSubEntity(2)->setMaterialName( "ZAxis" );
+		Manip->getSubEntity(0)->setMaterialName( "XAxis" );
+		Manip->getSubEntity(1)->setMaterialName( "YAxis" );
+		Manip->getSubEntity(2)->setMaterialName( "ZAxis" );
 		break;
 	}
 }

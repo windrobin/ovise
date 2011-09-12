@@ -23,9 +23,20 @@
 #include <boost/bind.hpp>
 #include <sstream>
 
-COViSEFrameListener::COViSEFrameListener( CCS::CameraControlSystem* CCS )
-	: mCCS( CCS )
+COViSEFrameListener::COViSEFrameListener( CCS::CameraControlSystem* CCS,
+	CSelectionBox* SelBox )
+	: mCCS( CCS ), mSelectionBox( SelBox )
 {}
+
+bool COViSEFrameListener::frameStarted( const Ogre::FrameEvent& evt )
+{
+	if( CAppContext::instance().HasSelection() )
+	{
+		mSelectionBox->Show( 
+			CAppContext::instance().GetSelected()->GetOgreEntity() );
+	}
+	return true;
+}
 
 bool COViSEFrameListener::frameEnded( const Ogre::FrameEvent& evt )
 {
@@ -117,6 +128,34 @@ MainFrame::MainFrame( wxString  MediaDir,
 	mOgreWindow->Bind( wxEVT_LEFT_UP, &MainFrame::OnViewClick, this );
 	mOgreWindow->Bind( wxEVT_MOTION, &MainFrame::OnMouseEvent, this );
 
+	// Main toolbar
+	mMainToolBar = new wxAuiToolBar( this, 
+		wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+		wxAUI_TB_HORZ_TEXT );
+	mMainToolBar->AddTool( wxID_ANY, 
+		wxT("Move"), wxBitmap( mMediaPath + wxT("/data/MoveIcon.png"), 
+		wxBITMAP_TYPE_ANY ), wxNullBitmap, 
+		wxITEM_RADIO, 
+		wxT("Displays the move manipulator on selection. Drag the axis to move the object."), 
+		wxT("Move tool."), NULL )->SetActive(true);
+	mMainToolBar->AddTool( wxID_ANY, 
+		wxT("Scale"), wxBitmap( mMediaPath + wxT("/data/ScaleIcon.png"), 
+		wxBITMAP_TYPE_ANY ), wxNullBitmap,
+		wxITEM_RADIO, 
+		wxT("Shows scale manipulator on selected object. Drag axis to scale along that axis."), 
+		wxT("Scale tool."), NULL ); 
+	mMainToolBar->AddTool( wxID_ANY, 
+		wxT("Rotate"), wxBitmap( mMediaPath + wxT("/data/RotateIcon.png"), 
+		wxBITMAP_TYPE_ANY ), wxNullBitmap,
+		wxITEM_RADIO, 
+		wxT("Shows rotate manipulator on selected object. Drag axis to scale along that axis."), 
+		wxT("Rotate tool."), NULL ); 
+	mMainToolBar->Realize();
+
+	mWindowManager.AddPane( mMainToolBar, wxAuiPaneInfo().
+		Name( wxT("Tools")).Caption(wxT("Main Toolbar")).
+		ToolbarPane().Top().LeftDockable(false).RightDockable(false));
+	
 	// Initialize PropertyGrid
 	mAttributeView.reset( new AttributeView( this ) );
 	mWindowManager.AddPane( mAttributeView->GetGrid(), wxRIGHT,
@@ -148,11 +187,6 @@ MainFrame::~MainFrame()
 
 void MainFrame::OnIdle( wxIdleEvent& Event )
 {
-	if( CAppContext::instance().HasSelection() )
-	{
-		mSelectionBox->Show( 
-			CAppContext::instance().GetSelected()->GetOgreEntity() );
-	}
 	mOgreWindow->UpdateOgre();
 	Event.RequestMore();
 }
@@ -365,7 +399,8 @@ bool MainFrame::InitOgre()
 	mOrbitalCamMode.reset( new CCS::OrbitalCameraMode( mCCS.get(), 2.f, Ogre::Radian(), Ogre::Radian( Ogre::Degree( -45.f ) )  ) );
 	mCCS->registerCameraMode( "Orbital", mOrbitalCamMode.get() );
 	mCCS->setCurrentCameraMode( mCCS->getCameraMode("Orbital") );
-	mOgreWindow->GetRoot()->addFrameListener( new COViSEFrameListener( mCCS.get() ) );
+	mOgreWindow->GetRoot()->addFrameListener( 
+		new COViSEFrameListener( mCCS.get(), mSelectionBox.get() ) );
 
 	mRaySceneQuery.reset( new Ogre::DefaultRaySceneQuery( SceneManager ) );
 
@@ -809,6 +844,37 @@ void MainFrame::OnDeleteAttribute( wxCommandEvent& Event )
 	CAppContext::instance().GetSelected()->RemoveAttribute( Name );
 }
 
+void MainFrame::OnMoveToolClick( wxCommandEvent& evt )
+{
+	if( evt.IsChecked() )
+	{
+		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_MOVE );
+		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_MOVE;
+	}
+	else
+	{
+		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_NONE );
+		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_NONE;
+	}
+
+	evt.Skip();
+}
+
+void MainFrame::OnScaleToolClick( wxCommandEvent& evt )
+{
+	if( evt.IsChecked() )
+	{
+		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_SCALE );
+		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_SCALE;
+	}
+	else
+	{
+		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_NONE );
+		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_NONE;
+	}
+
+	evt.Skip();
+}
 
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 {
@@ -831,24 +897,53 @@ void MainFrame::OnDragObject( float Delta )
 	Ogre::SceneNode* TargetNode = TargetEntity->getParentSceneNode();
 	if( !TargetNode ) return;
 
-	switch( CAppContext::instance().GetToolaxis() )
+	switch( CAppContext::instance().GetToolmode() )
 	{
-	case OVISE::TOOLAXIS_X:
-		TargetNode->translate( Delta, 0.f, 0.f, Ogre::Node::TS_LOCAL );
-		break;
-	case OVISE::TOOLAXIS_Y:
-		TargetNode->translate( 0.f, Delta, 0.f, Ogre::Node::TS_LOCAL );
-		break;
-	case OVISE::TOOLAXIS_Z:
-		TargetNode->translate( 0.f, 0.f, Delta, Ogre::Node::TS_LOCAL );
-		break;
-	default:break;
-	}
+	case OVISE::TOOLMODE_MOVE:
+		{
+			switch( CAppContext::instance().GetToolaxis() )
+			{
+			case OVISE::TOOLAXIS_X:
+				TargetNode->translate( Delta, 0.f, 0.f, Ogre::Node::TS_LOCAL );
+				break;
+			case OVISE::TOOLAXIS_Y:
+				TargetNode->translate( 0.f, Delta, 0.f, Ogre::Node::TS_LOCAL );
+				break;
+			case OVISE::TOOLAXIS_Z:
+				TargetNode->translate( 0.f, 0.f, Delta, Ogre::Node::TS_LOCAL );
+				break;
+			default:break;
+			}
 
-	const Entity::VariantType* PosAttrib = Target->GetAttribute( "Position" );
-	if( PosAttrib )
-	{
-		Target->SetAttribute( "Position", TargetNode->getPosition() );
+			const Entity::VariantType* PosAttrib = Target->GetAttribute( "Position" );
+			if( PosAttrib )
+			{
+				Target->SetAttribute( "Position", TargetNode->getPosition() );
+			}
+		} break;
+	case OVISE::TOOLMODE_SCALE:
+		{
+			switch( CAppContext::instance().GetToolaxis() )
+			{
+			case OVISE::TOOLAXIS_X:
+				TargetNode->scale( Delta, 1.f, 1.f );
+				break;
+			case OVISE::TOOLAXIS_Y:
+				TargetNode->scale( 1.f, Delta, 1.f );
+				break;
+			case OVISE::TOOLAXIS_Z:
+				TargetNode->scale( 1.f, 1.f, Delta );
+				break;
+			default:break;
+			}
+
+			const Entity::VariantType* ScaleAttrib = Target->GetAttribute( "Scale" );
+			if( ScaleAttrib )
+			{
+				Target->SetAttribute( "Scale", TargetNode->getScale() );
+			}
+		} break;
+	default: break;
 	}
 }
 
