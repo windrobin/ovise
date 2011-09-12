@@ -57,12 +57,15 @@ using boost::scoped_ptr;
 class COViSEFrameListener : public Ogre::FrameListener
 {
 public:
-	COViSEFrameListener( CCS::CameraControlSystem* CCS );
+	COViSEFrameListener( CCS::CameraControlSystem* CCS, CSelectionBox* SelBox );
 
+	virtual bool frameStarted(const Ogre::FrameEvent &evt);
 	virtual bool frameEnded (const Ogre::FrameEvent &evt);
 
 private:
 	CCS::CameraControlSystem* mCCS;
+	CSelectionBox*            mSelectionBox;
+	Ogre::Entity*             mCurrentSelection;
 };
 
 /** 
@@ -84,28 +87,41 @@ public:
 
 private:
 	void OnQuit( wxCommandEvent& event );
+
 	void OnLoadScene( wxCommandEvent& event );
 	void OnLoadPointcloud( wxCommandEvent& event );
+
 	void OnClose( wxCloseEvent& event );
+
 	void OnAbout( wxCommandEvent& event );
 	void OnPluginsSummary( wxCommandEvent& event );
+
 	void OnSaveScreenToFile( wxCommandEvent& event );
+	
 	void OnShowSceneStructure( wxCommandEvent& event );
 	void OnDynamicShadowsChange( wxCommandEvent& event );
 	void OnDMPoints( wxCommandEvent &event );
 	void OnDMWire( wxCommandEvent &event );
 	void OnDMSolid( wxCommandEvent &event );
+	
 	void OnTestStuff( wxCommandEvent& event );
+	
 	void OnInsertEntity( wxCommandEvent& Event );
 	void OnRemoveEntity( wxCommandEvent& Event );
 	void OnAddAttribute( wxCommandEvent& Event );
 	void OnDeleteAttribute( wxCommandEvent& Event );
+
+	void OnMoveToolClick( wxCommandEvent& evt );
+	void OnScaleToolClick( wxCommandEvent& evt );
+	
 	void OnMouseEvent( wxMouseEvent& evt );
 	void OnKeyboardEvent( wxKeyEvent& evt );
 	void OnViewClick( wxMouseEvent& evt );
 	void OnTreeSelectionChanged( wxTreeEvent& event );
+	
 	void OnNetworkInterfaceCheck( wxCommandEvent& Event, std::string& Name );
 	void OnNetworkTimer( wxTimerEvent& Event );
+	
 	void OnIdle( wxIdleEvent& Event );
 
 	void OnSelectionChange( Entity* NewSel, Entity* OldSel );
@@ -120,6 +136,8 @@ private:
 protected:
 	wxString                             mMediaPath;
 	wxString                             mPluginPath;
+
+	wxAuiToolBar*                        mMainToolBar;
 
 	OgreWindow*                          mOgreWindow;
 	scoped_ptr<SceneView>                mSceneView;

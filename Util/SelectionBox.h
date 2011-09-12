@@ -10,6 +10,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "AxisDisplay.h"
+#include "Definitions.h"
 
 const std::string OVISE_SelectionBoxName = "__SelectionBox";
 
@@ -33,6 +34,7 @@ public:
 		const Ogre::Real& ScreenRight, const Ogre::Real& ScreenBottom );
 
 	int mCurrentToolAxis;
+	int mCurrentToolMode;
 
 	const Ogre::SceneNode* GetSceneNode() { return mParent; }
 
@@ -40,14 +42,18 @@ private:
 	Ogre::Vector3					mSize;
 	Ogre::SceneNode*				mParent;
 
+	Ogre::SceneNode*                mMoveNode;
+	Ogre::SceneNode*                mScaleNode;
+
 	Ogre::ManualObject*				mVisual;
 
 	Ogre::Entity*					mMoveManip;
+	Ogre::Entity*                   mScaleManip;
 
 	boost::scoped_ptr<CAxisDisplay> mAxisDisplay;
 
 	void Resize( const Ogre::Vector3& Size );
-	void ColorMoveManipAxis( const int& Axis );
+	void ColorManipAxis( Ogre::Entity* Manip, const int& Axis );
 };
 
 #endif // OVISE_SELECTIONBOX_H
