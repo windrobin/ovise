@@ -100,7 +100,17 @@ const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 	else if( SelectionTube.intersects( ZSphere ) )
 		Axis = OVISE::TOOLAXIS_Z;
 	
-	ColorManipAxis( mMoveManip, Axis );
+	switch( mCurrentToolMode )
+	{
+	case OVISE::TOOLMODE_MOVE:
+		ColorManipAxis( mMoveManip, Axis );
+		break;
+	case OVISE::TOOLMODE_SCALE:
+		ColorManipAxis( mScaleManip, Axis );
+		break;
+	default: break;
+	}
+
 	return Axis;
 }
 
