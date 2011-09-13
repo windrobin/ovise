@@ -19,6 +19,7 @@
 #include <wx/tokenzr.h>
 #include <wx/aboutdlg.h>
 #include <wx/treectrl.h>
+#include <wx/toolbar.h>
 
 #include <wx/treebase.h>
 #include <wx/imaglist.h>
@@ -137,7 +138,7 @@ protected:
 	wxString                             mMediaPath;
 	wxString                             mPluginPath;
 
-	wxAuiToolBar*                        mMainToolBar;
+	wxAuiToolBar*                           mMainToolBar;
 
 	OgreWindow*                          mOgreWindow;
 	scoped_ptr<SceneView>                mSceneView;

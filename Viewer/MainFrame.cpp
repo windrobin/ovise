@@ -130,27 +130,36 @@ MainFrame::MainFrame( wxString  MediaDir,
 
 	// Main toolbar
 	mMainToolBar = new wxAuiToolBar( this, 
-		wxID_ANY, wxDefaultPosition, wxDefaultSize, 
-		wxAUI_TB_HORZ_TEXT );
-	mMainToolBar->AddTool( wxID_ANY, 
+		wxID_ANY, wxDefaultPosition, wxDefaultSize );
+	mMainToolBar->AddSeparator(); // need this, otherwise we get buggy radio buttons
+	wxAuiToolBarItem* MoveItem = mMainToolBar->AddTool( wxID_ANY, 
 		wxT("Move"), wxBitmap( mMediaPath + wxT("/data/MoveIcon.png"), 
 		wxBITMAP_TYPE_ANY ), wxNullBitmap, 
 		wxITEM_RADIO, 
 		wxT("Displays the move manipulator on selection. Drag the axis to move the object."), 
-		wxT("Move tool."), NULL )->SetActive(true);
-	mMainToolBar->AddTool( wxID_ANY, 
+		wxT("Move tool."), NULL );
+	wxAuiToolBarItem* ScaleItem = mMainToolBar->AddTool( wxID_ANY, 
 		wxT("Scale"), wxBitmap( mMediaPath + wxT("/data/ScaleIcon.png"), 
 		wxBITMAP_TYPE_ANY ), wxNullBitmap,
 		wxITEM_RADIO, 
 		wxT("Shows scale manipulator on selected object. Drag axis to scale along that axis."), 
 		wxT("Scale tool."), NULL ); 
-	mMainToolBar->AddTool( wxID_ANY, 
+	wxAuiToolBarItem* RotateItem = mMainToolBar->AddTool( wxID_ANY, 
 		wxT("Rotate"), wxBitmap( mMediaPath + wxT("/data/RotateIcon.png"), 
 		wxBITMAP_TYPE_ANY ), wxNullBitmap,
 		wxITEM_RADIO, 
 		wxT("Shows rotate manipulator on selected object. Drag axis to scale along that axis."), 
-		wxT("Rotate tool."), NULL ); 
+		wxT("Rotate tool."), NULL );
 	mMainToolBar->Realize();
+
+	MoveItem->SetActive( true );
+
+	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
+		&MainFrame::OnMoveToolClick, this, MoveItem->GetId() );
+	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
+		&MainFrame::OnScaleToolClick, this, ScaleItem->GetId() );
+	//mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
+	//	&MainFrame::OnMoveToolClick, this, MoveItem->GetId() );
 
 	mWindowManager.AddPane( mMainToolBar, wxAuiPaneInfo().
 		Name( wxT("Tools")).Caption(wxT("Main Toolbar")).
@@ -851,12 +860,6 @@ void MainFrame::OnMoveToolClick( wxCommandEvent& evt )
 		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_MOVE );
 		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_MOVE;
 	}
-	else
-	{
-		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_NONE );
-		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_NONE;
-	}
-
 	evt.Skip();
 }
 
@@ -867,12 +870,6 @@ void MainFrame::OnScaleToolClick( wxCommandEvent& evt )
 		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_SCALE );
 		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_SCALE;
 	}
-	else
-	{
-		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_NONE );
-		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_NONE;
-	}
-
 	evt.Skip();
 }
 
@@ -923,6 +920,7 @@ void MainFrame::OnDragObject( float Delta )
 		} break;
 	case OVISE::TOOLMODE_SCALE:
 		{
+			Delta += 1.f;
 			switch( CAppContext::instance().GetToolaxis() )
 			{
 			case OVISE::TOOLAXIS_X:
