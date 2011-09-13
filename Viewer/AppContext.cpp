@@ -1,8 +1,9 @@
 #include "AppContext.h"
-
+#include "Definitions.h"
 
 CAppContext::CAppContext()
-	: mSelection( NULL ), Dragging( false ), MousePos(0,0)
+	: mSelection( NULL ), Dragging( false ), MousePos(0,0),
+	mToolmode( OVISE::TOOLMODE_NONE ), mToolaxis( OVISE::TOOLAXIS_NONE )
 {
 }
 

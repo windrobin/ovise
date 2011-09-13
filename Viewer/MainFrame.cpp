@@ -150,9 +150,8 @@ MainFrame::MainFrame( wxString  MediaDir,
 		wxITEM_RADIO, 
 		wxT("Shows rotate manipulator on selected object. Drag axis to scale along that axis."), 
 		wxT("Rotate tool."), NULL );
+	RotateItem->SetState( -1 );
 	mMainToolBar->Realize();
-
-	MoveItem->SetActive( true );
 
 	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
 		&MainFrame::OnMoveToolClick, this, MoveItem->GetId() );
