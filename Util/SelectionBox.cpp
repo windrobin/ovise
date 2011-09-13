@@ -2,7 +2,7 @@
 
 CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 	: mSize( 1.f, 1.f, 1.f ), mParent( NULL ), 
-	mCurrentToolAxis( OVISE::TOOLAXIS_NONE ), mCurrentToolMode( OVISE::TOOLMODE_MOVE )
+	mCurrentToolAxis( OVISE::TOOLAXIS_NONE ), mCurrentToolMode( OVISE::TOOLMODE_NONE )
 {
 	mVisual = SceneMgr->createManualObject( OVISE_SelectionBoxName );
 	mParent = SceneMgr->getRootSceneNode()->createChildSceneNode( OVISE_SelectionBoxName );
@@ -77,6 +77,10 @@ const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 	const Ogre::Real& ScreenLeft, const Ogre::Real& ScreenTop,
 	const Ogre::Real& ScreenRight, const Ogre::Real& ScreenBottom )
 {
+	// noop
+	if( mCurrentToolMode == OVISE::TOOLMODE_NONE )
+		return OVISE::TOOLAXIS_NONE;
+
 	// Get box from camera into world around mouse position
 	Ogre::PlaneBoundedVolume SelectionTube = Cam->getCameraToViewportBoxVolume(
 		ScreenLeft, ScreenTop, ScreenRight, ScreenBottom );
