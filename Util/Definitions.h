@@ -3,9 +3,10 @@
 
 namespace OVISE {
 
-const int TOOLMODE_NONE = 0;
-const int TOOLMODE_MOVE = 1;
-const int TOOLMODE_SCALE = 2;
+const int TOOLMODE_NONE   = 0;
+const int TOOLMODE_MOVE   = 1;
+const int TOOLMODE_SCALE  = 2;
+const int TOOLMODE_ROTATE = 3;
 
 const int TOOLAXIS_NONE = 10;
 const int TOOLAXIS_X	= 11;

@@ -44,11 +44,13 @@ private:
 
 	Ogre::SceneNode*                mMoveNode;
 	Ogre::SceneNode*                mScaleNode;
+	Ogre::SceneNode*                mRotateNode;
 
 	Ogre::ManualObject*				mVisual;
 
 	Ogre::Entity*					mMoveManip;
 	Ogre::Entity*                   mScaleManip;
+	Ogre::Entity*                   mRotateManip;
 
 	boost::scoped_ptr<CAxisDisplay> mAxisDisplay;
 

@@ -83,6 +83,16 @@ void InputHandler::handleKeyboardInput( wxKeyEvent &evt )
 	case 'f':
 	case 'F':
 		//focusCamera();
+		if( CAppContext::instance().HasSelection() )
+		{
+			Entity* TargetEntity = CAppContext::instance().GetSelected();
+			Ogre::Entity* Target = TargetEntity->GetOgreEntity();
+			if( Target != NULL )
+			{
+				mCCS->getTargetSceneNode()->setPosition(
+					Target->getParentSceneNode()->getPosition() );
+			}
+		}
 		break;
 	case WXK_DELETE:
 		this->DeleteSelectedObjects();

@@ -20,7 +20,13 @@ CSelectionBox::CSelectionBox( Ogre::SceneManager* SceneMgr )
 	mScaleNode = mParent->createChildSceneNode("Scale");
 	mScaleNode->attachObject( mScaleManip );
 	mScaleManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
-	mScaleNode->setVisible( false );	
+	mScaleNode->setVisible( false );
+
+	mRotateManip = SceneMgr->createEntity( "RotateManip", "RotateManipulator.mesh" );
+	mRotateNode = mParent->createChildSceneNode("Rotate");
+	mRotateNode->attachObject( mRotateManip );
+	mRotateManip->setRenderQueueGroup( Ogre::RENDER_QUEUE_OVERLAY );
+	mRotateNode->setVisible( false );
 
 	mAxisDisplay.reset( new CAxisDisplay( SceneMgr ) );
 	//mAxisDisplay->Attach( mParent );
@@ -53,13 +59,21 @@ void CSelectionBox::Show( Ogre::Entity* Target )
 	case OVISE::TOOLMODE_MOVE:
 		mMoveNode->setVisible( true );
 		mScaleNode->setVisible( false );
+		mRotateNode->setVisible( false );
 		break;
 	case OVISE::TOOLMODE_SCALE:
 		mScaleNode->setVisible( true );
 		mMoveNode->setVisible( false );
+		mRotateNode->setVisible( false );
+		break;
+	case OVISE::TOOLMODE_ROTATE:
+		mRotateNode->setVisible( true );
+		mMoveNode->setVisible( false );
+		mScaleNode->setVisible( false );
 		break;
 	default: mMoveNode->setVisible( false );
 		mScaleNode->setVisible( false );
+		mRotateNode->setVisible( false );
 		break;
 	}
 
@@ -97,12 +111,24 @@ const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 
 	int Axis = OVISE::TOOLAXIS_NONE;
 	// intersect with SelectionTube, color selected axis and return axis
-	if( SelectionTube.intersects( XSphere ) )
-		Axis = OVISE::TOOLAXIS_X;
-	else if( SelectionTube.intersects( YSphere ) )
-		Axis = OVISE::TOOLAXIS_Y;
-	else if( SelectionTube.intersects( ZSphere ) )
-		Axis = OVISE::TOOLAXIS_Z;
+	if( mCurrentToolMode != OVISE::TOOLMODE_ROTATE )
+	{
+		if( SelectionTube.intersects( XSphere ) )
+			Axis = OVISE::TOOLAXIS_X;
+		else if( SelectionTube.intersects( YSphere ) )
+			Axis = OVISE::TOOLAXIS_Y;
+		else if( SelectionTube.intersects( ZSphere ) )
+			Axis = OVISE::TOOLAXIS_Z;
+	}
+	else
+	{
+		if( SelectionTube.intersects( XSphere ) )
+			Axis = OVISE::TOOLAXIS_Z;
+		else if( SelectionTube.intersects( YSphere ) )
+			Axis = OVISE::TOOLAXIS_X;
+		else if( SelectionTube.intersects( ZSphere ) )
+			Axis = OVISE::TOOLAXIS_Y;
+	}
 	
 	switch( mCurrentToolMode )
 	{
@@ -111,6 +137,9 @@ const int CSelectionBox::GetToolAxis( Ogre::Camera* Cam,
 		break;
 	case OVISE::TOOLMODE_SCALE:
 		ColorManipAxis( mScaleManip, Axis );
+		break;
+	case OVISE::TOOLMODE_ROTATE:
+		ColorManipAxis( mRotateManip, Axis );
 		break;
 	default: break;
 	}
