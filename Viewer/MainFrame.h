@@ -114,6 +114,7 @@ private:
 
 	void OnMoveToolClick( wxCommandEvent& evt );
 	void OnScaleToolClick( wxCommandEvent& evt );
+	void OnRotateToolClick( wxCommandEvent& evt );
 	
 	void OnMouseEvent( wxMouseEvent& evt );
 	void OnKeyboardEvent( wxKeyEvent& evt );

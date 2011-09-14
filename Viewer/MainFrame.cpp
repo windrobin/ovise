@@ -150,15 +150,14 @@ MainFrame::MainFrame( wxString  MediaDir,
 		wxITEM_RADIO, 
 		wxT("Shows rotate manipulator on selected object. Drag axis to scale along that axis."), 
 		wxT("Rotate tool."), NULL );
-	RotateItem->SetState( -1 );
 	mMainToolBar->Realize();
 
 	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
 		&MainFrame::OnMoveToolClick, this, MoveItem->GetId() );
 	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
 		&MainFrame::OnScaleToolClick, this, ScaleItem->GetId() );
-	//mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
-	//	&MainFrame::OnMoveToolClick, this, MoveItem->GetId() );
+	mMainToolBar->Bind( wxEVT_COMMAND_MENU_SELECTED, 
+		&MainFrame::OnRotateToolClick, this, RotateItem->GetId() );
 
 	mWindowManager.AddPane( mMainToolBar, wxAuiPaneInfo().
 		Name( wxT("Tools")).Caption(wxT("Main Toolbar")).
@@ -611,6 +610,7 @@ void MainFrame::OnSaveScreenToFile( wxCommandEvent &event )
 
 void MainFrame::OnViewClick( wxMouseEvent& evt )
 {
+	mOgreWindow->SetFocus();
 	if( CAppContext::instance().Dragging )
 	{
 		CAppContext::instance().Dragging = false;
@@ -629,6 +629,7 @@ void MainFrame::OnViewClick( wxMouseEvent& evt )
 	if( ClickedEntity == NULL )
 	{
 		CAppContext::instance().ClearSelection();
+		evt.Skip();
 		return;
 	} 
 	
@@ -649,6 +650,7 @@ void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 	if( !CAppContext::instance().HasSelection() )
 	{
 		CAppContext::instance().MousePos = std::pair<int,int>(p.x, p.y);
+		evt.Skip();
 		return;
 	}
 	
@@ -690,20 +692,39 @@ void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 			Ogre::Vector3 P2;
 			Ogre::Vector2 R2;
 
-			switch( CAppContext::instance().GetToolaxis() )
+			if( CAppContext::instance().GetToolmode() != OVISE::TOOLMODE_ROTATE )
 			{
-			case OVISE::TOOLAXIS_X:
-				P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(0);
-				break;
-			case OVISE::TOOLAXIS_Y:
-				P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(1);
-				break;
-			case OVISE::TOOLAXIS_Z:
-				P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(2);
-				break;
-			default: break;
+				switch( CAppContext::instance().GetToolaxis() )
+				{
+				case OVISE::TOOLAXIS_X:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(0);
+					break;
+				case OVISE::TOOLAXIS_Y:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(1);
+					break;
+				case OVISE::TOOLAXIS_Z:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(2);
+					break;
+				default: break;
+				}
 			}
-
+			else
+			{
+				switch( CAppContext::instance().GetToolaxis() )
+				{
+				case OVISE::TOOLAXIS_X:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(2);
+					break;
+				case OVISE::TOOLAXIS_Y:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(0);
+					break;
+				case OVISE::TOOLAXIS_Z:
+					P2 = P + mSelectionBox->GetSceneNode()->getLocalAxes().GetColumn(1);
+					break;
+				default: break;
+				}
+			}
+			
 			if( OVISE::GetScreenspaceCoords( P2, mCamera, R2 ) )
 			{
 				int w = mOgreWindow->GetRenderWindow()->getWidth();
@@ -722,7 +743,9 @@ void MainFrame::OnMouseEvent( wxMouseEvent& evt )
 				Ogre::Vector2 AxisDir = R2 - R;
 				AxisDir.normalise();
 
-				float Delta = DragDir.dotProduct( AxisDir )*Amount;
+				float Delta = 0.f;
+				Delta = DragDir.dotProduct( AxisDir )*Amount;
+				
 				CAppContext::instance().DragObjectSignal( Delta );
 			}
 		}		
@@ -872,6 +895,16 @@ void MainFrame::OnScaleToolClick( wxCommandEvent& evt )
 	evt.Skip();
 }
 
+void MainFrame::OnRotateToolClick( wxCommandEvent& evt )
+{
+	if( evt.IsChecked() )
+	{
+		CAppContext::instance().SetToolmode( OVISE::TOOLMODE_ROTATE );
+		mSelectionBox->mCurrentToolMode = OVISE::TOOLMODE_ROTATE;
+	}
+	evt.Skip();
+}
+
 void MainFrame::OnTreeSelectionChanged( wxTreeEvent& Event )
 {
 	wxTreeItemId Item = Event.GetItem();
@@ -897,6 +930,7 @@ void MainFrame::OnDragObject( float Delta )
 	{
 	case OVISE::TOOLMODE_MOVE:
 		{
+			Delta *= 1.5f;
 			switch( CAppContext::instance().GetToolaxis() )
 			{
 			case OVISE::TOOLAXIS_X:
@@ -938,6 +972,28 @@ void MainFrame::OnDragObject( float Delta )
 			if( ScaleAttrib )
 			{
 				Target->SetAttribute( "Scale", TargetNode->getScale() );
+			}
+		} break;
+	case OVISE::TOOLMODE_ROTATE:
+		{
+			switch( CAppContext::instance().GetToolaxis() )
+			{
+			case OVISE::TOOLAXIS_X:
+				TargetNode->pitch( Ogre::Radian( Delta ) );
+				break;
+			case OVISE::TOOLAXIS_Y:
+				TargetNode->yaw( Ogre::Radian( Delta ) );
+				break;
+			case OVISE::TOOLAXIS_Z:
+				TargetNode->roll( Ogre::Radian( Delta ) );
+				break;
+			default:break;
+			}
+
+			const Entity::VariantType* ScaleAttrib = Target->GetAttribute( "Orientation" );
+			if( ScaleAttrib )
+			{
+				Target->SetAttribute( "Orientation", TargetNode->getOrientation() );
 			}
 		} break;
 	default: break;
