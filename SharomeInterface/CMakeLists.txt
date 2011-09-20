@@ -58,3 +58,10 @@ target_link_libraries( SharomeInterface
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS SharomeInterface RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Interfaces/Debug )
+install( TARGETS SharomeInterface RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Interfaces/Release )
+elseif( UNIX )
+install( TARGETS SharomeInterface LIBRARY DESTINATION Plugins/Interfaces )
+endif()

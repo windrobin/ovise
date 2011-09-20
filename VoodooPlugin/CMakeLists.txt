@@ -50,3 +50,10 @@ target_link_libraries( VoodooPlugin
 					   ${OGRE_LIBRARIES}
 					   ${Boost_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS VoodooPlugin RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Visualization/Debug )
+install( TARGETS VoodooPlugin RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Visualization/Release )
+elseif( UNIX )
+install( TARGETS VoodooPlugin LIBRARY DESTINATION Plugins/Interfaces )
+endif()
