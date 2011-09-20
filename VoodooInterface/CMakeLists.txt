@@ -55,3 +55,10 @@ target_link_libraries( VoodooInterface
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS VoodooInterface RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Interfaces/Debug )
+install( TARGETS VoodooInterface RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Interfaces/Release )
+elseif( UNIX )
+install( TARGETS VoodooInterface LIBRARY DESTINATION Plugins/Interfaces )
+endif()
