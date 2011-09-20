@@ -55,3 +55,10 @@ target_link_libraries( ILCASInterface
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS ILCASInterface RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Interfaces/Debug )
+install( TARGETS ILCASInterface RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Interfaces/Release )
+elseif( UNIX )
+install( TARGETS ILCASInterface LIBRARY DESTINATION Plugins/Interfaces )
+endif()

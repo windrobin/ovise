@@ -75,3 +75,5 @@ target_link_libraries( Viewer
 					   ${OGRE_LIBRARIES}
 					   ${GTK2_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+
+install( TARGETS Viewer RUNTIME DESTINATION bin )

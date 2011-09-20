@@ -24,3 +24,5 @@ endif( WIN32 )
 target_link_libraries( Core
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES} )
+					   
+install( TARGETS Core ARCHIVE DESTINATION lib )

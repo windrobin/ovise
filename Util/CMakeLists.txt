@@ -53,3 +53,5 @@ target_link_libraries( Util
 					   ${Boost_LIBRARIES}
 					   ${OGRE_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+
+install( TARGETS Util ARCHIVE DESTINATION lib )

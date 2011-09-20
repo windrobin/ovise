@@ -50,3 +50,10 @@ target_link_libraries( SkeletalPlugin
 					   ${OGRE_LIBRARIES}
 					   ${Boost_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS SkeletalPlugin RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Visualization/Debug )
+install( TARGETS SkeletalPlugin RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Visualization/Release )
+elseif( UNIX )
+install( TARGETS SkeletalPlugin ARCHIVE DESTINATION Plugins/Visualization )
+endif()

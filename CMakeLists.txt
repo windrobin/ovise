@@ -19,9 +19,9 @@ set( Boost_ADDITIONAL_VERSIONS "1.44.0" "1.44" )
 if( WIN32 )
 set( Boost_USE_STATIC_LIBS OFF )
 set( Boost_USE_MULTITHREAD ON )
-find_package( Boost 1.40 REQUIRED )
+find_package( Boost 1.44 REQUIRED )
 else( WIN32 )
-find_package( Boost 1.40 REQUIRED COMPONENTS system filesystem serialization signals regex)
+find_package( Boost 1.44 REQUIRED COMPONENTS system filesystem serialization signals regex)
 endif( WIN32 )
 
 # Ogre
@@ -54,6 +54,8 @@ add_subdirectory( Core )
 add_subdirectory( Util )
 add_subdirectory( CameraControlSystem )
 add_subdirectory( Viewer )
+
+add_subdirectory( Media )
 
 if( PLUGINS_SIMPLE )
 add_subdirectory( SimplePlugin )
@@ -90,3 +92,5 @@ endif()
 if( INTERFACES_VOODOO )
 add_subdirectory( VoodooInterface )
 endif()
+
+install( FILES "OViSE-README.txt" DESTINATION bin )
