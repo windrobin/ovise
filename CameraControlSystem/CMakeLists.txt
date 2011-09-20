@@ -19,3 +19,5 @@ set( CCS_Sources
 	 
 	 
 add_library ( CCS STATIC ${CCS_Headers} ${CCS_Sources})
+
+install( TARGETS CCS ARCHIVE DESTINATION lib )

@@ -1,0 +1,5 @@
+file( GLOB_RECURSE Mediafiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} * )
+foreach( MFile ${Mediafiles} )
+get_filename_component( MFilePath ${MFile} PATH )
+install( FILES ${MFile} DESTINATION Media/${MFilePath} )
+endforeach()

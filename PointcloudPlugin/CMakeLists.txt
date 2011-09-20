@@ -55,3 +55,10 @@ target_link_libraries( PointcloudPlugin
 					   ${wxWidgets_LIBRARIES}
 					   ${Boost_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS PointcloudPlugin RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Visualization/Debug )
+install( TARGETS PointcloudPlugin RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Visualization/Release )
+elseif( UNIX )
+install( TARGETS PointcloudPlugin ARCHIVE DESTINATION Plugins/Visualization )
+endif()

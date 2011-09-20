@@ -53,3 +53,10 @@ target_link_libraries( TrajectoryPlugin
 					   ${OGRE_LIBRARIES}
 					   ${Boost_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS TrajectoryPlugin RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Visualization/Debug )
+install( TARGETS TrajectoryPlugin RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Visualization/Release )
+elseif( UNIX )
+install( TARGETS TrajectoryPlugin ARCHIVE DESTINATION Plugins/Visualization )
+endif()

@@ -275,13 +275,13 @@ void MainFrame::SetupSceneTree()
 	this->mWindowManager.AddPane( mSceneTree, wxRIGHT,
 		wxT( "Scene structure" ));
 
-	/*mEntityPool.CreateEntity( "MisterRoboto" ).Set
+	mEntityPool.CreateEntity( "MisterRoboto" ).Set
 		( "Type", "Robot" )
-		( "Model", "Adero.mesh" )
-		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Model", "Albert.mesh" )
+		( "Position", vec3( 1.f, 1.f, 0.f ) )
 		( "Orientation", quat() )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
-	;*/
+	;
 
 	mEntityPool.CreateEntity( "Test" ).Set
 		( "Type", "Simple" )
@@ -291,35 +291,26 @@ void MainFrame::SetupSceneTree()
 		( "Scale", vec3( 0.1f, 0.1f, 0.1f ) )
 	;
 
-	/*std::vector<Ogre::Vector3> TestTrajectory;
-	TestTrajectory.push_back( vec3(0.f, 0.f, 0.f) );
-	TestTrajectory.push_back( vec3(1.f, 0.f, 0.f) );
-	TestTrajectory.push_back( vec3(1.f, 1.f, 0.f) );
-	TestTrajectory.push_back( vec3(1.f, 1.f, 1.f) );
+	std::vector<Ogre::Vector3> TestTrajectory;
+	for( int i=0; i<314; i+=10 )
+	{
+		TestTrajectory.push_back( vec3( i/100.f, 0.f, sin(i/100.f) ) );
+	}
 	
 	mEntityPool.CreateEntity( "TestTrajectory" ).Set
 		( "Type", "Trajectory" )
-		( "Position", vec3( 0.f, 0.f, 0.f ) )
+		( "Position", vec3( 0.f, -1.f, 0.f ) )
 		( "Color", vec3( 0.f, 0.f, 0.f ) )
 		( "PointSize", 0.02f )
 		( "Points", TestTrajectory )
-	;*/
+	;
 
-	/*mEntityPool.CreateEntity( "TestHand" ).Set
+	mEntityPool.CreateEntity( "TestHand" ).Set
 		( "Type", "Skeletal" )
 		( "Position", Ogre::Vector3::ZERO )
 		( "Scale", vec3( 1.f, 1.f, 1.f ) )
 		( "Model", "RainerHand.mesh" )
-	;*/
-
-	/*mEntityPool.CreateEntity( "TestCloud" ).Set
-		( "Type", "Pointcloud" )
-		( "Filename", "C:/Dev/Test.ply" )
-		( "Position", vec3( 0.f, 0.f, 0.f ) )
-		( "Orientation", quat( 1.f, 0.f, 0.f, 0.f ) )
-		( "Scale", vec3( 1.f, 1.f, 1.f ) )
-		( "PointSize", 0.05f )
-	;*/
+	;
 
 	// Link the Ogre visualization
 	mEntityPool.InsertObserver( mSceneTree );

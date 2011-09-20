@@ -50,3 +50,10 @@ target_link_libraries( RobotPlugin
 					   ${OGRE_LIBRARIES}
 					   ${Boost_LIBRARIES}
 					   ${wxWidgets_LIBRARIES} )
+					   
+if( WIN32 )
+install( TARGETS RobotPlugin RUNTIME CONFIGURATIONS Debug DESTINATION Plugins/Visualization/Debug )
+install( TARGETS RobotPlugin RUNTIME CONFIGURATIONS Release DESTINATION Plugins/Visualization/Release )
+elseif( UNIX )
+install( TARGETS RobotPlugin ARCHIVE DESTINATION Plugins/Visualization )
+endif()
