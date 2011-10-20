@@ -52,11 +52,11 @@ void CInterfaceManager::PollInterfaces() const
 
 bool CInterfaceManager::HasInterfaceRunning() const
 {
-	bool RValue = true;
+	bool RValue = false;
 	for( InterfaceMapType::const_iterator i = mInterfaces.begin();
 	     i != mInterfaces.end();
 	     i++ )
-		RValue = RValue && i->second->IsRunning();
+		RValue = RValue || i->second->IsRunning();
 
 	return RValue;
 }
