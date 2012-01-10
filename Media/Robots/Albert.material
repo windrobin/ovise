@@ -1,126 +1,136 @@
-material Body
+
+material _missing_material_ 
+{
+    receive_shadows off
+    technique
+    {
+        pass
+        {
+            ambient 0.1 0.1 0.1 1.0
+            diffuse 0.8 0.0 0.0 1.0
+            specular 0.5 0.5 0.5 1.0 12.5
+            emissive 0.3 0.3 0.3 1.0
+        }
+    }
+}
+
+material Albert_MediumGrey 
 {
 	receive_shadows on
 	technique
 	{
 		pass
 		{
-			ambient 0.400000 0.400000 0.400000 1.000000
-			diffuse 0.640000 0.640000 0.640000 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
+			cull_hardware none
+			ambient 0.699999988079071 0.6928830146789551 0.6930000185966492 1.0
+			diffuse 0.559999998807907 0.5543064200029733 0.5544000231385233 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Albert_White 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 1.0 1.0 1.0 1.0
+			diffuse 0.8998544216156006 0.8998544216156006 0.8998544216156006 1.0
+			specular 0.8994177579879761 0.8994177579879761 0.8994177579879761 1.0 16.0
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Albert_HalveBlue 
+{
+	receive_shadows on
+	technique
+	{
+		pass HalveBlue.001__HalveBlue.001
+		{
+			cull_hardware none
+			ambient 0.0 0.0 0.6600000262260437 1.0
+			diffuse 0.0 0.0 0.5280000288486484 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Albert_Yellow 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 1.0 0.8600000143051147 0.0 1.0
+			diffuse 0.800000011920929 0.6880000216960909 0.0 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Albert_Black 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.14000000059604645 0.14000000059604645 0.14000000059604645 1.0
+			diffuse 0.11200000214576722 0.11200000214576722 0.11200000214576722 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Albert_Body 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.800000011920929 0.800000011920929 0.800000011920929 1.0
+			diffuse 0.6400000190734865 0.6400000190734865 0.6400000190734865 1.0
+			specular 0.5 0.5 0.5 1.0 12.5
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
 			texture_unit
 			{
 				texture BodyTexture.jpg
 				tex_address_mode wrap
-				filtering trilinear
-				colour_op alpha_blend
+				scale 1.0 1.0
+				tex_coord_set 0
+				colour_op_ex blend_manual src_current src_texture 0.0
 			}
 		}
 	}
 }
-material HalveBlue
+material Albert_BlackMetal 
 {
 	receive_shadows on
 	technique
 	{
 		pass
 		{
-			ambient 0.000000 0.000000 0.330000 1.000000
-			diffuse 0.000000 0.000000 0.528000 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
-		}
-	}
-}
-material MediumGrey
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.350000 0.346442 0.346500 1.000000
-			diffuse 0.560000 0.554306 0.554400 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
-		}
-	}
-}
-material BlackMetal
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.070000 0.070000 0.070000 1.000000
-			diffuse 0.125980 0.125980 0.125980 1.000000
-			specular 0.899418 0.899418 0.899418 1.000000 16.000000
-			emissive 0.000000 0.000000 0.000000 1.000000
-		}
-	}
-}
-material Grey
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.500000 0.500000 0.500000 1.000000
-			diffuse 0.800000 0.800000 0.800000 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
-			texture_unit
-			{
-				texture BodyTexture.jpg
-				tex_address_mode wrap
-				filtering trilinear
-				colour_op alpha_blend
-			}
-		}
-	}
-}
-material Yellow
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.500000 0.430000 0.000000 1.000000
-			diffuse 0.800000 0.688000 0.000000 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
-		}
-	}
-}
-material Black
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.070000 0.070000 0.070000 1.000000
-			diffuse 0.112000 0.112000 0.112000 1.000000
-			specular 0.500000 0.500000 0.500000 1.000000 12.500000
-			emissive 0.000000 0.000000 0.000000 1.000000
-		}
-	}
-}
-material White
-{
-	receive_shadows on
-	technique
-	{
-		pass
-		{
-			ambient 0.500000 0.500000 0.500000 1.000000
-			diffuse 0.899854 0.899854 0.899854 1.000000
-			specular 0.899418 0.899418 0.899418 1.000000 16.000000
-			emissive 0.000000 0.000000 0.000000 1.000000
+			cull_hardware none
+			ambient 0.14000000059604645 0.14000000059604645 0.14000000059604645 1.0
+			diffuse 0.1259796195625391 0.1259796195625391 0.1259796195625391 1.0
+			specular 0.8994177579879761 0.8994177579879761 0.8994177579879761 1.0 16.0
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
 		}
 	}
 }
