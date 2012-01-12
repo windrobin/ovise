@@ -14,6 +14,182 @@ material _missing_material_
     }
 }
 
+material Adero_Beige 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.20000000298023224 0.16799999725818626 0.19400000861287126 1.0
+			diffuse 0.800000011920929 0.671999989032745 0.776000034451485 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Black 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.0 0.0 0.0 1.0
+			diffuse 0.0 0.0 0.0 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_DarkGray 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.015999999880790705 0.023999999821186058 0.023999999821186058 1.0
+			diffuse 0.06399999952316282 0.09599999928474423 0.09599999928474423 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Yellow 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.20000000298023224 0.20000000298023224 0.0 1.0
+			diffuse 0.800000011920929 0.800000011920929 0.0 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Orange 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.19600000673532492 0.12539999671876423 0.0 1.0
+			diffuse 0.7840000269412997 0.5015999868750569 0.0 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_LightGray 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.18400000607967382 0.1779999997913837 0.17400000354647638 1.0
+			diffuse 0.7360000243186953 0.7119999991655348 0.6960000141859055 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Aluminum 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.1756800081682206 0.18980000301897526 0.20000000298023224 1.0
+			diffuse 0.7027200326728824 0.759200012075901 0.800000011920929 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Sand 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.15800000664591796 0.07400000205636026 0.0360000019669533 1.0
+			diffuse 0.6320000265836718 0.29600000822544104 0.1440000078678132 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Brown 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.023999999821186058 0.01800000098347665 0.002400000056624413 1.0
+			diffuse 0.09599999928474423 0.0720000039339066 0.009600000226497651 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Gray 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.015999999880790705 0.023999999821186058 0.023999999821186058 1.0
+			diffuse 0.06399999952316282 0.09599999928474423 0.09599999928474423 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
+material Adero_Wheel 
+{
+	receive_shadows on
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			ambient 0.0 0.20000000298023224 0.0 1.0
+			diffuse 0.0 0.800000011920929 0.0 1.0
+			specular 0.0 0.0 0.0 1.0 25.75
+			emissive 0.0 0.0 0.0 1.0
+			scene_blend one zero
+		}
+	}
+}
 material Body 
 {
 	receive_shadows on
