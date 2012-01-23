@@ -22,28 +22,22 @@ namespace
 			( "ExistProb", Obj.getExistProb() )
 		;
 
-		OOWM::Mem::CAttribute A;
-		OOWM::SResult         Result;
-		Obj.getFirstByName( A, "Location", &Result );
-		if( Result.m_nCode == R_OK )
+		OOWM::Mem::CLocation L;
+		if( L.FromObject( Obj ) )
 		{
-			OOWM::Mem::CLocation L;
-			if( L.FromAttribute( A ) )
-			{
-				E.SetAttribute( "Position",
-					vec3( float(L.m_Position.m_Value[0]),
-					float(L.m_Position.m_Value[1]),
-					float(L.m_Position.m_Value[2] ) ) );
-				E.SetAttribute( "Orientation",
-					quat( float(L.m_Orientation.m_Value.w),
-					float(L.m_Orientation.m_Value.x),
-					float(L.m_Orientation.m_Value.y),
-					float(L.m_Orientation.m_Value.z ) ) );
-				E.SetAttribute( "Scale",
-					vec3( float(L.m_Scale.m_Value[0]),
-					float(L.m_Scale.m_Value[1]),
-					float(L.m_Scale.m_Value[2] ) ) );
-			}
+			E.SetAttribute( "Position",
+				vec3( float(L.m_Position.m_Value[0]),
+				float(L.m_Position.m_Value[1]),
+				float(L.m_Position.m_Value[2] ) ) );
+			E.SetAttribute( "Orientation",
+				quat( float(L.m_Orientation.m_Value.w),
+				float(L.m_Orientation.m_Value.x),
+				float(L.m_Orientation.m_Value.y),
+				float(L.m_Orientation.m_Value.z ) ) );
+			E.SetAttribute( "Scale",
+				vec3( float(L.m_Scale.m_Value[0]),
+				float(L.m_Scale.m_Value[1]),
+				float(L.m_Scale.m_Value[2] ) ) );
 		}
 	}
 }
@@ -80,13 +74,15 @@ bool SharomeInterface::Start()
 		boost::bind( &SharomeInterface::HandleError, this, _1 ) );
 
 	std::string ErrMsg;
-	return LegacyClient->Start( ErrMsg, 5000, true );
+	mRunning = LegacyClient->Start( ErrMsg, 5000, true );
+	return mRunning;
 }
 
 bool SharomeInterface::Stop()
 {
 	std::cout << "SharomeInterface uninit." << std::endl;
 	LegacyClient.reset();
+	mRunning = false;
 
 	return true;
 }

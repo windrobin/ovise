@@ -5,8 +5,8 @@
 #include <Mem/Scene.h>
 #include <LegacyClientLib/AsyncClient.hpp>
 
-#include "Message.h"
-#include "Connection.h"
+//#include "Message.h"
+//#include "Connection.h"
 
 /**
   Interface for Shared Robot Memory.
