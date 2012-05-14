@@ -1,0 +1,31 @@
+#include <cstdlib>
+#include <iostream>
+#include <deque>
+
+#include <boost/bind.hpp>
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+
+#include "client.h"
+
+using boost::asio::ip::tcp;
+
+typedef std::deque< Message > MessageQueue;
+
+int main(int _argc, char** _argv)
+{
+	try
+	{
+		if(_argc != 3)
+		{
+			std::cerr << " > Usage: test_client_threaded <host> <port> " << std::endl;
+			
+		}
+	}
+	catch()
+	{
+		std::cerr << " > Exception: " << _e.what() << std::endl;
+	}
+
+	return 0;
+}

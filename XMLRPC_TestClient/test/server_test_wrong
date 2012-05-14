@@ -1,0 +1,83 @@
+#include <boost/asio.hpp>
+#include <boost/array.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/bind.hpp>
+
+#include <iostream>
+#include <sstream>
+#include <string>
+
+boost::asio::io_service g_io_service;
+
+boost::scoped_ptr< boost::asio::ip::tcp::endpoint > g_endpoint;
+boost::scoped_ptr< boost::asio::ip::tcp::acceptor > g_acceptor;
+boost::scoped_ptr< boost::asio::ip::tcp::socket > g_socket;
+
+boost::array< char, 4096 > g_buffer;
+
+bool g_bRunning = true;
+
+void readHndlr(const boost::system::error_code& _error, std::size_t _bytesTransferred)
+{
+	if(_error)
+		return;
+
+	std::cout << " > msg: " << std::string(g_buffer.data(), _bytesTransferred).c_str() << std::endl;
+	std::string ready = "ready\n";
+	boost::asio::write(*g_socket, boost::asio::buffer(ready));
+	g_socket->async_read_some(boost::asio::buffer(g_buffer), boost::bind(&readHndlr, this, _1, _2));
+}
+
+void accHndlr(const boost::system::error_code& _error)
+{
+	if(_error)
+		return;
+
+	std::cout << " > accept handler called" << std::endl;
+	boost::asio::write(g_io_service, boost::asio::buffer("ready"));
+	g_socket->async_read_some(boost::asio::buffer(g_buffer), boost::bind(&readHndlr, this, _1, _2));
+}
+
+int main(int _argc, char** _args)
+{
+	g_endpoint.reset(new boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 7171));
+	g_acceptor.reset(new boost::asio::ip::tcp::acceptor(g_io_service, *g_endpoint));
+	g_socket.reset(new boost::asio::ip::tcp::socket(g_io_service));
+
+	std::cout << " > listen on port : 7171" << std::endl;
+
+	g_acceptor->listen();
+	g_acceptor->async_accept(sock, boost::bind(&accHndlr, this, _1));
+
+	g_bRunning = true;
+
+	while(g_bRunning)
+	{
+		g_io_service->poll_one();
+		g_io_service->reset();
+	}
+
+	if(g_socket)
+		g_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+	if(g_acceptor)
+		g_acceptor->close();
+
+
+/*	boost::asio::io_service io_service;
+	boost::asio::ip::tcp::acceptor acceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 7171));
+
+	std::cout << " > listen on port : 7171" << std::endl;
+
+	std::string msg("ready");
+	while(1)
+	{
+		boost::asio::ip::tcp::socket sock(io_service);
+
+		acceptor.accept(sock);
+		std::cout << " > client blah" << std::endl;
+
+		sock.send(boost::asio::buffer(msg));
+	}*/
+
+	return 0;
+}
