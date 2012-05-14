@@ -57,7 +57,6 @@ void EntityPool::RemoveEntity( Entity* Rhs )
 	BOOST_FOREACH( EntityPoolObserver * x, mObserver )
 	x->OnEntityRemove( Rhs, Position );
 
-
 	delete Rhs;
 }
 
@@ -126,6 +125,19 @@ void EntityPool::RemoveObserver( EntityPoolObserver* Rhs )
 	}
 
 	mObserver.erase( Rhs );
+}
+
+std::vector< std::string > EntityPool::GetEntityNames() const
+{
+	std::vector< std::string > res;
+	Entity* E = NULL;
+
+	BOOST_FOREACH(E, mData)
+	{
+		res.push_back(E->GetName());
+	}
+
+	return res;
 }
 
 int EntityPool::RemoveEntitiesByAttribute( const std::string& Attribute )

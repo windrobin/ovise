@@ -70,6 +70,8 @@ public:
 	void InsertObserver( EntityPoolObserver* Rhs );
 	void RemoveObserver( EntityPoolObserver* Rhs );
 
+	std::vector< std::string > GetEntityNames() const;
+
 private:
 	std::vector<Entity*>          mData;
 	int                           mNextId;

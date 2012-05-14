@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <set>
+#include <vector>
 #include <boost/variant.hpp>
 #include <boost/any.hpp>
 #include <OgreVector2.h>
@@ -27,7 +28,68 @@ class Entity;
 typedef boost::variant<int,double,vec2,vec3,vec4,quat,std::string,Entity*,
 					   boost::any> EntityVariantType;
 
-/** 
+class EntityVisitor : public boost::static_visitor< std::string >
+{
+public:
+	std::string operator() (int _val) const
+	{
+		std::stringstream res;
+		res << _val;
+
+		return res.str();
+	}
+
+	std::string operator() (double _val) const
+	{
+		std::stringstream res;
+		res << _val;
+
+		return res.str();
+	}
+
+	std::string operator() (const vec2& _vec) const
+	{
+		std::stringstream res;
+		res << _vec[0] << " " << _vec[1];
+
+		return res.str();
+	}
+
+	std::string operator() (const vec3& _vec) const
+	{
+		std::stringstream res;
+		res << _vec[0] << " " << _vec[1] << " " << _vec[2];
+
+		return res.str();
+	}
+
+	std::string operator() (const vec4& _vec) const
+	{
+		std::stringstream res;
+		res << _vec[0] << " " << _vec[1] << " " << _vec[2] << " " << _vec[3];
+
+		return res.str();
+	}
+
+	std::string operator() (const quat& _quat) const
+	{
+		std::stringstream res;
+		res << _quat[0] << " " << _quat[1] << " " << _quat[2] << " " << _quat[3];
+
+		return res.str();
+	}
+
+	std::string operator() (const std::string& _str) const
+	{ return _str; }
+
+	std::string operator() (const Entity& _e) const
+	{ return ""; }
+
+	std::string operator() (const boost::any& _any) const
+	{ return ""; }
+};
+
+/**
   Abstract observer for the entity type.
   The observer is supposed to be triggered for all attribute changes and a name change.
  */
@@ -101,7 +163,7 @@ public:
 
 	/** Construct an entity with a given name and id.
 	 */
-	explicit Entity( const ::std::string& name, const int id );
+	explicit Entity( const std::string& name, const int id );
 
 	/** Destruct an entity.
 	 */
@@ -139,14 +201,14 @@ public:
 
 	/** Get the name of this entity.
 	 */
-	inline const std::string& GetName() const 
+	inline const std::string& GetName() const
     {
         return Name;
 	}
 
 	/** Get the Id of the Entity.
 	 */
-	inline const int GetId() const 
+	inline const int GetId() const
     {
        return Id;
 	}
@@ -162,7 +224,7 @@ public:
 	}
 
 	/** Set the ID of this entity.
-		The ID should only be modified by the EntityPool. 
+		The ID should only be modified by the EntityPool.
 		Changing the ID somewhere else could produce problems.
 	 */
 	void SetId( int newId );
@@ -180,6 +242,8 @@ public:
 	/** Retrieve the variant type of an attribute.
 	 */
 	const VariantType* GetAttribute( const std::string& Name ) const;
+	
+	std::vector< std::string > GetAttributeNames() const;
 
 	/** Set the variant type of an attribute.
 		\note This is mostly for very specific use - using Set is normally preferable.

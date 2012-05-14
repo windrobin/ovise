@@ -47,6 +47,7 @@ option( PLUGINS_VOODOO "Build Voodoo plugin" OFF )
 
 # Plugins (Network)
 option( INTERFACES_ILCAS "Build ILCAS interface" ON )
+option( INTERFACES_XMLRPC "Build XMLRPC interface" ON )
 option( INTERFACES_SHAROME "Build SHAROME interface" OFF )
 option( INTERFACES_VOODOO "Build VOODOO interface" OFF )
 
@@ -83,6 +84,10 @@ endif()
 
 if( INTERFACES_ILCAS )
 add_subdirectory( ILCASInterface )
+endif()
+
+if( INTERFACES_XMLRPC)
+add_subdirectory( XMLRPCInterface )
 endif()
 
 if( INTERFACES_SHAROME )
