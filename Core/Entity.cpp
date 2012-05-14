@@ -55,6 +55,21 @@ const
 		return &Node->second;
 }
 
+std::vector< std::string > Entity::GetAttributeNames() const
+{
+	AttributeType::const_iterator it = Attribute.begin();
+
+	std::vector< std::string > attrNames;
+
+	while(it != Attribute.end())
+	{
+		attrNames.push_back((*it).first);
+		it++;
+	}
+
+	return attrNames;
+}
+
 void Entity::Changed( const std::string& Name, const VariantType* Attrib )
 {
 	BOOST_FOREACH( EntityObserver * x, Observer )
