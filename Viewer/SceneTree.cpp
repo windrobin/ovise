@@ -59,9 +59,11 @@ void SceneTree::OnEntityRemove( Entity *Object, std::size_t Position )
 	      Item=this->GetNextSibling( Item ) )
 	{
 		// Is this the right one?
-		if ( dynamic_cast<EntityTreeData*>( this->GetItemData( Item ) )
-		     ->mEntity == Object )
+		if ( dynamic_cast<EntityTreeData*>( this->GetItemData( Item ) )->mEntity == Object )
+		{
 			this->Delete( Item );
+			return;
+		}
 	}
 }
 

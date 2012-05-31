@@ -30,6 +30,8 @@ set( XMLRPCInterfaceSources
          HTTPRequstParser.h
          HTTPRequestParser.cpp
 	 XMLRPCMessageHandler.cpp
+         XMLRPCServerMessageAPI.h
+         XMLRPCServerMessageAPI.cpp
 	 XMLRPCPlugin.rc )
 else( WIN32 )
 set( XMLRPCInterfaceSources
@@ -40,7 +42,9 @@ set( XMLRPCInterfaceSources
          HTTPRequest.h
          HTTPRequestParser.h
          HTTPRequestParser.cpp
-	 XMLRPCMessageHandler.cpp )
+	 XMLRPCMessageHandler.cpp
+         XMLRPCServerMessageAPI.h
+         XMLRPCServerMessageAPI.cpp )
 endif( WIN32 )
 	 
 add_library( XMLRPCInterface SHARED ${XMLRPCInterfaceHeaders} ${XMLRPCInterfaceSources} )

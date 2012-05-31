@@ -13,9 +13,11 @@
 #include "../Core/Entity.h"
 #include "../Core/EntityPool.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
+#include "../Viewer/AppContext.h"
 
 #include "HTTPReply.h"
 #include "HTTPRequest.h"
+#include "XMLRPCServerMessageAPI.h"
 
 #include <OgreVector2.h>
 #include <OgreVector3.h>
@@ -47,7 +49,7 @@ public:
 	        \param _message message in XML-RPC format
 	        \returns failure code (success: 0; failure: -1)
 	 */
-    std::string HandleMessage( const std::string& _message, HTTPReply& _reply );
+    int HandleMessage( const std::string& _message, HTTPReply& _reply );
 
     /** 
     */
@@ -59,49 +61,51 @@ private:
 
     std::string mRequestType;
 
+    XMLRPCServerMessageAPI mRPCMesAPI;
+
     std::string GetHTTPHeader( const std::string& _message ) const;
     std::string GetHTTPContent( const std::string& _message ) const;
     int CheckHTTPHeader( const std::string& _header, HTTPReply& _reply );
     std::string Trimm( const std::string& _str ) const;
-    std::string HandleMessageRPC2( const std::string& _content );
+    int HandleMessageRPC( const std::string& _content, std::string& _message );
 
-	std::string CallMethod( const std::string& _methodName, const std::list< std::vector< std::string > >& _param_list );
+	int CallMethod( const std::string& _methodName, const std::list< std::vector< std::string > >& _param_list, std::string& _message );
 
-    std::string GetAllEntityNames() const;
+    int GetAllEntityNames( std::string& _message ) const;
 
     /** Insert a new entity in the entity pool
             \param _param_list list of parameters which were retrieved from the message
-            \returns true for success; false otherwise
+            \returns 0 for success; -1 otherwise
     */
-    bool InsertEntity( const std::list< std::vector< std::string > >& _param_list );
+    int InsertEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
 
     /** Removes an entity from the entity pool
             \param _param_list list of parameters which were retrieved from the message
-            \returns true for success; false otherwise
+            \returns 0 for success; -1 otherwise
     */
-    bool RemoveEntity( const std::list< std::vector< std::string > >& _param_list );
+    int RemoveEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
 
     /** Removes entities from the entity pool which specified attribute
             \param _param_list list of parameters which were retrieved from the message
-            \returns true for success; false otherwise
+            \returns 0 for success; -1 otherwise
     */
-    bool RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& _param_list );
+    int RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
 
     /** Adds a new attribute to an entity of the entity pool
             \param _param_list list of parameters which were retrieved from the message
-            \returns true for success; false otherwise
+            \returns 0 for success; -1 otherwise
     */
-    bool AddAttributeToEntity( const std::list< std::vector< std::string > >& _param_list );
+    int AddAttributeToEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
 
-    std::string RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list);
+    int RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message);
 
-    std::string GetAttributeNamesFromEntity( const std::list< std::vector< std::string > >& _param_list ) const;
+    int GetAttributeNamesFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
 
-    std::string GetAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list ) const;
+    int GetAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
 
-    std::string GetAttributeFromEntityId( const std::list< std::vector< std::string > >& _param_list ) const;
+    int GetAttributeFromEntityId( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
 
-    std::string ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& _param_list ) const;
+    int ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
 };
 
 #endif   // OVISE_XMLRPC_MESSAGE_HANDLER_H
