@@ -11,7 +11,7 @@ std::string XMLRPCMessageAPI::GetAllEntityNamesMsg() const
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> getAllEntityNames </methodName>" << "\r\n";
+	msg << " <methodName> GetAllEntityNames </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "  </params>" << "\r\n";
 	msg << "</methodCall>" << "\r\n";
@@ -24,7 +24,7 @@ std::string XMLRPCMessageAPI::InsertEntityMsg(const std::string& _name) const
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> insertEntity </methodName>" << "\r\n";
+	msg << " <methodName> InsertEntity </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _name << " </string> </value>" << "\r\n";
@@ -40,7 +40,7 @@ std::string XMLRPCMessageAPI::InsertEntityMsg(const std::string& _name, int _id)
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> insertEntity </methodName>" << "\r\n";
+	msg << " <methodName> InsertEntity </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _name << "  </string> </value>" << "\r\n";
@@ -59,7 +59,7 @@ std::string XMLRPCMessageAPI::RemoveEntityMsg(const std::string& _name) const
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> removeEntity </methodName>" << "\r\n";
+	msg << " <methodName> RemoveEntity </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _name << " </string> </value>" << "\r\n";
@@ -75,7 +75,7 @@ std::string XMLRPCMessageAPI::RemoveEntityMsg(int _id) const
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> removeEntity </methodName>" << "\r\n";
+	msg << " <methodName> RemoveEntity </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <i4> " << _id << " </i4> </value>" << "\r\n";
@@ -91,7 +91,7 @@ std::string XMLRPCMessageAPI::RemoveEntitiesByAttributeMsg(const std::string& _a
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> removeEntitiesByAttribute </methodName>" << "\r\n";
+	msg << " <methodName> RemoveEntitiesByAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _attributeName << " </string> </value>" << "\r\n";
@@ -107,7 +107,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -129,7 +129,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -151,7 +151,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -173,7 +173,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -196,7 +196,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -207,7 +207,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector2" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector2" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "     </data>" << "\r\n";
@@ -224,7 +224,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -235,7 +235,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector3" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector3" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[2] << " </double> </value>" << "\r\n";
@@ -248,12 +248,12 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	return msg.str();
 }
 
-std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const vec4& _vec) const
+/*std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const vec4& _vec) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -264,7 +264,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector4" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector4" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[2] << " </double> </value>" << "\r\n";
@@ -276,14 +276,14 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	msg << "</methodCall>" << "\r\n";
 
 	return msg.str();
-}
+}*/
 
 std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const quat& _quat) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> addAttribute </methodName>" << "\r\n";
+	msg << " <methodName> AddAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -294,7 +294,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "quaternion" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "quaternion" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[2] << " </double> </value>" << "\r\n";
@@ -375,7 +375,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 
 		msg = AddAttributeMsg(_entityName, _attributeName, v);
 	}
-	else if(_attributeType == "vector4")
+	/*else if(_attributeType == "vector4")
 	{
 		std::string val1 = "";
 		std::string val2 = "";
@@ -405,7 +405,7 @@ std::string XMLRPCMessageAPI::AddAttributeMsg(const std::string& _entityName, co
 		v[3] = atof(val4.c_str());
 
 		msg = AddAttributeMsg(_entityName, _attributeName, v);
-	}
+	}*/
 	else if(_attributeType == "quaternion")
 	{
 		std::string val1 = "";
@@ -446,7 +446,7 @@ std::string XMLRPCMessageAPI::GetAttributeMsg(const std::string& _entityName, co
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> getAttribute </methodName>" << "\r\n";
+	msg << " <methodName> GetAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -460,12 +460,12 @@ std::string XMLRPCMessageAPI::GetAttributeMsg(const std::string& _entityName, co
 	return msg.str();
 }
 
-std::string XMLRPCMessageAPI::GetAttributeNamesFromEntityMsg(const std::string& _entityName) const
+std::string XMLRPCMessageAPI::GetAttributeNamesMsg(const std::string& _entityName) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> getAttributeNamesFromEntity </methodName>" << "\r\n";
+	msg << " <methodName> GetAttributeNames </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -476,12 +476,12 @@ std::string XMLRPCMessageAPI::GetAttributeNamesFromEntityMsg(const std::string& 
 	return msg.str();
 }
 
-std::string XMLRPCMessageAPI::RemoveAttributeFromEntityMsg(const std::string& _entityName, const std::string& _attributeName) const
+std::string XMLRPCMessageAPI::RemoveAttributeMsg(const std::string& _entityName, const std::string& _attributeName) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> removeAttributeFromEntity </methodName>" << "\r\n";
+	msg << " <methodName> RemoveAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -500,7 +500,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -522,7 +522,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -544,7 +544,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -566,7 +566,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -588,7 +588,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -599,7 +599,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector2" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector2" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "     </data>" << "\r\n";
@@ -616,7 +616,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -627,7 +627,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector3" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector3" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[2] << " </double> </value>" << "\r\n";
@@ -640,12 +640,12 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	return msg.str();
 }
 
-std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const vec4& _vec) const
+/*std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const vec4& _vec) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -656,7 +656,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "vector4" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "vector4" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _vec[2] << " </double> </value>" << "\r\n";
@@ -668,14 +668,14 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	msg << "</methodCall>" << "\r\n";
 
 	return msg.str();
-}
+}*/
 
 std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName, const std::string& _attributeName, const quat& _quat) const
 {
 	std::stringstream msg;
 	msg << "<?xml version=\"1.0\"?>" << "\r\n";
 	msg << "<methodCall>" << "\r\n";
-	msg << " <methodName> changeAttributeOfEntity </methodName>" << "\r\n";
+	msg << " <methodName> ChangeAttribute </methodName>" << "\r\n";
 	msg << "  <params>" << "\r\n";
 	msg << "   <param>" << "\r\n";
 	msg << "    <value> <string> " << _entityName << " </string> </value>" << "\r\n";
@@ -686,7 +686,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 	msg << "   <param>" << "\r\n";
 	msg << "    <array>" << "\r\n";
 	msg << "     <data>" << "\r\n";
-	msg << "      <value> <string> " << "quaternion" << " </string> </value>" << "\r\n";
+//	msg << "      <value> <string> " << "quaternion" << " </string> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[0] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[1] << " </double> </value>" << "\r\n";
 	msg << "      <value> <double> " << _quat[2] << " </double> </value>" << "\r\n";
@@ -767,7 +767,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 
 		msg = ChangeAttributeMsg(_entityName, _attributeName, v);
 	}
-	else if(_attributeType == "vector4")
+	/*else if(_attributeType == "vector4")
 	{
 		std::string val1 = "";
 		std::string val2 = "";
@@ -797,7 +797,7 @@ std::string XMLRPCMessageAPI::ChangeAttributeMsg(const std::string& _entityName,
 		v[3] = atof(val4.c_str());
 
 		msg = ChangeAttributeMsg(_entityName, _attributeName, v);
-	}
+	}*/
 	else if(_attributeType == "quaternion")
 	{
 		std::string val1 = "";

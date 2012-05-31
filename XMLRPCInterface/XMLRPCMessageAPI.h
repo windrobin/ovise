@@ -119,8 +119,8 @@ public:
 			\param _attributeValue holds a vec4 value for the new attribute
 			\returns a std::string ready for transmitting as message
 	*/
-	virtual std::string AddAttributeMsg( const std::string& _entityName, const std::string& _attributeName,
-										const vec4& _vec ) const;
+	//virtual std::string AddAttributeMsg( const std::string& _entityName, const std::string& _attributeName,
+	//									const vec4& _vec ) const;
 
 	/** Provides a std::string-message for adding a new attribute to an entity of the entity-pool
 			\param _entityName name of the entity which gets the new attribute
@@ -152,14 +152,14 @@ public:
 			\param _entityName is the name of the entity
 			\returns a std::string ready for transmitting as message
 	*/
-	virtual std::string GetAttributeNamesFromEntityMsg( const std::string& _entityName ) const;
+	virtual std::string GetAttributeNamesMsg( const std::string& _entityName ) const;
 
 	/** Provides a std::string-message to remove an attribute from an entity of the entity-pool
 			\param _entityName name of the entity from which the attribute should be removed
 			\param _attributeName name of the attribute which should be removed
 			\returns a std::string ready for transmitting as message
 	*/
-	virtual std::string RemoveAttributeFromEntityMsg( const std::string& _entityName, const std::string& _attributeName ) const;
+	virtual std::string RemoveAttributeMsg( const std::string& _entityName, const std::string& _attributeName ) const;
 
 	/** Provides a std::string-message for changing a value of an attribute of a given entity
 			\param _entityName is the name of the entity
@@ -221,8 +221,8 @@ public:
 			\param _attributeValue is the new Ogre::Vector4 value for the attribute
 			\returns a std::string ready for transmitting as message
 	*/
-	virtual std::string ChangeAttributeMsg( const std::string& _entityName, const std::string& _attributeName,
-											const vec4& _vec ) const;
+	//virtual std::string ChangeAttributeMsg( const std::string& _entityName, const std::string& _attributeName,
+	//										const vec4& _vec ) const;
 
 	/** Provides a std::string-message for changing a value of an attribute of a given entity
 			\param _entityName is the name of the entity

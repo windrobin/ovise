@@ -53,28 +53,6 @@ void read_handler(const boost::system::error_code& _ec, std::size_t _bytes_trans
 		std::string content;
 		content.assign(g_buffer.begin(), g_buffer.begin() + _bytes_transferred);
 		std::cout << " > read buffer: " << content << std::endl;
-
-		//std::cout << " > read buffer: ." << g_buffer.data() << "." << std::endl;
-
-		/*if(trimm(g_buffer.data()) == "ready")
-			g_readyReturned++;
-
-		std::cout << " > RR: " << g_readyReturned << std::endl;
-
-		if(g_readyReturned == 2)
-		{
-			g_op = -1;
-			//g_io_service.stop();
-			write_handler();
-		}*/
-
-		/*if(std::string(g_buffer.data()) == "ready")
-		{
-			std::cout << " > disconnect client" << std::endl;
-			boost::system::error_code error;
-			g_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-			g_socket.close();
-		}*/
 	}
 	else
 		std::cerr << " > could not read" << std::endl;
@@ -102,17 +80,15 @@ void write_handler()
 			break;
 		case 5: msg = msg_api.GetAttributeMsg(g_entity_name, g_attribute_name);
 			break;
-		case 6: msg = msg_api.GetAttributeNamesFromEntityMsg(g_entity_name);
+		case 6: msg = msg_api.GetAttributeNamesMsg(g_entity_name);
 			break;
 		case 7: msg = msg_api.GetAllEntityNamesMsg();
 			break;
-		case 8: msg = msg_api.RemoveAttributeFromEntityMsg(g_entity_name, g_attribute_name);
+		case 8: msg = msg_api.RemoveAttributeMsg(g_entity_name, g_attribute_name);
 			break;
 		case 9: msg = msg_api.ChangeAttributeMsg(g_entity_name, g_attribute_name, g_attribute_type, g_attribute_value);
 			break;
 	}
-
-	//std::cout << " > msg: " << std::endl << msg << std::endl;
 
 	// create http header
 	std::stringstream header;
@@ -127,33 +103,24 @@ void write_handler()
 
 	std::cout << " > msg: " << std::endl << msg << std::endl;
 
-	//boost::asio::write(g_socket, boost::asio::buffer(msg));
 	std::cout << " > write message" << std::endl;
 	boost::asio::write(g_socket, boost::asio::buffer(header.str()));
 	std::cout << " > message written" << std::endl;
 	std::cout << " > read some" << std::endl;
-	//g_socket.async_read_some(boost::asio::buffer(g_buffer), read_handler);
+
 	g_socket.read_some(boost::asio::buffer(g_buffer));
 	std::cout << " > read some done: " << std::string(g_buffer.data()) << std::endl;
-	//std::cout << " > read: " << std::string(g_buffer.data()) << std::endl;
-	//g_socket.async_read_some(boost::asio::buffer(g_buffer), read_handler);
-	//boost::asio::write(g_socket, boost::asio::buffer("ready\n"));
-
-	// may be check for a response message
 }
 
 void connect_handler(const boost::system::error_code& _ec)
 {
 	if(!_ec)
 	{
-		//boost::asio::write(g_socket, boost::asio::buffer(msg));
-		//boost::asio::write(g_socket, boost::asio::buffer(header.str()));)
 		write_handler();
 		std::cout << " > read some in connect_handler" << std::endl;
 		g_socket.async_read_some(boost::asio::buffer(g_buffer), read_handler);
 		std::cout << " > read: " << std::string(g_buffer.data()) << std::endl;
 		std::cout << " > read some in connect_handler done" << std::endl;
-		//boost::asio::write(g_socket, boost::asio::buffer("ready\n"));
 		g_io_service.stop();
 		g_socket.close();
 	}
@@ -223,22 +190,6 @@ int main(int _argc, char** _argv)
 				std::cin >> g_attribute_name;
 				g_attribute_name = trimm(g_attribute_name);
 			break;
-		/*case 4: std::cout << " > insert attribute name: ";
-				std::cin >> g_attribute_name;
-				std::cout << std::endl;
-				std::cout << " > possible attribute types: 'boolean', 'int', 'double', 'string', 'vector2', 'vector3', 'vector4', 'quaternion'" << std::endl;
-				std::cout << std::endl;
-				std::cout << " > insert attribute type: ";
-				std::cin >> g_attribute_type;
-				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << " > insert attribute value(max length 80 characters): ";
-				{
-					char buffer[81];
-					memset(buffer, 0, 81);
-					std::cin.getline(buffer, 81, '\n');
-					g_attribute_value = buffer;
-				}
-			break;*/
 		case 4:	std::cout << " > insert entity name: ";
 				std::cin >> g_entity_name;
 				std::cout << std::endl;

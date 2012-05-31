@@ -129,10 +129,13 @@ void CXMLRPCInterface::HandleReadContent( const boost::system::error_code& _ec, 
 	std::string content;
 	content.assign(mBuffer.begin(), mBuffer.begin() + _bytes_transferred);
 
-	std::string strRes = mMessageHandler.HandleMessage(content, mReply);
-	std::cout << " > strRes: " << strRes << std::endl;
+	int res = mMessageHandler.HandleMessage(content, mReply);
+	std::cout << " > res: " << res << std::endl;
 
-	if(strRes[0] == 'R')
+	std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
+	mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
+
+	/*if(strRes[0] == 'R')
 	{
 		mSocket->async_write_some(boost::asio::buffer(strRes), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
 		std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
@@ -149,7 +152,7 @@ void CXMLRPCInterface::HandleReadContent( const boost::system::error_code& _ec, 
 		mSocket->async_write_some(boost::asio::buffer(strRes), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
 		std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
 		mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-	}
+	}*/
 
 	ResetConnection();
 }

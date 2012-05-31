@@ -56,7 +56,7 @@ void EntityPool::RemoveEntity( Entity* Rhs )
 	// Notify the observers
 	BOOST_FOREACH( EntityPoolObserver * x, mObserver )
 	x->OnEntityRemove( Rhs, Position );
-
+	
 	delete Rhs;
 }
 
