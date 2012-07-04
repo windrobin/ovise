@@ -131,4 +131,59 @@ Ogre::Entity* RaycastToPolygon( const Ogre::Real& x, const Ogre::Real& y,
 	return ClosestResult;
 }
 
+int StrToInt( const std::string& Str )
+{
+	std::stringstream ssConvBuf;
+	ssConvBuf << Str;
+
+	int res;
+	ssConvBuf >> res;
+
+	return res;
+}
+
+float StrToFloat( const std::string& Str )
+{
+	std::stringstream ssConvBuf;
+	ssConvBuf << Str;
+
+	float res;
+	ssConvBuf >> res;
+
+	return res;
+}
+
+std::string Trim( const std::string& Str )
+{
+    std::string res = Str;
+    
+    size_t pos1 = Str.find_first_not_of(" \r\n");
+    size_t pos2 = Str.find_last_not_of(" \r\n");
+    if(pos1 == std::string::npos)
+        return Str;
+    if(pos2 == std::string::npos)
+        pos2 = Str.length();
+
+    res = Str.substr(pos1, pos2 - pos1 + 1);
+
+    return res;
+}
+
+std::string GetHTTPHeader( const std::string& Message )
+{
+    size_t pos = Message.find("\r\n\r\n");
+    std::string header = Message.substr(0, pos);
+
+    return header;
+}
+
+std::string GetHTTPContent( const std::string& Message )
+{
+    size_t pos1 = Message.find("\r\n\r\n");
+    size_t pos2 = Message.find("\r\n\r\n", pos1 + 1);
+    std::string content = Message.substr(pos1 + 4, pos2 - pos1 - 4);
+
+    return content;
+}
+
 } // namespace OVISE

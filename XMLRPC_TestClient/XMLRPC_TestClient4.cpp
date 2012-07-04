@@ -7,6 +7,8 @@
 
 #include <cstdlib>
 
+#include <boost/lexical_cast.hpp>
+
 #include "XMLRPCMessageAPI.h"
 
 boost::asio::io_service g_io_service;
@@ -225,7 +227,7 @@ int main(int _argc, char** _argv)
 				}
 				else if(g_attribute_type == "int")
 				{
-					if( !(atoi(g_attribute_value.c_str()) < INT_MAX && atoi(g_attribute_value.c_str()) > INT_MIN) )
+					if( !(boost::lexical_cast< int >(g_attribute_value) < INT_MAX && boost::lexical_cast< int >(g_attribute_value) > INT_MIN) )
 					{
 						std::cout << " > the value is not appropriate to the given datatype" << std::endl;
 						return 0;
@@ -233,7 +235,7 @@ int main(int _argc, char** _argv)
 				}
 				else if(g_attribute_type == "double")
 				{
-					if( !(atof(g_attribute_value.c_str()) < HUGE_VAL && atof(g_attribute_value.c_str()) > -HUGE_VAL) )
+					if( !(boost::lexical_cast< float >(g_attribute_value) < HUGE_VAL && boost::lexical_cast< float >(g_attribute_value) > -HUGE_VAL) )
 					{
 						std::cout << " > the value is not appropriate to the given datatype" << std::endl;
 						return 0;
@@ -329,7 +331,7 @@ int main(int _argc, char** _argv)
 				std::cin >> g_entity_name;
 				std::cout << " > insert attribute name: ";
 				std::cout << std::endl;
-				std::cout << " > possible attribute types: 'boolean', 'int', 'double', 'string', 'vector2', 'vector3', 'vector4', 'quaternion'" << std::endl;
+				std::cout << " > possible attribute types: 'boolean', 'int', 'double', 'string', 'vector2', 'vector3', 'quaternion'" << std::endl;
 				std::cout << " > insert attribute type: ";
 				std::cin >> g_attribute_type;
 				std::cout << " > insert attribute name: ";

@@ -2,177 +2,57 @@
 
 #include "../Core/EntityPool.h"
 
-XMLRPCMessageHandler::XMLRPCMessageHandler(EntityPool* _entityPool)
+XMLRPCMessageHandler::XMLRPCMessageHandler(EntityPool* EntityPool)
 :
-mEntityPool(_entityPool),
+mEntityPool(EntityPool),
 mRequestType("")
 {}
 
 XMLRPCMessageHandler::~XMLRPCMessageHandler()
 {}
 
-int XMLRPCMessageHandler::HandleHTMLRequest(const HTTPRequest& _request, HTTPReply& _reply)
-{}
-
-std::string XMLRPCMessageHandler::GetHTTPHeader( const std::string& _message ) const
+int XMLRPCMessageHandler::HandleMessage( const std::string& Message, HTTPReply& Reply )
 {
-    size_t pos = _message.find("\r\n\r\n");
-    std::string header = _message.substr(0, pos);
+    std::string strHeader = OVISE::GetHTTPHeader(Message);
+    std::string strContent = OVISE::GetHTTPContent(Message);
 
-    return header;
-}
-
-std::string XMLRPCMessageHandler::GetHTTPContent( const std::string& _message ) const
-{
-    size_t pos1 = _message.find("\r\n\r\n");
-    size_t pos2 = _message.find("\r\n\r\n", pos1 + 1);
-    std::string content = _message.substr(pos1 + 4, pos2 - pos1 - 4);
-
-    return content;
-}
-
-int XMLRPCMessageHandler::CheckHTTPHeader( const std::string& _header, HTTPReply& _reply )
-{
-    std::size_t headerLength = _header.length();
-    if(headerLength < 3)
-        return -2;  // more data required
-
-    std::size_t pos1;
-    std::size_t pos2 = _header.find(" ");
-    std::string req = _header.substr(0, pos2);
-
-    std::string headerLine = "";
-    if(req == "POST")
-    {
-        mRequestType = "POST";
-        pos2 = _header.find("\r\n");
-        headerLine = _header.substr(4, pos2 - 4);
-    }
-    else if(req == "GET")
-    {
-        mRequestType = "GET";
-        pos2 = _header.find("\r\n");
-        headerLine = _header.substr(3, pos2 - 3);
-    }
-    else
-    {
-        mRequestType = "NONE";
-        headerLine = "";
-    }
-
-    pos1 = _header.find("User-Agent:", pos2 + 1);
-    pos2 = _header.find("\r\n", pos2 + 1);
-    if(pos1 == std::string::npos)
-        return -1;
-    std::string userAgent = _header.substr(pos1 + 11, pos2 - pos1 - 11);
-
-    pos1 = _header.find("Host:", pos2 + 1);
-    pos2 = _header.find("\r\n", pos2 + 1);
-    if(pos1 == std::string::npos)
-        return -1;
-    std::string host = _header.substr(pos1 + 5, pos2 - pos1 - 5);
-
-    pos1 = _header.find("Content-Type:", pos2 + 1);
-    pos2 = _header.find("\r\n", pos2 + 1);
-    if(pos1 == std::string::npos)
-        return -1;
-    std::string contentType = _header.substr(pos1 + 13, pos2 - pos1 - 13);
-
-    pos1 = _header.find("Content-Length:", pos2 + 1);
-    pos2 = _header.find("\r\n", pos2 + 1);
-    if(pos1 == std::string::npos)
-        return -1;
-    std::string contentLength = _header.substr(pos1 + 15, pos2 - pos1 - 15);
-
-    mRequestType = Trimm(mRequestType);
-    headerLine = Trimm(headerLine);
-    userAgent = Trimm(userAgent);
-    host = Trimm(host);
-    contentType = Trimm(contentType);
-    contentLength = Trimm(contentLength);
-
-    if(headerLine == "/RPC2 HTTP/1.0" || headerLine == "/RPC2 HTTP/1.1")
-    {
-        // check content-type
-        if(contentType != "text/xml")
-        {
-            _reply.Status = HTTPReply::bad_request;
-            _reply.Content = "can only process text/xml messages";
-            return -1;
-        }
-
-        return 1;
-    }
-
-    return 0;
-}
-
-std::string XMLRPCMessageHandler::Trimm( const std::string& _str ) const
-{
-    std::string res = _str;
-    
-    size_t pos1 = _str.find_first_not_of(" \r\n");
-    size_t pos2 = _str.find_last_not_of(" \r\n");
-    if(pos1 == std::string::npos)
-        return _str;
-    if(pos2 == std::string::npos)
-        pos2 = _str.length();
-
-    res = _str.substr(pos1, pos2 - pos1 + 1);
-
-    return res;
-}
-
-int XMLRPCMessageHandler::HandleMessage( const std::string& _message, HTTPReply& _reply )
-{
-    std::string strHeader = GetHTTPHeader(_message);
-    std::string strContent = GetHTTPContent(_message);
-
-    // ------- ofd
-    std::cerr << " > -----------------------------------------------" << std::endl;
-    std::cerr << " > [XMLRPCMessageHandler::HandleMessage] message: \n" << _message << std::endl;
-    std::cerr << " > -----------------------------------------------" << std::endl;
-    // --- end ofd
-
-    std::string message = "";
-    int res = HandleMessageRPC(strContent, message);
-
-    std::cerr << " > [HandleMessage] res: " << res << std::endl;
+    std::string msg = "";
+    int res = HandleMessageRPC(strContent, msg);
 
     if(res == 0)
-        _reply.Status = HTTPReply::ok;
+        Reply.Status = HTTPReply::ok;
     else
-        _reply.Status = HTTPReply::bad_request;
+        Reply.Status = HTTPReply::bad_request;
 
-    _reply.Content = message;
+    Reply.Content = msg;
 
     return res;
 }
 
-int XMLRPCMessageHandler::HandleMessageRPC( const std::string& _content, std::string& _message )
+int XMLRPCMessageHandler::HandleMessageRPC( const std::string& Content, std::string& Message )
 {
     std::string methodName;
     std::list< std::vector< std::string > > param_list;
 
     try
     {
-        mDocument.parse< 0 >(const_cast< char* >((char*)(_content.c_str())));
+        mDocument.parse< 0 >(const_cast< char* >((char*)(Content.c_str())));
 
         rapidxml::xml_node<>* rootNode = mDocument.first_node("methodCall");
         if(!rootNode)
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("No rootnode found in xmlrpc-message");
+            Message = mRPCMesAPI.ErrorResponseMsg("No rootnode found in xmlrpc-message");
             return -1;
         }
 
         rapidxml::xml_node<>* node = rootNode->first_node("methodName");
         if(!node)
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("No node 'methodName' found in xmlrpc-message");
+            Message = mRPCMesAPI.ErrorResponseMsg("No node 'methodName' found in xmlrpc-message");
             return -1;
         }
 
-        methodName = Trimm(node->value());
+        methodName = OVISE::Trim(node->value());
 
         rapidxml::xml_node<>* param_node = node->next_sibling("params")->first_node("param");
 
@@ -185,27 +65,27 @@ int XMLRPCMessageHandler::HandleMessageRPC( const std::string& _content, std::st
                 return -1;
             }
 
-            std::string strDataType = Trimm(node->name());
+            std::string strDataType = OVISE::Trim(node->name());
             std::vector< std::string > param_vec;
             
             if(!strDataType.compare("value"))
             {
-                strDataType = Trimm(node->first_node()->name());
+                strDataType = OVISE::Trim(node->first_node()->name());
                 if(!strDataType.compare("array"))
                 {
                     rapidxml::xml_node<>* array_val_node = node->first_node()->first_node()->first_node();
 
-                    std::string strType = Trimm(array_val_node->first_node()->name());
+                    std::string strType = OVISE::Trim(array_val_node->first_node()->name());
 
                     while(array_val_node)
                     {
-                        if(Trimm(array_val_node->first_node()->name()).compare(strType))
+                        if(OVISE::Trim(array_val_node->first_node()->name()).compare(strType))
                         {
-                            _message = mRPCMesAPI.ErrorResponseMsg("Type change in scope of array in xmlrpc-message");
+                            Message = mRPCMesAPI.ErrorResponseMsg("Type change in scope of array in xmlrpc-message");
                             return -1;
                         }
 
-                        std::string strVal = Trimm(array_val_node->first_node()->value());  // get data
+                        std::string strVal = OVISE::Trim(array_val_node->first_node()->value());  // get data
                         param_vec.push_back(strVal);
                         array_val_node = array_val_node->next_sibling("value");
                     }
@@ -213,7 +93,7 @@ int XMLRPCMessageHandler::HandleMessageRPC( const std::string& _content, std::st
                 }
                 else
                 {
-                    std::string strDataValue = Trimm(node->first_node()->first_node()->value());
+                    std::string strDataValue = OVISE::Trim(node->first_node()->first_node()->value());
                     
                     param_vec.push_back(strDataType);
                     param_vec.push_back(strDataValue);
@@ -223,7 +103,7 @@ int XMLRPCMessageHandler::HandleMessageRPC( const std::string& _content, std::st
             }
             else
             {
-                _message = mRPCMesAPI.ErrorResponseMsg("Unknown node in xmlrpc-message");
+                Message = mRPCMesAPI.ErrorResponseMsg("Unknown node in xmlrpc-message");
                 return -1;
             }
 
@@ -232,149 +112,84 @@ int XMLRPCMessageHandler::HandleMessageRPC( const std::string& _content, std::st
     }
     catch(rapidxml::parse_error _pe)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not parse xmlrpc-message");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not parse xmlrpc-message");
         return -1;
     }
 
-    return CallMethod(methodName, param_list, _message);
+    return CallMethod(methodName, param_list, Message);
 }
 
-int XMLRPCMessageHandler::CallMethod( const std::string& _methodName,
-                    const std::list< std::vector< std::string > >& _param_list, std::string& _message )
+int XMLRPCMessageHandler::CallMethod( const std::string& MethodName,
+                    const std::list< std::vector< std::string > >& ParamList, std::string& Message )
 {
-    if( !(_methodName.compare("InsertEntity")) )
+    if( !(MethodName.compare("InsertEntity")) )
     {
-        if(_param_list.size() == 0 || _param_list.size() > 2)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist has an incorrect size (maybe it's empty or greater than 2)");
-            return -1;
-        }
-
-        if( InsertEntity(_param_list, _message) != 0 )
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not insert entity");
-            return -1;
-        }
+        return InsertEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("RemoveEntity")) )
+    else if( !(MethodName.compare("RemoveEntity")) )
     {
-        if(_param_list.size() != 1)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        if( RemoveEntity(_param_list, _message) != 0)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not remove entity");
-            return -1;
-        }
+        return RemoveEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("RemoveEntitiesByAttribute")) )
+    else if( !(MethodName.compare("RemoveEntitiesByAttribute")) )
     {
-        if(_param_list.size() < 1)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        if( RemoveEntitiesByAttribute(_param_list, _message) != 0)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not remove entities by attribute");
-            return -1;
-        }
+        return RemoveEntitiesByAttribute(ParamList, Message);
     }
-    else if( !(_methodName.compare("AddAttribute")) )
+    else if( !(MethodName.compare("AddAttribute")) )
     {
-        //if(_param_list.size() < 3)
-        if(_param_list.size() < 2)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        if( AddAttributeToEntity(_param_list, _message) != 0)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not add attribute to entity");
-            return -1;
-        }
+        return AddAttributeToEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("GetAttribute")) )
+    else if( !(MethodName.compare("GetAttribute")) )
     {
-        if(_param_list.size() < 2)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        return GetAttributeFromEntity(_param_list, _message);
+        return GetAttributeFromEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("GetAttributeNames")) )
+    else if( !(MethodName.compare("GetAttributeNames")) )
     {
-        if(_param_list.size() < 1)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("No entity specified");
-            return -1;
-        }
-
-        return GetAttributeNamesFromEntity(_param_list, _message);
+        return GetAttributeNamesFromEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("RemoveAttribute")) )
+    else if( !(MethodName.compare("RemoveAttribute")) )
     {
-        if(_param_list.size() < 2)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        return RemoveAttributeFromEntity(_param_list, _message);
+        return RemoveAttributeFromEntity(ParamList, Message);
     }
-    else if( !(_methodName.compare("GetAllEntityNames")) )
+    else if( !(MethodName.compare("GetAllEntityNames")) )
     {
-        /*if(_param_list.size() < 1)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("No entity specified");
-            return -1;
-        }*/
-
-        return GetAllEntityNames(_message);
+        return GetAllEntityNames(Message);
     }
-    else if( !(_methodName.compare("ChangeAttribute")) )
+    else if( !(MethodName.compare("ChangeAttribute")) )
     {
-        if(_param_list.size() < 2)
-        {
-            _message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
-            return -1;
-        }
-
-        return ChangeAttributeOfEntity(_param_list, _message);
+        return ChangeAttributeOfEntity(ParamList, Message);
     }
     else
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Method doesn't exist");
+        Message = mRPCMesAPI.ErrorResponseMsg("Method doesn't exist");
         return -1;
     }
 
     return 0;
 }
 
-int XMLRPCMessageHandler::GetAllEntityNames(std::string& _message) const
+int XMLRPCMessageHandler::GetAllEntityNames(std::string& Message) const
 {
     std::vector< std::string > names = mEntityPool->GetEntityNames();
-    _message = mRPCMesAPI.AllEntityNamesResponseMsg(names);
+    Message = mRPCMesAPI.AllEntityNamesResponseMsg(names);
     return 0;
 }
 
-int XMLRPCMessageHandler::InsertEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message )
+int XMLRPCMessageHandler::InsertEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message )
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() == 0 || ParamList.size() > 2)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist has an incorrect size (maybe it's empty or greater than 2)");
+        return -1;
+    }
 
-    if(_param_list.size() == 1)
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
+
+    if(ParamList.size() == 1)
     {
         std::vector< std::string > param_vec = *it;
         if( !((param_vec.at(0)).compare("i4")) )        // check datatype for id
         {
-            int id = atoi( (const char*)((param_vec.at(1)).c_str()) );
+            int id = OVISE::StrToInt( param_vec.at(1) );
             mEntityPool->InsertEntity(new Entity(id));     // create and insert new entity in entity-pool
         }
         else if( !((param_vec.at(0)).compare("string")) )   // check datatype for name
@@ -386,7 +201,7 @@ int XMLRPCMessageHandler::InsertEntity( const std::list< std::vector< std::strin
         }
         else
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Wrong parameters");
+            Message = mRPCMesAPI.ErrorResponseMsg("Could not insert entity");
             return -1;
         }
     }
@@ -394,7 +209,7 @@ int XMLRPCMessageHandler::InsertEntity( const std::list< std::vector< std::strin
     {
         if( (*it).at(0).compare("string") )     // check datatype for name
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype for entity name");
+            Message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype for entity name");
             return -1;
         }
 
@@ -403,29 +218,35 @@ int XMLRPCMessageHandler::InsertEntity( const std::list< std::vector< std::strin
 
         if( (*it).at(0).compare("i4") && (*it).at(0).compare("int") )   // check datatype for id
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype for an entity id");
+            Message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype for an entity id");
             return -1;
         }
 
-        int id = atoi( (const char*)(((*it).at(1)).c_str()) );
+        int id = OVISE::StrToInt( (*it).at(1) );
 
         Entity* e = new Entity(id);
         e->SetName(name);
         mEntityPool->InsertEntity(e);
     }
 
-    _message = mRPCMesAPI.StatusResponseMsg("Entity inserted");
+    Message = mRPCMesAPI.StatusResponseMsg("Entity inserted");
     return 0;
 }
 
-int XMLRPCMessageHandler::RemoveEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message )
+int XMLRPCMessageHandler::RemoveEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message )
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() != 1)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
+        return -1;
+    }
+
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
     std::vector< std::string > param_vec = *it;
 
     if(param_vec.at(0) == "i4" || param_vec.at(0) == "int")     // check datatype for id
     {
-        int id = atoi( (const char*)((param_vec.at(1)).c_str()) );
+        int id = OVISE::StrToInt( param_vec.at(1) );
         Entity* e = mEntityPool->GetEntityById(id);
 
         if(CAppContext::instance().GetSelected() == e)
@@ -433,7 +254,7 @@ int XMLRPCMessageHandler::RemoveEntity( const std::list< std::vector< std::strin
 
         if(e == NULL)
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity by id");
+            Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity by id");
             return -1;
         }
         mEntityPool->RemoveEntity(e);
@@ -448,39 +269,51 @@ int XMLRPCMessageHandler::RemoveEntity( const std::list< std::vector< std::strin
 
         if(e == NULL)
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity by name");
+            Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity by name");
             return -1;
         }
         mEntityPool->RemoveEntity(e);  // remove entity
     }
     else
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Wrong parameters");
+        Message = mRPCMesAPI.ErrorResponseMsg("Wrong parameters");
         return -1;
     }
 
-    _message = mRPCMesAPI.StatusResponseMsg("Entity removed");
+    Message = mRPCMesAPI.StatusResponseMsg("Entity removed");
     return 0;
 }
 
 
-int XMLRPCMessageHandler::RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& _param_list,
-                                                    std::string& _message )
+int XMLRPCMessageHandler::RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& ParamList,
+                                                    std::string& Message )
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() < 1)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
+        return -1;
+    }
+
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
     CAppContext::instance().ClearSelection();
 
     mEntityPool->RemoveEntitiesByAttribute((*it).at(1));
 
-    _message = mRPCMesAPI.StatusResponseMsg("Entities removed by attribute");
+    Message = mRPCMesAPI.StatusResponseMsg("Entities removed by attribute");
     return 0;
 }
 
-int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< std::string > >& _param_list,
-                                                std::string& _message )
+int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< std::string > >& ParamList,
+                                                std::string& Message )
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() < 2)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
+        return -1;
+    }
+
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
     std::string name = (*it).at(1);
     it++;
     std::string attrName = (*it).at(1);
@@ -492,18 +325,18 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
     Entity* e = mEntityPool->GetEntityByName(name);
     if(e == NULL)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
         return -1;
     }
 
-    if(_param_list.size() == 3)    // if value is of standard type then use this branch
+    if(ParamList.size() == 3)    // if value is of standard type then use this branch
     {
         std::string valueType = (*it).at(0);
         std::string value = (*it).at(1);
 
         if( !(valueType.compare("i4")) || !(valueType.compare("int")) )     // check for datatype int
         {
-            e->Set<int>( attrName, atoi( ((const char*)(value.c_str())) ) );
+            e->Set<int>( attrName, OVISE::StrToInt( value ) );
         }
         else if( !(valueType.compare("boolean")) )                          // check for datatype boolean
         {
@@ -512,7 +345,7 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
         }
         else if( !(valueType.compare("double")) )                           // check for datatype double
         {
-            e->Set<double>( attrName, atof( ((const char*)(value.c_str())) ) );
+            e->Set<double>( attrName, OVISE::StrToFloat( value ) );
         }
         else if( !(valueType.compare("string")) )                           // check for datatype string
         {
@@ -520,14 +353,12 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
         }
         else
         {
-            std::cerr << " > [XMLRPCMessageHandler::AddAttributeToEntity]: size: " << (*it).size() << std::endl;
-
             switch( (*it).size())
             {
                 case 2:
                 {
-                    double x = atof((const char*)((*it).at(0).c_str()));
-                    double y = atof((const char*)((*it).at(1).c_str()));
+                    double x = OVISE::StrToFloat((*it).at(0));
+                    double y = OVISE::StrToFloat((*it).at(1));
 
                     vec2 v(x, y);
                     e->Set<vec2>(attrName, v);
@@ -535,9 +366,9 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
                 }
                 case 3:
                 {
-                    double x = atof((const char*)((*it).at(0).c_str()));
-                    double y = atof((const char*)((*it).at(1).c_str()));
-                    double z = atof((const char*)((*it).at(2).c_str()));
+                    double x = OVISE::StrToFloat((*it).at(0));
+                    double y = OVISE::StrToFloat((*it).at(1));
+                    double z = OVISE::StrToFloat((*it).at(2));
 
                     vec3 v(x, y, z);
                     e->Set<vec3>(attrName, v);
@@ -545,10 +376,10 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
                 }
                 case 4:
                 {
-                    double x = atof((const char*)((*it).at(0).c_str()));
-                    double y = atof((const char*)((*it).at(1).c_str()));
-                    double z = atof((const char*)((*it).at(2).c_str()));
-                    double w = atof((const char*)((*it).at(3).c_str()));
+                    double x = OVISE::StrToFloat((*it).at(0));
+                    double y = OVISE::StrToFloat((*it).at(1));
+                    double z = OVISE::StrToFloat((*it).at(2));
+                    double w = OVISE::StrToFloat((*it).at(3));
 
                     vec4 v(x, y, z, w);
                     e->Set<vec4>(attrName, v);
@@ -556,7 +387,7 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
                 }
                 default:
                 {
-                    _message = mRPCMesAPI.ErrorResponseMsg("Could not add attribute with given datatype");
+                    Message = mRPCMesAPI.ErrorResponseMsg("Could not add attribute with given datatype");
                     return -1;
                 }
             }
@@ -570,18 +401,24 @@ int XMLRPCMessageHandler::AddAttributeToEntity( const std::list< std::vector< st
 
         // todo: set attribute
 
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not add attribute with given datatype");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not add attribute with given datatype");
         return -1;
     }
 
-    _message = mRPCMesAPI.StatusResponseMsg("Attribute added to entity");
+    Message = mRPCMesAPI.StatusResponseMsg("Attribute added to entity");
     return 0;
 }
 
-int XMLRPCMessageHandler::RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list,
-                                                    std::string& _message )
+int XMLRPCMessageHandler::RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& ParamList,
+                                                    std::string& Message )
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() < 2)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
+        return -1;
+    }
+
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
     std::string entityName = (*it).at(1);
     it++;
@@ -593,21 +430,27 @@ int XMLRPCMessageHandler::RemoveAttributeFromEntity( const std::list< std::vecto
 
     if(e == NULL)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
         return -1;
     }
 
     e->RemoveAttribute(attributeName);
 
-    _message = mRPCMesAPI.StatusResponseMsg("Attribute removed from entity");
+    Message = mRPCMesAPI.StatusResponseMsg("Attribute removed from entity");
 
     return 0;
 }
 
 int XMLRPCMessageHandler::GetAttributeNamesFromEntity(
-                            const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const
+                            const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    if(ParamList.size() < 1)
+    {
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
+        return -1;
+    }
+
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
     std::string entityName = (*it).at(1);
 
@@ -617,24 +460,24 @@ int XMLRPCMessageHandler::GetAttributeNamesFromEntity(
 
     if(e == NULL)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
         return -1;
     }
 
     std::vector< std::string > attrNames = e->GetAttributeNames();
 
     if(attrNames.size() == 0)
-        _message = mRPCMesAPI.StatusResponseMsg("Entity doesn't have any attributes");
+        Message = mRPCMesAPI.StatusResponseMsg("Entity doesn't have any attributes");
     else
-        _message = mRPCMesAPI.AllAttributeNamesResponseMsg(attrNames);
+        Message = mRPCMesAPI.AllAttributeNamesResponseMsg(attrNames);
 
     return 0;
 }
 
-int XMLRPCMessageHandler::GetAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list,
-                                                std::string& _message ) const
+int XMLRPCMessageHandler::GetAttributeFromEntity( const std::list< std::vector< std::string > >& ParamList,
+                                                std::string& Message ) const
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
     std::string entityName = (*it).at(1);
     it++;
@@ -646,13 +489,13 @@ int XMLRPCMessageHandler::GetAttributeFromEntity( const std::list< std::vector< 
 
     if(e == NULL)   // if there's no entity with given entityName return error -1
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
         return -1;
     }
 
     if( !(attributeName.compare("id")) )
     {
-        _message = mRPCMesAPI.AttributeResponseMsg(e->GetId());
+        Message = mRPCMesAPI.AttributeResponseMsg(e->GetId());
     }
     else
     {
@@ -660,22 +503,22 @@ int XMLRPCMessageHandler::GetAttributeFromEntity( const std::list< std::vector< 
 
         if(vt == NULL)
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Could not find attribute");
+            Message = mRPCMesAPI.ErrorResponseMsg("Could not find attribute");
             return -1;
         }
 
-        _message = mRPCMesAPI.AttributeResponseMsg(boost::apply_visitor(EntityVisitor(), *vt));
+        Message = mRPCMesAPI.AttributeResponseMsg(boost::apply_visitor(EntityVisitor(), *vt));
     }
 
     return 0;
 }
 
 int XMLRPCMessageHandler::GetAttributeFromEntityId(
-                                const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const
+                                const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const
 {
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
-    int entityId = atoi(((*it).at(1)).c_str());
+    int entityId = OVISE::StrToInt((*it).at(1));
     it++;
     std::string attributeName = (*it).at(1);
 
@@ -685,49 +528,49 @@ int XMLRPCMessageHandler::GetAttributeFromEntityId(
 
     if(e == NULL)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity with given id");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity with given id");
         return -1;
     }
 
     if( !(attributeName.compare("name")) )
     {
-        _message = mRPCMesAPI.AttributeResponseMsg(e->GetName());
+        Message = mRPCMesAPI.AttributeResponseMsg(e->GetName());
     }
     else
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find attribute");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find attribute");
         return -1;
     }
 
     return 0;
 }
 
-int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& _param_list,
-                                                std::string& _message ) const
+int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& ParamList,
+                                                std::string& Message ) const
 {
-    if( _param_list.size() == 0 )
+    if(ParamList.size() < 2)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Empty parameterlist");
+        Message = mRPCMesAPI.ErrorResponseMsg("Parameterlist is incorrect");
         return -1;
     }
 
-    std::list< std::vector< std::string > >::const_iterator it = _param_list.begin();
+    std::list< std::vector< std::string > >::const_iterator it = ParamList.begin();
 
     std::string entityName = (*it).at(1);
     it++;
 
-    if( it == _param_list.end() || (*it).size() == 0)
+    if( it == ParamList.end() || (*it).size() == 0)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Wrong parameterlist-size");
+        Message = mRPCMesAPI.ErrorResponseMsg("Wrong parameterlist-size");
         return -1;
     }
 
     std::string attributeName = (*it).at(1);
     it++;
 
-    if( it == _param_list.end() || (*it).size() == 0)
+    if( it == ParamList.end() || (*it).size() == 0)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Wrong parameterlist-size");
+        Message = mRPCMesAPI.ErrorResponseMsg("Wrong parameterlist-size");
         return -1;
     }
 
@@ -739,13 +582,13 @@ int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector<
     std::stringstream res;
     if(e == NULL)
     {
-        _message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
+        Message = mRPCMesAPI.ErrorResponseMsg("Could not find entity");
         return -1;
     }
 
     if( !attributeType.compare("int") || !attributeType.compare("i4") )
     {
-        e->Set(attributeName, atoi(attributeValue.c_str()));
+        e->Set(attributeName, OVISE::StrToInt(attributeValue));
     }
     else if( !attributeType.compare("boolean") )
     {
@@ -761,13 +604,13 @@ int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector<
         }
         else
         {
-            _message = mRPCMesAPI.ErrorResponseMsg("Wrong value for type boolean");
+            Message = mRPCMesAPI.ErrorResponseMsg("Wrong value for type boolean");
             return -1;
         }
     }
     else if( !attributeType.compare("double") )
     {
-        e->Set(attributeName, atof(attributeValue.c_str()));
+        e->Set(attributeName, OVISE::StrToFloat(attributeValue));
     }
     else if( !attributeType.compare("string") && (*it).size() < 3)
     {
@@ -780,8 +623,8 @@ int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector<
             case 2:
             {
                 vec2 v;
-                v[0] = atof((*it).at(0).c_str());
-                v[1] = atof((*it).at(1).c_str());
+                v[0] = OVISE::StrToFloat((*it).at(0));
+                v[1] = OVISE::StrToFloat((*it).at(1));
 
                 e->Set(attributeName, v);
                 break;
@@ -789,9 +632,9 @@ int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector<
             case 3:
             {
                 vec3 v;
-                v[0] = atof((*it).at(0).c_str());
-                v[1] = atof((*it).at(1).c_str());
-                v[2] = atof((*it).at(2).c_str());
+                v[0] = OVISE::StrToFloat((*it).at(0));
+                v[1] = OVISE::StrToFloat((*it).at(1));
+                v[2] = OVISE::StrToFloat((*it).at(2));
 
                 e->Set(attributeName, v);
                 break;
@@ -799,22 +642,22 @@ int XMLRPCMessageHandler::ChangeAttributeOfEntity( const std::list< std::vector<
             case 4:
             {
                 quat q;
-                q[0] = atof((*it).at(0).c_str());
-                q[1] = atof((*it).at(1).c_str());
-                q[2] = atof((*it).at(2).c_str());
-                q[3] = atof((*it).at(3).c_str());
+                q[0] = OVISE::StrToFloat((*it).at(0));
+                q[1] = OVISE::StrToFloat((*it).at(1));
+                q[2] = OVISE::StrToFloat((*it).at(2));
+                q[3] = OVISE::StrToFloat((*it).at(3));
 
                 e->Set(attributeName, q);
                 break;
             }
             default:
             {
-                _message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype");
+                Message = mRPCMesAPI.ErrorResponseMsg("Wrong datatype");
                 return -1;
             }
         }
     }
 
-    _message = mRPCMesAPI.StatusResponseMsg("Attribute changed");
+    Message = mRPCMesAPI.StatusResponseMsg("Attribute changed");
     return 0;
 }
