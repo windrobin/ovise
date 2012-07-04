@@ -14,6 +14,7 @@
 #include "../Core/EntityPool.h"
 #include "../rapidxml-1.13/rapidxml.hpp"
 #include "../Viewer/AppContext.h"
+#include "../Util/UtilityFunctions.h"
 
 #include "HTTPReply.h"
 #include "HTTPRequest.h"
@@ -42,18 +43,14 @@ struct stMethodCallInfo
 class XMLRPCMessageHandler
 {
 public:
-    XMLRPCMessageHandler( EntityPool* _entityPool );
+    XMLRPCMessageHandler( EntityPool* EntityPool );
     ~XMLRPCMessageHandler();
 
     /** Handles the message.
 	        \param _message message in XML-RPC format
 	        \returns failure code (success: 0; failure: -1)
 	 */
-    int HandleMessage( const std::string& _message, HTTPReply& _reply );
-
-    /** 
-    */
-    int HandleHTMLRequest(const HTTPRequest& _request, HTTPReply& _reply);
+    int HandleMessage( const std::string& Message, HTTPReply& Reply );
 
 private:
 	rapidxml::xml_document<>        mDocument;
@@ -63,49 +60,65 @@ private:
 
     XMLRPCServerMessageAPI mRPCMesAPI;
 
-    std::string GetHTTPHeader( const std::string& _message ) const;
-    std::string GetHTTPContent( const std::string& _message ) const;
-    int CheckHTTPHeader( const std::string& _header, HTTPReply& _reply );
-    std::string Trimm( const std::string& _str ) const;
-    int HandleMessageRPC( const std::string& _content, std::string& _message );
+    int HandleMessageRPC( const std::string& Content, std::string& Message );
 
-	int CallMethod( const std::string& _methodName, const std::list< std::vector< std::string > >& _param_list, std::string& _message );
+	int CallMethod( const std::string& MethodName, const std::list< std::vector< std::string > >& ParamList, std::string& Message );
 
-    int GetAllEntityNames( std::string& _message ) const;
+    int GetAllEntityNames( std::string& Message ) const;
 
     /** Insert a new entity in the entity pool
-            \param _param_list list of parameters which were retrieved from the message
+            \param ParamList list of parameters which were retrieved from the message
             \returns 0 for success; -1 otherwise
     */
-    int InsertEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
+    int InsertEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message );
 
     /** Removes an entity from the entity pool
-            \param _param_list list of parameters which were retrieved from the message
+            \param ParamList list of parameters which were retrieved from the message
             \returns 0 for success; -1 otherwise
     */
-    int RemoveEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
+    int RemoveEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message );
 
     /** Removes entities from the entity pool which specified attribute
-            \param _param_list list of parameters which were retrieved from the message
+            \param ParamList list of parameters which were retrieved from the message
             \returns 0 for success; -1 otherwise
     */
-    int RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
+    int RemoveEntitiesByAttribute( const std::list< std::vector< std::string > >& ParamList, std::string& Message );
 
     /** Adds a new attribute to an entity of the entity pool
-            \param _param_list list of parameters which were retrieved from the message
+            \param ParamList list of parameters which were retrieved from the message
             \returns 0 for success; -1 otherwise
     */
-    int AddAttributeToEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message );
+    int AddAttributeToEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message );
 
-    int RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message);
+    /** Removes an attribute from an entity of the entity pool
+            \param ParamList list of parameters which were retrieved from the message
+            \returns 0 for success; -1 otherwise
+    */
+    int RemoveAttributeFromEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message);
 
-    int GetAttributeNamesFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
+    /** Gets all attribute names form an entity
+            \param ParamList list of parameters which were retrieved from the message
+            \returns 0 for success; -1 otherwise
+    */
+    int GetAttributeNamesFromEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const;
 
-    int GetAttributeFromEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
+    /** Gets an attribute from an entity of the entity pool
+            \param ParamList list of parameters which were retrieved from the message
+            \returns 0 for success; -1 otherwise
+    */
+    int GetAttributeFromEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const;
 
-    int GetAttributeFromEntityId( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
+    /** Gets an attribute from an entity by entity-id
+            \param ParamList list of parameters which were retrieved from the message
+            \returns 0 for success; -1 otherwise
+    */
+    int GetAttributeFromEntityId( const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const;
 
-    int ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& _param_list, std::string& _message ) const;
+    /** Changes an attribute of an entity of the entity pool
+            \param ParamList list of parameters which were retrieved from the message
+            \returns 0 for success; -1 otherwise
+    */
+    int ChangeAttributeOfEntity( const std::list< std::vector< std::string > >& ParamList, std::string& Message ) const;
 };
 
 #endif   // OVISE_XMLRPC_MESSAGE_HANDLER_H

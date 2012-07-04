@@ -26,9 +26,7 @@ bool CXMLRPCInterface::Start()
 	mAcceptor.reset( new boost::asio::ip::tcp::acceptor( mIOService, *mEndpoint ) );
 	mSocket.reset( new boost::asio::ip::tcp::socket( mIOService ) );
 
-	//mAcceptor->open( mEndpoint->protocol() );
 	mAcceptor->set_option( boost::asio::ip::tcp::acceptor::reuse_address(true) );
-	//mAcceptor->bind( *(mEndpoint.get()) );
 
 	mAcceptor->listen();
 	mAcceptor->async_accept( *mSocket, boost::bind( &CXMLRPCInterface::AcceptHandler, this, _1 ) );
@@ -72,23 +70,17 @@ void CXMLRPCInterface::Poll()
 	mIOService.reset();
 }
 
-void CXMLRPCInterface::HandleRead( const boost::system::error_code& _ec, std::size_t _bytes_transferred )
+void CXMLRPCInterface::HandleRead( const boost::system::error_code& Error, std::size_t BytesTransferred )
 {
-	if(!_ec)
+	if(!Error)
 	{
 		boost::tribool result;
-		boost::tie(result, boost::tuples::ignore) = mRequestParser.Parse(mRequest, mBuffer.data(), mBuffer.data() + _bytes_transferred);
+		boost::tie(result, boost::tuples::ignore) = mRequestParser.Parse(mRequest, mBuffer.data(), mBuffer.data() + BytesTransferred);
 		
 		if(result)
 		{
-			std::cout << " > result is true" << std::endl;
-
-			if(mRequest.Method == "GET")
-			{
-				mMessageHandler.HandleHTMLRequest(mRequest, mReply);
-				mSocket->async_write_some(mReply.ToBuffers(),
-					mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-			}
+			if(mRequest.Method == "GET")	// ignore this case
+			{}
 			else if(mRequest.Method == "POST")
 			{
 				int content_length = 0;
@@ -103,9 +95,7 @@ void CXMLRPCInterface::HandleRead( const boost::system::error_code& _ec, std::si
 				}
 				if(content_length > 0)
 				{
-					std::cout << " > content-length: " << content_length << std::endl;
-
-					HandleReadContent(_ec, _bytes_transferred);
+					HandleReadContent(Error, BytesTransferred);
 				}
 			}
 		}
@@ -124,42 +114,21 @@ void CXMLRPCInterface::HandleRead( const boost::system::error_code& _ec, std::si
 	}
 }
 
-void CXMLRPCInterface::HandleReadContent( const boost::system::error_code& _ec, std::size_t _bytes_transferred )
+void CXMLRPCInterface::HandleReadContent( const boost::system::error_code& Error, std::size_t BytesTransferred )
 {
 	std::string content;
-	content.assign(mBuffer.begin(), mBuffer.begin() + _bytes_transferred);
+	content.assign(mBuffer.begin(), mBuffer.begin() + BytesTransferred);
 
-	int res = mMessageHandler.HandleMessage(content, mReply);
-	std::cout << " > res: " << res << std::endl;
+	mMessageHandler.HandleMessage(content, mReply);
 
-	std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
 	mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-
-	/*if(strRes[0] == 'R')
-	{
-		mSocket->async_write_some(boost::asio::buffer(strRes), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-		std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
-		mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-	}
-	else if(strRes[0] == 'E')
-	{
-		mSocket->async_write_some(boost::asio::buffer(strRes), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-		std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
-		mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-	}
-	else if(strRes[0] == 'S')
-	{
-		mSocket->async_write_some(boost::asio::buffer(strRes), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-		std::cout << " > reply status: " << mReply.Status << " content: " << mReply.Content << std::endl;
-		mSocket->async_write_some(mReply.ToBuffers(), mStrand.wrap(boost::bind(&CXMLRPCInterface::HandleWrite, this, boost::asio::placeholders::error)));
-	}*/
 
 	ResetConnection();
 }
 
-void CXMLRPCInterface::HandleWrite( const boost::system::error_code& _ec )
+void CXMLRPCInterface::HandleWrite( const boost::system::error_code& Error )
 {
-	if(!_ec)
+	if(!Error)
 	{
 		// initiate graceful connection closure
 		boost::system::error_code ignored_ec;

@@ -14,7 +14,7 @@
 
 using namespace boost::asio;
 
-class CXMLRPCInterface :	public CNetworkInterface
+class CXMLRPCInterface : public CNetworkInterface
 {
 public:
 	CXMLRPCInterface( EntityPool& EntPool, const wxString& Name );
@@ -46,9 +46,9 @@ private:
 	CHTTPRequestParser mRequestParser;
 	HTTPReply mReply;
 
-	void HandleRead( const boost::system::error_code& _ec, std::size_t _bytes_transferred );
-	void HandleReadContent( const boost::system::error_code& _ec, std::size_t _bytes_transferred );
-	void HandleWrite( const boost::system::error_code& _ec );
+	void HandleRead( const boost::system::error_code& Error, std::size_t BytesTransferred );
+	void HandleReadContent( const boost::system::error_code& Error, std::size_t BytesTransferred );
+	void HandleWrite( const boost::system::error_code& Error );
 };
 
 #endif // OVISE_XMLRPC_INTERFACE_H
